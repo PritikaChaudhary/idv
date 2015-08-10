@@ -129,3 +129,16 @@ button, .button{padding:.5rem 1rem 0.5625rem 1rem;}
 div.loan_head{
     background-color: #f1f1f1;
 }
+
+form#loan-url-form{
+     display: inline-block;
+    padding: 50px 0;
+    width: 100%;
+}
+.panel_head{
+    background-color: #f1f1f1;    
+}
+
+table.access_email_list tbody tr:nth-child(odd){
+    background-color: red;
+}

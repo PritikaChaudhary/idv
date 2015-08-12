@@ -87,7 +87,7 @@ gem 'pdfkit'
 gem 'awesome_print'
 gem 'wicked_pdf'
 gem 'will_paginate'
-
+gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 
 
 

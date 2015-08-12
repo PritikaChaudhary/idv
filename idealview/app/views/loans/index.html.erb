@@ -1,14 +1,17 @@
 <style>
  .sortbtn
  {
- 	width:153px;
+    width:153px;
  }
 
  .generatepdf
  {
- 	float: right;
- 	margin-right: 36px;
+    float: right;
+    /*margin-right: 36px;*/
+    margin-right: 20px;
+    color:#ffffff;
  }
+
  .large-2 {
     width: 12.667%;
 }
@@ -99,18 +102,18 @@ label
     }
 }); });
 
-	function generate_pdf()
-	{
-		 var allVals = [];
-		$('input[name="select_loan"]:checked').each(function(){
-			allVals.push($(this).val());
-		});
-		if (allVals.length === 0) {
-    		alert("Please select atleast one loan.");
-    		return false;
-    	}
-		var data = "&moredata=" + allVals;
-		$.ajax({
+    function generate_pdf()
+    {
+         var allVals = [];
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
                 data: data,
                 type: 'POST',
                 url: '/loans/generate_pdf',
@@ -122,7 +125,7 @@ label
             }
             });
 
-	}
+    }
 
     function send_pdf()
     {
@@ -228,7 +231,7 @@ label
         });
 
         
-    });	
+    }); 
     function lender_change(sts, id)
     {
             var status=sts.value;
@@ -356,64 +359,65 @@ function custom_searchForm()
 </script>
 <script src="https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
 
-
-<div class="container"  style="padding-left:48px; padding-right:60px;">  
-<div class="row" >
- <div class="br-header">
-    <div class="sort_buttons" style='margin-left:142px; margin-top:19px;'>
-        <% @url=url_for :controller=>'loans', :action=>'recent', :sort=>'desc' %>
-        <%= button_tag "Recent",  onclick:"callSort('#{@url}','loan_records', 'all_loans', 'recent' )", class: 'tiny button success sortbtn'%>
-
-        <% @url=url_for :controller=>'loans', :action=>'priority', :sort=>'ordering' %>
-        <%= button_tag "Priority",  onclick:"callSort('#{@url}','loan_records', 'all_loans', 'priority' )", class: 'tiny button success sortbtn'%>
-
-        <%
-        if @checkAdmin==true%>
-            <%= button_tag "Create Pipeline",  onclick:"send_pdf()", class: 'tiny button success generatepdf'%>
-            <a id="pdf_download" href="#" download target="_blank" style="display:none;">Download PDF</a>
-        <% end %>
+<div class="container heading">
+    <div class="medium-12 column" style="background:#F1F1F1; padding-top:20px; padding-bottom:20px; margin-bottom: 25px;">
+        <h3>Current Loans</h3>
     </div>
-  
-    <!-- <a href="javascript:void(0);" onclick="send_pdf()" >Send PDF</a>-->
-    <% if @checkAdmin==true %>
-    <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; margin-left: 146px; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}">
-    <% end %>
-    <h3 class='text-center'>Current Loans</h3>
- </div>  
- </div> 
-<div class="search_div" style="float:left; width:25%; text-align:center; ">
+</div>
+<!-- <div class="container"  style="padding-left:48px; padding-right:60px;"> -->
+<div class="container">
+<div class="br-header">
+<!-- <div class="sort_buttons" style='margin-left:142px; margin-top:19px;'>
+    <% @url=url_for :controller=>'loans', :action=>'recent', :sort=>'desc' %>
+    <%= button_tag "Recent",  onclick:"callSort('#{@url}','loan_records', 'all_loans', 'recent' )", class: 'tiny button success sortbtn'%>
+
+    <% @url=url_for :controller=>'loans', :action=>'priority', :sort=>'ordering' %>
+    <%= button_tag "Priority",  onclick:"callSort('#{@url}','loan_records', 'all_loans', 'priority' )", class: 'tiny button success sortbtn'%>
+</div> -->
+
+<!-- <a href="javascript:void(0);" onclick="send_pdf()" >Send PDF</a>-->
+<% if @checkAdmin==true %>
+<!-- <img src="http://idealview.us/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; margin-left: 146px; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}"> -->
+<% end %>
+</div>
+
+<div class="search_div medium-3 small-12 column">
 <form class="custom_search" name="custom_search" id="custom_search">
-<input type="hidden" name="sorting" id="sorting" value="recent">
-        <div class="input_container">
-        <label>Loan Range</label>
-        <select name="loanMinDropDown" class="half">
-            <option value="">From</option>
-            <option value="0">0</option>
-            <option value="1000">1000</option>
-            <option value="10000">10000</option>
-            <option value="50000">50000</option>
-            <option value="100000">100000</option>
-            <option value="500000">500000</option>
-            <option value="1000000">1000000</option>
-            <option value="2000000">2000000</option>
-            <option value="5000000">5000000</option>
-        </select>
-        <select name="loanMaxDropDown" class="half">
-            <option value="0">To</option>
-            <option value="50000">50000</option>
-            <option value="100000">100000</option>
-            <option value="250000">250000</option>
-            <option value="500000">500000</option>
-            <option value="1000000">1000000</option>
-            <option value="2000000">2000000</option>
-            <option value="5000000">5000000</option>
-            <option value="0">No Max</option>
-        </select>
+<input type="hidden" name="sorting" id="sorting" value="recent" style="text">
+        <div class="input_container row" style="text-align:center;">
+            <label>Loan Range</label>
+            <div class="small-6 column">
+                <select name="loanMinDropDown" class="">
+                    <option value="">From</option>
+                    <option value="0">0</option>
+                    <option value="1000">1000</option>
+                    <option value="10000">10000</option>
+                    <option value="50000">50000</option>
+                    <option value="100000">100000</option>
+                    <option value="500000">500000</option>
+                    <option value="1000000">1000000</option>
+                    <option value="2000000">2000000</option>
+                    <option value="5000000">5000000</option>
+                </select>
+            </div>
+            <div class="small-6 column">
+                <select name="loanMaxDropDown" class="">
+                    <option value="0">To</option>
+                    <option value="50000">50000</option>
+                    <option value="100000">100000</option>
+                    <option value="250000">250000</option>
+                    <option value="500000">500000</option>
+                    <option value="1000000">1000000</option>
+                    <option value="2000000">2000000</option>
+                    <option value="5000000">5000000</option>
+                    <option value="0">No Max</option>
+                </select>
+            </div>
         </div>
 
        <div class="input_container">
         <label>Lending Category</label>
-        <select name="lendingCategory" style="width:80%" id="lendingCategory">
+        <select name="lendingCategory" id="lendingCategory">
             <option value="all">All</option>
             <option value="Private Real Estate Loan">Private Real Estate Loan</option>
             <option value="Business Financing">Business Financing</option>
@@ -424,7 +428,7 @@ function custom_searchForm()
 
         <div class="input_container">
         <label>Lending Types</label>
-        <select name="lendingTypes" style="width:80%" id="lendingTypes">
+        <select name="lendingTypes" id="lendingTypes">
             <option value="">All</option>
             <option value="Single Family Residence">Single Family Residence</option>
             <option value="Multifamily">Multifamily</option>
@@ -438,7 +442,7 @@ function custom_searchForm()
             <option value="Industrial">Industrial</option>
             <option value="Other">Other</option>
         </select> 
-        <select name="businessFinancingTypes" style="display:none;" style="width:80%" id="businessFinancingTypes">
+        <select name="businessFinancingTypes" style="display:none;" id="businessFinancingTypes">
             <option value="">All</option>
             <option value="Equipment/Inventory">Equipment/Inventory</option>
             <option value="Working Capital">Working Capital</option>
@@ -451,7 +455,7 @@ function custom_searchForm()
             <option value="SBA Financing">SBA Financing</option>
             <option value="Other">Other</option>
         </select>
-        <select name="equityandCrowdFunding" style="display:none;" style="width:80%" id="equityandCrowdFunding">
+        <select name="equityandCrowdFunding" style="display:none;" id="equityandCrowdFunding">
             <option value="">All</option>
             <option value="Project Financing">Project Financing</option>
             <option value="Acquisition and Development">Acquisition and Development</option>
@@ -459,7 +463,7 @@ function custom_searchForm()
             <option value="Business Partnership">Business Partnership</option>
             <option value="Other">Other</option>
         </select>  
-        <select name="mortageTypes" style="display:none;" style="width:80%" id="mortageTypes">
+        <select name="mortageTypes" style="display:none;" id="mortageTypes">
             <option value="">All</option>
             <option value="Owner Occupied">Owner Occupied</option>
             <option value="Second Home">Second Home</option>
@@ -481,7 +485,7 @@ function custom_searchForm()
 
         <div class="input_container">
         <label>States</label>
-        <select size="10" multiple="" id="State3" name="State3[]" style="width:80%; height:178px;">
+        <select size="10" multiple="" id="State3" name="State3[]" style="height:178px;">
             <option value="">Select States</option>
             <option value="Nationwide">Nationwide</option>
             <option value="Alabama">Alabama</option>
@@ -536,8 +540,8 @@ function custom_searchForm()
         </div>
 
         <input type="hidden" name="used" id="used">
-        <div class="input_container">
-        <input type="button" value="Search" onclick="custom_searchForm();">
+        <div class="input_container noborder">
+        <input class="search" type="button" value="Search" onclick="custom_searchForm();">
         </div>
 
   </form>
@@ -545,7 +549,7 @@ function custom_searchForm()
 
 </div>
 
-    <div class='row' id="loan_records" style="border-top: 7px solid rgb(242, 242, 242); float:left; width:75%">
+    <div id="loan_records" class="medium-9 small-12 column">
     
     
     <%= render partial: 'layouts/messages' %>

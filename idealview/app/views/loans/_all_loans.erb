@@ -1,5 +1,40 @@
 <%= render partial: 'layouts/messages' %>
 <% color_class = ''%>
+
+
+<div class="small-12 columns">
+	<div class="small-5 columns">
+		<span class="small-6">Sort By</span>
+		<select class="small-6" name="sortby">
+			<option value="">Recent</option>
+			<option value="">Priority</option>
+		</select>
+	</div>
+	<div class="small-7 columns top_buttons">
+		<a href="" class="button secondary tiny">Send to CPC</a>
+		<a href="" class="button secondary tiny">Shop Loan</a>
+		<a href="" class="button secondary tiny">Archive</a>
+		<% if @checkAdmin==true %>
+			<a href="javascript:void(0);" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}" class="button secondary tiny trash">
+	        	<i class="fa fa-trash"></i>
+	        </a>
+            <%= button_tag "Create Pipeline",  onclick:"send_pdf()", class: 'tiny button secondary generatepdf'%>
+            <a id="pdf_download" href="#" download target="_blank" style="display:none;">Download PDF</a>
+        <% end %>
+	</div>
+</div>
+
+<div class="small-12 columns">
+	<table width="100%" class="list_loans">
+		<thead>
+			<tr>
+				<th></th>
+				<th></th>
+				<th>Net Amount</th>
+				<th>Location</th>
+			</tr>
+		</thead>
+		<tbody>
 <%
 unless @loans.blank?
  @loans.each do |loan_rec|
@@ -7,7 +42,8 @@ unless @loans.blank?
 	#abort("#{loan.inspect}")
 	
  %>
-<div class='row <%=color_class%> bottom-space text-left'>
+
+<!-- <div class='row <%=color_class%> bottom-space text-left'> -->
 	<% if loan_rec.name.blank?
 		#abort("#{loan|Loan_id|}")
 	    loan_name = 'No Loan Title'
@@ -17,39 +53,43 @@ unless @loans.blank?
 
 	%>
 	
-	<% 
-	if @checkAdmin==true %>
-	<div class='large-2 columns'>
-		<input type="checkbox" id="check_<%= loan_rec.id %>" name="select_loan" value="<%= loan_rec.id %>" style="float:left;margin-top:7px;">
-		<div id="click_<%= loan_rec.id %>" style="float:left;">
-			<% @url=url_for :controller=>'loan_urls', :action=>'fetch_lenders', :id=>loan_rec.id %>
-			<a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= loan_rec.id %>', 'lender_loans')">[+]</a>
-		</div>
-		<div id="click_hide_<%= loan_rec.id %>" style="display:none; float:left;" class="click_hide"  onclick="order_lenderhide('<%= loan_rec.id %>')">
-			<a href="javascript:void(0);" class="hide_lender_<%= loan_rec.id %>">[-]</a>
-		</div>
-		</div>
-	<% end %>
-
-	
-	<div class='large-3 columns'><h5>  <a href='<%=url_for :controller=>'loans', :action=>'show',:id=>loan_rec.id%>'><%= loan_name%></a></h5></div>
-	<div class='<% if @checkAdmin==true %> large-2 columns <% else %> large-3 columns <% end %>'>
-		<span>Net Amount:</span><BR>
-		<% if loan['_NetLoanAmountRequested0'].blank? %>
-			N/A
-		<% else %>
-			<%=fd_money(loan['_NetLoanAmountRequested0'])%>
-		<% end %>
-	</div>
-	
-	<div class='<% if @checkAdmin==true %> large-2 columns <% else %> large-3 columns <% end %>'>
-		<span>Location :</span>
-		<% if loan['City3'].blank? && loan['State3'].blank? %>
-		   N/A
-		<% else %>
-		  <%=loan['City3']+', '%> <%=loan['State3']%>
-		<% end %>
-	</div>
+	<tr>
+		<td width="55">
+			<% 
+			if @checkAdmin==true %>
+				<input type="checkbox" id="check_<%= loan_rec.id %>" name="select_loan" value="<%= loan_rec.id %>" style="float:left;margin-top:7px; margin-right:5px;">
+				<div id="click_<%= loan_rec.id %>" style="float:left;">
+					<% @url=url_for :controller=>'loan_urls', :action=>'fetch_lenders', :id=>loan_rec.id %>
+					<a class="more-option" href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= loan_rec.id %>', 'lender_loans')"><i class="fa fa-plus-circle"></i></a>
+				</div>
+				<div id="click_hide_<%= loan_rec.id %>" style="float:left; display:none;" class="click_hide"  onclick="order_lenderhide('<%= loan_rec.id %>')">
+					<a class="less-option" href="javascript:void(0);" class="hide_lender_<%= loan_rec.id %>"><i class="fa fa-minus-circle"></i></a>
+				</div>
+			<% end %>
+		</td>
+		<td>
+			<h5>  <a href='<%=url_for :controller=>'loans', :action=>'show',:id=>loan_rec.id%>'><%= loan_name%></a></h5>
+		</td>
+		<td>
+				<!-- <span>Net Amount:</span><BR> -->
+				<% if loan['_NetLoanAmountRequested0'].blank? %>
+					N/A
+				<% else %>
+					<%=fd_money(loan['_NetLoanAmountRequested0'])%>
+				<% end %>
+		</td>
+		<td>
+			<!-- <span>Location :</span> -->
+			<% if loan['City	3'].blank? && loan['State3'].blank? %>
+			   N/A
+			<% else %>
+			  <%=loan['City3']+', '%> <%=loan['State3']%>
+			<% end %>
+		</td>
+		</tr>
+		<tr>
+		<td style="padding:0px;"></td>
+		<td colspan="3" style="padding:0px;">
 
 
 <% if @checkBroker==true  && @checkAdmin==false %>
@@ -61,8 +101,9 @@ unless @loans.blank?
 		<% end %>
 		</div>
 <% end %>
-    
-    <% @shop_loan_id = 'shop-loan-'+loan['Id'].to_s %>
+ 
+<!--  
+<% @shop_loan_id = 'shop-loan-'+loan['Id'].to_s %>
 <% if @checkAdmin==true %>
     <div id='<%=@shop_loan_id%>' class='large-3 columns'>
     
@@ -82,7 +123,7 @@ unless @loans.blank?
 
     </div>
     <% end %>
-    <br>
+    <br>-->
     <div id="loan_lenders<%= loan_rec.id %>">
 
 	</div>
@@ -129,11 +170,17 @@ unless @loans.blank?
 
 
 
-</div>
+<!-- </div> -->
 
 <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+		</td>
+	</tr>
 
-<% end 
+<% end %>
+		</tbody>
+	</table>
+</div>
+<%
 else 
 	    if @empty.blank? %>
 			You have not submitted any loans yet. Submit a loan here.

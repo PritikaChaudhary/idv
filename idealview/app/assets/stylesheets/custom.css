@@ -213,3 +213,64 @@ background-color: #f1f1f1;
 .tabs-content .featured .button, .tabs-content .featured input{
     margin: 0;
 }
+
+/******************** Loans listing page *******************/
+
+table.list_loans td{
+    padding:10px;
+}
+.more-option, .less-option{
+    position: relative; top:5px;
+    color: #C2C2C2;
+}
+
+.lender_inner {
+    margin-left:10px!important;
+    padding-bottom:10px;
+}
+
+#loan_records .top_buttons .secondary{
+    color:#ffffff!important;
+    font-weight: bold;
+    background-color: #b9b9b9;
+}
+
+.trash{
+    float: right;
+}
+.custom_search .input_container{
+    margin-bottom: 20px;
+    border:1px solid #eaeaea;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.custom_search .input_container label{
+    padding: 10px;
+    background-color: #F1F1F1;
+    margin-bottom: 10px;
+    text-align: left;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.custom_search .input_container select{
+    width: 90%;
+    margin: 5%;
+}
+.input_container.noborder{
+    border:none;
+}
+.input_container.noborder .search{
+    width:100%;
+    height: 40px;
+    color:#ffffff;
+    background-color: #b9b9b9;
+    border: 0px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}

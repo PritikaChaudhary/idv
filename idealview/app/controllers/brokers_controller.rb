@@ -346,7 +346,7 @@ class BrokersController < ApplicationController
 
     end
     unless params[:password].blank?
-      redirect_to "http://idealview.us/users/sign_in"
+      redirect_to "http://dash.idealview.us/users/sign_in"
     else
       redirect_to action: 'settings'
     end

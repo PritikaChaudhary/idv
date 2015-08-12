@@ -42,6 +42,7 @@ class Broker
   key :parent_user, String
   key :permissions, String
   key :broker_admin, Integer
+  key :customer_id, String
 
   
 

@@ -10,7 +10,7 @@ class LoansController < ApplicationController
 
  def index
    #################### Create Broker  ######################
-    @loans = Loan.all(:incomplete.ne => 1)
+    @loans = Loan.all
     @emails = Array.new
     binfo = Array.new
    @loans.each do |loan|
@@ -111,10 +111,10 @@ class LoansController < ApplicationController
            @broker_emails << broker_req['email']
         end
       end
-      @loans = Loan.all(:email =>@broker_emails, :delete.ne => 1, :archived.ne => true, :incomplete.ne => 1, :order => :id.desc) 
+      @loans = Loan.all(:email =>@broker_emails, :delete.ne => 1, :archived.ne => true, :order => :id.desc) 
     else
       #@loans = Loan.paginate(:delete.ne => 1, :archived.ne => true, :order => :id.desc, :per_page => 10, :page => params[:page])
-      @loans = Loan.all(:delete.ne => 1, :archived.ne => true, :incomplete.ne => 1, :order => :id.desc)
+      @loans = Loan.all(:delete.ne => 1, :archived.ne => true,:order => :id.desc)
     end
  end
   
@@ -182,6 +182,7 @@ class LoansController < ApplicationController
   end
   
   def show
+  #  bucket = S3.create_bucket(bucket: 'testbusketxyz')
    loan_url = LoanUrl.find_by_url(params[:id])
 
     if loan_url
@@ -191,7 +192,7 @@ class LoansController < ApplicationController
       end
       loan_url.visits<<Time.now.getutc
       loan_url.save
-      redirect_to action: 'detail', id: params[:id]
+    #  redirect_to action: 'detail', id: params[:id]
     end
 
     if @loan.blank? && !current_user.blank?
@@ -488,12 +489,12 @@ class LoansController < ApplicationController
   #upload the main image for the loan
   def upload_main_image
    loan=Loan.find_by_id(params[:id].to_i)
+   up_size = number_to_human_size(params[:upload].size)
    uploaded_io = params[:upload]
    file_name = uploaded_io.original_filename
-   
-    File.open(Rails.root.join('public', 'temp', file_name), 'wb') do |file|
-      contents = uploaded_io.read
-      file.write(contents)
+   File.open(Rails.root.join('public', 'temp', file_name), 'wb') do |file|
+   contents = uploaded_io.read
+   file.write(contents)
       
       
       # Make an object in your bucket for your upload
@@ -505,7 +506,10 @@ class LoansController < ApplicationController
                key: key_name,
                body: contents
                )
-    
+      
+
+       
+
        #clear all featured image tags
         @check = false
         loan.images.each do |img|
@@ -835,6 +839,7 @@ class LoansController < ApplicationController
   end
 
   def docs
+    redirect_to action: 'detail', id: params[:id]
     id = Base64.decode64(Base64.decode64(params[:id])) 
     loan_url = Loan.find_by_id(id.to_i)
 
@@ -1022,7 +1027,7 @@ def generate_pdf
   str_time=today.strftime("%d/%m/%Y")
    time="loans_"+Time.now.strftime("%m-%d-%y_%H-%M-%S")+".pdf"
     # file_path = "public/pdfs/"+time+".pdf"
-  text="<div style='width:100%'><img src='http://idealview.us/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'><p style='float:right;'>Pipeline Summary "+str_time+"</p></div>"
+  text="<div style='width:100%'><img src='http://#{@hostname}/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'><p style='float:right;'>Pipeline Summary "+str_time+"</p></div>"
   @loans = Loan.find(ids)
   @loans.map do |loan|
     a=""
@@ -1068,7 +1073,7 @@ def generate_pdf_old
  ids=params[:moredata].split(",").map { |s| s.to_i }
   today=Time.new
   str_time=today.strftime("%d/%m/%Y")
-  text="<div style='width:100%'><img src='http://idealview.us/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'><p style='float:right;'>Pipeline Summary "+str_time+"</p></div>"
+  text="<div style='width:100%'><img src='http://#{@hostname}/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'><p style='float:right;'>Pipeline Summary "+str_time+"</p></div>"
   @loans = Loan.find(ids)
   @loans.map do |loan|
     a=""
@@ -1349,7 +1354,7 @@ def hide_file
 
  def delete_loans
   ids=params[:moredata].split(",").map { |s| s.to_i }
- 	ids.each do |number|
+  ids.each do |number|
       loanRecord=Loan.find(number)
       loanRecord.delete=1
       loanRecord.save
@@ -1359,12 +1364,12 @@ def hide_file
  end
 
  def save_loc
- 	id=params[:id].split(",").map { |s| s.to_i }
- 	loan=Loan.find_by_id(id)
-	loan.info["City3"] = params[:City3] 
- 	loan.info["State3"] = params[:State3] 
+  id=params[:id].split(",").map { |s| s.to_i }
+  loan=Loan.find_by_id(id)
+  loan.info["City3"] = params[:City3] 
+  loan.info["State3"] = params[:State3] 
     loan.save()
-	render nothing: true
+  render nothing: true
   end
 
   def edit_info
@@ -1747,11 +1752,9 @@ def pdforder
   end
 
   def detail
-    loan_url = LoanUrl.find_by_url(params[:id])
-    
-    if loan_url
-      @loan = Loan.find_by_id(loan_url.loan_id)
-      #abort("#{@loan.inspect}")
+     id = Base64.decode64(Base64.decode64(params[:id]))
+    if id
+      @loan = Loan.find_by_id(id.to_i)
     else
       flash[:alert] ='You have either selected an invalid loan or you are not authorized to view this loan.'
       redirect_to '/'

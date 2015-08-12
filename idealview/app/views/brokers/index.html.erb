@@ -108,7 +108,7 @@ function search_fun()
 </script>
 <div class="row" style="margin-top:25px">
     <div class="br-header">
-        <img src="http://idealview.us/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_brokers()}">
+        <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_brokers()}">
         <h3 class='text-center'>Brokers</h3>
         <div class="broker_search">
             <form name="search_form" id="search_form" style="width:250px;">
@@ -132,7 +132,7 @@ function search_fun()
             </div>
             
             <div class='large-3 columns'>
-                <a href="http://idealview.us/brokers/show/<%= broker.id %>">
+                <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
                     <% unless broker.name.blank? %>
                         <%= broker.name %>
                     <% else %>

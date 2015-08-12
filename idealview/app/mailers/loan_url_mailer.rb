@@ -66,5 +66,14 @@ class LoanUrlMailer < ActionMailer::Base
     mail(to: emails, subject: @email.subject)
   end
 
+   def new_plan(plan, email)
+    @plan = plan 
+    emails = email
+    @email = Email.find_by_name("Thanking you email to subscribe plan")
+    email_subject = @email.subject.gsub("plan_name", plan)
+    #emails = "pritika@digimantra.com"
+    mail(to: emails, subject: email_subject)
+  end
+
 
 end

@@ -97,7 +97,7 @@ $('document').ready(function(){
                     
                     
                     <div class='large-3 columns'>
-                        <a href="http://idealview.us/brokers/show/<%= admin.id %>">
+                        <a href="http://<%= @hostname %>/brokers/show/<%= admin.id %>">
                             <% unless admin.name.blank? %>
                                 <%= admin.name %>
                             <% else %>
@@ -120,18 +120,18 @@ $('document').ready(function(){
                              if allow.include? "change_passwords"
                               
                          %>
-                            <a href="http://idealview.us/brokers/change_password/<%= admin.id %>" class="tiny button success sortbtn" >
+                            <a href="http://<%= @hostname %>/brokers/change_password/<%= admin.id %>" class="tiny button success sortbtn" >
                                 Change Password
                             </a>
                         <%
                          end
                          else %>
-                            <a href="http://idealview.us/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
+                            <a href="http://<%= @hostname %>/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
                                 Edit
                             </a>
                         <% end %>
 
-                        <a href="http://idealview.us/brokers/loans/<%= admin.id %>" class="tiny button" >
+                        <a href="http://<%= @hostname %>/brokers/loans/<%= admin.id %>" class="tiny button" >
                             View Loans
                          </a>
                        
@@ -175,7 +175,7 @@ $('document').ready(function(){
             
             
             <div class='large-3 columns'>
-                <a href="http://idealview.us/brokers/show/<%= broker.id %>">
+                <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
                     <% unless broker.name.blank? %>
                         <%= broker.name %>
                     <% else %>
@@ -197,17 +197,17 @@ $('document').ready(function(){
                      allow = @infoBroker.permissions.split(",")
                      if allow.include? "change_passwords"
                  %>
-                    <a href="http://idealview.us/brokers/change_password/<%= broker.id %>" class="tiny button success sortbtn" >
+                    <a href="http://<%= @hostname %>/brokers/change_password/<%= broker.id %>" class="tiny button success sortbtn" >
                         Change Password
                     </a>
                 <%
                  end
                  else %>
-                    <a href="http://idealview.us/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
+                    <a href="http://<%= @hostname %>/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
                         Edit
                     </a>
                 <% end %>
-                <a href="http://idealview.us/brokers/loans/<%= broker.id %>" class="tiny button" >
+                <a href="http://<%= @hostname %>/brokers/loans/<%= broker.id %>" class="tiny button" >
                     View Loans
                  </a>
                

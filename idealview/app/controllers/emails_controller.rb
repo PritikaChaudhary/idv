@@ -7,13 +7,13 @@ class EmailsController < ApplicationController
 
 
   def index
-   # email = Email.new
-    #email.name = "Sub Broker Login"
-    #email.subject = "Your Sub Broker Login"
+    #email = Email.new
+    #email.name = "Thanking you email to subscribe plan"
+    #email.subject = "Thanking you for subscribing plan_name"
    # email.subject = "New FD Loan Submission"
-    #email.content = "<p> Following are the fields that are submitted by the user: </p><br> submitted_fields"
-   # email.fixed_variable = "submitted_fields"
-   # email.save
+    #email.content = "<p> Thank you for subscribing to idealview plan_name! We are excited to help you organize and share better, faster deals with your lenders.  </p><br> You now have access to all the features of the Pro Plan."
+    #email.fixed_variable = "plan_name"
+    #email.save
     @emails = Email.all
   end
 

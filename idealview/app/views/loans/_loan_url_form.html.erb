@@ -23,15 +23,19 @@
 	</table>
 </div>
 
-<div class="doc_page" style="padding-left:98px;padding-right:50px;">
+<div class="doc_page">
 <% if @loan.doc_url.blank? %>
 	<% @url=url_for :controller=>'loan_urls', :action=>'generate_url', :id=>@loan.id %>
 	<%= button_tag "Generate Documents URL",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button success'%>
 <% end %>
 <% if @loan.doc_url %>
-	<table style='small-12; width:94%'>
-	<tr><th>Upload Documents Link</th><th>Valid Upto</th><th>Action</th></tr>
-	<tr><td>http://idealview.us/loans/docs/<%= @loan.doc_url %></td>
+<div class="row">
+	<table class='small-12'>
+	<thead>
+		<tr><th>Upload Documents Link</th><th>Valid Upto</th><th>Action</th></tr>
+	</thead>
+	<tbody>
+	<tr><td>http://<%= @hostname %>/loans/docs/<%= @loan.doc_url %></td>
 	<td>
 	<% time = @loan.url_time
        next_month = Time.utc(time.year, time.month+1, time.day) 
@@ -43,6 +47,8 @@
 	<%= button_tag "Extend Validity",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button success'%>
 	</td>
 	</tr>
+	</tbody>
 	</table>
+</div>
 <% end %>
 </div>

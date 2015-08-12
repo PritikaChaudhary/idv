@@ -116,7 +116,7 @@ label
                 url: '/loans/generate_pdf',
                 success:function(response){
                 //window.open('http://localhost:3000/loans/show_pdf/'+response);
-                window.open('http://idealview.us/loans/show_pdf/'+response);
+                window.open('http://<%= @hostname %>/loans/show_pdf/'+response);
                 //$("a#pdf_download").attr("href","http://idealview.us/pdfs/"+response);
                 $("a#pdf_download").fadeIn();
             }
@@ -136,7 +136,7 @@ label
         }
         //var data = "moredata=" + allVals;
         //$.form('http://idealview.us/loans/pdf', { q: allVals }, 'POST').submit();
-        $.form('http://idealview.us/loans/pdf', { q: allVals }, 'POST').submit();
+        $.form('http://<%= @hostname %>/loans/pdf', { q: allVals }, 'POST').submit();
        // $.form('http://localhost:3000/loans/pdf', { q: allVals }, 'POST').submit();     
     }
 
@@ -376,7 +376,7 @@ function custom_searchForm()
   
     <!-- <a href="javascript:void(0);" onclick="send_pdf()" >Send PDF</a>-->
     <% if @checkAdmin==true %>
-    <img src="http://idealview.us/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; margin-left: 146px; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}">
+    <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; margin-left: 146px; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}">
     <% end %>
     <h3 class='text-center'>Current Loans</h3>
  </div>  

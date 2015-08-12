@@ -2,7 +2,7 @@
 					<li id="<%= pdf.id %>">
 
 						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
-						<img src="http://idealview.us/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
+						<img src="http://<%= @hostname %>/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
 							<br>
 							<b><%= pdf.loan_name+" | "+pdf.location %></b>
 							<br>

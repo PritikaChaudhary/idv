@@ -243,17 +243,8 @@ function lender_change(sts, id)
 
 
 
-<div class='row'>
+<div class='row' id="loan_tabs">
 
-	<div class='large-3 columns'>
-		<h3 class='text-center'>
-			Highlights
-		</h3>
-		<div class='medium-only-text-center small-only-text-center'>
-		    	<%=render partial: 'highlights'%>
-		  </div>
-	
-	</div>
 
 
 	<div class="large-9  columns">
@@ -263,7 +254,7 @@ function lender_change(sts, id)
 		  <dd><a href="#collateral" onclick='get_property_map();'>Collateral</a></dd>
 		   <dd><a href="#exit-strategy">Exit Strategy</a></dd>
 		  <dd><a href="#pictures">Pictures</a></dd>
-		  <dd><a href="#documents">Documents</a></dd>
+		  <dd><a href="#documents" style="margin-right:0;">Documents</a></dd>
 		</dl>
 		<div class="tabs-content">
 		  <div class="content active" id="overview">
@@ -321,6 +312,15 @@ function lender_change(sts, id)
 	</div>
 
 
+	<div class='large-3 columns' id="highlight_box">
+		<h3 class='text-center'>
+			Highlights
+		</h3>
+		<div class='medium-only-text-center small-only-text-center highlight_desc'>
+		    	<%=render partial: 'highlights'%>
+		  </div>
+	
+	</div>
 
 
 	

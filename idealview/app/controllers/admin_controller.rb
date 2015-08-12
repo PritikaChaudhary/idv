@@ -49,6 +49,7 @@ class AdminController < ApplicationController
         @roles.push(Role.new(:name=>item[1]))
       end
     end
+
     @user.roles = @roles
 
     unless broker_id.blank?
@@ -56,7 +57,13 @@ class AdminController < ApplicationController
     end
     
     if @user.save :safe => true
-     flash[:notice] = @user.email + " Created Successfully"
+      unemail = user_info['email'].split("@")[0]
+      uemail = unemail.gsub!(/[^0-9A-Za-z]/, '')
+      bucket_name = @user.id.to_s+uemail.to_s 
+      bucket = S3.create_bucket(bucket: bucket_name)
+      @user.bucket_name = bucket_name
+      @user.save
+      flash[:notice] = @user.email + " Created Successfully"
     else
      flash[:alert] = "Something went wrong! You may need a longer password. Please try again."
      redirect_to action: 'new_user'
@@ -119,6 +126,8 @@ class AdminController < ApplicationController
   end   
  end
  
+ 
+
  
  
 end

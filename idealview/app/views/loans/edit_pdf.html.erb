@@ -107,7 +107,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
                 	alert('Document has been saved successfully.');
 					$('.save_pipeline').hide();
                 	$('.save_pipeline_off').show();
-                	var gen="'http://idealview.us/loans/show_pdf/"+response+"'";
+                	var gen="'http://<%= @hostname %>/loans/show_pdf/"+response+"'";
                 	$('.generate').html('<input type="button" value="Download Preview" class="tiny button" onclick="window.open('+gen+');">');
                 	$('.generate').show();
                 	$('#edit_content').html(old_cont);
@@ -159,7 +159,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
                 url: '/loans/generate_send',
                 success:function(response){
               	//window.open('http://idealview.us/loans/show_pdf/'+response);
-                 window.location.href = "http://idealview.us/loans/pdf_files/listing";
+                 window.location.href = "http://<%= @hostname %>/loans/pdf_files/listing";
                 //$("a#pdf_download").attr("href","http://idealview.us/pdfs/"+response);
                 //$("a#pdf_download").fadeIn();
            		 }
@@ -331,7 +331,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 		<div class="btn_div">
 		
 		<div class="generate" <% unless @record.name.blank? %> style="float: left; width: 142px;" <% else %> style="float: left; width: 142px; display:none;" <% end %>>
-			<input type="button" value="Download Preview" class="tiny button" onclick="window.open('http://idealview.us/loans/show_pdf/<%= @record.file_name %>');">
+			<input type="button" value="Download Preview" class="tiny button" onclick="window.open('http://<%= @hostname %>/loans/show_pdf/<%= @record.file_name %>');">
 		</div>
 		
 		
@@ -394,7 +394,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 			</style>
 
 			<div style='width:100%;overflow:hidden	' >
-			<img src='http://idealview.us/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'>
+			<img src='http://<%= @hostname %>/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'>
 			<p style='float:right;'>Pipeline Summary <%= @str_time %></p>
 			</div>
 			  <ul id="sortable">
@@ -402,7 +402,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 					<li id="<%= pdf.id %>" style="list-style: none;">
 
 						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
-						<img src="http://idealview.us/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
+						<img src="http://<%= @hostname %>/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
 							<br>
 							<b><%= pdf.loan_name+" | "+pdf.location %></b>
 							<br>

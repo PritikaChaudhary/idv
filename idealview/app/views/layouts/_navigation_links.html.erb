@@ -1,7 +1,11 @@
 <section class="top-bar-section">
     <ul class="right">
       <li class="divider"></li>
-      
+      <% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+%>
 
       <% 
       if !current_user.blank?
@@ -19,7 +23,7 @@
       		<%= link_to('Admin',  admin_path) %>
       		<ul class="dropdown">
       			<li><%= link_to('New User',  admins_new_user_path) %></li>
-                <li><a href="http://idealview.us/loans/pdf_files/listing">Pipelines</a></li>
+                <li><a href="http://<%= @hostname %>/loans/pdf_files/listing">Pipelines</a></li>
       		</ul>
       	</li>
       	<li>
@@ -28,31 +32,31 @@
       	 	<li class="has-dropdown">
                    <a href="javascript:void(0);">Lenders</a>
                   <ul class="dropdown">
-      					<li><a href="http://idealview.us/lenders">View</a></li>
-                        <li><a href="http://idealview.us/lenders/add">Add</a></li>
+      					<li><a href="http://<%= @hostname %>/lenders">View</a></li>
+                        <li><a href="http://<%= @hostname %>/lenders/add">Add</a></li>
       			  </ul>
             </li>
             <li>
-                  <a href="http://idealview.us/brokers">Brokers</a>
+                  <a href="http://<%= @hostname %>/brokers">Brokers</a>
             </li>
             <li>
-                  <a href="http://idealview.us/loans/application/create">Application</a>
+                  <a href="http://<%= @hostname %>/loans/application/create">Application</a>
             </li>
             <li>
-                  <a href="http://idealview.us/emails">Emails</a>
+                  <a href="http://<%= @hostname %>/emails">Emails</a>
             </li>
       	
       <% end %>
 
        <% if checkBroker==true && checkAdmin==false %>
         <li>
-             <a href="http://idealview.us/brokers/settings">Settings</a>
+             <a href="http://<%= @hostname %>/brokers/settings">Settings</a>
         </li>
         <li>
           <%= link_to('All Loans',  loans_path) %>
         </li>
         <li>
-          <a href="http://idealview.us/loans/application/create">Application</a>
+          <a href="http://<%= @hostname %>/loans/application/create">Application</a>
         </li>
         
         <% unless @infoBroker.permissions.blank? 
@@ -70,10 +74,10 @@
 
         
           <li class="has-dropdown">
-              <a href='http://idealview.us/brokers/sub_brokers'>Sub Brokers</a>
+              <a href='http://<%= @hostname %>/brokers/sub_brokers'>Sub Brokers</a>
           <% if add_subuser=="true" %>
              <ul class="dropdown">
-              <li><a href="http://idealview.us/brokers/add_user">Add Broker</a></li>
+              <li><a href="http://<%= @hostname %>/brokers/add_user">Add Broker</a></li>
              </ul> 
           <% end %>
         </li>
@@ -87,6 +91,13 @@
 					
 					<ul class="dropdown">
 						<li><%= link_to('Change Password',  edit_user_registration_path) %></li>
+            <% unless @infoBroker.blank? %>
+              <% if @hostname == "localhost" %>
+              <li><a href="http://<%=@hostname%>:<%=@portnum%>/payments/select_plan"> Buy Plan </a></li>
+              <% else %>
+              <li><a href="http://<%=@hostname%>/payments/select_plan"> Buy Plan </a></li>
+              <% end %>
+            <% end %>
 						<li><%= link_to('Logout', destroy_user_session_path) %></li>
 					</ul> 
 				</li>

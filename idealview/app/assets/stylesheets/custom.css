@@ -27,7 +27,7 @@ background: #000000 !important;
 	margin-bottom:10px;
 }
 .tabs dd > a, .tabs .tab-title > a {
-	padding: 1rem 1.5rem !important;
+	/*padding: 1rem 1.5rem !important;*/
 }
 
 .even-row{
@@ -124,21 +124,92 @@ button, .button{padding:.5rem 1rem 0.5625rem 1rem;}
 .table-style-1 { width: 100%; margin-bottom: 40px; }
 .add-listing-section { float: left; width: 100%; padding: 20px 0; }
 
-/******************List Detail Page Style end******************/
+/******************Loan Detail Page Style end******************/
 
 div.loan_head{
     background-color: #f1f1f1;
 }
 
+div.featured input.success, div.featured div.success, div.doc_page button.alert,div.doc_page button.success, table.access_email_list button.success,table.access_email_list button.alert,form#loan-url-form button{
+       background-color: #c2c2c2;
+    font-size: 15px;
+    padding: 10px 30px;
+
+}
 form#loan-url-form{
      display: inline-block;
     padding: 50px 0;
     width: 100%;
 }
-.panel_head{
+#show-urls .doc_page table thead tr, .panel_head{
     background-color: #f1f1f1;    
 }
 
 table.access_email_list tbody tr:nth-child(odd){
-    background-color: red;
+    background-color: #fff;
+}
+table.access_email_list tbody tr:nth-child(even){
+background-color: #f1f1f1;
+}
+
+#show-urls .doc_page table tr{
+    background-color: #fff;
+}
+#show-urls .doc_page table tbody td,#show-urls .doc_page table thead th, table.access_email_list tbody td, thead th{
+    border: 1px solid #eee;
+}
+
+#loan_tabs dd a{
+    border-radius: 10px 10px 0px 0px;
+    border:1px solid #eaeaea;
+    border-bottom-width: 0px;
+}
+#loan_tabs .tabs-content{
+    border:1px solid #eaeaea;
+}
+
+#loan_tabs .tabs dd a{
+    background-color: #790e2a;
+    color: #fff;
+}
+
+#loan_tabs .tabs dd > a, #loan_tabs  .tabs .tab-title > a {
+    padding:0.7rem 1.1rem;
+    margin-right: 10px;
+}
+#loan_tabs .tabs{
+    padding: 0 0 0 15px;
+}
+#loan_tabs .tabs dd.active a{
+    background-color: #fff;
+    color: #000;
+}
+#highlight_box .highlight_desc{
+    /*padding: 10px;*/
+}
+#highlight_box .highlight_desc div.bottom-space{
+    border-bottom: 1px solid #eaeaea;
+    padding: 10px;
+}
+#highlight_box{
+    border:1px solid #eaeaea;   
+    padding: 0;
+    border-radius: 5px;
+}
+#highlight_box h3{
+    background-color: #f1f1f1;
+    margin: 0;
+}
+#highlight_box .highlight_desc div.bottom-space span span{
+    color:#000;
+}
+#highlight_box .highlight_desc div.bottom-space span{
+    color: #787878;
+}
+.tabs-content .featured{
+    background-color: #efefef;
+    padding: 30px 0px;
+}
+.tabs-content .featured .button, .tabs-content .featured input{
+    margin: 0;
 }

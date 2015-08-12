@@ -31,6 +31,11 @@ class ApplicationController < ActionController::Base
     end
 
     def check_admin
+      @hostname = request.host
+      @portnum =  request.port
+      # bucket = S3.Bucket.new('idv_users')
+       
+
        if !current_user.blank?
         roles=current_user.roles
         @names = Array.new

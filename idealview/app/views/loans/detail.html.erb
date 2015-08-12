@@ -39,6 +39,12 @@ $('document').ready(function(){
              /.container-fluid --
         </nav>
     </div> -->
+    <style type="text/css">
+        .login
+        {
+            display: none !important; 
+        }
+    </style>
     <div class="lp-bg"></div>
     <div class="content-section">
         <div class="container">
@@ -63,7 +69,14 @@ $('document').ready(function(){
                                 </li>
                                 <li>
                                     <span class="hl-l">Location: </span>
-                                    <span class="hl-r"><%= @loan.info['City3']+", "+@loan.info['State3'] %></span>
+                                    <span class="hl-r">
+                                    <% unless @loan.info['City3'].blank? %>
+                                        <%= @loan.info['City3']+", "%>
+                                    <% end %>
+                                    <% unless @loan.info['State3'].blank? %>
+                                        <%= @loan.info['State3']%>
+                                    <% end %>
+                                    </span>
                                 </li>
                                 <li>
                                     <span class="hl-l">Expected Close:</span>
@@ -107,20 +120,31 @@ $('document').ready(function(){
                                 <div id="lp-tab2" class="medium-4 column">
                                     <span class="icon-r"><img src="/assets/location-icon-o.png"></span>
                                     <p class="lp-th-title">Location</p>
-                                    <p><%= @loan.info['City3']+", "+@loan.info['State3'] %></p>
+                                    <p>
+                                    <% unless @loan.info['City3'].blank? %>
+                                        <%= @loan.info['City3']+", "%>
+                                    <% end %>
+                                    <% unless @loan.info['State3'].blank? %>
+                                        <%= @loan.info['State3']+", "%>
+                                    <% end %>
+                                    </p>
                                 </div>
                                 <div id="lp-tab3" class="medium-4 column">
                                     <span class="icon-r"><img src="/assets/ltv-icon-o.png"></span>
                                     <p class="lp-th-title">LTV</p>
                                     <p>
                                     <%
-                                        unless @loan.info['_NetLoanAmountRequested0'].blank? 
+                                     unless @loan.info['_NetLoanAmountRequested0'].blank? 
                                             unless @loan.info['_EstimatedMarketValue'].blank?
-                                                ltv = @loan.info['_NetLoanAmountRequested0']/@loan.info['_EstimatedMarketValue']
+                                               if @loan.info['_EstimatedMarketValue'].to_i>0
+                                                ltv = @loan.info['_NetLoanAmountRequested0'].to_i/@loan.info['_EstimatedMarketValue'].to_i
+                                                end
                                             end
                                         end
                                      %></p>
-                                     <%= ltv %>
+                                     <% unless ltv.blank? %>
+                                        <%= ltv.round(2) %>
+                                     <% end %>
                                      </p>
                                 </div>
                             </div>

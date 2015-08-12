@@ -1,0 +1,137 @@
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  // This identifies your website in the createToken call below
+  Stripe.setPublishableKey('pk_test_HMXVQvXP0VhCtre2zqVRWtvA');
+  // ...
+  jQuery(function($) {
+  $('#payment-form').submit(function(event) {
+    var $form = $(this);
+
+    // Disable the submit button to prevent repeated clicks
+    $form.find('button').prop('disabled', true);
+
+    Stripe.card.createToken($form, stripeResponseHandler);
+
+    // Prevent the form from submitting with the default action
+    return false;
+  });
+});
+
+function stripeResponseHandler(status, response) {
+  var $form = $('#payment-form');
+
+  if (response.error) {
+    // Show the errors on the form
+    $form.find('.payment-errors').text(response.error.message);
+    $form.find('button').prop('disabled', false);
+  } else {
+    // response contains id and card, which contains additional card details
+    var token = response.id;
+    // Insert the token into the form so it gets submitted to the server
+    $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+    // and submit
+    $form.get(0).submit();
+  }
+};
+</script>
+
+
+
+<style type="text/css">
+	.expire
+  {
+    width : 100%;
+  }
+  .half_text
+	{
+		width : 40% !important;
+		float: left;
+    margin-right: 10px;
+	}
+  .payment-errors
+  {
+    color: red;
+  }
+</style>
+
+<div class='row'>
+	<div class="small-8 small-centered columns">
+
+		<h3 style="text-align:center;">Buy Plan</h3>
+<% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+%>
+<% if @hostname == "localhost" %>
+  <form action="http://<%=@hostname%>:<%=@portnum%>/payments/payment_successfull" method="POST" id="payment-form">
+<% else %>
+  <form action="http://<%= @hostname%>/payments/payment_successfull" method="POST" id="payment-form">
+<% end %>
+  <span class="payment-errors"></span>
+  <div class="form-row">
+    <label>
+      <span >Select Plan</span>
+      <select name="plan">
+        <% @all_plans.each do |plan| %>
+          <option value="<%= plan.plan_id %>"><%= plan.name %> - $<%= plan.amount.to_i/100 %> </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+  <!--
+  <div class="form-row" style="margin-top:10px;">
+   <label>
+    <span>Card Type</span> <br>
+   </label>   
+      <input type="radio" data-stripe="brand" value="Visa" />  Visa  <br>
+      <input type="radio" data-stripe="brand" value="MasterCard" /> MasterCard <br>
+      <input type="radio" data-stripe="brand" value="American Express" />  American Express 
+    
+  </div>
+  -->
+<input type="hidden" name="email" value="<%= @infoBroker.email %>">
+<input type="hidden" name="broker_id" value="<%= @infoBroker.id %>">
+<input type="hidden" name="user_id" value="<%= current_user.id %>">
+  <div class="form-row" style="margin-top:10px;">
+    <label>
+      <span>Card Number</span>
+      <input type="text" size="20" data-stripe="number"/>
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>
+      <span>CVC</span>
+      <input type="text" size="4" data-stripe="cvc"/>
+    </label>
+  </div>
+
+  <div class="form-row">
+  
+   <span>Expiration (MM/YYYY)</span>
+   <div class="expire">
+   <select class="half_text" data-stripe="exp-month">
+    <option value="">Month (MM)</option>
+    <% for i in 01..12 
+        j=i.to_s
+        num = j.size 
+    %>
+    <% if num !=2 %>
+      <option value="0<%= i %>">0<%= i %></option>
+    <% else %>
+      <option value="<%= i %>"><%= i %></option>
+    <% end %>
+    <% end %>
+    </select>
+   <input type="text" size="4" data-stripe="exp-year" class="half_text" placeholder="YYYY"/>
+  </div>
+   
+  </div>
+
+  <button type="submit" class="tiny button">Submit Payment</button>
+</form>
+
+
+	</div>
+</div>

@@ -4,7 +4,7 @@
 		var checkbroker = "<%= @checkBroker %>";
 		if(checkadmin=="false" && checkbroker=="true")
 		{
-			window.location.replace("http://idealview.us/loans");
+			window.location.replace("http://<%= @hostname %>/loans");
 			//self.location="http://localhost:3000/loans";
 		}
 

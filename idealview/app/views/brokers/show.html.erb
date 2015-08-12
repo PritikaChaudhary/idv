@@ -92,7 +92,7 @@
          unless loan['delete']==1 %>
         <div class='row <%=color_class%> bottom-space text-left'>
             <div class='large-3 columns'>
-                <a href="http://idealview.us/loans/<%= loan.id %>">
+                <a href="http://<%= @hostname %>/loans/<%= loan.id %>">
                     <% unless loan.name.blank? %>
                         <%= loan.name %>
                     <% else %>

@@ -1,0 +1,11 @@
+<% if !@all_new_fields.blank? %>
+  <% @all_new_fields.each do |afield|%>
+      <div class="columns medium-12" id="custom_<%= afield.field_name %>" <% if afield.hide == 1 %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong><%= afield.name %>:</strong>
+          <p><input  name="<%= afield.field_name %>" type="text" class="loan_info_fields"></p>
+        </div>
+      </div>
+  <% end %>
+<% end %>
+	

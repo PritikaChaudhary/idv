@@ -1,0 +1,33 @@
+<% color_class = ''%>
+<div class="small-12 columns">
+	<table width="100%" class="list_loans">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Folders</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+<%
+unless @all_folders.blank?
+ 	@all_folders.each do |folder|
+	%>
+		<tr class="loans_table">
+			<td width="60">
+				<input type="checkbox"  name="select_folder" value="<%= folder %>" style="float:left;margin-top:7px; margin-right:5px;" class="select_folder">
+			</td>
+			<td>
+				<h5 style="float:left; margin-left:6px;">  
+					<a href="javascript:void(0);" onclick="select_folder('<%= folder %>')">
+						<i class="fa fa-folder-open fa-2" aria-hidden="true"></i>
+						<%= folder %>
+					</a>
+				</h5>
+			</td>
+			
+		</tr>
+
+	<% end %>
+		
+<% end %>

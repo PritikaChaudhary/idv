@@ -1,0 +1,2713 @@
+<style type="text/css">
+  .detail_div
+  {
+    margin-bottom: 25px;
+    display: none;
+  }
+
+  .info
+  {
+    width : 40%;
+    float: left;
+    font-size: 12px;
+  }
+
+  .info_equal
+  {
+    width : 6%;
+    float: left;
+    font-size: 12px;
+  }
+
+
+  .info_detail
+  {
+    width : 54%;
+    float: left;
+    font-size: 12px;
+  }
+  .full_info
+  {
+    width: 100% !important;
+    float:left;
+  }
+  .bordr_detail_div
+  {
+    /*border: 1px solid;*/
+  }
+  .sub_input
+  {
+    height:26px !important; 
+    padding:0px !important; 
+    width:134px !important;
+    padding-left: 5px !important;
+  }
+  .ui-datepicker-header
+  {
+    background-color: #fff;
+  }
+  .ui-datepicker-prev
+  {
+    background:#eeeeee;
+    margin-left: 2px;
+  }
+  .ui-datepicker-next
+  {
+    background:#eeeeee;
+    margin-left:2px;
+  }
+  .side_fields
+  {
+    padding-left: 0px !important;
+  }
+  .crsr
+  {
+      cursor: all-scroll;
+  }
+  .analysis_form input
+  {
+    margin: 0px !important;
+  }
+  .analysis_form select
+  {
+    margin: 0px !important;
+  }
+  .detail_div
+  {
+    margin-top: 10px;
+  }
+  .full_info
+  {
+    margin: 10px;
+  }
+  .analysis_div
+  {
+    margin-bottom: 10px !important;
+  }
+  .analysis_cover
+  {
+    border: 1px solid;
+  }
+  .land_size
+  {
+    display: none;
+  }
+  .pac-container
+  {
+    width:300px !important;
+  }
+  input[type="file"] {
+    height: 35px;
+    width: 100%;
+}
+  .fund_edit_pen
+  {
+    cursor: pointer; 
+  }
+  
+  .add_collateral_fund
+  {
+    float:left;
+    margin-left:10px;
+  }
+
+  .trans-info-item {
+    height:107px;
+  }
+
+ 
+  #done_loan_adding {
+    background-color: #3c9f00;
+    float: right;
+    font-size: 14px;
+    }
+    .thanks_div
+    {
+      color:#3c9f00;
+      font-size: 25px;
+    }
+    header
+    {
+      background: none;
+      border-top:none;
+    }
+    
+    .note
+    {
+      margin:5px;
+    }
+    /*td:first-child { width: 500px !important; }*/
+    
+    th:first-child { width: 500px !important; }
+    
+    .add_fields_button
+    {
+      float:left;
+    }
+    #myModalFields input
+    {
+      margin:0px;
+    }
+    #myModalFields span
+    {
+      color: red;
+    }
+    .modalhead {
+    background-color: #eeeeee;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    }
+    #loading_img{
+      position:fixed;
+      top:0px;
+      right:0px;
+      width:100%;
+      height:100%;
+      background-color:#666;
+      background-image:url('/assets/ajaxloader.gif');
+      background-repeat:no-repeat;
+      background-position:center;
+      z-index:10000000;
+      opacity: 0.4;
+      filter: alpha(opacity=40); /* For IE8 and earlier */
+    }
+</style>
+<div id="loading_img" style="display:none"></div>
+<script type="text/javascript">
+  $('document').ready(function(){
+      $('#add_new_fields').click(function(){
+        $('#myModalFields').foundation('reveal', 'open');
+      });
+
+      $('#change_custom_name').click(function(){
+        $('#myModalHead').foundation('reveal', 'open');
+      });
+    
+      $('#save_field').click(function(){
+       var field_name = $('#field_name').val();
+       $("#loading_img").show();
+       if(field_name != "")
+       {
+          data = "field_name="+field_name
+          $('.error_field').hide();
+          $('.error_already').hide();
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/custom/check_if_exist',
+                    success:function(response){
+                      if(response == "yes")
+                      {
+                        $.ajax({
+                            data: data,
+                            type: 'POST',
+                            url: '/custom/add_new_field',
+                            success:function(response){
+                              $('#all_new_custom_fields').html(response);
+                              $.ajax({
+                                  data: data,
+                                  type: 'POST',
+                                  url: '/custom/right_custom_tab',
+                                  success:function(response){
+                                     $('#table_custominfo').html(response)
+                                     $('#myModalFields').foundation('reveal', 'close');
+                                     $("#loading_img").hide();
+                                  }
+                              });
+                              
+                            }
+                        });
+                      }
+                      else
+                      {
+                        $('.error_already').show();
+                      }
+                    }
+                });
+
+         
+       }
+       else
+       {
+          $('.error_field').show();
+       }
+        
+    });
+
+    $('#save_heading_field').click(function(){
+       var heading_tab = $('#custom_tab_heading').val();
+       $("#heading_tab").show();
+       if(heading_tab != "")
+       {
+          data = "tab_name="+heading_tab;
+          $('.heading_error').hide();
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/custom/edit_custom_tab',
+                    success:function(response){
+                      if(response == "done")
+                      {
+                        $('#custom_heading').html(heading_tab);
+                        $('#table_custom_head').html(heading_tab);
+                        $('#myModalHead').foundation('reveal', 'close');
+                        $("#loading_img").hide();
+                      }
+                      else
+                      {
+                        $('.heading_error').show();
+                      }
+                    }
+                });
+
+         
+       }
+       else
+       {
+          $('.heading_error').show();
+       }
+        
+    });
+
+    $('.custom_check').click(function(){
+        if($(this).is(':checked'))
+        {
+            check_val = $(this).val();
+            var data = "field="+check_val+"&required=1";  
+        }
+        else
+        {
+            check_val = $(this).val();   
+            var data = "field="+check_val+"&required=0";  
+        }
+
+       $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/custom/required_custom_field',
+            success:function(response)
+            {
+             
+            }
+      });
+    });
+  });
+  
+
+</script>
+
+<div id="myModalFields" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    Add New Field
+  </div>
+   <div class="row">
+        <form method="post" class="newLoanForm">
+            <div class="large-12 column">
+            <input type="text" id="field_name" name="field_name" placeholder = "Field Name">
+            <span class="error_field" style="display:none;"> Please enter field name.</span>
+            <span class="error_already" style="display:none;"> This field is already exist. </span>
+            </div>
+             <div class="large-12 column">
+            <input type="button" id="save_field" value="Submit" class="tiny button" style="margin-top:10px;">
+            </div>
+        </form>
+    </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+ 
+<div id="myModalHead" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    Edit Tab Heading
+  </div>
+   <div class="row">
+        <form method="post" class="newLoanForm">
+            <div class="large-12 column">
+            <input type="text" id="custom_tab_heading" name="custom_tab_heading" placeholder = "Tab Heading">
+            <span class="error_field heading_error" style="display:none;"> Please enter heading.</span>
+            </div>
+             <div class="large-12 column">
+            <input type="button" id="save_heading_field" value="Submit" class="tiny button" style="margin-top:10px;">
+            </div>
+        </form>
+    </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script type="text/javascript">
+    $('document').ready(function(){
+      $('.contact_check').click(function(){
+        if($(this).is(':checked'))
+        {
+            check_val = $(this).val();
+            var data = "tab=Contact Information&field="+check_val+"&required=1";  
+        }
+        else
+        {
+            check_val = $(this).val();   
+            var data = "tab=Contact Information&field="+check_val+"&required=0";  
+        }
+
+       $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/custom/required_field',
+            success:function(response)
+            {
+             
+            }
+      });
+    });
+
+    $('.highlight_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Highlights&field="+check_val+"&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Highlights&field="+check_val+"&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_field',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.summary_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Summary&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Summary&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_tab',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.transaction_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Transaction Information&field="+check_val+"&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Transaction Information&field="+check_val+"&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_field',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.funds_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Use Of Funds&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Use Of Funds&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_tab',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.exit_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Exit Strategy&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Exit Strategy&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_tab',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.borrower_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Borrower&field="+check_val+"&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Borrower&field="+check_val+"&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_field',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+    $('.collateral_check').click(function(){
+      if($(this).is(':checked'))
+      {
+          check_val = $(this).val();
+          var data = "tab=Collateral&field="+check_val+"&required=1";  
+      }
+      else
+      {
+          check_val = $(this).val();   
+          var data = "tab=Collateral&field="+check_val+"&required=0";  
+      }
+
+      $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/custom/required_field',
+          success:function(response)
+          {
+           
+          }
+      });
+    });
+
+
+
+  });
+</script>
+<script>
+function callFun(customUrl, divId, formId, plan){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+   $('#loan_lenders').html('loading...');
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+
+      $('#'+divId).html(data);
+      
+      if(plan == "SOLO")
+      {
+        $('#loan-url-form').hide();
+      }
+      if(plan=="generate_doc_url")
+      {
+        $('.doc_page').show();
+      }
+      if(formId=="lender_loans")
+      {
+        var a_id=divId.replace('loan_lenders','');
+        $('#click_'+a_id).hide();
+        $('#click_hide_'+a_id).show();
+        $("#loan_lenders"+a_id).show();
+      }
+
+        },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+    
+}
+
+function callAjax(customUrl, divId, formId, buttontype){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+      // $("#mdate").mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      
+      // *************** Borrower *****************//
+     
+      $('#'+divId).html(data);
+      
+     },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+
+
+    
+}
+</script>
+
+
+
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+<script type="text/javascript">
+	function remove_tab(id)
+  {
+    if(id=="contact")
+    {
+      tab_val = "Contact Information"
+    }
+    else if(id == "highlights")
+    {
+      tab_val = "Highlights"
+    }
+    else if(id == "summary")
+    {
+      tab_val = "Summary"
+    }
+    else if(id == "transaction_information")
+    {
+      tab_val = "Transaction Information"
+    }
+    else if(id == "use_of_funds")
+    {
+      tab_val = "Use Of Funds"
+    }
+    else if(id == "exit_strategy")
+    {
+      tab_val = "Exit Strategy"
+    }
+    else if(id == "borrower")
+    {
+      tab_val = "Borrower"
+    }
+    else if(id == "collateral")
+    {
+      tab_val = "Collateral"
+    }
+    else if(id == "picture")
+    {
+      tab_val = "Picture"
+    }
+    else if(id == "document")
+    {
+      tab_val = "Document"
+    }
+    else if(id == "custom")
+    {
+      tab_val = "Custom Fields"
+    }
+    data = "tab="+tab_val
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/remove_tab',
+      success:function(response)
+      {
+        $('#'+id).hide();
+        $('#add_'+id).show();
+        $('#remove_'+id).hide();
+      }
+    });
+  }
+
+  function add_tab(id)
+  {
+    if(id=="contact")
+    {
+      tab_val = "Contact Information"
+    }
+    else if(id == "highlights")
+    {
+      tab_val = "Highlights"
+    }
+    else if(id == "summary")
+    {
+      tab_val = "Summary"
+    }
+    else if(id == "transaction_information")
+    {
+      tab_val = "Transaction Information"
+    }
+    else if(id == "use_of_funds")
+    {
+      tab_val = "Use Of Funds"
+    }
+    else if(id == "exit_strategy")
+    {
+      tab_val = "Exit Strategy"
+    }
+    else if(id == "borrower")
+    {
+      tab_val = "Borrower"
+    }
+    else if(id == "collateral")
+    {
+      tab_val = "Collateral"
+    }
+    else if(id == "picture")
+    {
+      tab_val = "Picture"
+    }
+    else if(id == "document")
+    {
+      tab_val = "Document"
+    }
+    else if(id == "custom")
+    {
+      tab_val = "Custom Fields"
+    }
+    data = "tab="+tab_val
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/add_tab',
+      success:function(response)
+      {
+        $('#'+id).show();
+        $('#add_'+id).hide();
+        $('#remove_'+id).show();
+      }
+    });
+  }
+
+  function add_field(id)
+  {
+    id_array = id.split("_");
+    tab = id_array[0];
+    if(tab == "transaction")
+    {
+      tab = "transaction_information"
+    }
+    field = id.replace(tab+"_", "");
+
+    data = "tab="+tab+"&field="+field
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/add_field',
+      success:function(response)
+      {
+        $('#'+id).show();
+        $('#add_'+id).hide();
+        $('#remove_'+id).show();
+      }
+    });
+  }
+
+  function remove_field(id)
+  {
+    id_array = id.split("_");
+    tab = id_array[0];
+    if(tab == "transaction")
+    {
+      tab = "transaction_information"
+    }
+    field = id.replace(tab+"_", "");
+    data = "tab="+tab+"&field="+field
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/remove_field',
+      success:function(response)
+      {
+        $('#'+id).hide();
+        $('#remove_'+id).hide();
+        $('#add_'+id).show();
+      }
+    });
+    // alert(tab+" - "+field);
+    // alert(JSON.stringify(id_array));
+    
+  }
+
+  function add_custom_field(id)
+  {
+    field = id;
+    data = "&field="+field
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/show_custom_field',
+      success:function(response)
+      {
+        $('#custom_'+id).show();
+        $('#add_'+id).hide();
+        $('#remove_'+id).show();
+      }
+    });
+  }
+
+  function remove_custom_field(id)
+  {
+    field = id;
+    data = "&field="+field
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/custom/remove_custom_field',
+      success:function(response)
+      {
+        $('#custom_'+id).hide();
+        $('#remove_'+id).hide();
+        $('#add_'+id).show();
+      }
+    });
+  }
+
+</script>
+<section class="content-section">
+  <div class="container" >
+    <div class="row" id="user_loan_info">
+     <!--  <div class="columns small-12">
+        <ul class="inner-nav tabs" data-tab>
+            <li class="active"><a href="#contact">Contact</a></li>
+            <li><a href="#overview" onclick="return show_preview('overview');">Overview</a></li>
+            <li><a href="#borrowers" onclick="return hide_analysis();">Borrowers</a></li>
+            <li><a href="#collaterals" onclick="return hide_analysis();">Collateral</a></li>
+            <li><a href="#exit_strategy" onclick="return hide_analysis();">Exit Strategy</a></li>
+            <li><a href="#pictures" onclick="return hide_analysis();">Pictures</a></li>
+            <li><a href="#documents" onclick="return hide_analysis();">Documents</a></li>
+        </ul>
+      </div> -->
+      <div class="columns medium-8  columns">
+          
+          <a href="<% request.base_url%>/loans/embed_application/<%= current_user.id %>" target="_blank" class="button"> Shareable Link </a>
+
+
+          <!-------------- Contact Tab ------------------------>
+          <% unless @contact_tab.blank? %>
+           
+              <div  id="contact"  <% if @contact_tab.hide == 1 %> style="display:none;" <% end %>>
+                <%= render partial: 'new_contact_information' %>    
+              </div>
+            
+          <% else %>
+            <div  id="contact">
+             <%= render partial: 'new_contact_information' %>    
+            </div>
+          <% end %>
+          <!-------------- End Contact Tab ------------------------>
+
+          <!-------------- Highlight Tab ------------------------>
+          <% unless @highlight_tab.blank? %>
+            
+              <div  id="highlights" <% if @highlight_tab.hide == 1 %> style="display:none;" <% end %>>
+                <%= render partial: 'new_overview' %>  
+              </div>
+            
+          <% else %>
+            <div  id="highlights">
+              <%= render partial: 'new_overview' %>     
+            </div>
+          <% end %>
+          <!-------------- End Highlight Tab ------------------------>
+          
+          <!-------------- Summary Tab ------------------------>
+          <% unless @summary_tab.blank? %>
+            
+              <div  id="summary" <% if @summary_tab.hide == 1 %> style="display:none;" <% end %>>
+               <%= render partial: 'new_summary' %>
+              </div>
+            
+          <% else %>
+            <div  id="summary">
+             <%= render partial: 'new_summary' %>
+            </div>
+          <% end %>
+          <!-------------- End Summary Tab ------------------------>
+
+          <!-------------- Transaction Tab ------------------------>
+          <% unless @transaction_information_tab.blank? %>
+            
+              <div  id="transaction_information" <% if @transaction_information_tab.hide == 1 %> style="display:none;" <% end %>>
+                <%= render partial: 'new_transaction_information' %>
+              </div>
+           
+          <% else %>
+            <div  id="transaction_information">
+             <%= render partial: 'new_transaction_information' %>
+            </div>
+          <% end %>
+          <!-------------- End Transaction Tab ------------------------>
+
+          <!-------------- Funds Tab ------------------------>
+          <% unless @use_of_funds_tab.blank? %>
+            
+               <div  id="use_of_funds" <% if @use_of_funds_tab.hide == 1 %> style="display:none" <% end %>>
+                 <%= render partial: 'new_use_funds' %>
+              </div>
+            
+          <% else %>
+             <div id="use_of_funds">
+                <%= render partial: 'new_use_funds' %>
+             </div>
+          <% end %>
+          <!-------------- End Funds Tab ------------------------>
+
+          <!-------------- Exit Strategy ------------------------>
+          <% unless @exit_strategy_tab.blank? %>
+            
+               <div  id="exit_strategy" <% if @exit_strategy_tab.hide == 1 %> style="display:none;"  <% end %>>
+                 <%= render partial: 'new_exitstrategy' %>
+              </div>
+            
+          <% else %>
+             <div id="exit_strategy">
+                <%= render partial: 'new_exitstrategy' %>
+             </div>
+          <% end %>
+          <!-------------- End Funds Tab ------------------------>
+          
+          
+         <% unless @borrowers_tab.blank? %>
+            
+               <div  id="borrower"  <% if @borrowers_tab.hide == 1 %> style="display:none;"  <% end %>>
+                <div class="content-white-box">
+                  <div class="cwb-header">
+                    <h3>Borrowers</h3>
+                  </div>
+                  <%= render partial: 'new_borrower' %>
+                </div>
+              </div>
+            
+          <% else %>
+             <div  id="borrower">
+            <div class="content-white-box">
+              <div class="cwb-header">
+                <h3>Borrowers</h3>
+              </div>
+              <%= render partial: 'new_borrower' %>
+            </div>
+          </div>
+        <% end %>
+
+        <% unless @collateral_tab.blank? %>
+            
+          <div  id="collateral" <% if @collateral_tab.hide == 1 %> style="display:none;"  <% end %>>
+            <div class="content-white-box">
+              <div class="cwb-header">
+                <h3>Collateral</h3>
+              </div>
+              <%= render partial: 'new_collateral' %>
+            </div>
+          </div>
+            
+        <% else %>
+             
+          <div  id="collateral">
+            <div class="content-white-box">
+              <div class="cwb-header">
+                <h3>Collateral</h3>
+              </div>
+              <%= render partial: 'new_collateral' %>
+            </div>
+          </div>
+        
+        <% end %>
+        
+
+        <% unless @picture_tab.blank? %>
+            
+          <div  id="picture" <% if @picture_tab.hide == 1 %> style="display:none;"  <% end %> >
+            <div class="content-white-box">
+            <div class="cwb-header">
+              <h3>Pictures</h3>
+            </div>
+            <input id="upload_loan_pictures" class="tiny button add-custom" type="button" value="Add Pictures" style="float:left; margin-left:10px; margin-top:10px;">
+              <div class="all_loan_contents" id='pictures-container' style="display:none;" >
+                <%= render partial: 'embed_thumbnails', locals:{images: @images, loan_id:"test"}%>
+              </div>
+            </div>
+          </div>
+            
+        <% else %>
+             
+          <div  id="picture" >
+            <div class="content-white-box">
+            <div class="cwb-header">
+              <h3>Pictures</h3>
+            </div>
+            <input id="upload_loan_pictures" class="tiny button add-custom" type="button" value="Add Pictures" style="float:left; margin-left:10px; margin-top:10px;">
+              <div class="all_loan_contents" id='pictures-container' style="display:none;" >
+                <%= render partial: 'embed_thumbnails', locals:{images: @images, loan_id:"test"}%>
+              </div>
+            </div>
+          </div>
+        
+        <% end %>
+
+
+        <% unless @document_tab.blank? %>
+            
+         <div id="document" class="content-white-box"  <% if @document_tab.hide == 1 %> style="display:none;"  <% end %> >
+          <div class="cwb-header">
+              <h3>Documents</h3>
+          </div>
+          <input type="button" class="tiny button add-custom" value="Add Files" id="add_custom_folder" style="margin-left:10px; margin-top:10px;">
+           <div  id="documents" style="display:none;">
+              <div class="all_loan_contents">
+                <%=render partial: 'embed_documents'%>
+              </div>
+           </div>
+         </div>
+            
+        <% else %>
+             
+         <div id="document" class="content-white-box">
+          <div class="cwb-header">
+              <h3>Documents</h3>
+          </div>
+          <input type="button" class="tiny button add-custom" value="Add Files" id="add_custom_folder" style="margin-left:10px; margin-top:10px;">
+           <div  id="documents" style="display:none;">
+              <div class="all_loan_contents">
+                <%=render partial: 'embed_documents'%>
+              </div>
+           </div>
+         </div>
+        
+        <% end %>
+
+        <% unless @new_custom_tab.blank? %>
+            
+          <div  id="custom" <% if @new_custom_tab.hide == 1 %> style="display:none;"  <% end %>>
+            <div class="content-white-box">
+              <div class="cwb-header">
+                <h3 style="float:left; margin-top:9px;" id="custom_heading"> <% if @new_custom_tab.display_name.blank? %> Custom Fields <% else %> <%= @new_custom_tab.display_name %><% end %></h3> <a href="javascript:void(0);" id="change_custom_name" style="margin-top:7px; float:left; margin-left:10px;" title="Edit Tab Heading"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+
+                <input type="button" name="add_fields" value="Add Fields" id="add_new_fields" class="tiny button add_fields_button" style="float:right; margin: 0px;">
+              </div>
+              <div class="cwb-content">
+                <div class="row" id="all_new_custom_fields">
+                  <%= render partial: 'new_custom_field' %>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+        <% else %>
+             
+          <div  id="custom">
+            <div class="content-white-box">
+              <div class="cwb-header">
+                <h3>Custom Fields</h3>
+              </div>
+              <%= render partial: 'new_custom_field' %>
+            </div>
+          </div>
+        
+        <% end %>
+    
+  </div>
+  <div class="columns medium-4  columns">
+          <div class="sidebar-item">
+            <div class="sidebar-item-header">Customize Form</div>
+            <div class="sidebar-item-content">
+              <label class="note"><b> To make the required field, please check the checkbox.</b></label>
+              <table class="columns medium-12  columns" id="table_contactinfo"> 
+                <tr>
+                  <th> Contact Information </th>
+                  <th>
+                    <% unless @contact_tab.blank? %>
+                       <a href="javascript:void(0);" onclick="remove_tab('contact')" id="remove_contact" <% if @contact_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true" ></i></a>
+                       <a href="javascript:void(0);" onclick="add_tab('contact')" id="add_contact" <% if @contact_tab.hide != 1 %> style="display:none;" <% end %> ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('contact')" id="remove_contact"><i class="fa fa-check" aria-hidden="true"></i></a>
+                      <a href="javascript:void(0);" onclick="add_tab('contact')" id="add_contact" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                    <% end %>
+                  </th>
+                  <th> <!-- <input type="checkbox" class="required_checkbox contact_check" value="contact_tab"> --> &nbsp; </th>
+                </tr>
+                <tr>
+                  <td> Name</td>
+                  <td>
+                      <% if @contact_tab.custom_fields.include? "FirstName"%>
+                          <a href="javascript:void(0);" onclick="remove_field('contact_FirstName')" id="remove_contact_FirstName" style="display:none"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('contact_FirstName')" id="add_contact_FirstName"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      
+                      <% else %>
+                        <a href="javascript:void(0);" onclick="remove_field('contact_FirstName')" id="remove_contact_FirstName"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_field('contact_FirstName')" id="add_contact_FirstName" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+
+                  </td>
+                  <td>
+                    <input type="checkbox" title="Required Field" class="required_checkbox contact_check" value="FirstName" <% if @contact_tab.required_fields.include? "FirstName"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                   <!-- <i class="fa fa-times" aria-hidden="true"></i> -->
+                  <td>
+                      
+                       <% if @contact_tab.custom_fields.include? "Email"%>
+                          <a href="javascript:void(0);" onclick="remove_field('contact_Email')" id="remove_contact_Email" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('contact_Email')" id="add_contact_Email"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                       <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('contact_Email')" id="remove_contact_Email"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('contact_Email')" id="add_contact_Email" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                       <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox contact_check" value="Email" title="Required Field"<% if @contact_tab.required_fields.include? "Email"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>
+                      <% if @contact_tab.custom_fields.include? "Phone"%>
+                          <a href="javascript:void(0);" onclick="remove_field('contact_Phone')" id="remove_contact_Phone" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('contact_Phone')" id="add_contact_Phone" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('contact_Phone')" id="remove_contact_Phone"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('contact_Phone')" id="add_contact_Phone" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox contact_check" title="Required Field" value="Phone" <% if @contact_tab.required_fields.include? "Phone"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+              </table>
+
+              <table class="columns medium-12  columns" id="table_highlightinfo"> 
+                <tr>
+                  <th> Highlights </th>
+                  <th>
+                    <% unless @highlight_tab.blank? %>
+                       <a href="javascript:void(0);" onclick="remove_tab('highlights')" id="remove_highlights" <% if @highlight_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                      
+                       <a href="javascript:void(0);" onclick="add_tab('highlights')" id="add_highlights" <% if @highlight_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                      
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('highlights')" id="remove_highlights"><i class="fa fa-check" aria-hidden="true"></i></a>
+                      <a href="javascript:void(0);" onclick="add_tab('highlights')" id="add_highlights" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <% end %>
+                  </th>
+                  <th>  &nbsp; </th>
+                </tr>
+                <tr>
+                  <td> Net Loan Amount Requested</td>
+                  <td>
+                      <% if @highlight_tab.custom_fields.include? "NetLoanAmountRequested0"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_NetLoanAmountRequested0')" id="remove_highlights_NetLoanAmountRequested0" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_NetLoanAmountRequested0')" id="add_highlights_NetLoanAmountRequested0" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_NetLoanAmountRequested0')" id="remove_highlights_NetLoanAmountRequested0"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_NetLoanAmountRequested0')" id="add_highlights_NetLoanAmountRequested0" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="NetLoanAmountRequested0" title="Required Field" <% if @highlight_tab.required_fields.include? "NetLoanAmountRequested0"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Desired Term Length</td>
+                   <!-- <i class="fa fa-times" aria-hidden="true"></i> -->
+                  <td>
+                      <% if @highlight_tab.custom_fields.include? "DesiredTermLength"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_DesiredTermLength')" id="remove_highlights_DesiredTermLength" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_DesiredTermLength')" id="add_highlights_DesiredTermLength" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_DesiredTermLength')" id="remove_highlights_DesiredTermLength"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_DesiredTermLength')" id="add_highlights_DesiredTermLength" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="DesiredTermLength" title="Required Field" <% if @highlight_tab.required_fields.include? "DesiredTermLength"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>
+                    <% if @highlight_tab.custom_fields.include? "Address3"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_Address3')" id="remove_highlights_Address3" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_Address3')" id="add_highlights_Address3" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_Address3')" id="remove_highlights_Address3"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_Address3')" id="add_highlights_Address3" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="Address3" title="Required Field" <% if @highlight_tab.required_fields.include? "Address3"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>City</td>
+                  <td>
+                    <% if @highlight_tab.custom_fields.include? "City3"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_City3')" id="remove_highlights_City3" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_City3')" id="add_highlights_City3" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_City3')" id="remove_highlights_City3"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_City3')" id="add_highlights_City3" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="City3" title="Required Field" <% if @highlight_tab.required_fields.include? "City3"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>State</td>
+                  <td>
+                    <% if @highlight_tab.custom_fields.include? "State3"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_State3')" id="remove_highlights_State3" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_State3')" id="add_highlights_State3" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_State3')" id="remove_highlights_State3"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_State3')" id="add_highlights_State3" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="State3" title="Required Field" <% if @highlight_tab.required_fields.include? "State3"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Expected Close Date</td>
+                  <td>
+                      <% if @highlight_tab.custom_fields.include? "ExpectedCloseDate"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_ExpectedCloseDate')" id="remove_highlights_ExpectedCloseDate" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_ExpectedCloseDate')" id="add_highlights_ExpectedCloseDate" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_ExpectedCloseDate')" id="remove_highlights_ExpectedCloseDate"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_ExpectedCloseDate')" id="add_highlights_ExpectedCloseDate" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="ExpectedCloseDate" title="Required Field"<% if @highlight_tab.required_fields.include? "ExpectedCloseDate"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Lending Category</td>
+                  <td>
+                      <% if @highlight_tab.custom_fields.include? "LendingCategory"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_LendingCategory')" id="remove_highlights_LendingCategory" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlightsLendingCategory')" id="add_highlights_LendingCategory" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_LendingCategory')" id="remove_highlights_LendingCategory"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_LendingCategory')" id="add_highlights_LendingCategory" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="LendingCategory" title="Required Field" <% if @highlight_tab.required_fields.include? "LendingCategory"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Asset Type</td>
+                  <td>
+                      <% if @highlight_tab.custom_fields.include? "types"%>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_types')" id="remove_highlights_types" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_types')" id="add_highlights_types" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('highlights_types')" id="remove_highlights_types"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('highlights_types')" id="add_highlights_types" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox highlight_check" value="types"  title="Required Field" <% if @highlight_tab.required_fields.include? "types"%> checked="checked" <% end %>>
+                  </td>
+                </tr>
+              </table>
+              
+              <table class="columns medium-12  columns" id="table_summaryinfo"> 
+                <tr>
+                  <th> Summary </th>
+                  <th>
+                      <% unless @summary_tab.blank? %>
+                        
+                         <a href="javascript:void(0);" onclick="remove_tab('summary')" id="remove_summary" <% if @summary_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true" ></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('summary')" id="add_summary" <% if @summary_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                      <% else %>
+                        <a href="javascript:void(0);" onclick="remove_tab('summary')" id="remove_summary"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('summary')" id="add_summary" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                      <% end %>
+                  </th>
+                  <td>
+                    <input type="checkbox" class="required_checkbox summary_check" value="summary"  title="Required Field" <% if @summary_tab.required == 1 %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+              </table>
+
+              <table class="columns medium-12  columns" id="table_transactioninfo"> 
+                <tr>
+                  <th> Transaction Information </th>
+                  <th>
+                    <% unless @transaction_information_tab.blank? %>
+                        
+                         <a href="javascript:void(0);" onclick="remove_tab('transaction_information')" id="remove_transaction_information" <% if @transaction_information_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('transaction_information')" id="add_transaction_information"  <% if @transaction_information_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('transaction_information')" id="remove_transaction_information"><i class="fa fa-check" aria-hidden="true"></i></a>
+                      
+                      <a href="javascript:void(0);" onclick="add_tab('transaction_information')" id="add_transaction_information" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <% end %>
+                  </th>
+                  <th>
+                    &nbsp;
+                  </th>
+                </tr>
+                <tr>
+                  <td>Transaction Type</td>
+                  <td>
+                      <% if @transaction_information_tab.custom_fields.include? "transaction_type"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_transaction_type')" id="remove_transaction_information_transaction_type" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_transaction_type')" id="add_transaction_information_transaction_type" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_transaction_type')" id="remove_transaction_information_transaction_type"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_transaction_type')" id="add_transaction_information_transaction_type" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>  
+
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="transaction_type"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "transaction_type" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Submitted By Broker</td>
+                  <td>
+                      <% if @transaction_information_tab.custom_fields.include? "isBroker"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_isBroker')" id="remove_transaction_information_isBroker" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_isBroker')" id="add_transaction_information_isBroker" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_isBroker')" id="remove_transaction_information_isBroker"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_isBroker')" id="add_transaction_information_isBroker" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="isBroker"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "isBroker" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+               
+
+                <tr>
+                  <td>Contract Closing Date</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "contract_closing_date"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_contract_closing_date')" id="remove_transaction_information_contract_closing_date" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_contract_closing_date')" id="add_transaction_information_contract_closing_date" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_contract_closing_date')" id="remove_transaction_information_contract_closing_date"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_contract_closing_date')" id="add_transaction_information_contract_closing_date" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="contract_closing_date"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "contract_closing_date" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Purchase Price</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "purchase_price"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_purchase_price')" id="remove_transaction_information_purchase_price" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_purchase_price')" id="add_transaction_information_purchase_price" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_purchase_price')" id="remove_transaction_information_purchase_price"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_purchase_price')" id="add_transaction_information_purchase_price" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="purchase_price"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "purchase_price" %> checked="checked" <% end %> >
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Rehab Amount</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "rehab_amount"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_rehab_amount')" id="remove_transaction_information_rehab_amount" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_rehab_amount')" id="add_transaction_information_rehab_amount" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_rehab_amount')" id="remove_transaction_information_rehab_amount"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_rehab_amount')" id="add_transaction_information_rehab_amount" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="rehab_amount"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "rehab_amount" %> checked="checked" <% end %> >
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Cash To Contribute</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "purchase_cash_contribute"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_purchase_cash_contribute')" id="remove_transaction_information_purchase_cash_contribute" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_purchase_cash_contribute')" id="add_transaction_information_purchase_cash_contribute" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_purchase_cash_contribute')" id="remove_transaction_information_purchase_cash_contribute"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_purchase_cash_contribute')" id="add_transaction_information_purchase_cash_contribute" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="purchase_cash_contribute"  title="Required Field"  <% if @transaction_information_tab.required_fields.include? "purchase_cash_contribute" %> checked="checked" <% end %> >
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Refinance Cash Contribute</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "refinance_cash_contribute"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_refinance_cash_contribute')" id="remove_transaction_information_refinance_cash_contribute" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_refinance_cash_contribute')" id="add_transaction_information_refinance_cash_contribute" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_refinance_cash_contribute')" id="remove_transaction_information_refinance_cash_contribute"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_refinance_cash_contribute')" id="add_transaction_information_refinance_cash_contribute" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="refinance_cash_contribute"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "refinance_cash_contribute" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Free and Clear</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "free_clear"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_free_clear')" id="remove_transaction_information_free_clear" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_free_clear')" id="add_transaction_information_free_clear" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_free_clear')" id="remove_transaction_information_free_clear"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_free_clear')" id="add_transaction_information_free_clear" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="free_clear"  title="Required Field" <% if @transaction_information_tab.required_fields.include? "free_clear" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Original Purchase Price</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "original_purchase_price"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_original_purchase_price')" id="remove_transaction_information_original_purchase_price" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_original_purchase_price')" id="add_transaction_information_original_purchase_price" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_original_purchase_price')" id="remove_transaction_information_original_purchase_price"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_original_purchase_price')" id="add_transaction_information_original_purchase_price" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="original_purchase_price" title="Required Field" <% if @transaction_information_tab.required_fields.include? "original_purchase_price" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Original Purchase Date</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "original_purchase_date"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_original_purchase_date')" id="remove_transaction_information_original_purchase_date" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_original_purchase_date')" id="add_transaction_information_original_purchase_date" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_original_purchase_date')" id="remove_transaction_information_original_purchase_date"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_original_purchase_date')" id="add_transaction_information_original_purchase_date" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="original_purchase_date" title="Required Field" <% if @transaction_information_tab.required_fields.include? "original_purchase_date" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Vested by</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "vested_by"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_vested_by')" id="remove_transaction_information_vested_by" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_vested_by')" id="add_transaction_information_vested_by" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_vested_by')" id="remove_transaction_information_vested_by"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_vested_by')" id="add_transaction_information_vested_by" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="vested_by" title="Required Field" <% if @transaction_information_tab.required_fields.include? "vested_by" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Cash contributed</td>
+                  <td>
+                    <% if @transaction_information_tab.custom_fields.include? "cash_contributed"%>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_cash_contributed')" id="remove_transaction_information_cash_contributed" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_cash_contributed')" id="add_transaction_information_cash_contributed" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('transaction_information_cash_contributed')" id="remove_transaction_information_cash_contributed"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('transaction_information_cash_contributed')" id="add_transaction_information_cash_contributed" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %> 
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox transaction_check" value="cash_contributed" title="Required Field" <% if @transaction_information_tab.required_fields.include? "cash_contributed" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+
+
+              </table>  
+
+              <table class="columns medium-12  columns"> 
+                <tr>
+                  <th>Use Of Funds</th>
+                  <th>
+                    <% unless @use_of_funds_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('use_of_funds')" id="remove_use_of_funds" <% if @use_of_funds_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"  ></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('use_of_funds')" id="add_use_of_funds"<% if @use_of_funds_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('use_of_funds')" id="remove_use_of_funds"><i class="fa fa-check" aria-hidden="true"></i></a>
+                      
+                       <a href="javascript:void(0);" onclick="add_tab('use_of_funds')" id="add_use_of_funds"  style="display:none;" ><i class="fa fa-times" aria-hidden="true"></i></a>
+
+                    <% end %>
+                  </th>
+                  <th>
+                    <input type="checkbox" class="required_checkbox funds_check" value="use_of_funds" title="Required Field" <% if @use_of_funds_tab.required == 1 %> checked="checked" <% end %>>
+                  </th>
+                </tr>
+              </table>
+
+              <table class="columns medium-12  columns"> 
+                <tr>
+                  <th>Exit Strategy</th>
+                  <th>
+                    <% unless @exit_strategy_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('exit_strategy')" id="remove_exit_strategy"   <% if @exit_strategy_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('exit_strategy')" id="add_exit_strategy"  <% if @exit_strategy_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('exit_strategy')" id="remove_exit_strategy"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('exit_strategy')" id="add_exit_strategy" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <% end %>
+                  </th>
+                  <th>
+                    <input type="checkbox" class="required_checkbox exit_check" value="exit_strategy" title="Required Field" <% if @exit_strategy_tab.required == 1 %> checked="checked" <% end %>>
+                  </th>
+                </tr>
+              </table>
+
+              <table class="columns medium-12  columns"> 
+                <tr>
+                  <th>Borrowers</th>
+                  <th>
+                    <% unless @borrowers_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('borrower')" id="remove_borrower"   <% if @borrowers_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('borrower')" id="add_borrower"  <% if @borrowers_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('borrower')" id="remove_borrower"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('borrower')" id="add_borrower" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <% end %>
+                  </th>
+
+                </tr>
+
+                 <tr>
+                  <td>Borrower Type</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "borrower_type"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_borrower_type')" id="remove_borrower_borrower_type" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_borrower_type')" id="add_borrower_borrower_type" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_borrower_type')" id="remove_borrower_borrower_type"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_borrower_type')" id="add_borrower_borrower_type" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="borrower_type" title="Required Field" <% if @borrowers_tab.required_fields.include? "borrower_type" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Personal Name</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_name"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_name')" id="remove_borrower_personal_name" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_name')" id="add_borrower_personal_name" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_name')" id="remove_borrower_personal_name"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_name')" id="add_borrower_personal_name" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_name" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_name" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Personal Name</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_phone"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_phone')" id="remove_borrower_personal_phone" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_phone')" id="add_borrower_personal_phone" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_phone')" id="remove_borrower_personal_phone"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_phone')" id="add_borrower_personal_phone" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_phone" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_phone" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Personal Email</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_email"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_email')" id="remove_borrower_personal_email" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_email')" id="add_borrower_personal_email" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_email')" id="remove_borrower_personal_email"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_email')" id="add_borrower_personal_email" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_email" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_email" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Monthly Income</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_monthly_income"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_monthly_income')" id="remove_borrower_personal_monthly_income" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_monthly_income')" id="add_borrower_personal_monthly_income" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_monthly_income')" id="remove_borrower_personal_monthly_income"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_monthly_income')" id="add_borrower_personal_monthly_income" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_monthly_income" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_monthly_income" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Address</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_address"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_address')" id="remove_borrower_personal_address" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_address')" id="add_borrower_personal_address" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_address')" id="remove_borrower_personal_address"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_address')" id="add_borrower_personal_address" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_address" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_address" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>City</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_city"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_city')" id="remove_borrower_personal_city" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_city')" id="add_borrower_personal_city" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_city')" id="remove_borrower_personal_city"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_city')" id="add_borrower_personal_city" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_city" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_city" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>State</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_state"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_state')" id="remove_borrower_personal_state" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_state')" id="add_borrower_personal_state" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_state')" id="remove_borrower_personal_state"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_state')" id="add_borrower_personal_state" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_state" title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_state" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>PostalCode</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_postalcode"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_postalcode')" id="remove_borrower_personal_postalcode" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_postalcode')" id="add_borrower_personal_postalcode" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_postalcode')" id="remove_borrower_personal_postalcode"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_postalcode')" id="add_borrower_personal_postalcode" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_postalcode" title="Required Field"<% if @borrowers_tab.required_fields.include? "personal_postalcode" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Income Source</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_income_source"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_income_source')" id="remove_borrower_personal_income_source" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_income_source')" id="add_borrower_personal_income_source" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_income_source')" id="remove_borrower_personal_income_source"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_income_source')" id="add_borrower_personal_income_source" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_income_source"  title="Required Field"<% if @borrowers_tab.required_fields.include? "personal_income_source" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>How long has income been derived from this source?</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "income_how_long"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_income_how_long')" id="remove_borrower_income_how_long" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_income_how_long')" id="add_borrower_income_how_long" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_income_how_long')" id="remove_borrower_income_how_long"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_income_how_long')" id="add_borrower_income_how_long" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="income_how_long"  title="Required Field"<% if @borrowers_tab.required_fields.include? "income_how_long" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Personal DOB </td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_dob"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_dob')" id="remove_borrower_personal_dob" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_dob')" id="add_borrower_personal_dob" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_dob')" id="remove_borrower_personal_dob"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_dob')" id="add_borrower_personal_dob" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_dob"  title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_dob" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Ever Borrowed Private Money?</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "ever_borrow_money"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_ever_borrow_money')" id="remove_borrower_ever_borrow_money" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_ever_borrow_money')" id="add_borrower_ever_borrow_money" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_ever_borrow_money')" id="remove_borrower_ever_borrow_money"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_ever_borrow_money')" id="add_borrower_ever_borrow_money" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="ever_borrow_money"  title="Required Field" <% if @borrowers_tab.required_fields.include? "ever_borrow_money" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>EIN</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_ein"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_ein')" id="remove_borrower_personal_ein" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_ein')" id="add_borrower_personal_ein" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_ein')" id="remove_borrower_personal_ein"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_ein')" id="add_borrower_personal_ein" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_ein"  title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_ein" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Estimated Fico</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "estimated_fico"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_estimated_fico')" id="remove_borrower_estimated_fico" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_estimated_fico')" id="add_borrower_estimated_fico" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_estimated_fico')" id="remove_borrower_estimated_fico"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_estimated_fico')" id="add_borrower_estimated_fico" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="estimated_fico"  title="Required Field" <% if @borrowers_tab.required_fields.include? "estimated_fico" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Net Worth</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "net_worth"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_net_worth')" id="remove_borrower_net_worth" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_net_worth')" id="add_borrower_net_worth" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_net_worth')" id="remove_borrower_net_worth"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_net_worth')" id="add_borrower_net_worth" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="net_worth"  title="Required Field" <% if @borrowers_tab.required_fields.include? "net_worth" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Gross Monthly Income</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_gross"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_gross')" id="remove_borrower_personal_gross" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_gross')" id="add_borrower_personal_gross" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_gross')" id="remove_borrower_personal_gross"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_gross')" id="add_borrower_personal_gross" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_gross"   title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_gross" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Borrower Cash Contribution</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "personal_cashContribution"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_cashContribution')" id="remove_borrower_personal_cashContribution" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_cashContribution')" id="add_borrower_personal_cashContribution" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_personal_cashContribution')" id="remove_borrower_personal_cashContribution"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_personal_cashContribution')" id="add_borrower_personal_cashContribution" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="personal_cashContribution"  title="Required Field" <% if @borrowers_tab.required_fields.include? "personal_cashContribution" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Borrower Also The Guarantor </td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "borrower_guarantor"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_borrower_guarantor')" id="remove_borrower_borrower_guarantor" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_borrower_guarantor')" id="add_borrower_borrower_guarantor" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_borrower_guarantor')" id="remove_borrower_borrower_guarantor"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_borrower_guarantor')" id="add_borrower_borrower_guarantor" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="borrower_guarantor"  title="Required Field" <% if @borrowers_tab.required_fields.include? "borrower_guarantor" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business Name </td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "business_name"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_name')" id="remove_borrower_business_name" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_name')" id="add_borrower_borrower_guarantor" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_name')" id="remove_borrower_business_name"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_name')" id="add_borrower_business_name" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="borrower_guarantor"  title="Required Field" <% if @borrowers_tab.required_fields.include? "borrower_guarantor" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business Phone </td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "business_phone"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_phone')" id="remove_borrower_business_phone" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_phone')" id="add_borrower_business_phone" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_phone')" id="remove_borrower_business_phone"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_phone')" id="add_borrower_business_phone" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="business_phone"  title="Required Field" <% if @borrowers_tab.required_fields.include? "business_phone" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+
+
+                <tr>
+                  <td>Time In Business</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "time_in_business"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_time_in_business')" id="remove_borrower_time_in_business" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_time_in_business')" id="add_borrower_time_in_business" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_time_in_business')" id="remove_borrower_time_in_business"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_time_in_business')" id="add_borrower_time_in_business" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="time_in_business"  title="Required Field" <% if @borrowers_tab.required_fields.include? "time_in_business" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business years of Revenue</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "revenue_time_period"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_revenue_time_period')" id="remove_borrower_revenue_time_period" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_revenue_time_period')" id="add_borrower_revenue_time_period" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_revenue_time_period')" id="remove_borrower_revenue_time_period"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_revenue_time_period')" id="add_borrower_revenue_time_period" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="revenue_time_period"  title="Required Field" <% if @borrowers_tab.required_fields.include? "revenue_time_period" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business EIN</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "business_ein"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_borrower_business_ein')" id="remove_borrower_business_ein" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_ein')" id="add_borrower_business_ein" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_ein')" id="remove_borrower_business_ein"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_ein')" id="add_borrower_business_ein" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="business_ein"  title="Required Field" <% if @borrowers_tab.required_fields.include? "business_ein" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business Type</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "business_type"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_type')" id="remove_borrower_business_type" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_type')" id="add_borrower_business_type" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_type')" id="remove_borrower_business_type"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_type')" id="add_borrower_business_type" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="business_type"  title="Required Field" <% if @borrowers_tab.required_fields.include? "business_type" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Business state of Incorporation</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "state_of_incorporation"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_state_of_incorporation')" id="remove_borrower_state_of_incorporation" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_state_of_incorporation')" id="add_borrower_state_of_incorporation" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_state_of_incorporation')" id="remove_borrower_state_of_incorporation"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_state_of_incorporation')" id="add_borrower_state_of_incorporation" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="state_of_incorporation"  title="Required Field" <% if @borrowers_tab.required_fields.include? "state_of_incorporation" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Business Balance Sheet Value</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "business_balance_sheet"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_balance_sheet')" id="remove_borrower_business_balance_sheet" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_balance_sheet')" id="add_borrower_business_balance_sheet" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_business_balance_sheet')" id="remove_borrower_business_balance_sheet"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_business_balance_sheet')" id="add_borrower_business_balance_sheet" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="business_balance_sheet"  title="Required Field"<% if @borrowers_tab.required_fields.include? "business_balance_sheet" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Bio</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "bio"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_bio')" id="remove_borrower_bio" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_bio')" id="add_borrower_bio" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_bio')" id="remove_borrower_bio"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_bio')" id="add_borrower_bio" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check"  title="Required Field" value="bio" <% if @borrowers_tab.required_fields.include? "bio" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Cash On Hand</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "cash_on_hand"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_cash_on_hand')" id="remove_borrower_cash_on_hand" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_cash_on_hand')" id="add_borrower_cash_on_hand" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_cash_on_hand')" id="remove_borrower_cash_on_hand"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_cash_on_hand')" id="add_borrower_cash_on_hand" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check"  title="Required Field" value="cash_on_hand" <% if @borrowers_tab.required_fields.include? "cash_on_hand" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Available Business Credit</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "available_credit"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_available_credit')" id="remove_borrower_available_credit" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_available_credit')" id="add_borrower_available_credit" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_available_credit')" id="remove_borrower_available_credit"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_available_credit')" id="add_borrower_available_credit" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="available_credit"  title="Required Field" <% if @borrowers_tab.required_fields.include? "available_credit" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Monthly NOI</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "monthly_noi"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_monthly_noi')" id="remove_borrower_monthly_noi" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_monthly_noi')" id="add_borrower_monthly_noi" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_monthly_noi')" id="remove_borrower_monthly_noi"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_monthly_noi')" id="add_borrower_monthly_noi" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="monthly_noi"  title="Required Field" <% if @borrowers_tab.required_fields.include? "monthly_noi" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Annual NOI</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "annual_noi"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_annual_noi')" id="remove_borrower_annual_noi" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_annual_noi')" id="add_borrower_annual_noi" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_annual_noi')" id="remove_borrower_annual_noi"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_annual_noi')" id="add_borrower_annual_noi" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="annual_noi"  title="Required Field" <% if @borrowers_tab.required_fields.include? "annual_noi" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Accounts Receivable</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "account_recievable"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_account_recievable')" id="remove_borrower_account_recievable" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_account_recievable')" id="add_borrower_account_recievable" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_account_recievable')" id="remove_borrower_account_recievable"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_account_recievable')" id="add_borrower_account_recievable" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="account_recievable"  title="Required Field" <% if @borrowers_tab.required_fields.include? "account_recievable" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Account Payable</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "account_payable"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_account_payable')" id="remove_borrower_account_payable" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_account_payable')" id="add_borrower_account_payable" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_account_recievable')" id="remove_borrower_account_payable"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_account_payable')" id="add_borrower_account_payable" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="account_payable"  title="Required Field" <% if @borrowers_tab.required_fields.include? "account_payable" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Guarantor Name</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_name"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_name')" id="remove_borrower_guarantor_name" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_name')" id="add_borrower_guarantor_name" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_name')" id="remove_borrower_guarantor_name"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_name')" id="add_borrower_guarantor_name" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_name"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_name" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Guarantor Phone</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_phone"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_phone')" id="remove_borrower_guarantor_phone" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_phone')" id="add_borrower_guarantor_phone" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_phone')" id="remove_borrower_guarantor_phone"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_phone')" id="add_borrower_guarantor_phone" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_phone"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_phone" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Guarantor Email</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_email"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_email')" id="remove_borrower_guarantor_email" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_email')" id="add_borrower_guarantor_email" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_email')" id="remove_borrower_guarantor_email"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_email')" id="add_borrower_guarantor_email" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_email"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_email" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Guarantor Monthly Income</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_monthly_income"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_monthly_income')" id="remove_borrower_guarantor_monthly_income" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_monthly_income')" id="add_borrower_guarantor_monthly_income" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_monthly_income')" id="remove_borrower_guarantor_monthly_income"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_monthly_income')" id="add_borrower_guarantor_monthly_income" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_monthly_income"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_monthly_income" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Guarantor Income Source</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_income_source"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_income_source')" id="remove_borrower_guarantor_income_source" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_income_source')" id="add_borrower_guarantor_income_source" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_income_source')" id="remove_borrower_guarantor_income_source"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_income_source')" id="add_borrower_guarantor_income_source" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_income_source"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_income_source" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> How long has income been derived from this source?(Months)</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_income_how_long"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_income_how_long')" id="remove_borrower_guarantor_income_how_long" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_income_how_long')" id="add_borrower_guarantor_income_how_long" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_income_how_long')" id="remove_borrower_guarantor_income_how_long"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_income_how_long')" id="add_borrower_guarantor_income_how_long" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_income_how_long"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_income_how_long" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Guarantor Address</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_address"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_address')" id="remove_borrower_guarantor_address" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_address')" id="add_borrower_guarantor_address" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_address')" id="remove_borrower_guarantor_address"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_address')" id="add_borrower_guarantor_address" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+
+                   <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_address"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_address" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Guarantor State</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_state"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_state')" id="remove_borrower_guarantor_state" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_state')" id="add_borrower_guarantor_state" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_state')" id="remove_borrower_guarantor_state"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_state')" id="add_borrower_guarantor_state" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_state"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_state" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Guarantor City</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_city"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_city')" id="remove_borrower_guarantor_city" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_city')" id="add_borrower_guarantor_city" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_city')" id="remove_borrower_guarantor_city"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_city')" id="add_borrower_guarantor_city" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_city"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_city" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td> Guarantor Postalcode</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_postalcode"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_postalcode')" id="remove_borrower_guarantor_postalcode" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_postalcode')" id="add_borrower_guarantor_postalcode" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_postalcode')" id="remove_borrower_guarantor_postalcode"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_postalcode')" id="add_borrower_guarantor_postalcode" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_postalcode"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_postalcode" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Guarantor Estimated FICO</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_estimated_ficco"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_estimated_ficco')" id="remove_borrower_guarantor_estimated_ficco" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_estimated_ficco')" id="add_borrower_guarantor_estimated_ficco" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_estimated_ficco')" id="remove_borrower_guarantor_estimated_ficco"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_estimated_ficco')" id="add_borrower_guarantor_estimated_ficco" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_estimated_ficco"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_estimated_ficco" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Guarantor Net Worth </td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_net_worth"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_net_worth')" id="remove_borrower_guarantor_net_worth" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_net_worth')" id="add_borrower_guarantor_net_worth" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_net_worth')" id="remove_borrower_guarantor_net_worth"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_net_worth')" id="add_borrower_guarantor_net_worth" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_net_worth"  title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_net_worth" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td> Have you ever borrowed private money?</td>
+                  <td>
+                      <% if @borrowers_tab.custom_fields.include? "guarantor_borrow_money"%>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_borrow_money')" id="remove_borrower_guarantor_borrow_money" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_borrow_money')" id="add_borrower_guarantor_borrow_money" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('borrower_guarantor_borrow_money')" id="remove_borrower_guarantor_borrow_money"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('borrower_guarantor_borrow_money')" id="add_borrower_guarantor_borrow_money" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox borrower_check" value="guarantor_borrow_money"   title="Required Field" <% if @borrowers_tab.required_fields.include? "guarantor_borrow_money" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+              </table>
+
+              <table class="columns medium-12  columns"> 
+                <tr>
+                  <th>Collaterals</th>
+                  <th>
+                    <% unless @collateral_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('collateral')" id="remove_collateral"   <% if @collateral_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('collateral')" id="add_collateral"  <% if @collateral_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+                      <a href="javascript:void(0);" onclick="remove_tab('collateral')" id="remove_collateral"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('collateral')" id="add_collateral" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <% end %>
+                  </th>
+                </tr>
+
+                 <tr>
+                  <td>Address</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_address"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_address')" id="remove_collateral_address" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_address')" id="add_collateral_address" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_address')" id="remove_collateral_address"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_address')" id="add_collateral_address" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="address"  title="Required Field" <% if @collateral_tab.required_fields.include? "address" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>City</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_city"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_city')" id="remove_collateral_city" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_city')" id="add_collateral_city" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_city')" id="remove_collateral_city"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_city')" id="add_collateral_city" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check"  title="Required" value="city" <% if @collateral_tab.required_fields.include? "city" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>State</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_state"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_state')" id="remove_collateral_state" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_state')" id="add_collateral_state" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_state')" id="remove_collateral_state"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_state')" id="add_collateral_state" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="state"  title="Required Field" <% if @collateral_tab.required_fields.include? "state" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Postalcode</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_postalcode"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_postalcode')" id="remove_collateral_postalcode" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_postalcode')" id="add_collateral_postalcode" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_postalcode')" id="remove_collateral_postalcode"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_postalcode')" id="add_collateral_postalcode" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="postalcode"  title="Required Field" <% if @collateral_tab.required_fields.include? "postalcode" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Estimated Value</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_estimated_value"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_estimated_value')" id="remove_collateral_estimated_value" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_estimated_value')" id="add_collateral_estimated_value" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_estimated_value')" id="remove_collateral_estimated_value"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_estimated_value')" id="add_collateral_estimated_value" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="estimated_value"  title="Required Field" <% if @collateral_tab.required_fields.include? "estimated_value" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Source Of Value</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_source_of_value"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_source_of_value')" id="remove_collateral_source_of_value" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_source_of_value')" id="add_collateral_source_of_value" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_source_of_value')" id="remove_collateral_source_of_value"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_source_of_value')" id="add_collateral_source_of_value" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="source_of_value"  title="Required Field" <% if @collateral_tab.required_fields.include? "source_of_value" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Mortgage Status</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_mortgage_status"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_mortgage_status')" id="remove_collateral_mortgage_status" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_mortgage_status')" id="add_collateral_mortgage_status" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_mortgage_status')" id="remove_collateral_mortgage_status"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_mortgage_status')" id="add_collateral_mortgage_status" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="mortgage_status"  title="Required Field" <% if @collateral_tab.required_fields.include? "mortgage_status" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>Amount Owed</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_amount_owed"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_amount_owed')" id="remove_collateral_amount_owed" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_amount_owed')" id="add_collateral_amount_owed" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_amount_owed')" id="remove_collateral_amount_owed"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_amount_owed')" id="add_collateral_amount_owed" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="amount_owed"  title="Required Field" <% if @collateral_tab.required_fields.include? "amount_owed" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Asset Type</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_asset_type"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_asset_type')" id="remove_collateral_asset_type" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_asset_type')" id="add_collateral_asset_type" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_asset_type')" id="remove_collateral_asset_type"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_asset_type')" id="add_collateral_asset_type" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="asset_type"  title="Required Field" <% if @collateral_tab.required_fields.include? "asset_type" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Sq Footage</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_sq_footage"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_sq_footage')" id="remove_collateral_sq_footage" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_sq_footage')" id="add_collateral_sq_footage" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_sq_footage')" id="remove_collateral_sq_footage"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_sq_footage')" id="add_collateral_sq_footage" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="sq_footage"  title="Required Field" <% if @collateral_tab.required_fields.include? "sq_footage" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Acres</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_acres"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_acres')" id="remove_collateral_acres" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_acres')" id="add_collateral_acres" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_acres')" id="remove_collateral_acres"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_acres')" id="add_collateral_acres" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="acres"  title="Required Field" <% if @collateral_tab.required_fields.include? "acres" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Structural Sq Footage</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_structural_sq_footage"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_structural_sq_footage')" id="remove_collateral_structural_sq_footage" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_structural_sq_footage')" id="add_collateral_structural_sq_footage" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_structural_sq_footage')" id="remove_collateral_structural_sq_footage"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_structural_sq_footage')" id="add_collateral_structural_sq_footage" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="structural_sq_footage"  title="Required Field" <% if @collateral_tab.required_fields.include? "structural_sq_footage" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>How Many Units?</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_units"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_units')" id="remove_collateral_units" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_units')" id="add_collateral_units" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_units')" id="remove_collateral_units"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_units')" id="add_collateral_units" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="units"  title="Required Field" <% if @collateral_tab.required_fields.include? "units" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>SF per Unit</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_sf_per_unit"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_sf_per_unit')" id="remove_collateral_sf_per_unit" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_sf_per_unit')" id="add_collateral_sf_per_unit" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_sf_per_unit')" id="remove_collateral_sf_per_unit"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_sf_per_unit')" id="add_collateral_sf_per_unit" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="sf_per_unit" title ="Required Field" <% if @collateral_tab.required_fields.include? "sf_per_unit" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                 <tr>
+                  <td>NOI (YTD)</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_noi_ytd"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_ytd')" id="remove_collateral_noi_ytd" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_ytd')" id="add_collateral_noi_ytd" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_ytd')" id="remove_collateral_noi_ytd"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_ytd')" id="add_collateral_noi_ytd" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="noi_ytd"  title="Required Field" <% if @collateral_tab.required_fields.include? "noi_ytd" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>NOI (two years ago)</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_noi_two_years_ago"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_two_years_ago')" id="remove_collateral_noi_two_years_ago" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_two_years_ago')" id="add_collateral_noi_two_years_ago" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_two_years_ago')" id="remove_collateral_noi_two_years_ago"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_two_years_ago')" id="add_collateral_noi_two_years_ago" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="noi_two_years_ago"  title="Required Field" <% if @collateral_tab.required_fields.include? "noi_two_years_ago" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>NOI Last Year</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_noi_last_year"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_last_year')" id="remove_collateral_noi_last_year" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_last_year')" id="add_collateral_noi_last_year" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_noi_last_year')" id="remove_collateral_noi_last_year"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_noi_last_year')" id="add_collateral_noi_last_year" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="noi_last_year"  title="Required Field" <% if @collateral_tab.required_fields.include? "noi_last_year" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Collateral Value</td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_collateral_value"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_collateral_value')" id="remove_collateral_collateral_value" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_collateral_value')" id="add_collateral_collateral_value" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_collateral_value')" id="remove_collateral_collateral_value"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_collateral_value')" id="add_collateral_collateral_value" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="collateral_value"  title="Required Field" <% if @collateral_tab.required_fields.include? "collateral_value" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+               
+
+                <tr>
+                  <td>Collateral is related to </td>
+                  <td>
+                      <% if @collateral_tab.custom_fields.include? "collateral_related_to"%>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_related_to')" id="remove_collateral_related_to" style="display:none;"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_related_to')" id="add_collateral_related_to" ><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% else %>
+                          <a href="javascript:void(0);" onclick="remove_field('collateral_related_to')" id="remove_collateral_related_to"><i class="fa fa-check" aria-hidden="true"></i></a>
+                          <a href="javascript:void(0);" onclick="add_field('collateral_related_to')" id="add_collateral_related_to" style="display:none;"><i class="fa fa-times" aria-hidden="true" ></i></a>
+                      <% end %>
+                  </td>
+                   <td>
+                    <input type="checkbox" class="required_checkbox collateral_check" value="related_to"  title="Required Field" <% if @collateral_tab.required_fields.include? "related_to" %> checked="checked" <% end %>>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pictures</th>
+                  <th>
+                    <% unless @picture_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('picture')" id="remove_picture"   <% if @picture_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('picture')" id="add_picture"  <% if @picture_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+
+                        <a href="javascript:void(0);" onclick="remove_tab('picture')" id="remove_picture"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('picture')" id="add_picture" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    
+                    <% end %>
+                  </th>
+                </tr>
+
+                <tr>
+                  <th>Documents</th>
+                  <th>
+                    <% unless @document_tab.blank? %>
+                       
+                         <a href="javascript:void(0);" onclick="remove_tab('document')" id="remove_document"   <% if @document_tab.hide == 1 %> style="display:none;" <% end %>><i class="fa fa-check" aria-hidden="true"></i></a>
+                        
+                         <a href="javascript:void(0);" onclick="add_tab('document')" id="add_document"  <% if @document_tab.hide != 1 %> style="display:none;" <% end %>><i class="fa fa-times" aria-hidden="true"></i></a>
+                        
+                    <% else %>
+
+                        <a href="javascript:void(0);" onclick="remove_tab('document')" id="remove_document"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0);" onclick="add_tab('document')" id="add_document" style="display:none;"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    
+                    <% end %>
+                  </th>
+                </tr>
+              </table>
+              <div  id="table_custominfo">
+               <%= render partial: 'right_custom_tab' %>  
+              </div>
+
+
+            </div>
+          </div>
+      </div>
+  
+</section>
+<div class="row thanks_div" style="display:none;">
+<div class="columns medium-10  large-centered columns">
+      <div >
+        Thanks, Your loan has been submitted successfuly.
+      </div>
+</div>
+</div>

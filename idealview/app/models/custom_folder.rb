@@ -6,6 +6,7 @@ class CustomFolder
   key :loan_id, Integer
   key :user_id, String
   key :folder_name, String
+  key :dropbox_name, String
   key :hide, Integer
   key :delete, Integer
 

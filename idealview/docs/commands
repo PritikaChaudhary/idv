@@ -1,0 +1,5 @@
+/./home/rails/initialize-app
+
+
+RAILS_ENV=production TERM_CHILD=1 BACKGROUND=yes QUEUE=* rake environment resque:work
+../.././initialize-app

@@ -20,6 +20,9 @@
 //= require jquery-ui
 //= require_tree .
 
+
+
+
 $(function(){ $(document).foundation(); });
 
 //= require turbolinks
@@ -35,7 +38,6 @@ function callAjax(customUrl, divId, formId){
 		url: customUrl,
 		data:data,
 		success:function(data){
-
 			$('#'+divId).html(data);
 			if(formId=="lender_loans")
 			{

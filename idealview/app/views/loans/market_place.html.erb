@@ -1,0 +1,404 @@
+<style type="text/css">
+	
+	[class*="block-grid-"] > li {
+    padding: 0px !important;
+	}
+	button, .button {
+    	margin: 0 0 0;
+    }
+    .small-block-grid-3 > li {
+	    width: 32.333%;
+	}
+	
+	.inner_search_div
+	{
+		background-color: #cbcbcb;
+	}
+
+	.mkt_search_box select
+	{
+		width:19%;
+		margin-left:10px;
+		margin-top: 14px;
+	}
+	.inner_search_div input
+	{
+		width: 18%; 
+		float: left; 
+		margin-left:10px; 
+		margin-top:14px;
+	}
+	.loanType {
+    float: left;
+    font-size: 14px;
+    margin-left: 3px;
+    margin-top: 3px;
+    opacity: 0.84;
+    position: absolute;
+}
+	.loanTypeList {
+    float: left;
+    font-size: 12px;
+    margin-left: 12px;
+    margin-top: 12px;
+    opacity: 0.84;
+    position: absolute;
+}
+	.loanAmount {
+    float: left;
+    font-size: 14px;
+    margin-left: 2px;
+    margin-top: 177px;
+    opacity: 0.84;
+    position: absolute;
+}
+	.loanAmount_list {
+    float: left;
+    font-size: 12px;
+    margin-left: 13px;
+    margin-top: 119px;
+    opacity: 0.84;
+    position: absolute;
+	}
+
+	@media all and (max-width: 887px) and (min-width: 620px){
+          .inner_search_div input {
+              width: 16%;
+          }
+          .mkt_search_box select {
+            width: 17%;
+            }
+        }
+
+    @media all and (max-width: 619px) and (min-width: 520px){
+          .inner_search_div input {
+              width: 16%;
+          }
+          .mkt_search_box select {
+            width: 17%;
+            }
+        }
+
+    @media all and (max-width: 519px) and (min-width: 430px){
+          .inner_search_div input {
+              width: 47%;
+          }
+          .mkt_search_box select {
+            width: 30%;
+            margin-top: 0px;
+            }
+        }
+
+
+    @media all and (max-width: 429px){
+          .inner_search_div input {
+              width: 40%;
+          }
+          .mkt_search_box select {
+            width: 25%;
+            margin-top: 0px;
+            }
+        }
+
+    @media all and (max-width: 678px) and (min-width: 515px){
+            .loanAmount_list {
+                margin-top: 108px;
+                max-height: 32px;
+                overflow-wrap: break-word !important;
+               	width: 81%;
+            }
+
+            .list_mkt_img {
+		       width: 30%;
+		       padding:0px;
+		    }
+		    .list_name_loc
+		    {
+		      width:25%;
+		      padding:0px;
+		    }
+		    .list_other_info
+		    {
+		       width:45%;
+		       padding:0px;
+		       overflow-wrap: break-word;
+		    }
+	}
+
+	 @media all and (max-width: 514px){
+            .loanAmount_list {
+                margin-top: 108px;
+                max-height: 32px;
+                overflow-wrap: break-word !important;
+               	width: 81%;
+            }
+
+            .list_mkt_img {
+		       width: 25%;
+		       padding:0px;
+		    }
+		    .list_name_loc
+		    {
+		      width:25%;
+		      padding:0px;
+		    }
+		    .list_other_info
+		    {
+		       width:50%;
+		       padding:0px;
+		       overflow-wrap: break-word;
+		    }
+	}
+
+	/*@media all and (max-width: 577px){
+	   
+	    
+	   }*/
+    
+
+
+
+
+
+
+</style>
+<script type="text/javascript">
+	$('document').ready(function(){
+		
+		$('#list_view_icon').click(function(){
+
+          	// var data = "";
+          	// $.ajax({
+           //          data: data,
+           //          type: 'POST',
+           //          url: '/loans/list_market_view',
+           //          success:function(response){
+           //           $('#market_place').html(response);
+           //           $('input[name="view_type"]').val("list");
+           //         }
+           //      });
+
+			min_range = $('input[name="min_range"]').val();
+			max_range = $('input[name="max_range"]').val();
+      		term = $('select[name="term"]').val();
+      		interest = $('select[name="interest"]').val();
+      		state = $('select[name="state"]').val();
+      		view_type = "list";
+      		data = "min_range="+min_range+"&max_range="+max_range+"&term="+term+"&interest="+interest+"&state="+state+"&view_type="+view_type;
+			$.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/search_market_loan',
+                    success:function(response){
+                     $('#market_place').html(response);
+                     $('input[name="view_type"]').val("list");
+                   }
+                });   
+
+      	});
+
+      	$('#gallery_view_icon').click(function(){
+
+          	// var data = "";
+          	// $.ajax({
+           //          data: data,
+           //          type: 'POST',
+           //          url: '/loans/gallery_market_view',
+           //          success:function(response){
+           //           $('#market_place').html(response);
+           //         	 $('input[name="view_type"]').val("gallery");
+           //         }
+           //      });
+
+      		min_range = $('input[name="min_range"]').val();
+			max_range = $('input[name="max_range"]').val();
+      		term = $('select[name="term"]').val();
+      		interest = $('select[name="interest"]').val();
+      		state = $('select[name="state"]').val();
+      		view_type = "gallery";
+      		data = "min_range="+min_range+"&max_range="+max_range+"&term="+term+"&interest="+interest+"&state="+state+"&view_type="+view_type;
+			$.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/search_market_loan',
+                    success:function(response){
+                     $('#market_place').html(response);
+                     $('input[name="view_type"]').val("gallery");
+                   }
+                });   
+
+      	});
+
+      	$('select').change(function(){
+      		min_range = $('input[name="min_range"]').val();
+			max_range = $('input[name="max_range"]').val();
+      		term = $('select[name="term"]').val();
+      		interest = $('select[name="interest"]').val();
+      		state = $('select[name="state"]').val();
+      		view_type = $('input[name="view_type"]').val();
+      		data = "min_range="+min_range+"&max_range="+max_range+"&term="+term+"&interest="+interest+"&state="+state+"&view_type="+view_type;
+			$.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/search_market_loan	',
+                    success:function(response){
+                     $('#market_place').html(response);
+                   }
+                });      		
+      	});
+
+      	$('input').change(function(){
+      		min_range = $('input[name="min_range"]').val();
+			max_range = $('input[name="max_range"]').val();
+      		term = $('select[name="term"]').val();
+      		interest = $('select[name="interest"]').val();
+      		state = $('select[name="state"]').val();
+      		view_type = $('input[name="view_type"]').val();
+      		data = "min_range="+min_range+"&max_range="+max_range+"&term="+term+"&interest="+interest+"&state="+state+"&view_type="+view_type;
+			$.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/search_market_loan	',
+                    success:function(response){
+                     $('#market_place').html(response);
+                   }
+                });      		
+      	});
+	});
+
+	function more_details(id)
+	{
+		var data = "loan_id="+id;
+      	$.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/more_details',
+                success:function(response){
+                 $('.more_detail_div').html(response);
+               	 $('#myModal').foundation('reveal', 'open');
+               }
+            });		
+	}
+
+	function request_access(id)
+	{
+		var data = "market_id="+id;
+      	$.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/market_access',
+                success:function(response){
+                 $('#market_access_'+id).show();
+                 $('#request_access_'+id).hide();
+               	}
+            });		
+	}
+</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<!------------------------------------ More Detail ------------------------------------>
+	<div id="myModal" class="reveal-modal medium more_detail_div" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  
+	</div>
+<!------------------------------------ More Detail ------------------------------------>
+<div class="row">
+	<div class="large-12 columns">
+		<h3 class="market_heading">Marketplace</h3>
+	</div>
+	<div class="row">
+		<div class="large-12 columns mkt_search_box">
+			<div class="small-12 columns inner_search_div">
+				<!-- <select name="loan_range">
+					<option value="">Loan Range</option>
+					<option value="1000-50000"> 1,000 to 50,000 </option>
+					<option value="50000-100000"> 50,000 to 100,000 </option>
+					<option value="100000-2000000"> 100,000 to 2,000,000 </option>
+					<option value="2000000+"> 2,000,000 + </option>
+				</select> -->
+				<input type="text" name="min_range" placeholder="Min Range">
+				<input type="text" name="max_range" placeholder="Max Range">
+
+				<select name="term">
+					<option value="">Term</option>
+					<option value="3">Less Than 3 Months</option>
+					<option value="6">3 to 6 Months</option>
+					<option value="12">6 to 12 Months</option>
+					<option value="24">12 to 24 Months</option>
+					<option value="25">More than 24 Months</option>
+				</select>
+
+				<select name="interest">
+					<option value="">Interest</option>
+					<option value="0">0 - 7%</option>
+					<option value="7">7% - 12%</option>
+					<option value="12">12% +</option>
+				</select>
+
+				<select name="state">
+					<option value="">State</option>
+					<option value="Nationwide">Nationwide</option>
+					<option value="Alabama">Alabama</option>
+					<option value="Alaska">Alaska</option>
+					<option value="Arizona">Arizona</option>
+					<option value="Arkansas">Arkansas</option>
+					<option value="California">California</option>
+					<option value="Colorado">Colorado</option>
+					<option value="Connecticut">Connecticut</option>
+					<option value="Delaware">Delaware</option>
+					<option value="Florida">Florida</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Hawaii">Hawaii</option>
+					<option value="Idaho">Idaho</option>
+					<option value="Illinois Indiana">Illinois Indiana</option>
+					<option value="Iowa">Iowa</option>
+					<option value="Kansas">Kansas</option>
+					<option value="Kentucky">Kentucky</option>
+					<option value="Louisiana">Louisiana</option>
+					<option value="Maine">Maine</option>
+					<option value="Maryland">Maryland</option>
+					<option value="Massachusetts">Massachusetts</option>
+					<option value="Michigan">Michigan</option>
+					<option value="Minnesota">Minnesota</option>
+					<option value="Mississippi">Mississippi</option>
+					<option value="Missouri">Missouri</option>
+					<option value="Montana Nebraska">Montana Nebraska</option>
+					<option value="Nevada">Nevada</option>
+					<option value="New Hampshire">New Hampshire</option>
+					<option value="New Jersey">New Jersey</option>
+					<option value="New Mexico">New Mexico</option>
+					<option value="New York">New York</option>
+					<option value="North Carolina">North Carolina</option>
+					<option value="North Dakota">North Dakota</option>
+					<option value="Ohio">Ohio</option>
+					<option value="Oklahoma">Oklahoma</option>
+					<option value="Oregon">Oregon</option>
+					<option value="Pennsylvania Rhode Island">Pennsylvania Rhode Island</option>
+					<option value="South Carolina">South Carolina</option>
+					<option value="South Dakota">South Dakota</option>
+					<option value="Tennessee">Tennessee</option>
+					<option value="Texas">Texas</option>
+					<option value="Utah">Utah</option>
+					<option value="Vermont">Vermont</option>
+					<option value="Virginia">Virginia</option>
+					<option value="Washington">Washington</option>
+					<option value="West Virginia">West Virginia</option>
+					<option value="Wisconsin">Wisconsin</option>
+					<option value="Wyoming">Wyoming</option>
+					<option value="International">International</option>
+				</select>
+
+			</div>
+			
+		</div>
+	</div>
+	<div class="large-12 columns icon_search_box">
+		<div class="list_grid_icons" >
+			<a href="javascript:void(0);" class="button secondary tiny list" style="background : #cbcbcb" title="List View" id="list_view_icon"><i class="fa fa-list fa-3" aria-hidden="true" style="color:#fff"></i></a>
+			<a href="javascript:void(0);" class="button secondary tiny list" style="background : #cbcbcb" title="Gallery View" id="gallery_view_icon"><i class="fa fa-th-large fa-3" aria-hidden="true" style="color:#fff"></i></a>
+		</div>
+		<input type="hidden" name="view_type" value="gallery">
+	</div>
+	<div class="large 12 columns" id = "market_place">
+		<%= render partial: 'market_grid' %>
+	</div>
+</div>

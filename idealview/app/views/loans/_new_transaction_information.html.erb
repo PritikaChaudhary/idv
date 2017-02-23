@@ -1,0 +1,186 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Transaction Information</h3></label>
+      
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12"  <% if @transaction_information_tab.custom_fields.include? "transaction_type"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <label><strong>Transaction Type:</strong></label>
+         
+            <select name="transaction_type" id="transaction_type" class="loan_info_fields">
+                <option value=""> Select Transaction Type </option>
+                <option value="Purchase">Purchase</option>
+                <option value="Refinance">Refinance</option>
+            </select>
+            <label class="error transaction_transaction_type"> This field is required. </label>
+         
+        </div>
+      </div>
+       <% if @transaction_information_tab.custom_fields.include? "contract_closing_date"%> 
+       <% else %>
+          <div class="columns medium-6 border-right purchase"  style="display:none;" >
+            
+            <div class="trans-info-item">
+                <label><strong>Contract Closing Date:</strong></label>
+                <input id="contract_closing_date" name="contract_closing_date" type="text"  class="loan_info_fields">
+                <label class="error transaction_contract_closing_date"> This field is required. </label>
+               
+            </div>
+            
+          </div>
+      <% end %>
+      
+      <% if @transaction_information_tab.custom_fields.include? "purchase_price"%> 
+      <% else %>
+      <div class="columns medium-6 purchase"  style="display:none;">
+        
+        <div class="trans-info-item">
+            <label><strong>Purchase Price:</strong></label>
+            <input id="purchase_price" name="purchase_price" rows="1"  type="text" class="loan_info_fields">
+             <label class="error transaction_purchase_price"> This field is required. </label>
+           
+        </div>
+       
+      </div>
+      <% end %>
+
+      <% if @transaction_information_tab.custom_fields.include? "rehab_amount"%> 
+      <% else %>
+      <div class="columns medium-6 border-right purchase"  style="display:none;" >
+        
+        <div class="trans-info-item">
+            <label><strong>Rehab Amount:</strong></label>
+            <input id="rehab_amount" name="rehab_amount" rows="1"  type="text" class="loan_info_fields">
+            <label class="error transaction_rehab_amount"> This field is required. </label>
+        </div>
+      </div>
+      <% end %>
+
+      <% if @transaction_information_tab.custom_fields.include? "purchase_cash_contribute"%> 
+      <% else %>
+        <div class="columns medium-6 purchase" style="display:none;" >
+          <div class="trans-info-item">
+              <label><strong>Cash To Contribute:</strong></label>
+              <input id="purchase_cash_contribute" name="purchase_cash_contribute" rows="1" type="text" class="loan_info_fields">
+              <label class="error transaction_purchase_cash_contribute"> This field is required. </label>
+              
+          </div>
+        </div>
+      <% end %>
+
+      <% if @transaction_information_tab.custom_fields.include? "maturity_date"%> 
+      <% else %>
+      <div class="columns medium-6 border-right refinance"  style="display:none;">
+        <div class="trans-info-item">
+            <strong>Maturity Date:</strong>
+            <input id="maturity_date" type="text" rows="1" name="maturity_date" class="loan_info_fields">
+            <label class="error transaction_maturity_date"> This field is required. </label>
+        </div>
+      </div>
+      <% end %>
+
+      <% if @transaction_information_tab.custom_fields.include? "refinance_cash_contribute"%> 
+      <% else %>
+        <div class="columns medium-6 refinance" style="display:none;" >
+          <div class="trans-info-item">
+              <strong>Cash To Contribute:</strong>
+              <input id="refinance_cash_contribute" name="refinance_cash_contribute" rows="1"  type="text" class="loan_info_fields">
+              <label class="error transaction_refinance_cash_contribute"> This field is required. </label>
+              
+          </div>
+        </div>
+      <% end %>
+      
+      <% if !@transaction_information_tab.custom_fields.include? "isBroker"%> 
+      <div class="columns medium-6 ask_broker ">
+        <div class="trans-info-item">
+          <strong> Submitted By Broker:</strong>
+          
+            <input type="radio" name="isBroker" value="Yes" class="loan_info_fields"  ><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="isBroker" value="No" ><label> No </label>
+            <label class="error transaction_isBroker" style="float:left;"> This field is required. </label>
+        
+        </div>
+      </div>
+      <% end %>
+
+      <% if !@transaction_information_tab.custom_fields.include? "who_broker"%> 
+      <div class="columns medium-6 yes_broker"  style="display:none;">
+        <div class="trans-info-item">
+          <strong> Who is the broker?:</strong>
+          
+            <input id="who_broker" type="text"  rows="1" name="who_broker" class="loan_info_fields">
+            <label class="error transaction_who_broker"> This field is required. </label>
+         
+        </div>
+      </div>
+      <% end %>
+
+      <div class="columns medium-12" <% if @transaction_information_tab.custom_fields.include? "free_clear"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+          
+          <div class="free_div" style="float:left; width:100%">
+          <strong> Free and Clear:</strong>
+            <input type="radio" name="free_clear" value="Yes" class="loan_info_fields"><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="free_clear" value="No"><label> No </label>
+          </div>
+           <label class="error transaction_free_clear" style="float:left;"> This field is required. </label>
+          
+          
+        </div>
+      </div>
+
+      <% if !@transaction_information_tab.custom_fields.include? "original_purchase_price"%> 
+        <div class="columns medium-6 border-right free_clear" style="display:none;" >
+          <div class="trans-info-item">
+            <strong>Original Purchase Price:</strong>
+            
+              <input id="original_purchase_price" type="text"  class="loan_info_fields" name="original_purchase_price">
+               <label class="error transaction_original_purchase_price"> This field is required. </label>
+          
+          </div>
+        </div>
+      <% end %>
+
+
+      <% if !@transaction_information_tab.custom_fields.include? "original_purchase_date"%> 
+        <div class="columns medium-6 free_clear"  style="display:none;" >
+          <div class="trans-info-item">
+            <strong>Original Purchase Date:</strong>
+            
+              <input id="original_purchase_date" type="text"  class="loan_info_fields" name="original_purchase_date" maxlength="20">
+               <label class="error transaction_original_purchase_date"> This field is required. </label>
+           
+          </div>
+        </div>
+      <% end %>
+
+      <% if !@transaction_information_tab.custom_fields.include? "vested_by"%>
+        <div class="columns medium-6 border-right free_clear" style="display:none;">
+          <div class="trans-info-last">
+            <strong>Vested by:</strong>
+            
+              <input id="vested_by" type="text" rows="1" name="vested_by" maxlength="20" class="loan_info_fields ">
+              <label class="error transaction_vested_by"> This field is required. </label>
+           
+          </div>
+        </div>
+      <% end %>
+
+      <% if !@transaction_information_tab.custom_fields.include? "cash_contributed"%>
+      <div class="columns medium-6 free_clear"  style="display:none;">
+        <div class="trans-info-last">
+          <strong>Cash contributed:</strong>
+          
+            <input id="cash_contributed" type="text" rows="1" name="cash_contributed" maxlength="20" class="loan_info_fields">
+            <label class="error transaction_cash_contributed"> This field is required. </label>
+         
+        </div>
+      </div>
+      <% end %>
+
+    </div>
+  </div>
+</div><!-- content-white-box -->

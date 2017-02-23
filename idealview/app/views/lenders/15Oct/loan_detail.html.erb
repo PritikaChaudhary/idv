@@ -1,0 +1,747 @@
+
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<%= javascript_include_tag "https://raw.githubusercontent.com/ankane/chartkick.js/master/chartkick.js", "chartkick" %>
+<% if @access != "false" && @login != "false"%>
+<script>
+$('document').ready(function(){
+<% if @agree == "false" %>
+        $('#myModal').foundation('reveal', 'open',{
+            close_on_background_click:false,
+            close_on_esc:false
+        });
+ <% end %>
+
+ $('#close_popup').click(function(){
+                window.location.replace("http://<%= @hostname %>/");
+            });
+
+<% if defined? @loan.address && @loan.address!= 'None' %>
+    if($('#property-map').html().length==0)
+    {
+
+        var embed = '<iframe'+
+                    ' width="600"'+
+                    ' height="450"'+
+                    ' frameborder="0" style="border:0"'+
+                    ' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loan.address%>&zoom=15">'+
+            '</iframe>';
+    
+    
+        $('#property-map').html(embed);
+    }
+
+<% end %>
+   
+   });
+</script>
+<% end %>
+
+<script type="text/javascript">
+$('document').ready(function(){
+    $('#countdown').timeTo({
+        timeTo: new Date(new Date('<%= @endt %>')),
+        displayDays: 2,
+        theme: "black",
+        displayCaptions: true,
+        fontSize: 48,
+        captionSize: 14
+    });
+
+
+   /////////////////////////////// For New User////////////////////////
+        <% 
+        if @login!="true" %>
+             $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+         <% end %>
+        
+         $('#passwordset').click(function(){
+            pass = $('#password').val();
+            cpass = $('#cpassword').val();
+            if(pass != cpass)
+            {
+               $('#pass_error').show();
+               return false;
+            }
+            alert("Matched");
+            var data = $('#setPassword').serialize(); 
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/set_password',
+                    success:function(data){
+                                            outside(data);
+                                        }
+            });
+         });
+     
+    
+    $("#sign_up").click(function(){
+        $('#myModal2').foundation('reveal', 'close');
+        $('#myModal3').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+
+    $("#log_in").click(function(){
+        $('#myModal3').foundation('reveal', 'close');
+        $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+    //////////////////////////// End For New User /////////////////////
+
+    $('#interested').click(function(){
+        var status = "<%= @auth %>";
+       if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/acept_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    $("#interested").hide();
+                    $("#decline").hide();
+                    alert("Your request has been accepted.");
+               }
+            });
+        }
+    });
+
+     $('#decline').click(function(){
+        var status = "<%= @auth %>";
+        if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/decline_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    alert("Your request has been declined.");
+                    window.location.replace("http://<%= @hostname %>/");
+               }
+            });  
+        }
+    });
+
+    $("#accept_contract").click(function(){
+        var signature = $('#signature').val();
+        if(signature=="")
+        {
+            $("#required").show();
+        }
+        else
+        {
+            var data=$('#agreementForm').serialize();   
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/lenders/accept_agreement',
+                    success:function(response){
+                       $('#myModal').foundation('reveal', 'close');  
+                    }
+                });
+ 
+        }
+
+    });
+
+    $('#counter').jQuerySimpleCounter({
+        start:  0.0,
+        end:    '<%= @lltv %>',
+        easing: 'swing', // jQuery easing effects
+        duration: 600, // animation speed
+        complete: '' // callback function
+    });
+
+
+});
+</script>
+<!--
+    <div class="header">
+        <nav class="navbar main-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">LOGO</a>
+                <div class="pull-right">
+                    <button type="button" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <ul class="">
+                        <li class=""><a href="#home">Login</a></li>
+                    </ul>
+                    -- /.navbar-collapse --
+                </div>
+            </div>
+             /.container-fluid --
+        </nav>
+    </div> -->
+    <style type="text/css">
+        .login
+        {
+            display: none !important; 
+        }
+      
+        .modalhead
+        {
+            background-color:  #eeeeee;
+            text-align: center;
+            font-weight: bold;
+        }
+        .reveal-modal .close-reveal-modal, dialog .close-reveal-modal
+        {
+            top: 0;
+        }
+        #chart-1
+        {
+            height:170px !important;
+        }
+       .detail_header
+       {
+        color: #db765e;
+       }
+       .orbit-bullets
+       {
+        display: none;
+       }
+        .l-sidebar.sticky{
+           position: fixed;
+           top:40px;
+           background: none repeat scroll 0 0 #ffffff;
+           width:26%;
+           padding-left: 2px;
+           padding-right: 34px;
+        }
+        #chart-1 svg {
+            margin-left: -123px !important;
+        }
+
+        /* .sticky .btn{
+           width:67%;
+        }*/
+
+        /*.sticky li
+        {
+          width: 66%;
+        }*/
+
+        #breakPoint{
+            position: relative;
+            top:60px;
+            width: 100%;
+            float:left;
+        }
+    </style>
+    <% if @access == "true" %>
+    <div id="myModal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold;"><%= @agreement.header %></h5>
+      </div>
+        <p><%= @agreement.content %> </p>
+
+      <div class="small-8 small-centered columns">
+        <form method="post" action="http://<%= @hostname %>/lenders/acept_agreement" id="agreementForm">
+          <div class="row">
+          
+                    <div class="small-3 columns">
+                      <label for="right-label" class="right">Signature</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input type="text" id="signature" name="signature">
+                      <label id="required" style="color:red; margin-bottom:10px; display:none;"> Signature is required. </label>
+                    </div>
+
+          </div>
+
+          <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">Date</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="agreement_date" value="<%= @bdate %>">
+                      <input type="hidden" name="agreement_date_time" value="<%= @adate %>">
+                      <input type="hidden" name="agreement_id" value="<%= @agreement.id %>">
+                      <input type="hidden" name="lender_id" value="<%= @info.lender.id %>">
+                    </div>
+
+              
+          </div>
+           <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">IP Address</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="ip_address" value="<%= @ip %>">
+                    </div>
+
+          </div>
+
+          <div class="row">
+                <div class="small-6 small-centered columns">
+                  <input type="button" id="accept_contract"  value="Accept  & Sign Contract" class="tiny button">
+                </div>
+          </div>
+        </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+    <% end %>
+
+    <!-- For new User -->
+  
+        <div id="myModal2" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+                <h5 id="modalTitle" style="font-weight:bold;"> Log In</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                        <%= form_for(:user, :url => session_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                            Email : <%= f.text_field :email %>
+                        </div>
+                        <div class="medium-12 column">
+                            Password: <%= f.password_field :password %>
+                        </div>
+                        <div class="medium-12 column">
+                            <%= f.submit 'Sign in' %> <a href="javascript:void(0);" id="sign_up" style="float:right; text-decoration:underline">Sign Up</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+
+
+          <div id="myModal3" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+                <h5 id="modalTitle" style="font-weight:bold;"> Sign Up</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                       <%= form_for(:user, :url => registration_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                           Email:
+                           <%= f.email_field :email, autofocus: true %>
+                        </div>
+                        <div class="medium-12 column">
+                            Password: 
+                            <% if @validatable %>
+                            <em>(<%= @minimum_password_length %> characters minimum)</em>
+                            <% end %><br />
+                            <%= f.password_field :password, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                            Confirm: 
+                            <%= f.password_field :password_confirmation, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                             <%= f.submit "Sign up" %> <a href="javascript:void(0);" id="log_in" style="float:right; text-decoration:underline">Log In</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+    
+    <!-- End New User -->
+
+    <div class="lp-bg"></div>
+    <div class="content-section">
+
+      <h2 class="loan_msg">The loan opportunity will be given to another Lender in</h2>
+      <div id="countdown"></div>
+
+      
+      <div class="row">
+        <div class="loan-share-content">      
+          
+          <div class="medium-8 column">
+              <div class="row">
+
+                  <div class="property_info medium-9 column">
+                      <h1 class="page-title"><%= @loan.name %></h1>
+                      <% unless @loan.info['_LendingCategory'].blank? %>
+                          <h5><span style="float:left;">Category:</span><label style="float:left; font-size:17px;"><%= @loan.info['_LendingCategory'] %></label></h5>
+                      <% end %>
+                      <br>
+                      <h5><span style="float:left;">Location:</span>
+                          <label style="float:left; font-size:17px;">
+                              <% unless @loan.info['City3'].blank? %>
+                                  <%= @loan.info['City3']+", "%>
+                              <% end %>
+                              <% unless @loan.info['State3'].blank? %>
+                                  <%= @loan.info['State3']%>
+                              <% end %>
+                          </label>
+                      </h5>
+                   </div> 
+                     
+                      
+                   
+                 
+                  <div class="medium-3 column ltv_prop">
+                                                            
+                          <% unless @lltv.blank? %>
+                              <span>LTV:</span>  
+                               
+                              <div id="counter"></div> 
+                            <% end %>
+                  </div>
+              </div> <!-- top row -->
+              <div class="r-content">
+              <% if !@loan.images.blank?  %>
+                  
+                  <div class="sbanner-wrap">
+                      <div class="sbanner-inner">
+                              <ul class="example-orbit" data-orbit>
+                                   <% if !@loan.images.blank? %>
+                                       <% @loan.images.each do |img|%>
+                                           <% if img.featured != true 
+                                                  front = ""
+                                              else
+                                                  front = "active"
+                                              end %>
+
+                                               <li class="<%= img.featured %>"> 
+                                                  <img style="height: 348px; width: 748px;" src="<%= img['url']%>">
+                                               </li>
+                                           
+                                       <% end %> 
+                                   <% end %>
+                              </ul>
+                      </div>
+                  </div>
+               <% end%>
+                  <ul class="tabs" data-tab>
+                    <li class="tab-title active"><a href="#panel1">OVERVIEW</a></li>
+                    <li class="tab-title"><a href="#panel2">BORROWER</a></li>
+                    <li class="tab-title"><a href="#panel3">COLLATERAL</a></li>
+                    
+                  </ul>
+              <% if @access != "false" && @login != "false"%>
+                  <div class="tabs-content">
+                         <div class="content active" id="panel1">
+                          <% if !@funds.blank? %>
+                                  <div class="white-content-box">
+                                      <div class="detail_header"><b>Use Of Funds</b></div>
+                                      
+                                      <b><%= fd_money(@loan.info['_NetLoanAmountRequested0']) %></b><span style="color:#777777;"> - Total Loan Amount</span>
+                                            <% Chartkick.options = { library: { legend: { enabled: true }, exporting: { enabled: false }, backgroundColor: "transparent", height: "150", width: "650", tooltip: {backgroundColor:"transparent"} } }%>
+                                                <%= bar_chart @funds.map { |fund| 
+                                                      {
+                                                        :name => fund.use, 
+                                                        :data => [["",fund.amount, "#{fund.use}"]], 
+                                                      } 
+                                                    }, :library => {:isStacked => true} %>                            
+
+                                          
+                                  </div><!-- white-content-box -->
+                          <% end %>
+                          <div class="white-content-box">
+                              <div class="detail_header"><b>Summary</b></div>
+                              <div class="wcb-content">
+                                  
+                                  <% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+                                  <article>
+                                      <% field_text = @loan.info['_LoanSummaryWhatareyoulookingfor']%>
+                                      <%= send('simple_format', field_text)%>
+                                  </article>
+                                <% end %> 
+                                 <div id='property-map' class="flex-video"></div>
+
+                                 
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+
+                          <div class="white-content-box">
+                              <div class="detail_header"><b>Exit Strategy</b></div>
+                              <div class="wcb-content">
+                                   <% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+                                    <article>
+                                      <% field_text = @loan.info['_ExitStrategyHowwillyoupaytheloanoff']%>
+                                      <%= send('simple_format', field_text)%>
+                                    </article>
+                                   <% end %>
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+                          <div class="white-content-box">
+                              <div class="detail_header"><b>Offering Documents</b></div>
+                              <div class="wcb-content">
+                                  
+                                     
+                                      <% @loan.documents.each do |doc| %>
+                                         <div class="add-files-outer">
+                                              <div class="uploaded-files">
+                                               <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+                                                  <a href="<%= url %>"><%= doc.name %></a>
+                                              </div>
+                                          </div>
+                                      <% end %>
+                                      
+                                     
+                                  
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+                        </div>
+
+                        <div class="content" id="panel2">
+                              <div class="white-content-box">
+                                  <div class="detail_header"><b>Personal Information</b></div>
+                                 <div class="wcb-content">
+                                      <table>
+                                          <tr>
+                                              <td width="400"><b>Name : </b>  <%= @loan.info['FirstName'] %> <%= @loan.info['LastName'] %> </td>
+                                              <td width="400"><b>Email : </b> <%= @loan.info['Email'] %> </td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"> <b>Birthday : </b>  <%= @loan.info['Birthday'] %> </td>
+                                              <td width="400"><b>Phone : </b><%= @loan.info['Phone1'] %></td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"><b>Gross Monthly Income : </b>  <%= fd_money(@loan.info['_GrossMonthlyIncome']) %> </td>
+                                              <td width="400"><b>Borrower Cash Contribution : </b>
+                                                  <%= fd_money(@loan.info['_CashContribution']) %>
+                                              </td>
+                                          </tr>
+                                      </table>
+                                  </div>
+                              </div><!-- white-content-box -->
+                          <div class="white-content-box">
+                              <div class="detail_header"><b>Borrower Bio</b></div>
+                              <div class="wcb-content">
+                                   <% unless @loan.info['_BorrowerBio'].blank? %>
+                                    <article>
+                                      <% field_text = @loan.info['_BorrowerBio']%>
+                                      <%= send('simple_format', field_text)%>
+                                    </article>
+                                   <% end %>
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+                         <div class="white-content-box">
+                                  <div class="detail_header"><b>Business Information</b></div>
+                                 <div class="wcb-content">
+                                      <table>
+                                          <tr>
+                                              <td width="400"><b>Name : </b>  <%= @loan.info['_BusinessName'] %>  </td>
+                                              <td width="400"><b>Phone : </b> <%= @loan.info['Phone2'] %> </td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"> <b>Address : </b>  <%= @loan.info['Address2Street1'] %> </td>
+                                              <td width="400"><b>City : </b><%= @loan.info['City2'] %></td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"><b>Gross Monthly Income : </b>  <%= fd_money(@loan.info['_GrossMonthlyIncome']) %> </td>
+                                              <td width="400"><b>Borrower Cash Contribution : </b>
+                                                  <%= fd_money(@loan.info['_CashContribution']) %>
+                                              </td>
+                                          </tr>
+                                      </table>
+                                  </div>
+                              </div><!-- white-content-box -->
+                              <div class="white-content-box">
+                                  <div class="detail_header"><b>Business Financials</b></div>
+                                   <div class="wcb-content">
+                                       <table>
+                                          <tr>
+                                              <td width="400"><b> Cash On Hand : </b>  <%= fd_money(@loan.info['_CashOnHand']) %>  </td>
+                                              <td width="400"><b>Available Credit : </b> <%= fd_money(@loan.info['_AvailableCredit']) %> </td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"> <b> Monthly NOI : </b>  <%= fd_money(@loan.info['_MonthlyNOI']) %> </td>
+                                              <td width="400"><b> Annual NOI : </b><%= fd_money(@loan.info['_AnnualNOI']) %></td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"><b> Accounts Receivable : </b>  <%= fd_money(@loan.info['_AccountsReceivable']) %> </td>
+                                              <td width="400"><b>Accounts Payable : </b>
+                                                  <%= fd_money(@loan.info['_AccountsPayable']) %>
+                                              </td>
+                                          </tr>
+                                      </table>
+                                  </div>
+                          </div><!-- white-content-box -->
+
+                         </div><!--- panel2 ------------>
+
+                         
+                          <div class="content" id="panel3">
+                              <div class="white-content-box">
+                                  <div class="detail_header"><b>Collateral Information</b></div>
+                                  <div class="wcb-content">                                           
+                                      <table>
+                                          <tr>
+                                              <td width="400"><b> Address : </b>  <%= @loan.info['Address3Street1'] %>  </td>
+                                              <td width="400"><b>Mortgage Status : </b> 
+                                              <% if !@loan.info['_FreeandClear0'].blank? %> 
+                                                  <% if @loan.info['_FreeandClear0']==1 %>
+                                                      Paid In Full
+                                                  <% elsif @loan.info['_FreeandClear0'] ==0 %>
+                                                      Has Mortgage
+                                                  <% end %>
+                                              <% end %>
+                                              </td>
+                                          
+                                          </tr>
+                                          <tr>
+                                              <td width="400"> <b> Estimated Property Value :  </b>  
+                                              <%= fd_money(@loan.info['_EstimatedMarketValue']) %> </td>
+                                              <td width="400"><b>Amount Owed : </b><%= fd_money(@loan.info['_AmountOwed']) %></td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"><b>Gross Monthly Income : </b>
+                                              <%= fd_money(@loan.info['_HowmuchGrossMonthlyIncome']) %> </td>
+                                              <td width="400"><b> Purchase Price : </b>
+                                                  <%= fd_money(@loan.info['_PurchasePrice']) %>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td width="400"><b>Original Purchase Price :  </b>
+                                              <%= fd_money(@loan.info['_OriginalPurchasePriceifitsarefinance']) %> </td>
+                                              <td width="400">&nbsp;</td>
+                                          </tr>
+                                      </table>
+                                  </div>
+                              </div><!-- white-content-box -->
+                              <div class="white-content-box">
+                              <div class="detail_header"><b>Additional Collateral</b></div>
+                              <div class="wcb-content">
+                                   <% unless @loan.info['_AdditionalCollateralWhatelsecanyouofferassecurity0'].blank? %>
+                                    <article>
+                                      <% field_text = @loan.info['_AdditionalCollateralWhatelsecanyouofferassecurity0']%>
+                                      <%= send('simple_format', field_text)%>
+                                    </article>
+                                   <% end %>
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+                        </div>
+                  </div>
+              <% end %>
+              <% if @access == "false" && @login == "false" %>
+                  <div class="white-content-box">
+                      <h5>Please login to see the loan details. </h5> 
+                  </div>  
+              <% end %>
+
+              </div> <!-- r-content -->
+          </div> <!-- medium-8 -->
+
+
+          <div class="medium-4 column">
+              <div id="breakPoint"> </div>
+              <div class="l-sidebar">
+                  <!-- <div class="gray-box"> -->
+                  <div>
+                      <h3>Highlights:</h3>
+                      <ul class="hl-list">
+                          <li>
+                              <span class="hl-l">Loan Amount:</span>
+                              <span class="hl-r"><%= fd_money(@loan.info['_NetLoanAmountRequested0']) %></span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Value:</span>
+                              <span class="hl-r"><%= @loan.info['_EstimatedMarketValue'] %></span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Term Length:</span>
+                              <span class="hl-r"><%= @loan.info['_DesiredTermLength'] %></span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Location: </span>
+                              <span class="hl-r">
+                              <% unless @loan.info['City3'].blank? %>
+                                  <%= @loan.info['City3']+", "%>
+                              <% end %>
+                              <% unless @loan.info['State3'].blank? %>
+                                  <%= @loan.info['State3']%>
+                              <% end %>
+                              </span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Expected Close:</span>
+                              <span class="hl-r"><%= @loan.info['_ExpectedCloseDate'] %></span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Lending Category:</span>
+                              <span class="hl-r"><%= @loan.info['_LendingCategory'] %></span>
+                          </li>
+                          <li>
+                              <span class="hl-l">Loan Type: </span>
+                              <span class="hl-r"><%= @loan.info['_LendingTypes'] %></span>
+                          </li>
+                           <li>
+                              <span class="hl-l">Transaction Type: </span>
+                              <span class="hl-r"><%= @loan.info['_TransactionType0'] %></span>
+                          </li>
+                      </ul>
+                  </div>
+                  <br>
+                  <% 
+                  if @login=="true" 
+                      if @info.status != "accept" %>
+                          <a class="button expand btn" href="javascript:void(0);" id="interested">I am interested</a>
+                          <a class="button expand btn" href="javascript:void(0);" id="decline">I decline</a>
+                   <% 
+                      end
+                  end %>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+      jQuery(function($){
+        var breakPoint =$('#breakPoint').offset().top;
+         var sidebar=  $('.l-sidebar');
+          $(window).scroll(function(){
+                 var wintop= $(window).scrollTop();
+                   sidebar[(wintop >breakPoint )? "addClass": "removeClass" ]("sticky");
+//console.log(wintop,breakPoint,sidebar);
+          })
+
+      });
+
+    $('article').readmore({speed: 500});
+  </script>

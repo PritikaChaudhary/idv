@@ -1,0 +1,281 @@
+<script type="text/javascript">
+$('document').ready(function(){
+  <% if @from_free == "yes"%>
+    $('#thanksModal').foundation('reveal', 'open');
+  <% end %>
+  <% if params[:u] %>
+    data="user_id=<%= current_user.id %>";
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/payments/select_plan',
+              success:function(response){
+               $('#active_content').html(response);
+             }
+          });
+  <% end %>
+  $('.payment_history').click(function(){
+      $('#active_content').show();
+      $('#billing_update_info').hide();
+     data="user_id=<%= current_user.id %>";
+     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/payments/payment_history',
+                success:function(response){
+                 $('#active_content').html(response);
+               }
+            });
+  });
+
+  $('.next_payment').click(function(){
+     $('#active_content').show();
+      $('#billing_update_info').hide();
+     data="user_id=<%= current_user.id %>";
+     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/payments/next_payment',
+                success:function(response){
+                 $('#active_content').html(response);
+               }
+            });
+  });
+
+  $('.upgrade').click(function(){
+     $('#active_content').show();
+      $('#billing_update_info').hide();
+     data="user_id=<%= current_user.id %>";
+     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/payments/select_plan',
+                success:function(response){
+                 $('#active_content').html(response);
+               }
+            });
+  });
+
+  $('.payment_method').click(function(){
+     data="user_id=<%= current_user.id %>";
+     // $.ajax({
+     //            data: data,
+     //            type: 'POST',
+     //            url: '/payments/change_billing_info',
+     //            success:function(response){
+     //             $('#active_content').html(response);
+     //             var script = document.createElement("script");
+     //             script.src = "https://js.recurly.com/v4/recurly.js"; 
+     //           }
+     //        });
+
+      $('#active_content').hide();
+      $('#billing_update_info').show();
+  });
+});
+</script>
+<script src="https://js.recurly.com/v4/recurly.js"></script>
+
+
+<style type="text/css">
+	.expire
+  {
+    width : 100%;
+  }
+  .half_text
+	{
+		width : 40% !important;
+		float: left;
+    margin-right: 10px;
+	}
+  .payment-errors
+  {
+    color: red;
+  }
+  .bordr_top_only
+  {
+    border-top: 1px solid #b9b9b9;
+  }
+  .botm_border
+  {
+    border-bottom: 1px solid #b9b9b9; 
+    cursor:pointer;
+  }
+  .left_tab
+  {
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 400px;
+  }
+    .recurly-hosted-field
+  {
+     background-color: #f1f1f1;
+      border: 1px solid #cccccc;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+      box-sizing: border-box;
+      color: rgba(0, 0, 0, 0.75);
+      display: block;
+      font-family: inherit;
+      font-size: 0.875rem;
+      height: 2.3125rem;
+      margin: 0 0 1rem;
+      padding: 0.5rem;
+      transition: box-shadow 0.45s ease 0s, border-col
+  or 0.45s ease-in-out 0s;
+      width: 100%;
+  }
+
+
+</style>
+
+<div id="thanksModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="medium-12 column modal_msg_outer">
+   <p class="modal_msg"> Congratulations, your account has been upgraded.</p>
+  </div>
+      
+  <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+</div>
+
+
+<div class='row main_div'>
+  <div class="large-12 columns center_txt">
+    Billing Information
+  </div>
+  <div class="add_edit">
+  	<div class="large-3 columns left_tab">
+      <div class="left-headings small-12 columns botm_border payment_history">
+        Payment History
+      </div>
+      <div class="left-headings small-12 columns botm_border next_payment">
+        Next Billing Date
+      </div>
+      <div class="left-headings small-12 columns botm_border payment_method">
+        Payment Method
+      </div>
+      <% @plan = current_user.plan.downcase %>
+      <% if @plan != "enterprise" %>
+          <div class="left-headings small-12 columns botm_border upgrade">
+            Upgrade
+          </div>
+      <% end %>
+    </div>
+    <div class="large-9 columns bordr_top_only" id="active_content" >
+      <% if params[:u] %>
+      <% else %>
+       <%= render partial: 'payment_history' %>
+      <% end %>
+    </div>
+    <div class="large-9 columns bordr_top_only" id="billing_update_info" style="display:none;">
+        <form method="post" id="signupForm" action="http://<%= @hostname %>:3000/payments/change_info">
+    <h3 class="heading_signup">Update Information</h3>
+    <div class="medium-6 column">
+      <input type="text" data-recurly="first_name" name="firstName" id="firstName" placeholder="First Name" class="required" style="background-color: #f1f1f1;">
+    </div>
+    <div class="medium-6 column">
+      <input type="text" name="lastName" placeholder="Last Name" class="form- control" data-recurly="last_name" style="background-color: #f1f1f1;">
+    </div>
+    <input type="hidden" name="customer_id" value="<%= current_user.customer_id %>">
+    <input type="hidden" name="recurlytoken" data-recurly="token">
+    <div class="medium-12 column">
+      <div data-recurly="number" id= "recurly-number"></div>
+    </div>
+    <div class="medium-12 column">
+      <div data-recurly="cvv" id="recurly-cvv"></div>
+    </div>
+    <div class="medium-6 column">
+      <div data-recurly="month" id="recurly-month"></div> 
+    </div>
+    <div class="medium-6 column">
+      <div data-recurly="year" id="recurly-year"></div>
+    </div>
+    <div class="medium-12 column">
+          <input type="submit" value="SUBMIT" class="tiny button">
+    </div>
+</form>
+
+
+    <script type="text/javascript">
+      
+      $('document').ready(function(){
+     $('#signupForm').on('submit', function (event) {
+      var form = this;
+        event.preventDefault();
+        recurly.token(form, function (err, token) {
+        if (err) {
+          // alert(JSON.stringify(err.fields));
+          errors = err.fields;
+        $.each(errors, function( index, value ) 
+          { 
+            if(value=="number")
+            {
+              alert("Please enter valid card number.")  
+            }
+            if(value=="month")
+            {
+              alert("Please enter valid expiry month.") 
+            }
+            if(value=="year")
+            {
+              alert("Please enter valid expiry year.")  
+            }
+          });
+          return false;
+          // handle error using err.code and err.fields
+        } else {
+          //alert(token.id);
+          $('input[name="recurly-token"]').val(token.id);
+            data = $('#signupForm').serialize();
+             $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/payments/change_info',
+                success:function(response){
+                 alert("Billing Information has been changed successfully.");
+               }
+            });
+        }
+    });
+  });
+     })
+    </script>
+
+    <script>
+    // recurly.readyState = 0;
+    // recurly.configure('ewr1-Si1772BTvzpk8Qer5H6Oys');
+     recurly.configure({
+        publicKey: 'ewr1-Si1772BTvzpk8Qer5H6Oys',
+         fields: {
+        number: '#recurly-number',
+        month: '#recurly-month',
+        year: '#recurly-year',
+        cvv: '#recurly-cvv'
+      },
+        style: {
+          
+          all: {
+            fontFamily: 'inherit',
+            fontSize: '1rem',
+            fontColor: 'inherit', 
+        border:'1px solid'
+      },
+          number: {
+            placeholder: 'Card Number'
+            
+          },
+          month: {
+            placeholder: 'MM'
+          },
+          year: {
+            placeholder: 'YY  '
+          },
+          cvv: {
+            placeholder: 'CVV'
+          }
+        }
+      });
+
+  </script>
+
+    </div>
+  </div>
+</div>

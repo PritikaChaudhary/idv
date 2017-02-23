@@ -1,0 +1,18 @@
+<table style="width:100%">
+              <tr><th><input type="checkbox" name="select_all_admin"  class="select_all_admins" style="float:left; margin-bottom:0px;"></th><th>Name</th><th>Email</th><th>&nbsp;</th></tr>
+              <% @users.each do |user| %>
+                <tr>
+                  <td><input type="checkbox" nid="check_<%= user.id %>" name="select_admin" value="<%= user.id %>" class="single_admin" style="float:left; margin-bottom:0px;"></td>
+                  <td><%= user.name %></td>
+                  <td><%= link_to(user.email,  admins_edit_user_path(user)) %></td>
+                  <td><%= link_to((button_tag 'Edit', class: 'tiny button'), admins_edit_user_path(user)) %></td>
+                   <!-- <td><%= user.roles_text %></td>
+                   <td><%= user.is_admin %></td> -->
+                <!-- <td>
+                  <%= link_to 'Delete', admins_destroy_user_path(user),
+                          method: :delete,
+                          data: { confirm: 'Are you sure?' } %>
+                </td> -->
+                </tr>
+              <% end %>
+            </table>

@@ -1,0 +1,59 @@
+<div class="display_collateral_loc">
+		<div class="row">
+			<div  class='medium-12 columns'>
+			<span class="hl-l">ADDRESS : </span><br>
+			<%= @collateral.address %>
+
+				<span class="edit_pen " style="float:right;">
+					<img  style="width:15px;" src="/assets/edit-icon.png" tabindex="0" onclick="edit_address('<%= @collateral.id %>')">
+				</span>
+			
+			
+				<!---- Hide/Show ---->
+
+					<% unless @collateral.hide_fields.blank? %>
+					   	<span id="show_address_<%=  @collateral.id %>" <% if @collateral.hide_fields.include? "#{f_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+							<a style="" onclick="show_collateral_field('<%= @collateral.id %>', 'address');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_address_<%= @collateral.id %>" <% if @collateral.hide_fields.include? "#{f_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+							<a style="" onclick="hide_collateral_field('<%=   @collateral.id   %>', 'address');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% else %>
+						<span id="show_address_<%= @collateral.id  %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+							<a style="" onclick="show_collateral_field('<%= @collateral.id %>', 'address');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_address_<%= @collateral.id %>"  style="float:right; margin-top:0px; margin-right:2px;">
+							<a style="" onclick="hide_collateral_field('<%= @collateral.id %>', 'address');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% end %>
+  
+
+				<!---- Hide/Show ---->
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="medium-4 columns">
+				<span class="hl-l">CITY : </span><br>
+				<%= @collateral.city %>
+			</div>
+			<div class="medium-4 columns">
+				<span class="hl-l">STATE : </span><br>
+				<%= @collateral.state %>
+			</div>
+			<div class="medium-4 columns">
+				<span class="hl-l">POSTALCODE : </span><br>
+				<%= @collateral.postalcode %>
+			</div>
+		</div>
+</div>

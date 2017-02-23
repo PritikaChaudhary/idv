@@ -1,0 +1,141 @@
+<% if (!field_value.blank? && field_value != 0) || current_user   %>
+<%= form_tag({:controller=>'loans', :action=>'edit_fields',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type}, :onSubmit => 'return false', :id=>field_name+'-form') do %>
+		  <%= hidden_field_tag 'contact_id', contact_id %>
+		  <%= hidden_field_tag 'field_type', field_type %>
+		  <%= hidden_field_tag 'field_name', field_name %>
+		  <%= hidden_field_tag 'field_label', field_label %>
+		  <%= hidden_field_tag 'field_options', field_options %>
+
+	<%if edit%>
+		  <div>
+		    <b><%= field_label %></b><br>
+			<%
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options[field_value].blank?
+				   		field_value=options[field_value]
+				   end
+				end
+		    	field_value=options_for_select(options,field_value)
+		    end
+		    
+		    if field_type == 'date_field_tag'
+		    	if !field_value.blank?
+     				field_value = Date.strptime(field_value.to_date.strftime("%d/%m/%Y"), '%d/%m/%Y')
+  				end
+		    end
+		    %>
+	    	<%
+	    	html_options = [rows:1]
+	    	if field_type=='text_area_tag'
+	    		html_options = [rows:15]
+	    	end
+	    		
+	    	%>
+
+	    	<%
+			  extra_callback = '';
+			  if field_name =='_FreeandClear0'
+			  	extra_url = url_for :controller=>'loans', :action=>'update_amount_owed',:id=>contact_id
+			  	extra_callback = "callAjax('#{extra_url}','_AmountOwed', '#{field_name}-form' );"
+			  end
+			  %>
+		    <div style='max-width:800px;margin-left:auto;margin-right:auto;'><%= send(field_type, field_name, field_value, html_options[0])  %></div>
+		  </div>
+		  
+
+		  
+			<% @url=url_for :controller=>'loans', :action=>'edit_fields',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type%>
+		  <%= button_tag "Save", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form' );#{extra_callback}", class: 'tiny button'%>
+			<% @url=url_for :controller=>'loans', :action=>'edit_fields',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type, :cancel=>true%>
+		  <%= button_tag "Cancel", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form' );", class: 'tiny button'%>
+		  
+		
+	<%else%>
+		<%
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options.key(field_value).blank?
+				   		field_value=options.key(field_value)
+				    end
+			        if !options.key(field_value.to_s).blank?
+				   		field_value=options.key(field_value.to_s)
+				    end
+				end
+		    end
+		 %>
+
+		<% @url=url_for :controller=>'loans', :action=>'edit_fields',:id=>contact_id, :field=>field_name, :edit=>true, :format_type=>format_type%>
+		<% #roleCheck = policy(Loan).update
+			#abort("#{roleCheck.inspect}")
+			 %>
+
+		<% if(@brokerLogin==true) 
+		 %>
+				<span style='min-width:20px;min-height:20px'   ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'  >
+		<% else %>
+				<span style='min-width:20px;min-height:20px' <% if policy(Loan).update? %> ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")' <% end %>>
+		<% end %>
+			<% if !field_label.blank? %>
+			<span style='font-weight:bold'><%=field_label%></span>
+
+			<!------------------------ Hide Fields -------------------------------->
+					<% 
+						@loanInfo = CopyLoan.find_by_id(contact_id)
+					   	# abort("#{@loanInfo.inspect}")
+					   %>
+
+			<% unless @loanInfo.hide_fields.blank? %>
+			   <span id="show_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+					<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+						<i class="fa fa-eye-slash" tabindex="0"></i>
+					</a>
+				</span>
+
+			  	<span id="hide_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+					<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+						<i class="fa fa-eye" tabindex="0"></i>
+					</a>
+				</span>
+			<% else %>
+
+				<span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+					<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+						<i class="fa fa-eye-slash" tabindex="0"></i>
+					</a>
+				</span>
+
+			  	<span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+					<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+						<i class="fa fa-eye" tabindex="0"></i>
+					</a>
+				</span>
+			<% end %>
+
+			<!------------------------ End Hide Fields -------------------------------->
+
+			<BR>
+			<% end %>
+			<%
+				if field_value == 'Both'
+					field_text = 'Purchase & Refinance'
+				else
+					field_text = field_value
+				end
+				
+				if field_value.blank?
+					# if field_label.blank?
+					# 	field_text = 'No '+field_name
+					# else
+					# 	field_text = 'No '+field_label
+					# end	
+				end
+			%>
+			<%= send(format_type, field_text) %>
+		</span>
+		<%= hidden_field_tag field_name, field_value %>
+	<%end%>
+<% end %>
+<% end %>

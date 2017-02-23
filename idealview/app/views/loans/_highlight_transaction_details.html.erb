@@ -1,0 +1,250 @@
+<div class="sidebar-item-header">Transaction Detail</div>
+<div class="sidebar-item-content">
+  <table border="0" cellpadding="0" cellspacing="0"  class="highlights-table">
+    <tr>
+        <% field_name = 'purchas_refi_amount'%>
+        <td>Purchasor Refi Amount:</td>
+        <td><input type="text" name="<%=field_name%>" value="<%= @loan.info['purchas_refi_amount'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%=field_name%>"></td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"purchas_refi_amount"} %>
+        </td>
+    </tr>
+    <tr>
+        <% field_name = 'improvement_construction'%>
+        <td>Improvement/Construction:</td>
+        <td><input type="text" name="<%=field_name%>" value="<%= @loan.info['improvement_construction'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%=field_name%>"></td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"improvement_construction"} %>
+        </td>
+    </tr>
+    <tr>
+        <%field_name = 'additional_uses'%>
+        <td>Additional Uses:</td>
+        <td>
+          <input type="text" name="<%=field_name%>" value="<%= @loan.info['additional_uses'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+        </td>
+        <td>
+             <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"additional_uses"} %>
+        </td>
+    </tr>
+    <tr>
+        <%field_name = 'interest_reserve'%>
+        <td>Interest Reserves:</td>
+        <td><input type="text" name="<%=field_name%>" value="<%= @loan.info['interest_reserve'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>"></td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"interest_reserve"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'other_reserves'%>
+        <td>Other Reserves:</td>
+        <td><input type="text" name="<%=field_name%>" value="<%= @loan.info['other_reserves'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>"></td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"other_reserves"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'other_loan_costs'%>
+        <td>Other Loan Costs:</td>
+        <td><input type="text" name="<%=field_name%>" value="<%= @loan.info['other_loan_costs'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>"></td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"other_loan_costs"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'lender_fees'%>
+        <td>Lender Fees:</td>
+        <td>
+          <div class="analysis" id="about_lender_fees">
+            <input type="text" name="<%=field_name%>" value="<%= @loan.info['lender_fees'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+          </div>
+          <table id="detail_lender_fees" class="detail_div">
+            <tr>
+              <td><b>Gross Loan Amount:</b></td>
+              <td><input type="text" name="gross_loan_amount_sub7" id="gross_loan_amount_sub7" onchange="return save_sub_value('gross_loan_amount', 'money',7);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"lender_fees"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'broker_fees'%>
+        <td>Broker Fees:</td>
+        <td>
+          <div class="analysis" id="about_broker_fees">
+            <input type="text" name="<%=field_name%>" value="<%= @loan.info['broker_fees'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+          </div>
+          <table id="detail_broker_fees" class="detail_div">
+            <tr>
+              <td><b>Gross Loan Amount:</b></td>
+              <td><input type="text" name="gross_loan_amount_sub7" id="gross_loan_amount_sub7" onchange="return save_sub_value('gross_loan_amount', 'money',7);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+            <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"broker_fees"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'est_title_escrow'%>
+        <td>Est. Title & Escrow:</td>
+        <td>
+           <input type="text" name="<%=field_name%>" value="<%= @loan.info['est_title_escrow'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_LendingTypes"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'legal_fees'%>
+        <td>Legal Fees (Transactional):</td>
+        <td>
+           <input type="text" name="<%=field_name%>" value="<%= @loan.info['legal_fees'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"legal_fees"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'gross_pre_down_payment'%>
+        <td>Gross (Pre Down-Payment):</td>
+        <td>
+          <div class="analysis" id="about_gross_pre_down_payment">
+           <input type="text" name="<%=field_name%>" value="<%= @loan.info['gross_pre_down_payment'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+          </div>
+          <table id="detail_gross_pre_down_payment" class="detail_div">
+            <tr>
+              <td><b>Purchasor Refi Amount</b></td>
+              <td> <input type="text" name="purchas_refi_amount_sub" id="purchas_refi_amount_sub" onchange="return save_sub_value('purchas_refi_amount', 'money',1);" value="<%= @loan.info['purchas_refi_amount'] %>" class="sub_input"> </td>    
+            </tr>
+             <tr>
+              <td><b>Improvement/Construction </b></td>
+              <td> <input type="text" name="improvement_construction_sub2" id="improvement_construction_sub2" onchange="return save_sub_value('improvement_construction', 'money',2);" value="<%= @loan.info['improvement_construction'] %>" class="sub_input"> </td>    
+            </tr>
+            <tr>
+              <td><b>Additional Uses</b></td>
+              <td>  <input type="text" name="additional_uses_sub" id="additional_uses_sub" onchange="return save_sub_value('additional_uses', 'money',1);" value="<%= @loan.info['additional_uses'] %>" class="sub_input"> </td>    
+            </tr>
+            <tr>
+              <td><b>Interest Reserve</b></td>
+              <td>  <input type="text" name="interest_reserve_sub2" id="interest_reserve_sub2" onchange="return save_sub_value('interest_reserve', 'money',2);" value="<%= @loan.info['interest_reserve'] %>" class="sub_input">  </td>    
+            </tr>
+            <tr>
+              <td><b>Other Reserves </b></td>
+              <td> <input type="text" name="other_reserves_sub2" id="other_reserves_sub2" onchange="return save_sub_value('other_reserves', 'money',2);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"> </td>    
+            </tr>
+             <tr>
+              <td><b>Other Loan Costs </b></td>
+              <td><input type="text" name="other_loan_costs_sub" id="other_loan_costs_sub" onchange="return save_sub_value('other_loan_costs', 'money',1);" value="<%= @loan.info['other_loan_costs'] %>" class="sub_input">  </td>    
+            </tr>
+            <tr>
+              <td><b>Lender Fees</b></td>
+              <td> <input type="text" name="lender_fees_sub" id="lender_fees_sub" onchange="return save_sub_value('lender_fees', 'money',1);" value="<%= @loan.info['lender_fees'] %>" class="sub_input"></td>    
+            </tr>
+            <tr>
+              <td><b>Broker Fees</b></td>
+              <td> <input type="text" name="broker_fees_sub" id="broker_fees_sub" onchange="return save_sub_value('broker_fees', 'money',1);" value="<%= @loan.info['broker_fees'] %>" class="sub_input"></td>    
+            </tr>
+            <tr>
+              <td><b>Est. Title & Escrow</b></td>
+              <td> <input type="text" name="est_title_escrow_sub" id="est_title_escrow_sub" onchange="return save_sub_value('est_title_escrow', 'money',1);" value="<%= @loan.info['est_title_escrow'] %>" class="sub_input"></td>    
+            </tr>
+            <tr>
+              <td><b>Legal Fees</b></td>
+              <td> <input type="text" name="legal_fees_sub" id="legal_fees_sub" onchange="return save_sub_value('legal_fees', 'money',1);" value="<%= @loan.info['legal_fees'] %>" class="sub_input"> </td>    
+            </tr>
+          </table>
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"gross_pre_down_payment"} %>
+        </td>
+    </tr>
+
+     <tr>
+        <%field_name = 'net_proceeds'%>
+        <td> Net Proceeds (After Down): </td>
+        <td>
+          <div class="analysis" id="about_net_proceeds">
+             <input type="text" name="<%=field_name%>" value="<%= @loan.info['net_proceeds'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+          </div>
+           <table id="detail_gross_pre_down_payment" class="detail_div" >
+            <tr>
+              <td><b>Purchasor Refi Amount</b></td>
+              <td> <input type="text" name="purchas_refi_amount_sub" id="purchas_refi_amount_sub" onchange="return save_sub_value('purchas_refi_amount', 'money',1);" value="<%= @loan.info['purchas_refi_amount'] %>" class="sub_input"> </td>    
+            </tr>
+             <tr>
+              <td><b>Improvement/Construction </b></td>
+              <td> <input type="text" name="improvement_construction_sub2" id="improvement_construction_sub2" onchange="return save_sub_value('improvement_construction', 'money',2);" value="<%= @loan.info['improvement_construction'] %>" class="sub_input"> </td>    
+            </tr>
+            <tr>
+              <td><b>Additional Uses</b></td>
+              <td>  <input type="text" name="additional_uses_sub" id="additional_uses_sub" onchange="return save_sub_value('additional_uses', 'money',1);" value="<%= @loan.info['additional_uses'] %>" class="sub_input"> </td>    
+            </tr>
+            <tr>
+              <td><b>Cash to Contribute</b></td>
+              <td> <input type="text" name="acash_to_contribute_sub2" id="acash_to_contribute_sub2" onchange="return save_sub_value('acash_to_contribute', 'money',2);" value="<%= @loan.info['acash_to_contribute'] %>" class="sub_input"> </td>    
+            </tr>
+           
+          </table>
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"net_proceeds"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'interest_rate'%>
+        <td> Interest Rate: </td>
+        <td>
+           <input type="text" name="<%=field_name%>" value="<%= @loan.info['net_proceeds'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"interest_rate"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'term_in_months'%>
+        <td> Term In Months:</td>
+        <td>
+           <input type="text" name="<%=field_name%>" value="<%= @loan.info['term_in_months'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"term_in_months"} %>
+        </td>
+    </tr>
+
+    <tr>
+        <%field_name = 'monthly_payment_amnt'%>
+        <td>Monthly Payment Amt.:</td>
+        <td>
+          <div class="analysis" id="about_monthly_payment_amnt">
+            <input type="text" name="<%=field_name%>" value="<%= @loan.info['monthly_payment_amnt'] %>" onchange="save_value('<%=field_name%>','money')" class="side_input" id="<%= field_name %>">
+          </div>
+          <table id="detail_monthly_payment_amnt" class="detail_div">
+            <tr>  
+              <td><b>Gross Loan Amount</b></td>
+              <td><input type="text" name="gross_loan_amount_sub9" id="gross_loan_amount_sub9" onchange="return save_sub_value('gross_loan_amount', 'money',9);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"></td>
+            </tr>
+            <tr>  
+              <td><b>Interest Rate </b></td>
+              <td><input type="text" name="interest_rate_sub" id="interest_rate_sub" onchange="return save_sub_value('interest_rate', 'text',1);" value="<%= @loan.info['interest_rate'] %>" class="sub_input"> </td>
+            </tr>
+          </table>
+        </td>
+        <td >
+           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"monthly_payment_amnt"} %>
+        </td>
+    </tr>
+
+  </table>
+</div>

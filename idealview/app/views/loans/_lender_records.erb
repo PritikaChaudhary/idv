@@ -5,10 +5,10 @@
 <% else  %>
 <% @lenders.loan_urls.each do |loan_url|%>
 <div class="lender_inner" style="float:left; margin-left:130px; width:100%">
-			<div class='large-3 columns' style="float:left; margin-top:8px;">
+			<div class='large-5 columns' style="float:left; margin-top:8px;">
 				<span><%= loan_url.name%></span>
 			</div>
-			<div class='large-3 columns' style="float:left;">
+			<div class='large-5 columns' style="float:left;">
 				<% unless loan_url.status.blank? %>
 					<select name="status" class="lender_status" id="lender<%=loan_url.id%>" onchange="lender_change(this, '<%=loan_url.id%>')" >
 						<option value="">Status</option>
@@ -30,6 +30,11 @@
 						<option value="Declined">Declined</option>
 				    </select>
 				<% end %>
+
+
+			</div>
+			<div class="large-2 cloumns" style="float:left;">
+				<img src="/assets/notes_icon.png" onclick="add_notes('<%=loan_url.id%>', '<%= loan_url.loan_id %>')">
 			</div>
 
 		</div>

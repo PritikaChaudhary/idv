@@ -1,0 +1,41 @@
+<% if defined? @loan.address && @loan.address!= 'None' %>
+<% @loc = "South City, Ludhiana, Punjab" %>
+<% end %>
+
+
+
+<% if @collaterals.empty? %>
+	<input type="button" value="Add Collateral" class="button" id="add_new_collateral" style="margin-top:10px; margin-left:10px;">
+<% else %>
+	<input type="button" value="Add More Collateral" class="button" id="add_new_collateral" style="margin-top:10px; margin-left:10px;">
+<% end %>
+
+<div id="all_new_collaterals">
+
+</div>
+
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.relation_edit').click(function(){
+			mainId = $(this).parents('.main_collateral').attr('id');
+			var atId = $(this).attr('id');
+			var id = atId.replace("rel_", ""); 
+			var loan_id = $('#add_loan_id').val();
+			var data = "loan_id="+loan_id+"&collateral_id="+id;
+			$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/loan_funds',
+		            success:function(response){
+		            	$('#'+mainId+' .edit_relation').html(response);
+		            	$('#'+mainId+' .edit_relation').show();
+		            	$('#'+mainId+' .related_collats').hide();
+		           }
+		        });
+		});
+
+		
+	});
+</script>
+
+

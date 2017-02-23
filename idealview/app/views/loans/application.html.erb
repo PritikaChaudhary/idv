@@ -1,416 +1,2877 @@
+<% @custom = 0 %>
+      <% if @adminLogin == true
+            @custom=1
+        end %>
+      <% if current_user.plan == "enterprise" 
+            @custom=1
+         end %>
 <style type="text/css">
-	.same_line
-	{
-		float: left;
-    	width: 48%;
-	}
-	.same_lines
-	{
-		float: left;
-    	margin-left: 23px;
-    	width: 48%;
-	}
-	.field
-	{
-		width:100%;
-		float: left;
-	}
-	#ui-datepicker-div
-	{
-		z-index: 99 !important;
-		background: none repeat scroll 0 0 #808080;
-	}
-	table
-	{
-		 border: 1px solid #000000;
-   		 margin-bottom: 0.25rem;
-	}
-	.ui-datepicker-next
-	{
-		margin-left: 8px;
-		color: #000000;
-	}
-	.ui-datepicker-prev
-	{
-		margin-left: 3px;
-		color: #000000;
-	}
-	.ui-datepicker-title
-	{
-		margin-left: 3px;
-	}
-	.actions
-	{
-		margin-top:14px;
-	}
-	h3
-	{
-		text-align: center;
-	}
+  .detail_div
+  {
+    margin-bottom: 25px;
+    display: none;
+  }
+
+  .info
+  {
+    width : 40%;
+    float: left;
+    font-size: 12px;
+  }
+
+  .info_equal
+  {
+    width : 6%;
+    float: left;
+    font-size: 12px;
+  }
+
+
+  .info_detail
+  {
+    width : 54%;
+    float: left;
+    font-size: 12px;
+  }
+  .full_info
+  {
+    width: 100% !important;
+    float:left;
+  }
+  .bordr_detail_div
+  {
+    /*border: 1px solid;*/
+  }
+  .sub_input
+  {
+    height:26px !important; 
+    padding:0px !important; 
+    width:134px !important;
+    padding-left: 5px !important;
+  }
+  .ui-datepicker-header
+  {
+    background-color: #fff;
+  }
+  .ui-datepicker-prev
+  {
+    background:#eeeeee;
+    margin-left: 2px;
+  }
+  .ui-datepicker-next
+  {
+    background:#eeeeee;
+    margin-left:2px;
+  }
+  .side_fields
+  {
+    padding-left: 0px !important;
+  }
+  .crsr
+  {
+      cursor: all-scroll;
+  }
+  .analysis_form input
+  {
+    margin: 0px !important;
+  }
+  .analysis_form select
+  {
+    margin: 0px !important;
+  }
+  .detail_div
+  {
+    margin-top: 10px;
+  }
+  .full_info
+  {
+    margin: 10px;
+  }
+  .analysis_div
+  {
+    margin-bottom: 10px !important;
+  }
+  .analysis_cover
+  {
+    border: 1px solid;
+  }
+  .land_size
+  {
+    display: none;
+  }
+  .pac-container
+  {
+    width:300px !important;
+  }
+  input[type="file"] {
+    height: 35px;
+    width: 100%;
+}
+  .fund_edit_pen
+  {
+    cursor: pointer; 
+  }
+  
+  .add_collateral_fund
+  {
+    float:left;
+    margin-left:10px;
+  }
+
+  .trans-info-item {
+    height:107px;
+  }
+
+  .application_page li
+  {
+    margin-bottom:0px;
+  }
+
+  .application_page li a
+  {
+     margin-bottom: 4px;
+     width: 100%;
+  }
+
+  .reveal-modal .close-reveal-modal, dialog .close-reveal-modal {
+    font-size: 1.5rem;
+  }
+
+ #loan_name
+  {
+    margin:0px;
+  }
+  @media only screen and (min-width: 930px) {
+   .reveal-modal.small, dialog.small {
+      max-width: 389px;
+    }
+  }
 </style>
+<% #abort("#{@bucket_size}be rtertert")
+# if defined? @num
+#   @form_show = ""
+#   @user_plan = ""
+#   if(@brokerLogin==true ) 
+#     if defined?@infoBroker.plan 
+#       if @infoBroker.plan == "SOLO"
+#         @user_plan = "SOLO"
+#         if (@num == 1 || @num>1)
+#           @form_show = "no" 
+#         end
+#       end
+#     end
+#    end 
+# end
+%>
 <script type="text/javascript">
-	$('document').ready(function() {
-		$('#yes').click(function(){
-			$('#broker_info').show();
-		});
-		$('#no').click(function(){
-				$('#broker_info').hide();
-		});
-		 $( "#Birthday").datepicker({ dateFormat: 'yy-mm-dd', changeYear: true, yearRange: '1950:2020'});
-		 $( "#_ExpectedCloseDate").datepicker({ dateFormat: 'yy-mm-dd', changeYear: true, yearRange: '1950:2020'});
-		 $('#yes_income').click(function(){
-			$('.generate_income').show();
-		});
-		$('#no_income').click(function(){
-				$('.generate_income').hide();
-		});
-		 $('#yes_appraisal').click(function(){
-			$('.appraisal').show();
-		});
-		$('#no_appraisal').click(function(){
-				$('.appraisal').hide();
-		});
-	});
+// $(window).bind("beforeunload", function() { 
+// 	alert("I am here");
+// 	return false;
+// });
+	// $(window).bind('beforeunload', function(){
+		
+ // 		 return 'Are you sure you want to leave?';
+
+	// });
+	// window.onunload=myfun();
+
+
+	// function myfun()
+	// {
+	// 	alert("hello...");
+	// 	return false;
+	// }
+
+	// window.onbeforeunload = function(){
+	//   myfun();
+	//   return 'Are you sure you want to leave?';
+	// };
+
+
 </script>
-<div class='row'>
-	<div class="small-8 small-centered columns">
-
-		<h3>Name Of Project</h3>
-		  <form method="post" action="http://<%= @hostname %>/loans/create_application">
-		  
-		  <div class="field">
-				<label for="_LoanName">Loan Name</label>
-				<br>
-				<input id="_LoanName" type="text" name="_LoanName" autofocus="autofocus">
-		  </div>
-
-		   <div class="field">
-			<label for="GurantorName">Name of Guarantor</label>
-			<br>
-			<input id="GurantorName" type="text" name="GurantorName" autofocus="autofocus">
-		 </div>
-		 <div class="field">
-			<div class="same_line">
-				<label for="Birthday">Birthdate</label>
-				<br>
-				<input id="Birthday" type="text" name="Birthday" autofocus="autofocus" readonly="readonly">
-			 </div>
-			 <div class="same_lines">
-				<label for="_CorporateBorrowerName">LIC or Corporate Borrower</label>
-				<br>
-				<input id="_CorporateBorrowerName" type="text" name="_CorporateBorrowerName" autofocus="autofocus">
-		 	</div>
-		 </div>
-		 <div class="field">
-			<label for="Address2Street1">Business Address</label>
-			<br>
-			<input id="Address2Street1" type="text" name="Address2Street1" autofocus="autofocus">
-		 </div>
-		  <div class="field">
-			<label for="StreetAddress1">Home Address</label>
-			<br>
-			<input id="StreetAddress1" type="text" name="StreetAddress1" autofocus="autofocus">
-		 </div>
-		 <div class="field">
-			<label for="City3">City</label>
-			<br>
-			<input id="City3" type="text" name="City3" autofocus="autofocus">
-		 </div>
-		 <div class="field">
-			<label for="State3">State</label>
-			<br>
-			<input id="State3" type="text" name="State3" autofocus="autofocus">
-		 </div>
-		  <div class="field">
-			<label for="PostalCode3">Zip</label>
-			<br>
-			<input id="PostalCode3" type="text" name="PostalCode3" autofocus="autofocus">
-		 </div>
-		 <div class="field">
-			 <div class="same_line">
-				<label for="_BusinessType">Type Of Business</label>
-				<br>
-				<input id="_BusinessType" type="text" name="_BusinessType" autofocus="autofocus">
-			 </div>
-			 <div class="same_lines">
-			 <label for="_EIN">Federal EIN</label>
-				<br>
-				<input id="_EIN" type="text" name="_EIN" autofocus="autofocus">
-			 </div>
-		 </div>
-		 <% if @checkAdmin==false && @checkBroker==true %>
-		 	<div class="field">
-				<label for="Email">Email Address</label>
-				<br>
-				<input id="Email" type="text" name="Email" autofocus="autofocus" value="<%= current_user.email %>" readonly="readonly">
-			 </div>
-		 <% else %>
-			 <div class="field">
-				<label for="Email">Email Address</label>
-				<br>
-				<input id="Email" type="text" name="Email" autofocus="autofocus">
-			 </div>
-		 <% end %>
-		  <div class="field">
-		  	<div class="same_line">
-				<label for="Phone2">Business Phone</label>
-				<br>
-				<input id="Phone2" type="text" name="Phone2" autofocus="autofocus">
-			</div>
-			<div class="same_lines">
-				<div class="field">
-					<label for="Phone1">Cell Phone</label>
-					<br>
-					<input id="Phone1" type="text" name="Phone1" autofocus="autofocus">
-			 	</div>
-			</div>
-		 </div>
-		
-		 <div class="field">
-			 <div class="same_line">
-				<label for="_SocialSecurityNumber">Social Security Number</label>
-				<br>
-				<input id="_SocialSecurityNumber" type="text" name="_SocialSecurityNumber" autofocus="autofocus">
-			 </div>
-			  <div class="same_lines">
-				<div class="field">
-					<label for="_BorrowerTimeInBusiness">How Long in Business?</label>
-					<br>
-					<select id="_BorrowerTimeInBusiness" rows="1" name="_BorrowerTimeInBusiness">
-						<option value="1">1 Year</option>
-						<option value="2">2 Years</option>
-						<option value="3">3 Years</option>
-						<option value="4">4 Years</option>
-						<option value="5">5 Years</option>
-						<option value="6">6 Years</option>
-						<option value="7">7 Years</option>
-						<option value="8">8 Years</option>
-						<option value="9">9 Years</option>
-						<option value="10">10+ Years</option>
-					</select>
-				 </div>
-			 </div>
-		 </div>
-		 <div class="field">
-		  	<div class="same_line">
-				<label for="_PrimaryIncomeSource">Primary Income Source</label>
-				<br>
-				<input id="_PrimaryIncomeSource" type="text" name="_PrimaryIncomeSource" autofocus="autofocus">
-			</div>
-			<div class="same_lines">
-				 <div class="field">
-					<label for="_GrossMonthlyIncome">Gross Monthly Personal Income</label>
-					<br>
-					<input id="_GrossMonthlyIncome" type="text" name="_GrossMonthlyIncome" autofocus="autofocus">
-			 	</div>
-			</div>
-		 </div>
-		
-		 <div class="field">
-			<label for="_SubmittedByBroker">Submitted by Broker</label>
-			<br>
-			<input type="radio" value="1" name="_SubmittedByBroker" id="yes"> <label>Yes</label><input type="radio" value="0" name="_SubmittedByBroker" id="no"> <label>No</label>
-		 </div> 
-		 <div id="broker_info" style="display:none;">
-			 <div class="field">
-				<label for="_BrokerName">Broker's Name</label>
-				<br>
-				<input id="_BrokerName" type="text" name="_BrokerName" autofocus="autofocus">
-			 </div>
-			  <div class="field">
-				<label for="_BrokerEmail">Broker's Email Address</label>
-				<br>
-				<input id="_BrokerEmail" type="text" name="_BrokerEmail" autofocus="autofocus">
-			 </div>
-			 <div class="field">
-				<label for="_BrokerPhone">Broker's Phone Number</label>
-				<br>
-				<input id="_BrokerPhone" type="text" name="_BrokerPhone" autofocus="autofocus">
-			 </div>
-			 <div class="field">
-				<label for="_BrokerCompensation">Broker's Compensation</label>
-				<br>
-				<input id="_BrokerCompensation" type="text" name="_BrokerCompensation" autofocus="autofocus">
-			 </div>
-		 </div>
 
 
-		 <h3>Loan Request</h3>
-		 <div class="field">
-			 <div class="same_line">
-				<label for="_LendingTypes">Loan Type</label>
-				<br>
+ 
+<script src="https://rawgit.com/MattKetmo/darkroomjs/master/build/darkroom.js"></script>
 
-				<input type="radio" value="Single Family Residence" name="_LendingTypes"> <label>Single Family Residence</label>
-				<br>
-				<input type="radio" value="Multifamily" name="_LendingTypes"> <label>Multifamily</label>
-				<br>
-				<input type="radio" value="Condo" name="_LendingTypes"> <label>Condo</label>
-				<br>
-				<input type="radio" value="Hospitality" name="_LendingTypes"> <label>Hospitality</label>
-				<br>
-				<input type="radio" value="Hospitality" name="_LendingTypes"> <label>Hospitality</label>
-				<br>
-				<input type="radio" value="Commercial" name="_LendingTypes"> <label>Commercial</label>
-				<br>
-				<input type="radio" value="Short Term Real Estate Loan" name="_LendingTypes"> <label>Short Term Real Estate Loan</label>
-				<br>
-				<input type="radio" value="Development" name="_LendingTypes"> <label>Development</label>
-				<br>
-				<input type="radio" value="Mixed Use" name="_LendingTypes"> <label>Mixed Use</label>
-				<br>
-				<input type="radio" value="Retail" name="_LendingTypes"> <label>Retail</label>
-				<br>
-				<input type="radio" value="Health Care" name="_LendingTypes"> <label>Health Care</label>
-				<br>
-				<input type="radio" value="Industrial" name="_LendingTypes"> <label>Industrial</label>
-				<br>
-				<input type="radio" value="Other" name="_LendingTypes"> <label>Other</label>
-			</div>		
-			<div class="same_lines">
-			<div class="field">
-			 <label for="_TransactionType0">Transaction Type</label>
-				<br>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-				<input type="radio" value="Purchase" name="_TransactionType0"> <label>Purchase</label>
-				<br>
-				<input type="radio" value="Refinance" name="_TransactionType0"> <label>Refinance</label>
-				<br>
-				<input type="radio" value="Both" name="_TransactionType0"> <label>Both</label>
-				<br>
-				</div>
-			</div>
-		 </div> 
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
-		
-		<div class="field">
-		    <div class="same_line">
-				<label for="_ExpectedCloseDate">Expected Closing Date (Contract)</label>
-				<br>
-				<input id="_ExpectedCloseDate" type="text" name="_ExpectedCloseDate" autofocus="autofocus" readonly="readonly">
-			</div>
-			 <div class="same_lines">
-				 <div class="field">
-					<label for="_PurchasePrice">Purchase Price</label>
-					<br>
-					<input id="_PurchasePrice" type="text" name="_PurchasePrice" autofocus="autofocus">
-				</div>
-			 </div>
-		</div>
-		<div class="field">
-		    <div class="same_line">
-				<label for="_NetLoanAmountRequested0">Loan Amount Requested</label>
-				<br>
-				<input id="_NetLoanAmountRequested0" type="text" name="_NetLoanAmountRequested0" autofocus="autofocus">
-			</div>
-			 <div class="same_lines">
-				 <div class="field">
-					<label for="_CashContribution">Cash Contribution</label>
-					<br>
-					<input id="_CashContribution" type="text" name="_CashContribution" autofocus="autofocus">
-				</div>
-			 </div>
-		</div>
-		<div class="field">
-		    <div class="same_line">
-				<label for="_DesiredTermLength">Length of Time Anticipated for Repayment</label>
-				<br>
-				
-				<input type="radio" value="3" name="_DesiredTermLength"> <label>Less Than 3 Months</label>
-				<br>
-				<input type="radio" value="6" name="_DesiredTermLength"> <label>3 to 6 Months</label>
-				<br>
-				<input type="radio" value="12" name="_DesiredTermLength"> <label>6 to 12 Months</label>
-				<br>
-				<input type="radio" value="24" name="_DesiredTermLength"> <label>12 to 24 Months</label>
-				<br>
-				<input type="radio" value="25" name="_DesiredTermLength"> <label>More than 24 Months</label>
-			</div>
-			 <div class="same_lines">
-				 <div class="field">
-					<label for="_FreeandClear0">Free & Clear Property as Asset</label>
-					<br>
-				<input type="radio" value="1" name="_FreeandClear0"> <label>Yes</label>
-				<br>
-				<input type="radio" value="0" name="_FreeandClear0"> <label>No</label>
-				</div>
-			 </div>
-		</div>
+<!-------------------------- Location Google API ------------------------------>
+  
+  <script type="text/javascript">
+  var autocomplete = {};
+    var autocompletesWraps = <%= raw @brwrId.to_json %>;
+
+   autocompletesWraps.forEach(function(this_form) {
+       // alert(this_form)
+       window[this_form+'_form']  = { street_number: 'short_name', route: 'long_name', locality: 'long_name', administrative_area_level_1: 'long_name', country: 'long_name', postal_code: 'short_name' };
+        ++this.count;
+      }, this);
+
+    function initialize() {
+      $.each(autocompletesWraps, function(index, name) {
+      
+        if($('#'+name).length == 0) {
+          return;
+        }
+
+       
+        autocomplete[name] = new google.maps.places.Autocomplete($('#'+name+' .autocomplete')[0], { types: ['geocode'] });
+          
+        google.maps.event.addListener(autocomplete[name], 'place_changed', function() {
+          
+          var place = autocomplete[name].getPlace();
+          var form = eval(name+'_form');
+          // var form = eval(name);
+
+          for (var component in form) {
+            $('#'+name+' .'+component).val('');
+            $('#'+name+' .'+component).attr('disabled', false);
+          }
+          
+          highlight_address = "";
+          col_address = "";
+          prsnl_address = "";
+          grntr_address = "";
+          loan_id = $('#add_loan_id').val();
+          for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (typeof form[addressType] !== 'undefined') {
+              var val = place.address_components[i][form[addressType]];
+              $('#'+name+' .'+addressType).val(val);
+              // alert(name+" "+addressType+" - "+val);
+              if(name.indexOf("loan_highlight") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  highlight_address = highlight_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  highlight_address = highlight_address.concat(val);            
+                }
+                $('#loc_address').val(highlight_address);
+              
+              }
+
+              if(name.indexOf("collateral_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  col_address = col_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  col_address = col_address.concat(val);            
+                }
+                id_col = name.replace("collateral_loc_","")
+                $('#'+name+' #address_'+id_col).val(col_address);
+              
+              }
+
+              if(name.indexOf("personal_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  prsnl_address = prsnl_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  prsnl_address = prsnl_address.concat(val);            
+                }
+                id_bor = name.replace("personal_loc_","")
+                $('#'+name+' #personal_address_'+id_bor).val(prsnl_address);
+              
+              }
+
+              if(name.indexOf("guarantor_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  grntr_address = grntr_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  grntr_address = grntr_address.concat(val);            
+                }
+                id_bor = name.replace("guarantor_loc_","")
+                $('#'+name+' #guarantor_address_'+id_bor).val(grntr_address);
+              
+              }
+              
+            }
 
 
-		<h3>Property Information</h3>
-		 <div class="field">
-				<label for="Address3Street1">Subject Address(es) with Year Acquired</label>
-				<br>
-				<input id="Address3Street1" type="text" name="Address3Street1" autofocus="autofocus">
-		</div>
-		 <div class="field">
-		  	<div class="same_line">
-				<label for="_OriginalPurchasePriceifitsarefinance">Original Cost </label>
-				<br>
-				<input id="_OriginalPurchasePriceifitsarefinance" type="text" name="_OriginalPurchasePriceifitsarefinance" autofocus="autofocus">
-			</div>
-			<div class="same_lines">
-				 <div class="field">
-					<label for="_EstimatedMarketValue">Estimated Market Value</label>
-					<br>
-					<input id="_EstimatedMarketValue" type="text" name="_EstimatedMarketValue" autofocus="autofocus">
-			 	</div>
-			</div>
-		 </div>
-		 <div class="field">
-				<label for="_DateOfValue">Source/Date of Value</label>
-				<br>
-				<input id="_DateOfValue" type="text" name="_DateOfValue" autofocus="autofocus">
-		</div>
-		<div class="field">
-			<label for="_Doesthepropertycurrentlygenerateincome">Does Property Currently Generate Income?</label>
-			<br>
-			<input type="radio" value="1" name="_Doesthepropertycurrentlygenerateincome" id="yes_income"> <label>Yes</label><input type="radio" value="0" name="_Doesthepropertycurrentlygenerateincome" id="no_income"> <label>No</label>
-		 </div> 
-		 <div class="generate_income" style="display:none;">
-		 <div class="field">
-				<label for="_HowmuchGrossMonthlyIncome">If yes, how much net monthly income?</label>
-				<br>
-				<input id="_HowmuchGrossMonthlyIncome" type="text" name="_HowmuchGrossMonthlyIncome" autofocus="autofocus">
-		</div>
-		</div>
-		<div class="field">
-			<label for="_appraisal">Current Appraisal within 90 Days?</label>
-			<br>
-			<input type="radio" value="1" name="_appraisal" id="yes_appraisal"> <label>Yes</label><input type="radio" value="0" name="_appraisal" id="no_appraisal"> <label>No</label>
-		 </div> 
-		 <div class="appraisal" style="display:none;">
-		 	<div class="field">
-				<label for="_Mostrecentappraisedvalue">If yes, value?</label>
-				<br>
-				<input id="_Mostrecentappraisedvalue" type="text" name="_Mostrecentappraisedvalue" autofocus="autofocus">
-			</div>
-		 </div>
-		 <div class="field">
-				<label for="_LoanSummaryWhatareyoulookingfor">Loan Summary</label>
-				<br>
-				<textarea name="_LoanSummaryWhatareyoulookingfor" id="_LoanSummaryWhatareyoulookingfor" autofocus="autofocus" style="width: 626px; height: 187px;"></textarea>
-			</div>
-			 <div class="field">
-				<label for="_AdditionalCollateralWhatelsecanyouofferassecurity0">Additional Collateral/Security</label>
-				<br>
-				<textarea name="_AdditionalCollateralWhatelsecanyouofferassecurity0" id="_AdditionalCollateralWhatelsecanyouofferassecurity0" autofocus="autofocus" style="width: 626px; height: 187px;"></textarea>
-			</div>
-			 <div class="field">
-				<label for="_UseofFundsWhatdoyouneedthecapitalfor">Name of Project Use of Funds</label>
-				<br>
-				<textarea name="_UseofFundsWhatdoyouneedthecapitalfor" id="_UseofFundsWhatdoyouneedthecapitalfor" autofocus="autofocus" style="width: 626px; height: 187px;"></textarea>
-			</div>
-			 <div class="field">
-				<label for="_ExitStrategyHowwillyoupaytheloanoff">Exit Strategy</label>
-				<br>
-				<textarea name="_ExitStrategyHowwillyoupaytheloanoff" id="_ExitStrategyHowwillyoupaytheloanoff" autofocus="autofocus" style="width: 626px; height: 187px;"></textarea>
-			</div>
-			<span>** By submitting this application, you are representing that the information in this application is accurate, true and current. </span>
-		  <div class="actions">
-		   <input type="submit" value="SUBMIT" class="tiny button success">
-		  </div>
-		  </form>
-	</div>
-</div>
+          }
+
+
+          if (name.indexOf("collateral_loc") >= 0)
+          {
+            setTimeout(function(){
+                  
+              id_col = name.replace("collateral_loc_","")
+              address = $('#'+name+' #address_'+id_col).val();
+              city = $('#'+name+' #city_'+id_col).val();
+              state = $('#'+name+' #state_'+id_col).val();
+              postalcode = $('#'+name+' #postalcode_'+id_col).val();
+
+              data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id_col;
+
+              $.ajax({
+                  data: data,
+                  type: 'POST',
+                        url: '/loans/save_collateral_address',
+                         success:function(response){
+                         
+
+                          new_data = "&collateral_id="+id_col;
+                          $.ajax({
+                            data: new_data,
+                            type: 'POST',
+                                  url: '/loans/fetch_location_map',
+                                   success:function(response){
+                                    $("#collateral_"+id_col+" .map_container").html(response);
+                                }
+                              }) ;
+
+                          address_val = $('#loc_address').val();
+                          
+                          if(address_val=="")
+                          {
+                            $('#loc_address').val(address);
+                            $('#loc_state').val(state);
+                            $('#loc_city').val(city);
+                            
+                            datas = "id="+loan_id;
+                            $.ajax({
+                              data: datas,
+                              type: 'POST',
+                              url: '/loans/view_loc_map',
+                              success:function(response){
+                                // $('#place_featured_image').html(response);
+                              }
+                            });
+
+                          }
+                      }
+              });
+            }, 3000);
+          }
+
+
+          // if (name.indexOf("loan_highlight") >= 0)
+          // {
+            
+          //   setTimeout(function(){
+            
+          //     city_val = $('#loc_city').val();
+          //     state_val = $('#loc_state').val();
+          //     address_val = $('#loc_address').val();
+          //     data = "id="+loan_id+"&City3="+city_val+"&State3="+state_val+"&Address3="+address_val;
+          //     $.ajax({
+          //         data: data,
+          //         type: 'POST',
+          //         url: '/loans/save_loc',
+          //         success:function(response){
+          //           $('.loctn_loc').html(city_val+', '+state_val);
+          //           $('#place_featured_image').html(response);
+          //         }
+          //      });
+           
+          //     }, 3000);
+          //   }
+
+            if (name.indexOf("personal_loc") >= 0)
+            {
+              
+              setTimeout(function(){
+              
+              id_prsnl = name.replace("personal_loc_","")
+              address = $('#'+name+' #personal_address_'+id_prsnl).val();
+              city = $('#'+name+' #personal_city_'+id_prsnl).val();
+              state = $('#'+name+' #personal_state_'+id_prsnl).val();
+              postalcode = $('#'+name+' #personal_postalcode_'+id_prsnl).val();
+
+             data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id_prsnl;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_personal_address',
+                             success:function(response){
+                              
+                          }
+                        }) ;
+
+                }, 3000);
+              }
+
+              if (name.indexOf("guarantor_loc") >= 0)
+              {
+                
+                setTimeout(function(){
+                
+                id_grntr = name.replace("guarantor_loc_","")
+                address = $('#'+name+' #guarantor_address_'+id_prsnl).val();
+                city = $('#'+name+' #guarantor_city_'+id_prsnl).val();
+                state = $('#'+name+' #guarantor_state_'+id_prsnl).val();
+                postalcode = $('#'+name+' #guarantor_postalcode_'+id_prsnl).val();
+
+                data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id_grntr;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_guarantor_address',
+                             success:function(response){}
+                        }) ;
+
+                }, 3000);
+              }
+
+
+          
+                        
+                  // data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+                  // $.ajax({
+                  //     data: data,
+                  //     type: 'POST',
+                  //           url: '/loans/save_guarantor_address',
+                  //            success:function(response){}
+                  //       }) ;
+
+                
+          
+        });
+
+
+      });
+    }
+</script>
+  
+
+<!-------------------------- End Location Google API ------------------------------>
+
+
+
+
+
+<script type="text/javascript">
+
+  $(function(){
+  $("#all_new_collaterals").sortable({
+      stop: function (event, ui) {
+          countRows(); // re-number rows after sorting
+      }
+  });
+  });
+  function countRows() {
+      var i = 0;
+      var ids=[];
+      $('#all_new_collaterals .main_collateral').each(function () {
+          //$(this).attr("value", ++i);
+          my_id = $(this).attr('id');
+        ids.push(my_id); 
+      });
+      // alert(ids);
+      loan_id = $('#add_loan_id').val();
+      var data =  "&moredata=" + ids +"&loan_id="+loan_id;
+      $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/collateral_changeorder'
+              });
+
+  }
+
+</script>
+
+  <script type="text/javascript">
+  $('document').ready(function(){
+      // $('#myModal1').foundation('reveal', 'open');
+
+     $('#myModal1').foundation('reveal', 'open',{
+      close_on_background_click:false,
+      close_on_esc:false
+     });
+
+     // $('#myModal1').bind('closed', function() {
+     //     window.location.href = "https://<%= @hostname %>/loans"; 
+     // });
+     // $('#myModal2').bind('closed', function() {
+     //     window.location.href = "https://<%= @hostname %>/loans"; 
+     // });
+
+     $('#myModal1 .close-reveal-modal').click(function() {
+        window.location.href = "https://<%= @hostname %>/loans"; 
+     });
+     $('#myModal2 .close-reveal-modal').click(function() {
+        window.location.href = "https://<%= @hostname %>/loans"; 
+     });
+
+     $("#create_new_loan").click(function(){
+
+      $('#myModal2').foundation('reveal', 'open',{
+        close_on_background_click:false,
+        close_on_esc:false
+      });
+      // $('#myModal1').foundation('reveal', 'close');
+     });
+
+     $('#save_loan_name').click(function(){
+
+        loan_name = $('#loan_name').val();
+        if(loan_name == "")
+        {
+          $('#name_error').show();
+        }
+        else
+        {
+          data = "_LoanName="+loan_name;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/add_new_loan',
+                    success:function(response){
+                      $('#add_loan_id').val(response);
+                      $('input[name="loan_id"]').val(response);
+                      $('#new_loan_name').html(loan_name);
+                      $('#myModal1').foundation('reveal', 'close');
+
+                      datax = "loan_id="+response;
+                      $.ajax({
+                          data: datax,
+                          type: 'POST',
+                          url: '/loans/new_file_upload',
+                          success:function(response){
+                              $('#file_upload_div').html(response);
+                          }
+                        });
+
+                     $('#myModal2').foundation('reveal', 'close'); 
+                    }
+          });
+
+        }
+          
+
+     });
+
+  //    $('#myModal1').bind('closed', function() {
+  //    	var loan_id =$('#add_loan_id').val();
+  //    	if(loan_id=="")
+  //    	{
+		//   	loan_name = $('#loan_name').val();
+	 //       	data = "_LoanName="+loan_name;
+	 //       	$.ajax({
+	 //                  data: data,
+	 //                  type: 'POST',
+	 //                  url: '/loans/add_new_loan',
+	 //                  success:function(response){
+	 //                  	$('#add_loan_id').val(response);
+	 //                  	$('input[name="loan_id"]').val(response);
+	 //                  	$('#new_loan_name').html(loan_name);
+	 //                  	$('#myModal1').foundation('reveal', 'close');
+
+	 //                  	datax = "loan_id="+response;
+		// 			    $.ajax({
+		// 			        data: datax,
+		// 			        type: 'POST',
+		// 			        url: '/loans/new_file_upload',
+		// 			        success:function(response){
+		// 			            $('#file_upload_div').html(response);
+		// 			        }
+		// 			      });
+	 //                  }
+	 //              });
+	 //    }
+	 // });
+
+       // $('#save_loan_name').click(function(){
+       // 	loan_name = $('#loan_name').val();
+       // 	data = "_LoanName="+loan_name;
+       // 	$.ajax({
+       //            data: data,
+       //            type: 'POST',
+       //            url: '/loans/add_new_loan',
+       //            success:function(response){
+       //            	$('#add_loan_id').val(response);
+       //            	$('input[name="loan_id"]').val(response);
+       //            	$('#new_loan_name').html(loan_name)
+       //            	$('#myModal1').foundation('reveal', 'close');
+
+       //            	datax = "loan_id="+response;
+				   //  $.ajax({
+				   //      data: datax,
+				   //      type: 'POST',
+				   //      url: '/loans/new_file_upload',
+				   //      success:function(response){
+				   //          $('#file_upload_div').html(response);
+				   //      }
+				   //    });
+       //            }
+       //        });
+
+
+       // });
+      initialize();
+      
+      $('#analysis_box').hide();
+      $('#profitability_box').hide();
+
+      
+
+      
+
+      $('input[name="mdate"]').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      $('input[name="personal_dob"]').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      $('input[name="guarantor_birthday"]').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      $('input[name="personal_phone"]').mask("(999)999-9999");
+      $('input[name="business_phone"]').mask("(999)999-9999");
+      $('input[name="guarantor_phone"]').mask("(999)999-9999");
+      $('input[name="Phone"]').mask("(999)999-9999");
+      
+      // $('input[name="maturity_date"]').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+    
+
+
+      $('.edit_me').click(function(){
+          var  str = $(this).attr('id');
+          var imgId = str.replace('edit_picture_','');
+          $.ajax({
+            data: "imgId="+imgId,
+            type: 'POST',
+            url: '/loans/edit_picture',
+            success:function(response){
+              $('#edit_pictures_popup').html(response);
+              $('#myModal4').foundation('reveal', 'open');
+               var dkrm = new Darkroom('#target_pic', {
+                // Size options
+                minWidth: 100,
+                minHeight: 100,
+                maxWidth: 600,
+                maxHeight: 500,
+                ratio: 4/3,
+                backgroundColor: '#000',
+
+                // Plugins options
+                plugins: {
+                  //save: false,
+                  crop: {
+                    quickCropKey: 67, //key "c"
+                    //minHeight: 50,
+                    //minWidth: 50,
+                    //ratio: 4/3
+                  }
+                },
+
+                // Post initialize script
+                initialize: function() {
+                  var cropPlugin = this.plugins['crop'];
+                  // cropPlugin.selectZone(170, 25, 300, 300);
+                  cropPlugin.requireFocus();
+                }
+              });
+
+
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                  ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+                  ga('send', 'pageview');
+            }
+           }); 
+      });
+
+  });
+	
+	
+
+  // function sub_val(field)
+  // {
+  //   new_field = field.replace("_sub","");
+  //   field_val = $('#'+field).val();
+  //   $('#'+new_field).val(field_val);
+  // }
+
+  function show_analysis()
+  {
+    $('#analysis_box').show();
+    $('#profitability_box').show();
+    setTimeout(function() {
+      $('.tii-controls a').attr('tabindex', '-1');
+      $('.tii-controls img').attr('tabindex', '-1');
+      $('.cwb-controls img').attr('tabindex', '-1');
+      $('.cwb-controls a').attr('tabindex', '-1');
+      $('a').attr('tabindex', '-1');
+      $('img').attr('tabindex', '-1');
+      $('strong').attr('tabindex', '-1');
+      $('.trans-info-item').attr('tabindex', '-1');
+      $('.trans-info-last').attr('tabindex', '-1');
+    }, 3000);
+  }
+
+  function hide_analysis()
+  {
+    $('#analysis_box').hide();
+    $('#profitability_box').hide();
+    setTimeout(function() {
+    $('.tii-controls a').attr('tabindex', '-1');
+    $('.tii-controls img').attr('tabindex', '-1');
+    $('.cwb-controls img').attr('tabindex', '-1');
+    $('.cwb-controls a').attr('tabindex', '-1');
+    $('a').attr('tabindex', '-1');
+    $('img').attr('tabindex', '-1');
+    $('strong').attr('tabindex', '-1');
+    $('.trans-info-item').attr('tabindex', '-1');
+    $('.trans-info-last').attr('tabindex', '-1');
+  }, 3000);
+}
+</script>
+<script>
+function callFun(customUrl, divId, formId, plan){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+   $('#loan_lenders').html('loading...');
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+
+      $('#'+divId).html(data);
+      
+      if(plan == "SOLO")
+      {
+        $('#loan-url-form').hide();
+      }
+      if(plan=="generate_doc_url")
+      {
+        $('.doc_page').show();
+      }
+      if(formId=="lender_loans")
+      {
+        var a_id=divId.replace('loan_lenders','');
+        $('#click_'+a_id).hide();
+        $('#click_hide_'+a_id).show();
+        $("#loan_lenders"+a_id).show();
+      }
+
+        },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+    
+}
+
+function callAjax(customUrl, divId, formId, buttontype){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+      // $("#mdate").mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      
+      // *************** Borrower *****************//
+     
+      $('#'+divId).html(data);
+      
+     },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+
+
+    
+}
+
+function handleMainImage(files) {
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var imageType = /image.*/;
+    
+    if (!file.type.match(imageType)) {
+      continue;
+    }
+    // $("#main_image_preview").show();
+    var img = document.createElement("img");
+    img.classList.add("obj");
+    img.file = file;
+    mainDiv = document.getElementById("main_image_preview");
+    mainDiv.innerHTML = '';
+    
+    mainDiv.appendChild(img); // Assuming that "preview" is a the div output where the content will be displayed.
+    
+    var reader = new FileReader();
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+    reader.readAsDataURL(file);
+  }
+}
+
+function hide_file(id)
+{
+  var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_file',
+              success:function(response){
+                $('#showfor_'+id).show();
+                $('#hidefor_'+id).hide();
+             }
+          });
+  
+}
+
+function hide_doc(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_doc',
+              success:function(response){
+                $('#showfile_'+id).show();
+                $('#hidefile_'+id).hide();
+             }
+          });
+  
+}
+
+
+function hide_borrower(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_borrower',
+              success:function(response){
+                $('#showborrower_'+id).show();
+                $('#hideborrower_'+id).hide();
+             }
+          });
+ 
+}
+
+function show_borrower(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_borrower',
+              success:function(response){
+                $('#showborrower_'+id).hide();
+                $('#hideborrower_'+id).show();
+             }
+          });
+  
+}
+
+function hide_borrower_field(id, field)
+{
+
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_borrower_field',
+              success:function(response){
+                $('#show_'+field+'_'+id).show();
+                $('#hide_'+field+'_'+id).hide();
+             }
+          });
+  
+}
+
+function show_borrower_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_borrower_field',
+              success:function(response){
+                $('#show_'+field+'_'+id).hide();
+                $('#hide_'+field+'_'+id).show();
+             }
+          });
+}
+
+function hide_collateral_field(id, field)
+{
+  
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_collateral_field',
+              success:function(response){
+                $('#showc_'+field+'_'+id).show();
+                $('#hidec_'+field+'_'+id).hide();
+             }
+          });
+  
+}
+
+function show_collateral_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_collateral_field',
+              success:function(response){
+                $('#showc_'+field+'_'+id).hide();
+                $('#hidec_'+field+'_'+id).show();
+             }
+          });
+}
+
+
+function hide_loan_field(id, field)
+{
+  
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_loan_field',
+              success:function(response){
+                $('#show_loan_'+field).show();
+                $('#hide_loan_'+field).hide();
+             }
+          });
+  
+}
+
+function show_loan_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_loan_field',
+              success:function(response){
+                $('#show_loan_'+field).hide();
+                $('#hide_loan_'+field).show();
+             }
+          });
+}
+
+function hide_collateral(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_collateral',
+              success:function(response){
+                $('#showcollat_'+id).show();
+                $('#hidecollat_'+id).hide();
+             }
+          });
+  
+}
+
+function show_collateral(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_collateral',
+              success:function(response){
+                $('#showcollat_'+id).hide();
+                $('#hidecollat_'+id).show();
+             }
+          });
+  
+}
+
+function edit_picture(id)
+{
+  var imgId = id;
+  loan_id = $('#add_loan_id').val();
+  $.ajax({
+    data: "imgId="+imgId+"&loan_id="+loan_id,
+    type: 'POST',
+    url: '/loans/edit_picture',
+    success:function(response){
+      $('#edit_pictures_popup').html(response);
+      $('#myModal4').foundation('reveal', 'open');
+       var dkrm = new Darkroom('#target_pic', {
+        // Size options
+        minWidth: 100,
+        minHeight: 100,
+        maxWidth: 600,
+        maxHeight: 500,
+        ratio: 4/3,
+        backgroundColor: '#000',
+
+        // Plugins options
+        plugins: {
+          //save: false,
+          crop: {
+            quickCropKey: 67, //key "c"
+            //minHeight: 50,
+            //minWidth: 50,
+            //ratio: 4/3
+          }
+        },
+
+        // Post initialize script
+        initialize: function() {
+          var cropPlugin = this.plugins['crop'];
+          // cropPlugin.selectZone(170, 25, 300, 300);
+          cropPlugin.requireFocus();
+        }
+      });
+
+
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+          ga('send', 'pageview');
+    }
+   }); 
+}
+
+function show_file(id)
+{
+  var data = "&id=" + id;
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/show_file',
+            success:function(response){
+              $('#hidefor_'+id).show();
+              $('#showfor_'+id).hide();
+          }
+        });
+}
+
+function show_doc(id)
+{
+  var data = "&id=" + id;
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/show_doc',
+            success:function(response){
+              $('#hidefile_'+id).show();
+              $('#showfile_'+id).hide();
+          }
+        });
+}
+
+function del_file(id)
+{
+  var data = "&id=" + id;
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_file',
+            success:function(response){
+              $('#del_'+id).hide();
+          }
+        });
+}
+
+function del_doc(id)
+{
+  var data = "&id=" + id;
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_doc',
+            success:function(response){
+              $('#del_file'+id).hide();
+          }
+        });
+}
+
+function del_folder(id)
+{
+  var data = "&id=" + id;
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_folder',
+            success:function(response){
+              $('#foldr_'+id).hide();
+              $('#folder_'+id).hide();
+          }
+        });
+}
+
+function fund_fields()
+{
+  use = $('.uses_related').val();
+  if(use=="Payoff")
+  {
+    $('.payOff_fund').show();
+    $('.purchase_fund').hide();
+  }
+  else if(use=="Purchase")
+  {
+    $('.purchase_fund').show();
+    $('.payOff_fund').hide();
+  }
+  else
+  {
+    $('.payOff_fund').hide();
+    $('.purchase_fund').hide();
+  }
+}
+
+/*********************** Location Functions *************************/
+function edit_personal_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #personal_loc_"+id).show();
+  $("#"+divId+" .display_personal_loc").hide();
+}
+
+function save_personal(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="personal_address_'+id+'"]').val();
+  city = $('input[name="personal_city_'+id+'"]').val();
+  state = $('input[name="personal_state_'+id+'"]').val();
+  postalcode = $('input[name="personal_postalcode_'+id+'"]').val();
+  
+  data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_personal_address',
+             success:function(response){
+              $("#"+divId+" .display_personal_loc").html(response);
+              $("#"+divId+" .display_personal_loc").show();
+              $("#"+divId+" #personal_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_personal(id)
+{
+  divId = "borrow_"+id;
+  $("#"+divId+" #personal_loc_"+id).hide();
+  $("#"+divId+" .display_personal_loc").show();
+}
+
+function edit_business_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #business_loc_"+id).show();
+  $("#"+divId+" .display_business_loc").hide();
+}
+
+function save_business(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="business_address_'+id+'"]').val();
+  city = $('input[name="business_city_'+id+'"]').val();
+  state = $('input[name="business_state_'+id+'"]').val();
+  postalcode = $('input[name="business_postalcode_'+id+'"]').val();
+  
+  data = "&business_address="+address+"&business_city="+city+"&business_state="+state+"&business_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_business_address',
+             success:function(response){
+              $("#"+divId+" .display_business_loc").html(response);
+              $("#"+divId+" .display_business_loc").show();
+              $("#"+divId+" #business_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_business(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #business_loc_"+id).hide();
+  $("#"+divId+" .display_business_loc").show();
+}
+
+function edit_guarantor_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #guarantor_loc_"+id).show();
+  $("#"+divId+" .display_guarantor_loc").hide();
+}
+
+function save_guarantor(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="guarantor_address_'+id+'"]').val();
+  city = $('input[name="guarantor_city_'+id+'"]').val();
+  state = $('input[name="guarantor_state_'+id+'"]').val();
+  postalcode = $('input[name="guarantor_postalcode_'+id+'"]').val();
+  
+  data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_guarantor_address',
+             success:function(response){
+              $("#"+divId+" .display_guarantor_loc").html(response);
+              $("#"+divId+" .display_guarantor_loc").show();
+              $("#"+divId+" #guarantor_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_guarantor(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #guarantor_loc_"+id).hide();
+  $("#"+divId+" .display_guarantor_loc").show();
+}
+
+function edit_address(id)
+{
+
+  divId = "collateral_"+id;
+  $("#"+divId+" #collateral_loc_"+id).show();
+  $("#"+divId+" .display_collateral_loc").hide();
+}
+
+function save_address(id)
+{
+  divId = "collateral_"+id;
+  address = $('input[name="address_'+id+'"]').val();
+  city = $('input[name="city_'+id+'"]').val();
+  state = $('input[name="state_'+id+'"]').val();
+  postalcode = $('input[name="postalcode_'+id+'"]').val();
+  
+  data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_collateral_address',
+             success:function(response){
+              $("#"+divId+" .display_collateral_loc").html(response);
+              $("#"+divId+" .display_collateral_loc").show();
+              $("#"+divId+" #collateral_loc_"+id).hide();
+
+              new_data = "&collateral_id="+id;
+              $.ajax({
+                data: new_data,
+                type: 'POST',
+                      url: '/loans/fetch_location_map',
+                       success:function(response){
+                        $("#"+divId+" .map_inner").html(response);
+                        $("#"+divId+" .map_outer").show();
+                    }
+                  }) ;
+          }
+        }) ;
+
+}
+
+function cancel_address(id)
+{
+  divId = "collateral_"+id;
+  $("#"+divId+" #collateral_loc_"+id).hide();
+  $("#"+divId+" .display_collateral_loc").show();
+}
+
+function save_value(field_name, type)
+{
+    var field_value = $('input[name="'+field_name+'"]').val();
+    var loan_id = $('#add_loan_id').val();
+    var data = "&loan_id="+loan_id+"&"+field_name+"="+field_value+"&ftype="+type;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_data',
+              success:function(response){
+                $('input[name="'+field_name+'"]').val(response);
+                 $('input[name*="'+field_name+'_sub"]').val(response);
+             }
+          });
+}
+
+function save_sub_value(field_name, type, num)
+{
+    if(num!=1)
+    {
+      var field_value = $('input[name="'+field_name+'_sub'+num+'"]').val();
+    }
+    else
+    {
+      var field_value = $('input[name="'+field_name+'_sub'+'"]').val();
+    }
+    // alert(field_value);
+    var loan_id = $('#add_loan_id').val();
+    var data = "&loan_id="+loan_id+"&"+field_name+"="+field_value+"&ftype="+type;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_data',
+              success:function(response){
+                // alert(response)
+                // $('input[name="'+field_name+'"]').val(response);
+                // if(num!="")
+                // {
+                //   $('input[name="'+field_name+'_sub'+num+'"]').val(response);
+                // }
+                // else
+                // {
+                //   $('input[name="'+field_name+'_sub"]').val(response); 
+                // }
+                $( "input[name*='"+field_name+"']" ).val(response);
+                $( "input[name*='"+field_name+"_sub']" ).val(response);
+                
+                // alert(field_name+" "+response);
+             }
+          });
+  
+}
+
+
+/*********************** End Location Functions *************************/
+
+$('document').ready(function(){
+  $( ".lender_status" ).change(function() {
+    var status=$(this).val();
+    var id=$(this).attr('id');
+    var lender_id=id.replace('lender','');
+    var data = "&status=" +status
+    $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loan_urls/'+lender_id+'/save_status',
+             success:function(response){
+              $('#del_'+id).hide();
+          }
+        }) ;
+  });
+
+  $('#add_new_borrower').click(function(){
+     loan_id = $('#add_loan_id').val();
+    $.ajax({
+            data: "loan_id="+loan_id,
+            type: 'POST',
+            url: '/loans/add_new_borrower',
+            success:function(response){
+              $('#all_new_borrowers').html(response);
+              initialize();
+            }
+        }); 
+  });
+
+  $('#add_new_collateral').click(function(){
+    loan_id = $('#add_loan_id').val();
+    $.ajax({
+            data: "loan_id="+loan_id,
+            type: 'POST',
+            url: '/loans/add_new_collateral',
+            success:function(response){
+              $('#all_new_collaterals').html(response);
+               initialize();
+              $('.payoff_edit').click(function(){
+                  colId = $(this).parents('.main_collateral').attr('id');
+                  $('#'+colId+' .payoff_add_edit').show();
+                  $('#'+colId+' .payoff_info').hide();
+                });
+              $('.cancel_payoff').click(function(){
+                colId = $(this).parents('.main_collateral').attr('id');
+                $('#'+colId+' .payoff_add_edit').hide();
+                $('#'+colId+' .payoff_info').show();
+              });
+               $('.save_payoff').click(function(){
+                  colId = $(this).parents('.main_collateral').attr('id');
+                  var data=$('#'+colId+' .payOffForm').serialize();
+                  $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/add_payoff',
+                          success:function(response){
+                            $('#'+colId+' .payoff_info').html(response);
+                           
+                            $('#'+colId+' .payoff_add_edit').hide();
+                            $('#'+colId+' .payoff_info').show();     
+                          }
+                      });
+                });
+                $('.add_more_payoff').click(function(){
+                  $(".collateral_append_here").append("<div class='large-12 columns'><div class='small-8 columns'><input type='text' name='amount[]' placeholder='Amount'></div><div class='small-4 columns'><input type='text' name='recipient[]' placeholder='Recipient'><input type='hidden' name='id[]' value=''></div>");
+                  });
+
+            }
+        });
+
+  });
+
+  $("#add_custom_folder").click(function(){
+    $(".add_new_folder").slideToggle();   
+  });
+
+  $("#cancel_add_folder").click(function(){
+    $(".add_new_folder").hide();
+    $(".folder_name").val("")
+  });
+
+  $("#add_folder").click(function(){
+    var data=$('#add_folder_form').serialize();
+    loan_id = $('#add_loan_id').val();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/add_folder',
+            success:function(response){
+              var datax = "id="+loan_id;
+              $.ajax({
+                        data: datax,
+                        type: 'POST',
+                        url: '/loans/new_loan_documents',
+                        success:function(response){
+                            $('#documents').html(response);
+                        }
+                      });
+            }
+        });
+  });
+
+  $('#accept').click(function(){
+        
+      $('#myModal').foundation('reveal', 'close'); 
+      $('#confirmation').foundation('reveal', 'open');
+    });
+
+     $('#confirm_shop').click(function(){
+        var allVals = [];
+        sorting_type = $('#sorting').val();
+        group_type = $('#shopping_outcome').val();
+        loan_id = $('#add_loan_id').val();
+        var data = "&id="+loan_id+"&group_type="+group_type;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/single_shop_loan',
+                success:function(response){
+                   $('#confirmation').foundation('reveal', 'close');   
+                    window.location.href = "https://dash.idealview.us/loans/shop_loans/listing"; 
+                   //alert("Your shop loan request has been sent to admin.");
+                }
+            });
+    });
+
+    $('#cancel_shop').click(function(){
+        $('#confirmation').foundation('reveal', 'close');
+    });
+
+    
+    $('#cancel_accept').click(function(){
+      $('#myModal').foundation('reveal', 'close');
+    });
+
+   
+
+    $('.add_more_payoff').click(function(){
+    $(".append_here").append("<div class='large-12 columns'><div class='small-8 columns'><input type='text' name='amount[]' placeholder='Amount'></div><div class='small-4 columns'><input type='text' name='recipient[]' placeholder='Recipient'><input type='hidden' name='id[]' value=''></div>");
+  });
+
+  
+
+
+  $('.save_payoff').click(function(){
+    var data=$('.payOffForm').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/add_payoff',
+            success:function(response){
+              $('.payoff_info').html(response);
+              $('.payoff_add_edit').hide();
+              $('.payoff_info').show();     
+            }
+        });
+  });
+
+  $('.fund_edit').click(function(){
+    
+  	loan_id = $('#add_loan_id').val();
+    var data = "&loan_id="+loan_id
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/edit_all_funds',
+                 success:function(response){
+                  $('#fund_add_edit').html(response);
+                  $('#fund_add_edit').show();
+                  $('#fund_info').hide();
+                }
+            }) ;
+  });
+
+  $('#cancel_funds').click(function(){
+    $('#fund_add_edit').hide();
+    $('#fund_info').show();
+  });
+
+  $('.payoff_edit').click(function(){
+    $('.payoff_add_edit').show();
+    $('.payoff_info').hide();
+  });
+
+ 
+  $('.cancel_payoff').click(function(){
+    $('.payoff_add_edit').hide();
+    $('.payoff_info').show();
+  });
+
+  $('.share_page').click(function(){
+    $('#myModal3').foundation('reveal', 'open');
+  });
+
+  $('.show_doc_div').click(function(){
+    $('.doc_page').slideToggle();
+  });
+  
+
+  
+});
+
+<%
+ server_host = request.host
+ if server_host.include? "idealview"
+    @host_addr = "idealview"
+ else
+    @host_addr = "idvstage"
+ end
+    %>
+
+function copyToClipboard(text) {
+  window.prompt("Copy to clipboard: Ctrl+C, Enter", "<iframe src='https://dash.<%= @host_addr %>.us/loans/embed_application/<%= current_user.id %>' width='1000' height='1000'></iframe>");
+}
+
+function copyShareLink(text) {
+  window.prompt("Copy to clipboard: Ctrl+C, Enter", "https://dash.<%= @host_addr %>.us/loans/embed_application/<%= current_user.id %>");
+}
+
+
+
+function loan_location()
+{
+  $('#l_location').show();
+  $('.loc').hide();
+}
+
+function loans_location()
+{
+  $('#loc_location').show();
+  $('.loctn').hide();
+  $('.loctn_name').hide();
+  $('.loc_edit_pen').hide();
+}
+
+
+function location_edit()
+{
+  var data=$('#loc_form').serialize();
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/save_loc',
+            success:function(response){
+              var address=$('#loc_address').val();
+              var city=$('#loc_city').val();
+              var state=$('#loc_state').val();
+              $('#loan_location').html(city+', '+state);
+              $('#highlight_address').html(address);
+              $('#highlight_city').html(city);
+              $('#highlight_state').html(state);
+              $('.loctn').html(city+', '+state);
+              $('.loc').show();
+              $('#l_location').hide();
+              $('#place_featured_image').html(response);
+
+            }
+        });
+}
+
+function locations_edit()
+{
+
+  var data=$('#loctn_form').serialize();
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/save_loc',
+            success:function(response){
+              // var city=$('#loctn_city').val();
+              // var state=$('#loctn_state').val();
+              var loan_name=$('#loctn_name').val();
+              // // alert(loan_name);
+              // $('#loan_location').html(city+', '+state);
+              // $('.loctn_loc').html(city+', '+state);
+              // $('#highlight_address').html(city+', '+state)
+              $('.loctn_name').html(loan_name);
+              $('.loc').show();
+              $('.loctn').show();
+              $('#loc_location').hide();
+              $('#l_location').hide();
+              $('.loc_edit_pen').show();
+              $('.loctn_name').show();
+            }
+        });
+}
+
+function cancel_loc()
+{
+  $('#l_location').hide();
+  $('.loc').show();
+}
+
+function cancel_locatn()
+{
+  $('#loc_location').hide();
+  $('.loctn').show();
+  $('.loctn_name').show();
+  $('.loc_edit_pen').show();
+}
+
+
+function lender_change(sts, id)
+    {
+            var status=sts.value;
+            var lender_id=id;
+            var data = "&status=" +status
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loan_urls/'+lender_id+'/save_status',
+                 success:function(response){
+                    $('#del_'+id).hide();
+                }
+            }) ;
+    }
+
+
+
+function add_related_funds(id)
+{
+	loan_id = $('#add_loan_id').val();
+    var data = "&collateral_id=" +id+ "&loan_id="+loan_id;
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/add_related_fund',
+      success:function(response)
+      {
+        $('.col_related_funds').html(response);
+        $('#myModal5').foundation('reveal', 'open');
+      }
+    });
+  
+}
+
+function after_add_funds(resp, id)
+{
+	loan_id = $('#add_loan_id').val();
+    $('#collateral_'+id+' .related_collats').html(resp);
+    var data = "&loan_id="+loan_id
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/after_related_funds',
+      success:function(response)
+      {
+        $('.table-use-fund').html(response);
+        $('#myModal5').foundation('reveal', 'close');
+      }
+    });
+}
+
+function remove_related_fund(col_id, fund_id)
+{
+  var data = "&collateral_id="+col_id+"&fund_id="+fund_id;
+  $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/remove_related_funds',
+      success:function(response)
+      {
+        $('#collateral_'+col_id+' .related_collats').html(response);
+      }
+    }); 
+}
+</script>
+
+
+
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+
+
+
+<!---------------------- Popup Selection  -------------------->
+
+	<div id="myModal1"  class="reveal-modal small" data-options="closeOnBackgroundClick:false" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <h3 id="modalTitle">What would you like to do? </h3>
+      <ul class="application_page" >
+        <li><a href="javascript:void(0);" id="create_new_loan" class="button">Create New Loan</a></li>
+        <li><a href="javascript:void(0);" onclick="copyShareLink('link')" class="button">Get Shareable Link</a></li>
+        <% embed = 0 %>
+          <% if @brokerLogin==true%>
+          <% if @infoBroker.plan=="ENTERPRISE" %>
+            <li><a href="javascript:void(0);" onclick="copyToClipboard('link')" class="button">Embed</a></li>
+            <% embed = 1 %>
+          <% else %>
+            <% embed = 0%>
+          <% end %>
+        <% end %>
+
+        
+        <% if @adminLogin==true && embed!=1%>
+          <li><a href="javascript:void(0);" onclick="copyToClipboard('link')" class="button">Embed</a></li>
+        <% end  %>
+        <% if @custom == 1 %>
+          <li><a href="https://<%= @hostname %>/custom/form" target="_blank" class="button">Customize Application</a></li>
+        <% end %>
+      </ul>
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+	
+<!---------------------- End Popup Selection ------------------------->
+
+<!---------------------- Add New Loan Title ---------------------------->
+  
+  <div id="myModal2"  class="reveal-modal small" data-options="closeOnBackgroundClick:false" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+   
+    <div class="row">
+      <label for="Email">Loan Name </label>
+      <input id="loan_name" type="text"  autofocus="autofocus" name="loan_name">
+      <label class="error" style="display:none;" id="name_error"> Please fill the loan name. </label>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <input class="tiny button" type="submit" value="SAVE" id="save_loan_name">
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+<!---------------------- End Add New Loan Title ------------------------>
+
+
+<!----------------------- Collateral Funds Popup -------------------------->
+
+  <div id="myModal5" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <h5 id="modalTitle" style="font-weight:bold; allign-text">Add Fund</h5>
+    </div>
+    <div class="col_related_funds">
+
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  <div id="myModal6" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <div class="row">
+      <div class="flash_notice" id="form_link_flash" style="display:none; margin-top:14px;">Email has been sent.</div>
+        <label for="Email">Enter Email</label>
+        <input id="form_email" type="text"  autofocus="autofocus" name="form_email">
+      </div>
+      <div class="row">
+        <input class="tiny button" type="submit" value="SEND LINK" id="send_form_link">
+      </div>
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+<!----------------------- Collateral Funds Popup -------------------------->
+
+<% 
+# if defined? @num
+#   @form_show = ""
+#   @user_plan = ""
+#   if(@brokerLogin==true ) 
+#     if defined?@infoBroker.plan 
+#       if @infoBroker.plan == "SOLO"
+#         @user_plan = "SOLO"
+#         if (@num == 1 || @num>1)  
+#           @form_show = "no" 
+#         end
+#       end
+#     end
+#    end 
+# end%>
+
+
+<!---------------------- Header Start ---------------->
+	<!-- <section class="title-bar">
+    
+	    <div class="row loctn">
+	        <% if @custom == 1 %>
+	           <h4><a  href="https://<%= @hostname %>/custom/form" id='customize_form' style="color:#ffffff; text-decoration:underline;">Customize Form</a></h4>
+	         <% end %>
+	        
+	    </div>
+
+	</section> --><!-- banner-section -->
+<!---------------------- Header End ------------------>
+
+<input type="hidden" name="add_loan_id" id="add_loan_id">
+<script type="text/javascript">
+	function show_preview(id)
+	{
+		loan_id = $('#add_loan_id').val();
+		if(id=="overview")
+		{
+			data = "loan_id="+loan_id;
+		 	$.ajax({
+		      data: data,
+		      type: 'POST',
+		      url: '/loans/show_overview',
+		      success:function(response)
+		      {
+		        $('#overview').html(response);
+		      }
+		    }); 
+		}
+	}
+</script>
+<section class="content-section">
+  <div class="container">
+    <div class="row">
+     <!--  <div class="columns small-12">
+        <ul class="inner-nav tabs" data-tab>
+            <li class="active"><a href="#contact">Contact</a></li>
+            <li><a href="#overview" onclick="return show_preview('overview');">Overview</a></li>
+            <li><a href="#borrowers" onclick="return hide_analysis();">Borrowers</a></li>
+            <li><a href="#collaterals" onclick="return hide_analysis();">Collateral</a></li>
+            <li><a href="#exit_strategy" onclick="return hide_analysis();">Exit Strategy</a></li>
+            <li><a href="#pictures" onclick="return hide_analysis();">Pictures</a></li>
+            <li><a href="#documents" onclick="return hide_analysis();">Documents</a></li>
+        </ul>
+      </div> -->
+      <div class="columns medium-10  large-centered columns">
+         
+
+          
+          <div  id="contact">
+             <%= render partial: 'new_contacts_information' %>    
+          </div>
+          <div  id="overview">
+             <%= render partial: 'new_overviews' %>
+            <% #render partial: 'overview' %>
+          </div><!---- overview -------->
+          
+          <div  id="borrowers">
+          	<div class="content-white-box">
+	          	<div class="cwb-header">
+	          		<h3>Borrowers</h3>
+	          	</div>
+            	<%= render partial: 'new_borrower' %>
+            </div>
+          </div>
+          <div  id="collaterals">
+            <div class="content-white-box">
+	          	<div class="cwb-header">
+	          		<h3>Collateral</h3>
+	          	</div>
+            	<%= render partial: 'new_collateral' %>
+            </div>
+          </div>
+          <div  id="exit_strategy">
+            <%= render partial: 'new_exitstrategy'%>
+          </div>
+          <div  id="pictures">
+            <div class="content-white-box">
+              <div class="cwb-header" style="margin-bottom:10px;">
+                <h3>Pictures</h3>
+              </div>
+              <div class="all_loan_contents" id='pictures-container' >
+                <%= render partial: 'new_thumbnails', locals:{images: @images, loan_id:"test"}%>
+              </div>
+            </div>
+          </div>
+
+         <div id="documents" class="content-white-box">
+            <div class="cwb-header" style="margin-bottom:10px;">
+                <h3>Documents</h3>
+            </div>
+          	<div class="all_loan_contents" style="margin-top:49px;">
+            	<%=render partial: 'new_documents'%>
+          	</div>
+         </div>
+        
+          
+        
+        
+      </div>
+      
+  </div>
+</section>
+<!--------------------------- New Design -------------------------->
+<script type="text/javascript">
+    $('document').ready(function(){
+      // tab_link.attr({"aria-selected": "true", tabindex: 0});
+
+      $('input[name="maturity_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="original_purchase_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="contract_closing_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="_ExpectedCloseDate"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('.maturityDates').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('.contractDates').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+
+      $('.loan_summary').change(function(){
+        this_val = $(this).val();
+        this_val = this_val.replace(/[";&"]+/g, '');
+        this_val = encodeURI(this_val);
+        field_name = "_LoanSummaryWhatareyoulookingfor";
+        loan_id = $('#add_loan_id').val();
+        data = "&field="+field_name+"&value="+this_val+"&loan_id="+loan_id;
+        $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_field',
+              success:function(response){
+              }
+          });
+
+      });
+
+      $('.loan_info_fields').change(function(){
+
+
+        this_val = $(this).val();
+        field_name = $(this).attr('name');
+        
+        loan_id = $('#add_loan_id').val();
+        /*************** Transaction Type *******************/
+          if(field_name=="transaction_type")
+          {
+            if(this_val=="Purchase")
+            {
+              $('.purchase').show();
+              $('.refinance').hide();
+            }
+            else if(this_val=="Refinance")
+            {
+              $('.refinance').show();
+              $('.purchase').hide(); 
+            }
+            else
+            {
+              $('.refinance').hide();
+              $('.purchase').hide(); 
+
+            }
+
+
+          }
+        /*************** Transaction Type *******************/
+
+        /*************** Is Broker **************************/
+          
+          if(field_name=="isBroker")
+          {
+            if(this_val=="Yes")
+            {
+              $('.yes_broker').show();
+              $('.ask_broker').addClass('border-right');
+            }
+            else
+            {
+              $('.yes_broker').hide();
+              $('.ask_broker').removeClass('border-right'); 
+            }
+          }
+        /*************** Is Broker End **********************/
+
+        /*************** Free Clear **************************/
+          
+          if(field_name=="free_clear")
+          {
+            if(this_val=="Yes")
+            {
+              $('.free_clear').show();
+            }
+            else
+            {
+              $('.free_clear').hide(); 
+            }
+          }
+        /*************** Free Clear End **********************/
+        
+        /*************** Loan Categorys **********************/
+          if(field_name=="_LendingCategory")
+          {
+            if(this_val == "Private Real Estate Loan")
+            {
+              $('#_LendingTypes').show();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Business Financing")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').show();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Equity and Crowdfunding")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').show();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Residential or Commercial Mortgage")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').show();
+            }
+          } 
+
+        /*************** Loan Categorys End ***************************/
+
+        /***************** Highlight Address Save **********************/
+          setTimeout(function(){
+          if(field_name=="Address3" || field_name=="City3" || field_name=="State3")
+          {
+            city_val = $('#loc_city').val();
+            state_val = $('#loc_state').val();
+            address_val = $('#loc_address').val();
+            loan_id = $('#add_loan_id').val();
+            data = "&"+field_name+"="+this_val+"&id="+loan_id+"&City3="+city_val+"&State3="+state_val+"&Address3="+address_val;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/save_loc',
+                success:function(response){
+                  $('.loctn_loc').html(city_val+', '+state_val);
+                  // $('#place_featured_image').html(response);
+                }
+            });
+          }
+          }, 3000);
+
+        /***************** Highlight Address Save **********************/
+
+        /******************** Land Size **********************/
+          if(field_name=="size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.sq_footage').show();
+              $('.acres').hide();
+            }
+            else if(this_val=="Acres")
+            {
+              $('.acres').show();
+              $('.sq_footage').hide();
+            }
+          }
+
+        /******************** End Land Size **********************/
+          if(field_name=="_NetLoanAmountRequested0" || field_name == "_EstimatedMarketValue")
+          {
+          	loan_id = $('#add_loan_id').val();
+            data = "&field="+field_name+"&value="+this_val+"&loan_id="+loan_id;
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_money',
+                  success:function(response){
+                    $('input[name="'+field_name+'"]').val(response);
+                  }
+            });
+          }
+          else
+          {
+            data = "&field="+field_name+"&value="+this_val+"&loan_id="+loan_id;
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_field',
+                  success:function(response){
+                  }
+            });
+          }
+          
+        /********************** Fetch Lenders **********************/
+
+          if(field_name=="_NetLoanAmountRequested0" || field_name=="_LendingCategory" || field_name=="Address3"  || field_name=="State3")
+          {
+          	loan_id = $('#add_loan_id').val();
+            data = "&loan_id="+loan_id;
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/fetch_lenders',
+                  success:function(response){
+                    $('#lenders_info').html(response)
+                  }
+              });
+          }
+
+        /********************** Fetch Lenders End **********************/
+
+        /********************** Expected Closed Date ******************/
+        if(field_name=="_ExpectedCloseDate")
+          {
+            $('#_ExpectedCloseDate').val(this_val);
+
+          }
+        /********************** End Expected Closed Date ******************/
+      });
+
+      /************************** Save Collateral Data ********************************/
+      
+
+        $('.collateral_info_fields').change(function(){
+
+            this_val = $(this).val();
+            field_name = $(this).attr('name');
+            this_id = $(this).attr('id');
+            id = this_id.replace(field_name+"_", "");
+        /**************** Location Function ******************/
+          // if(field_name=="address")
+          // {
+          //   // alert("hey...")
+
+          //   setTimeout(function(){
+          //   address = this_val;
+          //   city = $('#city_'+id).val();
+          //   state = $('#state_'+id).val();
+          //   postalcode = $('#postalcode_'+id).val();
+            
+          //   data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id;
+
+          //   $.ajax({
+          //       data: data,
+          //       type: 'POST',
+          //             url: '/loans/save_collateral_address',
+          //              success:function(response){
+                       
+
+          //               new_data = "&collateral_id="+id;
+          //               $.ajax({
+          //                 data: new_data,
+          //                 type: 'POST',
+          //                       url: '/loans/fetch_location_map',
+          //                        success:function(response){
+          //                         $("#collateral_"+id+" .map_container").html(response);
+          //                     }
+          //                   }) ;
+          //           }
+          //         }) ;
+          //   }, 3000);
+
+          // }
+          
+        /**************** Location Function ******************/
+        /******************** Land Size **********************/
+          if(field_name=="size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.sq_footage').show();
+              $('.acres').hide();
+            }
+            else if(this_val=="Acres")
+            {
+              $('.acres').show();
+              $('.sq_footage').hide();
+            }
+          }
+
+        /******************** End Land Size **********************/
+
+        /******************** Structural Size ********************/
+          if(field_name=="structural_size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.ask_structural_size').removeClass('medium-12 ');
+              $('.ask_structural_size').addClass('medium-6  border-right');
+              $('.structure_sq_footage').show();
+              $('.structure_units').hide();
+            }
+            else if(this_val=="Units")
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').show();
+            }
+            else
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').hide(); 
+            }
+          }
+
+
+
+        /******************** End Structural Size ********************/
+        
+          if(field_name=="estimated_value" || field_name=="amount_owed" || field_name=="gross_monthly_income" || field_name == "noi_ytd" || field_name == "noi_two_years_ago" )
+          {
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_money',
+                  success:function(response){
+                    $("#"+field_name+"_"+id).val(response);
+                    if(field_name=="estimated_value")
+                    {
+                      loan_id = $('#add_loan_id').val();
+                      ldata = "&loan_id="+loan_id;
+                       $.ajax({
+                            data: ldata,
+                            type: 'POST',
+                            url: '/loans/estimated_market_value',
+                            success:function(response){
+                             $('#_EstimatedMarketValue').val(response);
+                            }
+                        });
+                    }
+                  }
+              });
+          } 
+          else
+          {
+
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_field',
+                  success:function(response){
+                  }
+              });
+          } 
+
+
+
+          
+
+          
+
+          /********************** Collateral Analysis ********************************/
+            setTimeout(function(){
+            if(field_name=="acres")
+            {
+              
+               loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+
+
+            if(field_name=="sq_footage")
+            {
+              
+              	loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="gross_monthly_income")
+            {
+              
+               loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=gross_monthly_income";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="noi_ytd")
+            {
+              
+               loan_id = $('#add_loan_id').val(); 
+                var data = "&loan_id="+loan_id+"&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="structural_size")
+            {
+              
+               loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="units")
+            {
+              
+                loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="structural_sq_footage")
+            {
+              
+                loan_id = $('#add_loan_id').val();
+                var data = "&loan_id="+loan_id+"&field=structural_sq_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="sf_per_unit")
+            {
+              
+                loan_id = $('#add_loan_id').val();
+                var datas = "&loan_id="+loan_id+"&field=noi_ytd";
+                 $.ajax({
+                        data: datas,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+          },3000);
+            // alert("df");
+        /********************** End Collateral Analysis ***************************/
+
+        });
+
+      /************************** End Save Collateral Data ********************************/
+
+      /************************** Save Borrower Data ***************************************/
+         $('.borrower_edit_field').change(function(){
+            this_val = $(this).val();
+            field_name = $(this).attr('name');
+            this_id = $(this).attr('id');
+            id = this_id.replace(field_name+"_", "");
+            borId = "borrow_"+id;
+
+            /**************** Location Function ******************/
+              if(field_name=="personal_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  address = $('#personal_address_'+id).val();
+                  city = $('#personal_city_'+id).val();
+                  state = $('#personal_state_'+id).val();
+                  postalcode = $('#personal_postalcode_'+id).val();
+                  
+                  data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_personal_address',
+                             success:function(response){
+                              
+                          }
+                        }) ;
+
+                }, 3000);
+
+              }
+
+              if(field_name=="business_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  // divId = "borrow_"+id;
+                  address = $('#business_address_'+id).val();
+                  city = $('#business_city_'+id).val();
+                  state = $('#business_state_'+id).val();
+                  postalcode = $('#business_postalcode_'+id).val();
+                  
+                  data = "&business_address="+address+"&business_city="+city+"&business_state="+state+"&business_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_business_address',
+                             success:function(response){
+                             
+                          }
+                        }) ;
+
+                }, 3000);
+
+              }
+
+              if(field_name=="guarantor_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  // divId = "borrow_"+id;
+                  address = $('#guarantor_address_'+id).val();
+                  city = $('#guarantor_city_'+id).val();
+                  state = $('#guarantor_state_'+id).val();
+                  postalcode = $('#guarantor_postalcode_'+id).val();
+                  
+                  data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_guarantor_address',
+                             success:function(response){}
+                        }) ;
+
+                }, 3000);
+
+              }
+
+             
+          
+        /**************** Location Function ******************/
+            /******************* Borrower Type *********************/
+            if(field_name=="borrower_type")
+            {
+              if(this_val=="Individual")
+              {
+                $('#'+borId+' .business_info').hide();
+                $('#'+borId+' .business_financials').hide();
+                $('#'+borId+' .guarantor_info').show();
+                $('#'+borId+' .individual_div').show();
+                $('#'+borId+' .for_both').removeClass('medium-12');
+                $('#'+borId+' .for_border').addClass('border-right');
+                $('#'+borId+' .for_both').addClass('medium-6');
+                $('#'+borId+' .personal_info').show();
+                $('#'+borId+' .borrower_bio').insertAfter('#'+borId+' .business_info');
+                $('#'+borId+' .borrower_bio').show();
+              }
+              else if(this_val=="Company or Trust")
+              {
+                $('#'+borId+' .business_info').show();
+                $('#'+borId+' .business_financials').show();
+                $('#'+borId+' .guarantor_info').show();
+                $('#'+borId+' .individual_div').hide();
+                $('#'+borId+' .for_both').removeClass('border-right');
+                $('#'+borId+' .for_both').removeClass('medium-6');
+                $('#'+borId+' .for_both').addClass('medium-12');
+                $('#'+borId+' .business_info').insertAfter('#'+borId+' .one_div');
+                $('#'+borId+' .personal_info').hide();
+                $('#'+borId+' .borrower_bio').hide();
+              }
+            }
+            /******************* Borrower Type *********************/
+
+            /******************* Guarantor Functionality ****************/
+
+            if(field_name=="borrower_guarantor")
+            {
+              if(this_val=="Yes")
+              {
+                $('#'+borId+' .guarantor_info').hide();
+              }
+              else
+              {
+                $('#'+borId+' .guarantor_info').show();
+              }
+            }
+
+            /******************* End Guarantor Functionality ****************/
+            
+            if(field_name == "personal_monthly_income" || field_name == "net_worth" || field_name == "personal_gross" || field_name == "personal_cashContribution" || field_name == "cash_on_hand" || field_name == "available_credit" || field_name == "monthly_noi" || field_name == "annual_noi" || field_name == "account_recievable" || field_name == "account_payable" || field_name=="guarantor_net_worth" || field_name=="guarantor_monthly_income")
+            {
+              data = "&field="+field_name+"&value="+this_val+"&borrower_id="+id;
+              // alert(data);
+              $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_borrower_money',
+                    success:function(response){
+                      $("#"+field_name+"_"+id).val(response);
+                    }
+                });
+            }
+            else
+            {
+               data = "&field="+field_name+"&value="+this_val+"&borrower_id="+id;
+                // alert(data);
+                $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/save_borrower_field',
+                      success:function(response){
+                      }
+                  });
+            }
+           
+
+
+         });
+        
+
+      /************************** End Save Borrower Data ***********************************/
+
+
+     $('.add_more_fund').click(function(){
+        var div = $('table[class^=table-use-fund] tr:last');
+        var num = parseInt( div.prop("id").match(/\d+/g), 10 ) +1;
+        clon = div.clone('true').prop('id', num+"_fund" );
+        clon.find('.maturityDates').hide();
+        clon.find('.contractDates').hide();
+        clon.find('input:text').val('');
+        clon.find('input:hidden').val('');
+        clon.find('.payoff_funds').hide();
+        clon.find('.purchase_funds').hide();
+        $('.table-use-fund').append(clon);
+      });
+
+      $('.use').change(function(){
+        this_val = $(this).val();
+        mainId = $(this).closest('tr').attr('id');
+        
+
+        if(this_val=="Payoff")
+        {
+          $('#'+mainId+' .payoff_funds').show();
+          $('#'+mainId+' .purchase_funds').hide();
+        }
+        else if(this_val=="Purchase")
+        {
+          $('#'+mainId+' .purchase_funds').show();
+          $('#'+mainId+' .payoff_funds').hide();
+        }
+        else
+        {
+          $('#'+mainId+' .purchase_funds').hide();  
+          $('#'+mainId+' .payoff_funds').hide();
+        }
+      });  
+
+
+      $('#save_use_funds').click(function(){
+        form_data = $('#all_funds_form').serialize();
+        // alert(form_data);
+        loan_id = $('#add_loan_id').val();
+        data = form_data+"&loan_id="+loan_id;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/add_loan_funds',
+                success:function(response){
+                  alert("Use of funds saved successfuly.");
+                }
+            });
+      });
+
+      /**************** Expand the textbox width *********************/
+      // $('#loc_address').focus(function()
+      // {
+          /*to make this flexible, I'm storing the current width in an attribute*/
+      //     $(this).attr('data-default', $(this).width());
+      //     $(this).animate({ width: 250 }, 'slow');
+      // }).blur(function()
+      // {
+          /* lookup the original width */
+      //     var w = "107px";
+      //     $(this).animate({ width: w }, 'slow');
+      // });
+      /**************** Expand the textbox width *********************/
+
+      /**************** Remove Fund **********************************/
+
+      $('.remove_funds').click(function(){
+        rmvId = $(this).closest('.fund_row').attr('id');
+        $('#'+rmvId).remove();
+      });
+
+
+      /**************** Remove Fund End*******************************/
+
+      $('.tii-controls a').attr('tabindex', '-1');
+      $('.tii-controls img').attr('tabindex', '-1');
+      $('.cwb-controls img').attr('tabindex', '-1');
+      $('.cwb-controls a').attr('tabindex', '-1');
+      $('a').attr('tabindex', '-1');
+      $('img').attr('tabindex', '-1');
+      $('strong').attr('tabindex', '-1');
+      $('.trans-info-item').attr('tabindex', '-1');
+      $('.trans-info-last').attr('tabindex', '-1');
+
+
+      $('input, textarea, select, div').focus(function(){
+        $('.tii-controls a').attr('tabindex', '-1');
+        $('.tii-controls img').attr('tabindex', '-1');
+        $('.cwb-controls img').attr('tabindex', '-1');
+        $('.cwb-controls a').attr('tabindex', '-1');
+        $('a').attr('tabindex', '-1');
+        $('img').attr('tabindex', '-1');
+        $('strong').attr('tabindex', '-1');
+        $('.trans-info-item').attr('tabindex', '-1');
+        $('.trans-info-last').attr('tabindex', '-1');
+        $('label').attr('tabindex', '-1');
+       });
+
+
+
+      $('li a').click(function(){
+        $('.tii-controls a').attr('tabindex', '-1');
+        $('.tii-controls img').attr('tabindex', '-1');
+        $('.cwb-controls img').attr('tabindex', '-1');
+        $('.cwb-controls a').attr('tabindex', '-1');
+        $('a').attr('tabindex', '-1');
+        $('img').attr('tabindex', '-1');
+        $('strong').attr('tabindex', '-1');
+        $('.trans-info-item').attr('tabindex', '-1');
+        $('.trans-info-last').attr('tabindex', '-1');
+        $('label').attr('tabindex', '-1');
+       });
+
+      $('#send_form_link').click(function(){
+        var emails = $('#form_email').val();
+        if(emails=="")
+        {
+          alert("Please enter email address");
+        }
+        else
+        {
+          var loan_id = $('#add_loan_id').val();
+          data = "loan_id="+loan_id+"&emails="+emails;
+          $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/send_form_link',
+                  success:function(response){
+                    // $('#myModal6').foundation('reveal', 'close');
+                    $('#form_link_flash').show();
+                  }
+              });
+        }
+      });  
+      <% if @alert_msg == 'true' %> 
+        $('#main_image').click(function(){
+         var r=confirm("You have less then 10gb of memmory left. Press cancel to cancel uploading or Ok to proceed.");
+          if (r == false) {
+           return false;
+          }
+        });
+      <% end %>
+
+      $('.funds_field').change(function(){
+        save_use_funds()
+      });
+
+      // $('.change_col_funds').change(function(){
+      //   id = $(this).attr('id');
+      //   col_id = id.replace("collateral_funds_", ""); 
+      //   val = $('#'+id).val();
+      //   data = "related_funds="+val+"&collateral_id="+col_id;
+      //    $.ajax({
+      //           data: data,
+      //           type: 'POST',
+      //           url: '/loans/add_collateral_funds',
+      //           success:function(response){
+      //           }
+      //       });
+      // });
+
+      
+
+      $('.change_col_funds').click(function(){
+              id = $(this).attr('id');
+              col_id = id.replace("relate_fund_btn_", ""); 
+              select_id = "collateral_funds_"+col_id
+              val = $('#'+select_id).val();
+              data = "related_funds="+val+"&collateral_id="+col_id;
+               $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/add_collateral_funds',
+                      success:function(response){
+                        $('#collateral_'+col_id+' .loan_all_funds').hide();
+                        $('#collateral_'+col_id+' .related_collats').html(response);
+                        $('#collateral_'+col_id+' .related_collats').show();
+                        $('#collateral_'+col_id+' .add_collateral_fund').show();
+                      }
+                  });
+      });
+
+    });
+    
+    function send_form_link()
+    {
+      $('#myModal6').foundation('reveal', 'open');
+      $('#form_link_flash').hide();
+    }
+
+    function save_use_funds()
+    {
+       form_data = $('#all_funds_form').serialize();
+        // alert(form_data);
+        loan_id = $('#add_loan_id').val();
+        data = form_data+"&loan_id="+loan_id;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/add_loan_funds',
+                success:function(response){
+
+                }
+            });
+    }
+    function fund_edit_pen(col_id){
+        // id = $(this).attr('id')
+        // col_id = id.replace("relate_fund_edit_", "");
+        loan_id = $('#add_loan_id').val();
+        data = "loan_id="+loan_id+"&collateral_id="+col_id
+        $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/all_loan_funds',
+            success:function(response){
+              $('#collateral_'+col_id+' .loan_all_funds').html(response);
+              $('#collateral_'+col_id+' .loan_all_funds').show();
+              $('#collateral_'+col_id+' .related_collats').hide();
+              $('#collateral_'+col_id+' .add_collateral_fund').hide();
+            }
+          });
+        }
+</script>
+<!--------------------------- End New Design -------------------------->

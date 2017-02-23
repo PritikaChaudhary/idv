@@ -1,44 +1,67 @@
-<div class='row'>
-	<%= render partial: 'layouts/messages' %>
-	<%= form_tag({:controller=>'loan_urls', :action=>'create'}, :onSubmit => 'return false', :id=>'loan-url-form') do %>
+<% 
+if defined? @num
+	@form_show = ""
+	@user_plan = ""
+	if(@brokerLogin==true ) 
+		if defined?@infoBroker.plan 
+			if @infoBroker.plan == "SOLO"
+				@user_plan = "SOLO"
+				if (@num == 1 || @num>1)	
+					@form_show = "no" 
+				end
+			end
+		end
+	 end 
+end%>
+<script type="text/javascript">
+  $('document').ready(function(){
+  		<% @show_promp = 0 %>
+  	   <% if defined? @show_prompt%>
+      	 	<% @show_promp = 2 %>
+      <% else %>
+	      <% unless @loan.doc_url.blank? %>
+	        	<% @show_promp = 1 %>
+	      <% end %>
+      <% end %>
+      <% if @show_promp = 1 %>
+  		 <% unless @loan.doc_url.blank? %>
+	  		$('#gen_url').click(function(){
+
+	          <% docUrl = @loan.doc_url.strip %>
+	          url = "<%= docUrl%>";
+	          link = "https://<%= @hostname%>/loans/docs/"+url;
+	          window.prompt("Copy to clipboard: Ctrl+C, Enter", link);
+	        }); 
+        <% end %>
+      <% elsif @show_promp = 2%>
+      	<% unless @loan.doc_url.blank? %>
+      	  <% docUrl = @loan.doc_url.strip %>
+          url = "<%= docUrl%>";
+          link = "https://<%= @hostname%>/loans/docs/"+url;
+          window.prompt("Copy to clipboard: Ctrl+C, Enter", link);
+        <% end %>
+      <% end %>
+  });
+</script>
+<div class="row doc_page" style="display:none;">
 	
-		<%= hidden_field_tag 'loan_id', @loan.id %>
-		<div class='medium-5 medium-offset-1 columns'><%=email_field_tag 'email', '', placeholder:'email@example.com' %></div>
-		<div class='medium-4 columns'><%=text_field_tag 'name', '', placeholder:'Full Name' %></div>
-		<% @url=url_for :controller=>'loan_urls', :action=>'create' %>
-		<div class='medium-1 columns'><%= button_tag "Add",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button'%></div>
-		<div class='medium-3 columns'></div>
-	<% end %>
+<% if @loan.doc_url 
 
+	%>
 
-	<table class='small-12 access_email_list'>
-	<thead>
-		<tr class="panel_head"><th>Email</th><th>Name</th><th>Date Created</th><th>Link</th><th>Status</th><th>#Visits</th><th>Last Visit</th><th></th><th></th></tr>
-	</thead>
+	<table class='small-12' style="margin:0px;">
+	
 	<tbody>
-	<% @loan.loan_urls.each do |loan_url|%>
-	<%= render partial: 'loan_urls/show', locals:{url:loan_url}%>
-	<% end %>
-	</tbody>
-	</table>
-</div>
-
-<div class="doc_page">
-<% if @loan.doc_url.blank? %>
-	<% @url=url_for :controller=>'loan_urls', :action=>'generate_url', :id=>@loan.id %>
-	<%= button_tag "Generate Documents URL",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button success'%>
-<% end %>
-<% if @loan.doc_url %>
-<div class="row">
-	<table class='small-12'>
-	<thead>
-		<tr><th>Upload Documents Link</th><th>Valid Upto</th><th>Action</th></tr>
-	</thead>
-	<tbody>
+	<tr><td><b>Upload Documents Link</b></td><td><b>Valid Upto</b></td><td><b>Action</b></td></tr>
 	<tr><td>http://<%= @hostname %>/loans/docs/<%= @loan.doc_url %></td>
 	<td>
 	<% time = @loan.url_time
-       next_month = Time.utc(time.year, time.month+1, time.day) 
+		if time.month==12
+			mnth = 1
+			next_month = Time.utc(time.year, mnth, time.day) 
+       	else
+       		next_month = Time.utc(time.year, time.month+1, time.day) 
+       	end
      %>	
      <%= next_month.strftime('%m/%d/%Y') %>
 	</td>
@@ -49,6 +72,6 @@
 	</tr>
 	</tbody>
 	</table>
-</div>
+
 <% end %>
 </div>

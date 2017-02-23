@@ -1,0 +1,40 @@
+<% @pdfs.each do |pdf| %>
+					<li id="<%= pdf.id %>">
+
+						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
+						<img src="http://<%= @hostname %>/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
+							<br>
+							<b><%= pdf.loan_name+" | "+pdf.location %></b>
+							<br>
+							<b>Loan Amount : </b><%= pdf.amount %>
+							<br><br>
+							<b>Summary : </b><%= pdf.summary %>
+							<br>
+						</div>
+						
+						<div class="not_print" style="height:40px;border:1px solid red; display:none; ">
+						</div>
+
+						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px; display:none;' class="edit_loan_defination" id="loan_edit<%= pdf.id %>">
+							<form name="pdf_edit<%= pdf.id %>" id="pdf_edit<%= pdf.id %>" >
+								<br>
+								<b>Name : </b><input type="text" value="<%= pdf.loan_name%>" name="loan_name" >
+								<br>
+								<b>Location : </b><input type="text" value="<%= pdf.location%>" name="location">
+								<br>
+								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>">
+								<br>
+								<b>Summary : </b><textarea name="summary"><%= pdf.summary %></textarea>
+								<br>
+								<b>Sort Number :</b><input type="text" value="<%= pdf.sort_id %>" name="sort_id">
+								<input type="hidden" name="id" value="<%= pdf.id %>" >
+								<input type="button" value="SAVE" class="tiny button success" onclick="edit_loan('<%= pdf.id %>')">
+
+								<input type="button" value="CANCEL" class="tiny button alert" onclick="edit_off('<%= pdf.id %>')">
+							</form>
+						</div>
+						
+						
+
+					</li>
+					<% end %>

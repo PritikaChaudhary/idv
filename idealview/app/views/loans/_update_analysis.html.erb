@@ -1,0 +1,2445 @@
+<script type="text/javascript">
+$('document').ready(function(){
+  /**************** Check If ***********/
+
+
+
+
+  /**************** End Check If **********/
+
+  $('input').change(function(){
+    cls = $(this).attr('class');
+    // if(cls != "sub_input")
+    // {
+    setTimeout(function(){
+      units = $('#analysis_units').val();
+      // as_is_val = units*140
+      is_val = $('#as_is_value').val();
+      // alert(is_val);
+      improved_sf = $('#improved_sale_sf').val();
+      unimproved_sf = $('#unimproved_sf').val();
+      //begining_unit = $('#begining_unit').val();
+      as_improved_value = $('#as_improved_value').val();
+      //improved_unit = $('#improved_unit').val();
+      completed_square_footage = $('#completed_square_footage').val();
+      begining_project_completion = $("#begining_project_completion").val();
+      ending_project_completion = $("#ending_project_completion").val();
+      cash_value_ratio = $("#cash_value_ratio").val();
+      acash_to_contribute = $("#acash_to_contribute").val();
+      as_is_ltv = $("#as_is_ltv").val();
+      gross_loan_amount  = $("#gross_loan_amount").val();
+      as_is_ltv_purchaseprice = $("#as_is_ltv_purchaseprice").val();
+      apurchase_price = $("#apurchase_price").val();
+      as_improved_ltv = $("#as_improved_ltv").val();
+      begining_structural_sf = $("#begining_structural_sf").val();
+      structural_square_footage = $("#structural_square_footage").val();
+      borrower_stated_improved_value = $("#borrower_stated_improved_value").val();
+      borrower_as_is_ltv = $("#borrower_as_is_ltv").val();
+      borrower_stated_is_value = $("#borrower_stated_is_value").val();
+      improvement_construction = $('input[name="improvement_construction"]').val();
+          interest_reserve = $('input[name="interest_reserve"]').val();
+          other_reserves = $('input[name="other_reserves"]').val();
+          price = $('input[name="purchas_refi_amount"]').val();
+        improvement_construction = $('input[name="improvement_construction"]').val();
+          additional_uses = $('input[name="additional_uses"]').val();
+          interest_rate = $('input[name="interest_rate"]').val();
+          other_reserves = $('input[name="other_reserves"]').val();
+          interest_reserve = $('input[name="interest_reserve"]').val();
+          other_loan_costs = $('input[name="other_loan_costs"]').val();
+          est_title_escrow =  $('input[name="est_title_escrow"]').val();
+          leegal_fees =  $('input[name="leegal_fees"]').val();
+          lender_fees = $('input[name="lender_fees"]').val();
+          broker_fees = $('input[name="broker_fees"]').val();
+          half_term_roi = $('input[name="half_term_roi"]').val();
+      new_is_val = Number(is_val.replace(/[^0-9\.]+/g,""));
+      new_improved_val = Number(as_improved_value.replace(/[^0-9\.]+/g,""));
+      new_cash_contribute = Number(acash_to_contribute.replace(/[^0-9\.]+/g,""));
+      new_gross_loan_amount = Number(gross_loan_amount.replace(/[^0-9\.]+/g,""));
+      new_apurchase_price = Number(apurchase_price.replace(/[^0-9\.]+/g,""));
+      new_borrower_stated_improved_value = Number(borrower_stated_improved_value.replace(/[^0-9\.]+/g,""));
+      new_borrower_stated_is_value = Number(borrower_stated_is_value.replace(/[^0-9\.]+/g,""));
+      structural_square_footage = Number(structural_square_footage.replace(/[^0-9\.]+/g,""));
+      
+
+  /////////////////////// Side Fields //////////////////////////////////
+
+      price = $('input[name="purchas_refi_amount"]').val();
+        price = Number(price.replace(/[^0-9\.]+/g,""));
+        purchas_refi_amount = $('input[name="purchas_refi_amount"]').val();
+        purchas_refi_amount = Number(purchas_refi_amount.replace(/[^0-9\.]+/g,""));
+        projected_stabilized_noi = $('input[name="projected_stabilized_noi"]').val();
+        projected_stabilized_noi = Number(projected_stabilized_noi.replace(/[^0-9\.]+/g,""));
+        loan_amount  = $("#gross_loan_amount").val();
+        gross_loan_amount = Number(loan_amount.replace(/[^0-9\.]+/g,""));
+        improvement_construction = $('input[name="improvement_construction"]').val();
+        improvement_construction = Number(improvement_construction.replace(/[^0-9\.]+/g,""));
+         additional_uses = $('input[name="additional_uses"]').val();
+         additional_uses = Number(additional_uses.replace(/[^0-9\.]+/g,""));
+        interest_reserve = $('input[name="interest_reserve"]').val();
+        interest_reserve = Number(interest_reserve.replace(/[^0-9\.]+/g,""));
+        other_reserves = $('input[name="other_reserves"]').val();
+        other_reserves = Number(other_reserves.replace(/[^0-9\.]+/g,""));
+        other_loan_costs = $('input[name="other_loan_costs"]').val();
+        other_loan_costs = Number(other_loan_costs.replace(/[^0-9\.]+/g,""));
+        lender_fees = $('input[name="lender_fees"]').val();
+        lender_fees = Number(lender_fees.replace(/[^0-9\.]+/g,""));
+        broker_fees = $('input[name="broker_fees"]').val();
+        broker_fees = Number(broker_fees.replace(/[^0-9\.]+/g,""));
+        est_title_escrow = $('input[name="est_title_escrow"]').val();
+        est_title_escrow = Number(est_title_escrow.replace(/[^0-9\.]+/g,""));
+        legal_fees = $('input[name="legal_fees"]').val();
+        legal_fees = Number(legal_fees.replace(/[^0-9\.]+/g,""));
+        interest_rate = $('input[name="interest_rate"]').val();
+        interest_rate = Number(interest_rate.replace(/[^0-9\.]+/g,""));
+        term_in_months = $('input[name="term_in_months"]').val();
+        term_in_months = Number(term_in_months.replace(/[^0-9\.]+/g,""));
+        monthly_payment_amnt = $('input[name="monthly_payment_amnt"]').val();
+        monthly_payment_amnt = Number(monthly_payment_amnt.replace(/[^0-9\.]+/g,""));
+        interest_income = $('input[name="interest_income"]').val();
+        interest_income = Number(interest_income.replace(/[^0-9\.]+/g,""));
+        other_income = $('input[name="other_income"]').val();
+        other_income = Number(other_income.replace(/[^0-9\.]+/g,""));
+        fee_income = $('input[name="fee_income"]').val();
+        fee_income = Number(fee_income.replace(/[^0-9\.]+/g,"")); 
+        total_regular_income = $('input[name="total_regular_income"]').val();
+        total_regular_income = Number(total_regular_income.replace(/[^0-9\.]+/g,""));
+        is_val = $('#as_is_value').val();
+        as_is_value = Number(is_val.replace(/[^0-9\.]+/g,""));
+        acash_to_contribute = $('#acash_to_contribute').val();
+        acash_to_contribute = Number(acash_to_contribute.replace(/[^0-9\.]+/g,""));
+        as_is_income_subject = $('input[name="as_is_income_subject"]').val();
+        secondary_noi = $('input[name="secondary_noi"]').val();
+        as_is_dscr = $('input[name="as_is_dscr"]').val();
+        half_term_roi = $('input[name="half_term_roi"]').val();
+
+
+  /////////////////////// End Side Fields //////////////////////////////////
+
+  /////////////////////// SideBar Functions ////////////////////////////////
+
+    if(interest_income!="" && fee_income!="" && gross_loan_amount!="")
+       {
+
+         half_term_roi =  ((interest_income/2)+fee_income)/gross_loan_amount;
+         half_term_roi = half_term_roi.toFixed(2);
+          var data = "&loan_id=<%= @loan.id %>&half_term_roi="+half_term_roi+"&ftype=text";
+               $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/save_loan_data',
+                      success:function(response){
+                        $('input[name="half_term_roi"]').val(response);
+                        $('input[name*="half_term_roi_sub"]').val(response);
+                     }
+                  });
+
+          }
+
+
+
+       
+
+
+          if(monthly_payment_amnt!="" && as_is_income_subject!="")
+          {
+            as_is_dscr =  as_is_income_subject/monthly_payment_amnt;
+            as_is_dscr = as_is_dscr.toFixed(2);
+            var data = "&loan_id=<%= @loan.id %>&as_is_dscr="+as_is_dscr+"&ftype=text";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="as_is_dscr"]').val(response);
+                            $('input[name*="as_is_dscr_sub"]').val(response);
+                         }
+                      });
+          }
+
+
+          if(monthly_payment_amnt!="" && projected_stabilized_noi!="")
+          {
+
+               as_improved_dscr = projected_stabilized_noi/monthly_payment_amnt;
+               // alert(projected_stabilized_noi + " -M" + monthly_payment_amnt);
+                as_improved_dscr = as_improved_dscr.toFixed(2);
+                var data = "&loan_id=<%= @loan.id %>&as_improved_dscr="+as_improved_dscr+"&ftype=text";
+                       $.ajax({
+                              data: data,
+                              type: 'POST',
+                              url: '/loans/save_loan_data',
+                              success:function(response){
+                                $('input[name="as_improved_dscr"]').val(response);
+                                $('input[name*="as_improved_dscr_sub"]').val(response);
+                             }
+                          });  
+          }
+         
+        
+
+      if(half_term_roi!="")
+        {
+          half_term_roi_annualized = half_term_roi*2
+
+        var data = "&loan_id=<%= @loan.id %>&half_term_roi_annualized="+half_term_roi_annualized+"&ftype=text";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name="half_term_roi_annualized"]').val(response);
+                      $('input[name*="half_term_roi_annualized_sub"]').val(response);
+                   }
+                });
+        }
+
+
+      if(as_is_income_subject!="" && secondary_noi!="")
+      {
+         total_as_is_noi =  +as_is_income_subject + +secondary_noi
+          var data = "&loan_id=<%= @loan.id %>&total_as_is_noi="+total_as_is_noi+"&ftype=money";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/save_loan_data',
+                        success:function(response){
+                          $('input[name="total_as_is_noi"]').val(response);
+                          $('input[name*="total_as_is_noi_sub"]').val(response);
+                       }
+                    });
+      }
+
+
+      if(as_is_income_subject!="" && purchas_refi_amount!="")
+      {
+        as_is_cap_rate =  (as_is_income_subject/purchas_refi_amount)*100
+        as_is_cap_rate = as_is_cap_rate.toFixed(2)
+        var data = "&loan_id=<%= @loan.id %>&as_is_cap_rate="+as_is_cap_rate+"&ftype=text";
+               $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/save_loan_data',
+                      success:function(response){
+                        $('input[name="as_is_cap_rate"]').val(response);
+                        $('input[name*="as_is_cap_rate_sub"]').val(response);
+                     }
+                  });
+      }
+
+
+
+      if(projected_stabilized_noi!="" && purchas_refi_amount!="")
+      {
+        as_improved_cap_rate =  (projected_stabilized_noi/purchas_refi_amount)*100
+        as_improved_cap_rate = as_improved_cap_rate.toFixed(2)
+        var data = "&loan_id=<%= @loan.id %>&as_improved_cap_rate="+as_improved_cap_rate+"&ftype=text";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name="as_improved_cap_rate"]').val(response);
+                      $('input[name*="as_improved_cap_rate_sub"]').val(response);
+                   }
+                });
+      }
+
+      if(term_in_months!="" && monthly_payment_amnt!="")
+      {
+          interest_income = term_in_months*monthly_payment_amnt;
+           var data = "&loan_id=<%= @loan.id %>&interest_income="+interest_income+"&ftype=money";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name="interest_income"]').val(response);
+                      $('input[name*="interest_income_sub"]').val(response);
+                   }
+                });
+       }
+
+      if(interest_income!="" && other_income!="" && fee_income!="")
+      {
+        total_regular_income = +interest_income + +other_income + +fee_income;
+        // alert(total_regular_income)
+      var data = "&loan_id=<%= @loan.id %>&total_regular_income="+total_regular_income+"&ftype=money";
+         $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/save_loan_data',
+                success:function(response){
+                  $('input[name="total_regular_income"]').val(response);
+                  $('input[name*="total_regular_income_sub"]').val(response);
+                  }
+        });
+      }
+
+      if(gross_loan_amount !="" && total_regular_income!="")
+        {
+          full_term_roi = total_regular_income/gross_loan_amount;
+          var data = "&loan_id=<%= @loan.id %>&full_term_roi="+full_term_roi+"&ftype=text";
+          $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/loans/save_loan_data',
+          success:function(response){
+            $('input[name="full_term_roi"]').val(response);
+            $('input[name*="full_term_roi_sub"]').val(response);
+             }
+          });
+        }
+
+        if(lender_fees!="")
+        {
+             fee_income = lender_fees;
+               var data = "&loan_id=<%= @loan.id %>&fee_income="+fee_income+"&ftype=money";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/save_loan_data',
+                        success:function(response){
+                          $('input[name="fee_income"]').val(response);
+                          $('input[name*="fee_income_sub"]').val(response);
+                       }
+                    });
+          }
+
+          
+        if(gross_loan_amount!="" && interest_rate!="")
+        {
+             monthly_payment_amnt = (gross_loan_amount*interest_rate)/12;
+             var data = "&loan_id=<%= @loan.id %>&monthly_payment_amnt="+monthly_payment_amnt+"&ftype=money";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name="monthly_payment_amnt"]').val(response);
+                       $('input[name*="monthly_payment_amnt_sub"]').val(response);
+                   }
+                });
+        }  
+              
+
+        gross_pre_down_payment = +price + +improvement_construction + +additional_uses + +interest_reserve + +other_reserves + +other_loan_costs + +lender_fees + +broker_fees + +est_title_escrow  + +legal_fees;
+                  var data = "&loan_id=<%= @loan.id %>&gross_pre_down_payment="+gross_pre_down_payment+"&ftype=money";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="gross_pre_down_payment"]').val(response);
+                            $('input[name*="gross_pre_down_payment_sub"]').val(response);
+                         }
+                      });
+    
+
+
+        if(price!="" && improvement_construction!="" && additional_uses!="" && acash_to_contribute!="")
+              {
+                net_proceeds = (price + improvement_construction + additional_uses) - acash_to_contribute;
+                var data = "&loan_id=<%= @loan.id %>&net_proceeds="+net_proceeds+"&ftype=money";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/save_loan_data',
+                        success:function(response){
+                          $('input[name="net_proceeds"]').val(response);
+                          $('input[name*="net_proceeds_sub"]').val(response);
+                       }
+                    });
+              }
+
+              if(price!="")
+              {
+                  var data = "&loan_id=<%= @loan.id %>&apurchase_price="+price+"&ftype=money";
+               $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/save_loan_data',
+                      success:function(response){
+                        $('input[name="apurchase_price"]').val(response);
+                        $('input[name*="apurchase_price_sub"]').val(response);
+                     }
+                  });
+              }
+
+             
+               
+          as_is_ltv_net_disbursment = (gross_loan_amount-improvement_construction-interest_reserve-other_reserves)/as_is_value;
+          as_is_ltv_net_disbursment = as_is_ltv_net_disbursment.toFixed(2);
+          var data = "&loan_id=<%= @loan.id %>&as_is_ltv_net_disbursment="+as_is_ltv_net_disbursment+"&ftype=money";
+          $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/save_loan_data',
+                success:function(response){
+                  $('input[name*="as_is_ltv_net_disbursment"]').val(response);
+               }
+            });
+            
+                
+   ////////////////////// End SideBar Functions ////////////////////////////
+
+        ////////////////////// As Is LTV //////////////////////////////
+
+        if(gross_loan_amount!="")
+        {
+          if(interest_rate!="")
+          {
+           monthly_payment_amnt = (gross_loan_amount*interest_rate)/12;
+                   var data = "&loan_id=<%= @loan.id %>&monthly_payment_amnt="+monthly_payment_amnt+"&ftype=money";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="monthly_payment_amnt"]').val(response);
+                            $('input[name*="monthly_payment_amnt_sub"]').html(response);
+                         }
+                      });
+                }
+
+                if(total_regular_income!="")
+                {
+                  full_term_roi = total_regular_income/gross_loan_amount;
+                    var data = "&loan_id=<%= @loan.id %>&full_term_roi="+full_term_roi+"&ftype=money";
+                    $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name="full_term_roi"]').val(response);
+                      $('input[name*="full_term_roi_sub"]').val(response);
+                        }
+                    });
+    
+                }
+                
+
+                   lender_fees = gross_loan_amount*0.09
+                   var data = "&loan_id=<%= @loan.id %>&lender_fees="+lender_fees+"&ftype=money";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="lender_fees"]').val(response);
+                            $('input[name*="lender_fees_sub"]').val(response);
+                         }
+                      });
+
+                   broker_fees = gross_loan_amount*0.02
+                   var data = "&loan_id=<%= @loan.id %>&broker_fees="+broker_fees+"&ftype=money";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="broker_fees"]').val(response);
+                            $('input[name*="broker_fees_sub"]').val(response);
+                         }
+                      });
+
+                   if(interest_income!="" && fee_income!="")
+                   {
+
+                     half_term_roi =  ((interest_income/2)+fee_income)/gross_loan_amount;
+                  half_term_roi = half_term_roi.toFixed(2);
+                  var data = "&loan_id=<%= @loan.id %>&half_term_roi="+half_term_roi+"&ftype=text";
+                       $.ajax({
+                              data: data,
+                              type: 'POST',
+                              url: '/loans/save_loan_data',
+                              success:function(response){
+                                $('input[name="half_term_roi"]').val(response);
+                                $('input[name*="half_term_roi_sub"]').val(response);
+                             }
+                          });
+
+                  half_term_roi_annualized = half_term_roi*2
+                  var data = "&loan_id=<%= @loan.id %>&half_term_roi_annualized="+half_term_roi_annualized+"&ftype=text";
+                       $.ajax({
+                              data: data,   
+                              type: 'POST',
+                              url: '/loans/save_loan_data',
+                              success:function(response){
+                                $('input[name="half_term_roi_annualized"]').val(response);
+                                $('input[name*="half_term_roi_annualized_sub"]').val(response);
+                             }
+                          });
+
+                   }
+                  
+
+
+                   gross_pre_down_payment = +price + +improvement_construction + +additional_uses + +interest_reserve + +other_reserves + +other_loan_costs + +lender_fees + +broker_fees + +est_title_escrow  + +legal_fees;
+                  var data = "&loan_id=<%= @loan.id %>&gross_pre_down_payment="+gross_pre_down_payment+"&ftype=money";
+                   $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/save_loan_data',
+                          success:function(response){
+                            $('input[name="gross_pre_down_payment"]').val(response);
+                            $('input[name*="gross_pre_down_payment_sub"]').val(response);
+                         }
+                      });
+
+
+
+        }
+
+        
+
+        
+
+        if(is_val!="" && gross_loan_amount !="")
+        {
+          if(gross_loan_amount!="" && improvement_construction!="" && interest_reserve!="" && other_reserves!="" && new_is_val!="")
+          {
+            as_is_ltv_net_disbursment = (new_gross_loan_amount-improvement_construction-interest_reserve-other_reserves)/new_is_val;
+            as_is_ltv_net_disbursment = as_is_ltv_net_disbursment.toFixed(2);
+            var data = "&loan_id=<%= @loan.id %>&as_is_ltv_net_disbursment="+as_is_ltv_net_disbursment+"&ftype=text";
+                   $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/save_loan_data',
+                        success:function(response){
+                          $('input[name*="as_is_ltv_net_disbursment"]').val(response);
+                        }
+                    });
+          }
+          
+
+        }
+         
+
+        ////////////////////// As Is LTV //////////////////////////////
+
+        if(structural_square_footage!="" && is_val!="")
+        {
+
+          bsf = new_is_val/structural_square_footage
+          var data = "&loan_id=<%= @loan.id %>&begining_structural_sf="+bsf+"&ftype=money";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name*="begining_structural_sf"]').val(response);
+                   }
+                });
+        }
+
+        if(borrower_stated_improved_value!="" && structural_square_footage!="")
+        {
+          isf = new_borrower_stated_improved_value/structural_square_footage
+          var data = "&loan_id=<%= @loan.id %>&improve_value_persf="+isf+"&ftype=money";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name*="improve_value_persf"]').val(response);
+                   }
+                });
+        }
+
+        if(acash_to_contribute!="" && gross_loan_amount!="")
+        {
+          down_payment = (new_cash_contribute/new_gross_loan_amount)*100;
+          down_payment = down_payment.toFixed(2);
+          var data = "&loan_id=<%= @loan.id %>&down_payment_percentage="+down_payment+"&ftype=text";
+             $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_loan_data',
+                    success:function(response){
+                      $('input[name*="down_payment_percentage"]').val(response);
+                   }
+                });
+        }
+
+      if(gross_loan_amount!="" && is_val!="")
+      {
+        ltv = (new_gross_loan_amount/new_is_val)*100
+        ltv = ltv.toFixed(2);
+        var data = "&loan_id=<%= @loan.id %>&as_is_ltv="+ltv+"&ftype=text";
+           $.ajax({
+
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="as_is_ltv"]').val(response);
+                 }
+              
+              });
+      }
+
+      if(borrower_stated_is_value!="" && gross_loan_amount!="")
+      {
+        ltv = (new_gross_loan_amount/new_borrower_stated_is_value)*100
+        ltv = ltv.toFixed(2);
+        var data = "&loan_id=<%= @loan.id %>&borrower_as_is_ltv="+ltv+"&ftype=text";
+           $.ajax({
+
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="borrower_as_is_ltv"]').val(response);
+                  }
+              
+              });
+      }
+
+      if(borrower_stated_improved_value!="" && gross_loan_amount!="")
+      {
+        ltv = (new_gross_loan_amount/new_borrower_stated_improved_value)*100
+        ltv = ltv.toFixed(2);
+        var data = "&loan_id=<%= @loan.id %>&borrower_as_improved_ltv="+ltv+"&ftype=text";
+           $.ajax({
+
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="borrower_as_improved_ltv"]').val(response);
+                 }
+              
+              });
+      }
+
+      if(gross_loan_amount!="" && as_improved_value!="")
+      {
+        ltv = (new_gross_loan_amount/new_improved_val)*100
+        ltv = ltv.toFixed(2);
+        var data = "&loan_id=<%= @loan.id %>&as_improved_ltv="+ltv+"&ftype=text";
+           $.ajax({
+
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="as_improved_ltv"]').val(response);
+                 }
+              
+              });
+      }
+
+      /////////////////// Old //////////////////////////////
+      if(units!="" && completed_square_footage!="")
+      {
+        punit = (completed_square_footage/units)*100;
+        punit = punit.toFixed(2);
+        // alert(punit);
+        var data = "&loan_id=<%= @loan.id %>&begining_project_completion="+punit+"&ftype=text";
+           $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="begining_project_completion"]').val(response);
+                 }
+              });
+      }
+
+      if(units!="" && improved_sf!="")
+      {
+        epc = (improved_sf/units)*100
+        epc = epc.toFixed(2)
+        var data = "&loan_id=<%= @loan.id %>&ending_project_completion="+epc+"&ftype=text";
+           $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_data',
+                  success:function(response){
+                    $('input[name*="ending_project_completion"]').val(response);
+                 }
+              });
+      }
+
+      // if(units!="" && improved_sf!="")
+      // {
+      //  usf = units - improved_sf
+      //  var data = "&loan_id=<%= @loan.id %>&unimproved_sf="+usf+"&ftype=text";
+     //        $.ajax({
+     //              data: data,
+     //              type: 'POST',
+     //              url: '/loans/save_loan_data',
+     //              success:function(response){
+     //               $('#unimproved_sf').val(response);
+     //             }
+     //          });
+      // }
+
+
+      ///////////////////////// End New Modification ////////////////////////////
+    }, 1000);
+    // }
+
+  });
+
+  
+    /************ Sub Input Change ***************/
+      $('.sub_input').change(function(){
+        name = $(this).attr('name');
+        if(name.indexOf("acres") >= 0)
+        {
+          
+          field_name = "acres";
+          field_id = name.replace("acres_", "");
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&id="+field_id+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                     $(".total_acres").html(response['total_primary_sf']);
+                     $('input[name*="land_square_footage"]').val(response['info']['land_square_footage']);
+                    }
+                });
+        }
+        if(name.indexOf("sq_footage") >= 0)
+        {
+          field_name = "sq_footage";
+          field_id = name.replace("sq_footage_", "");
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&id="+field_id+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                     $(".total_footage").html(response['total_secondary_size']);
+                     $('input[name*="structural_square_footage"]').val(response['info']['structural_square_footage']);
+                    
+                    }
+                });
+        }
+
+        if(name.indexOf("grosses") >= 0)
+        {
+          field_name = "gross";
+          field_id = name.replace("gross_", "");
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&id="+field_id+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                       $(".total_gross").html(response['total_gross']);
+                       $('input[name*="annual_as_is_gross_income"]').val(response['info']['annual_as_is_gross_income']);
+                       $(".gross_days").html(response['info']['gross_days']);
+                    }
+                });
+        }
+
+        if(name.indexOf("noies") >= 0)
+        {
+          field_name = "noi";
+          field_id = name.replace("noi_", "");
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&id="+field_id+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                       $(".total_noi_ytd").html(response['total_noi_ytd']);
+                       $('input[name*="annual_as_is_noi"]').val(response['info']['annual_as_is_noi']);
+                       $("#annual_as_is_noi_sub").val(response['info']['annual_as_is_noi']);
+                       $(".noi_days").html(response['info']['noi_days']);
+                    }
+                });
+        }
+
+        if(name.indexOf("ncreated_date") >= 0)
+        {
+          field_name = "ncreated_date";
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                       $(".total_noi_ytd").html(response['total_noi_ytd']);
+                       $('input[name*="annual_as_is_noi"]').val(response['info']['annual_as_is_noi']);
+                       $("#annual_as_is_noi_sub").val(response['info']['annual_as_is_noi']);
+                       $(".noi_days").html(response['info']['noi_days']);
+                    }
+                });
+        } 
+
+        if(name.indexOf("gcreated_date") >= 0)
+        {
+          field_name = "gcreated_date";
+          field_val = $(this).val();
+          var data = "loan_id=<%= @loan.id %>&name="+field_name+"&value="+field_val;
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/update_fields',
+                    success:function(response)
+                    {
+                       $(".total_gross").html(response['total_gross']);
+                       $('input[name*="annual_as_is_gross_income"]').val(response['info']['annual_as_is_gross_income']);
+                       $("#annual_as_is_gross_income_sub").val(response['info']['annual_as_is_gross_income']);
+                       $(".gross_days").html(response['info']['gross_days']);
+                    }
+                });
+        } 
+        if(name.indexOf("as_is_value") >= 0)
+        {
+          field_val = $(this).val();
+          $('input[name*="as_is_value"]').val(field_val); 
+          $('#as_is_value_sub').val(field_val);
+        } 
+
+        if(name.indexOf("structural_square_footage") >= 0)
+        {
+          field_val = $(this).val();
+          $('input[name*="structural_square_footage"]').val(field_val); 
+          $('#structural_square_footage_sub').val(field_val);
+        }
+
+
+      
+      });
+        
+
+    $(".datepicker").each(function() {
+        $(this).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+
+    /************ End Sub Input Change ***************/
+
+  
+
+  $('.analysis').click(function(){
+    
+    div_id = $(this).attr('id');
+    field = div_id.replace('about_','');
+    show_div = "detail_"+field;
+    $('.detail_div').hide();
+    $('#'+show_div).show();
+    
+  });
+});
+
+function reset_values()
+{
+  $('input:text').val('');
+  form_data = $('.analysis_form').serialize()
+  var data = form_data+"&loan_id=<%= @loan.id %>";
+   $.ajax({
+
+          data: data,
+          type: 'POST',
+          url: '/loans/fetch_loan_data',
+          success:function(response){
+              
+              $('#gross_loan_amount').val(response['gross_loan_amount']);
+              $('#acash_to_contribute').val(response['acash_to_contribute']);
+              $('#apurchase_price').val(response['apurchase_price']);
+              $('#as_is_ltv').val(response['as_is_ltv']);
+      }
+      
+      });
+}
+</script>
+<h3 style="float:left;">Key Metrics :</h3>
+<!-- <div class="btn_container" style="width:100%;">
+  <input  type="button" value="Reload Default Values" id="reload_values" class="tiny button" style="float:right; " onclick="reset_values();">
+</div> -->
+<form method="post" class="analysis_form">
+<div class=" panel bottom-space personal">
+
+  <div class="row analysis_div" style="margin-top:28px;" >
+      
+      <% field_name = "gross_loan_amount" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_gross_loan_amount" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Gross Loan Amount: </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%=field_name%>" value="<%= @loan.info['gross_loan_amount'] %>" onchange="save_value('<%=field_name%>','money')" id="gross_loan_amount">
+        </div>
+      </div>
+      
+  <div id="detail_gross_loan_amount" class="medium-12 columns detail_div" style="margin-bottom:10px;">
+      <div class="small-10 small-centered columns bordr_detail_div">
+        <div class="full_info">
+          <div class="info"><b>Net Loan Amount Requested </b></div><div class="info_equal">=</div> <div class="info_detail analysis_net_loan"><%= @loan.info['_NetLoanAmountRequested0'] %> </div>
+        </div>
+      </div>
+  </div>
+  </div>
+    
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "land_square_footage" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+
+      <div class="analysis" id="about_land_square_footage" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Land Square Footage : </span>
+        </div>
+        
+        <div class="medium-6 columns">
+          <input type="text" name="<%=field_name%>" value="<%= @loan.info['land_square_footage'] %>" onchange="save_value('<%=field_name%>','text')" id="land_square_footage">
+        </div>
+      </div>
+      
+    <div id="detail_land_square_footage" class="medium-12 columns detail_div" >
+        <div class="collateral_acres small-10 small-centered columns bordr_detail_div">
+          <% unless @collaterals.blank? %>
+            <% s_no = 1 %>
+            <% @collaterals.each do |collateral| %>
+              <div class="full_info">
+                <div class="info"><b> <%= s_no %> Collateral Acres  </b> </div> <div class="info_equal">=</div> <div class="info_detail">
+                  <%  unless @colacres[collateral.id.to_s].blank? 
+                     acre = "#{@colacres[collateral.id.to_s]}"
+                      else
+                       acre = "-" 
+                    end 
+                  %>
+                  <input type="text" value="<%= acre %>" name = "acres_<%= collateral.id %>" class="sub_input">
+                </div> 
+              </div>
+              
+              <% s_no += 1 %>
+            <% end %>
+            <!-- <div class="full_info">
+              <div class="info"><b> Total Primary SF</b></div><div class="info_equal">=</div><div class="info_detail total_acres"><%= @loan.total_primary_sf %></div>
+            </div>
+            <div class="full_info">
+              <div class="info"><b>Sq per Acre = </b></div> <div class="info_equal">=</div><div class="info_detail"> 43,560</div>
+            </div>
+            <div class="full_info">
+              <div class="info"><b> Land Square Footage</b></div><div class="info_equal">=</div> <div class="info_detail"> Total Primary SF * Sq Per Acre </div>
+            </div> -->
+          <% end %>
+            
+        </div>
+    </div>
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "structural_square_footage" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_structural_square_footage" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Structural Square Footage : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%=field_name%>" value="<%= @loan.info['structural_square_footage'] %>" onchange="save_value('<%=field_name%>','text')" id="structural_square_footage">
+        </div>
+      </div>
+      <div id="detail_structural_square_footage" class="medium-12 columns detail_div" >
+          <div class="collateral_footage small-10 small-centered columns bordr_detail_div">
+            <% unless @collaterals.blank? %>
+              <% s_no = 1 %>
+              <% @collaterals.each do |collateral| %>
+                <div class="full_info">
+                  <div class="info"><b> <%= s_no %> Collateral Square Footage  </b> </div> <div class="info_equal">=</div> <div class="info_detail"><% unless @colsqs[collateral.id.to_s].blank? %><% sq_foot = "#{@colsqs[collateral.id.to_s]}" %><% else %> <% sq_foot = "-" %> <% end %>
+                  <input type="text" value="<%= sq_foot %>" name = "sq_footage_<%= collateral.id %>" class="sub_input">
+                   </div> 
+                </div>
+                
+                <% s_no += 1%>
+              <% end %>
+              <!-- <div class="full_info">
+                <div class="info"><b> Total Square Footage</b></div><div class="info_equal">=</div><div class="info_detail total_footage"><%= @loan.total_secondary_size %></div>
+              </div>
+              
+              <div class="full_info">
+                <div class="info"><b>Structural Square Footage :</b></div><div class="info_equal">=</div> <div class="info_detail"> Total Square Footage </div>
+              </div> -->
+            <% end %>
+              
+          </div>
+      </div>  
+
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "as_is_value" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">As-Is Value : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%=field_name%>" onchange="save_value('<%=field_name%>','money')" value="<%= @loan.info['as_is_value'] %>" id="as_is_value">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "as_improved_value" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">As-Improved Value : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%=field_name%>" value="<%= @loan.info['as_improved_value'] %>" onchange="save_value('<%=field_name%>','money')" id="as_improved_value">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "borrower_stated_is_value" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Borrower Stated As-Is Value : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%=field_name%>" value="<%= @loan.info['borrower_stated_is_value'] %>" onchange="save_value('<%=field_name%>','money')" id="borrower_stated_is_value">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "borrower_stated_improved_value" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Borrower Stated As-Improved Value : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%=field_name%>" value="<%= @loan.info['borrower_stated_improved_value'] %>" onchange="save_value('<%=field_name%>','money')" id="borrower_stated_improved_value">
+      
+
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "value_source" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Value Source : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <select name="<%=field_name%>" onchange="save_value('<%=field_name%>','text')">
+          <option value=""> Select Option</option>
+          <option value="Appraisal" <% if @loan.info['value_source'] == "Appraisal" %> selected="selected" <% end %>> Appraisal </option>
+        </select>
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "value_date" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Value Date : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%=field_name%>" value="<%= @loan.info['value_date'] %>" onchange="save_value('<%=field_name%>','text')" >
+      </div>
+      
+
+  </div>
+
+
+  <div class="row analysis_div">
+      
+      <% field_name = "completed_square_footage" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Completed Square Footage : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['completed_square_footage'] %>" onchange="save_value('<%=field_name%>','text')" id="completed_square_footage">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "improved_sale_sf" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Improved/For Sale SF : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['improved_sale_sf'] %>" onchange="save_value('<%=field_name%>','text')" id="improved_sale_sf">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "unimproved_sf" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Unimproved SF : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['unimproved_sf'] %>" onchange="save_value('<%=field_name%>','text')" id="unimproved_sf">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "begining_structural_sf" %>
+      <!----------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_begining_structural_sf" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Beginning $/Structural SF : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['begining_structural_sf'] %>" onchange="save_value('<%=field_name%>','money')" id="begining_structural_sf">
+        </div>
+      </div>
+    
+    <div id="detail_begining_structural_sf" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>As-Is Value </b></div><div class="info_equal">=</div> <div class="info_detail analysis_as_is_val"> <input type="text" name="as_is_value_sub" id="as_is_value_sub" onchange="return save_sub_value('as_is_value', 'money',1);" value="<%= @loan.info['as_is_value'] %>" class="sub_input"> </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Structural Square Footage</b></div><div class="info_equal">=</div> <div class="info_detail analysis_structural_square_footage"> <input type="text" name="structural_square_footage_sub" id="structural_square_footage_sub" onchange="return save_sub_value('structural_square_footage', 'text',1);" value="<%= @loan.info['structural_square_footage'] %>" class="sub_input"></div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>Beginning $/Structural SF</b></div><div class="info_equal">=</div> <div class="info_detail analysis_beginning_structural_sf"> As-Is Value/Structural Square Footage </div>
+          </div> -->
+        </div>
+    </div>  
+
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "begining_price_perunit" %>
+      <!----------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Beginning Price Per Unit : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['begining_price_perunit'] %>" onchange="save_value('<%=field_name%>','money')" id="begining_price_perunit">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "improve_value_perunit" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Improve Value Per Unit : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['improve_value_perunit'] %>" onchange="save_value('<%=field_name%>','money')" id="improve_value_perunit" >
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "improve_value_persf" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_improve_value_persf" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Improved Value Per SF : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['improve_value_persf'] %>" onchange="save_value('<%=field_name%>','money')" id="improve_value_persf" >
+        </div>
+      </div>
+      
+      <div id="detail_improve_value_persf" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Borrower Stated As-Improved Value </b></div><div class="info_equal">=</div> <div class="info_detail analysis_borrower_stated_improved_value"><input type="text" name="borrower_stated_improved_value_sub" id="borrower_stated_improved_value_sub" onchange="return save_sub_value('borrower_stated_improved_value', 'money',1);" value="<%= @loan.info['borrower_stated_improved_value'] %>" class="sub_input"> </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Structural Square Footage</b></div><div class="info_equal">=</div> <div class="info_detail analysis_structural_square_footage">
+              <input type="text" name="structural_square_footage_sub2" id="structural_square_footage_sub2" onchange="return save_sub_value('structural_square_footage', 'text',2);" value="<%= @loan.info['structural_square_footage'] %>" class="sub_input">
+            </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>Improved Value Per SF </b></div><div class="info_equal">=</div> <div class="info_detail">Borrower Stated As-Improved Value / Structural Square Footage</div>
+          </div> -->
+        </div>
+      </div>  
+
+  </div>
+
+  
+
+
+  <div class="row analysis_div">
+      
+      <% field_name = "acash_to_contribute" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Cash to Contribute : </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['acash_to_contribute'] %>"  onchange="save_value('<%=field_name%>','money')" id="acash_to_contribute">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_divanalysis_div">
+      
+      <% field_name = "down_payment_percentage" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_down_payment_percentage" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Down Payment Percentage : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['down_payment_percentage'] %>" onchange="save_value('<%=field_name%>','text')" id="down_payment_percentage">
+        </div>
+      </div>
+    <div id="detail_down_payment_percentage" class="medium-12 columns detail_div" >
+      <div class="small-10 small-centered columns bordr_detail_div">
+        <div class="full_info">
+          <div class="info"><b>Cash to Contribute </b></div><div class="info_equal">=</div> <div class="info_detail analysis_acash_to_contribute"> <input type="text" name="acash_to_contribute_sub" id="acash_to_contribute_sub" onchange="return save_sub_value('acash_to_contribute', 'money', 1);" value="<%= @loan.info['acash_to_contribute'] %>" class="sub_input"></div>
+        </div>
+        <div class="full_info">
+          <div class="info"><b>Gross Loan Amount </b></div><div class="info_equal">=</div> <div class="info_detail analysis_gross_loan_amount"> <input type="text" name="gross_loan_amount_sub" id="gross_loan_amount_sub" onchange="return save_sub_value('gross_loan_amount', 'money',1);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"></div>
+        </div>
+        <!-- <div class="full_info">
+          <div class="info"><b>Down Payment Percentage </b></div><div class="info_equal">=</div> <div class="info_detail">Cash to Contribute / Gross Loan Amount</div>
+        </div> -->
+      </div>
+    </div>  
+
+  </div>
+
+  
+
+
+
+  <div class="row analysis_div">
+      
+      <% field_name = "apurchase_price" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_apurchase_price" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Purchase Price : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['apurchase_price'] %>" onchange="save_value('<%=field_name%>','money')" id="apurchase_price">
+        </div>
+      </div>
+      
+      <div id="detail_apurchase_price" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>PurchasOr Refi Amount </b></div><div class="info_equal">=</div> <div class="info_detail analysis_purchas_refi_amount"> <input type="text" name="purchas_refi_amount_sub" id="purchas_refi_amount_sub" onchange="return save_sub_value('purchas_refi_amount', 'money',1);" value="<%= @loan.info['purchas_refi_amount'] %>" class="sub_input"></div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>Purchase Price </b></div><div class="info_equal">=</div> <div class="info_detail">PurchasOr Refi Amount</div>
+          </div> -->
+        </div>
+      </div>
+
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "as_is_ltv" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_as_is_ltv" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">As-Is LTV : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['as_is_ltv'] %>" onchange="save_value('<%=field_name%>','text')" id="as_is_ltv">
+        </div>
+      </div>
+
+      <div id="detail_as_is_ltv" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Gross Loan Amount  </b></div><div class="info_equal">=</div> <div class="info_detail">
+            <input type="text" name="gross_loan_amount_sub2" id="gross_loan_amount_sub2" onchange="return save_sub_value('gross_loan_amount', 'money',2);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input">
+             </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>As-Is Value</b></div><div class="info_equal">=</div> <div class="info_detail"><input type="text" name="as_is_value_sub2" id="as_is_value_sub2" onchange="return save_sub_value('as_is_value', 'money', 2);" value="<%= @loan.info['as_is_value'] %>" class="sub_input"> </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>As-Is LTV </b></div><div class="info_equal">=</div> <div class="info_detail">Gross Loan Amount / As-Is Value</div>
+          </div> -->
+        </div>
+      </div>
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "as_is_ltv_net_disbursment" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_as_is_ltv_net_disbursment" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">As-Is LTV on Net Disbursment : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['as_is_ltv_net_disbursment'] %>" onchange="save_value('<%=field_name%>','text')" id="as_is_ltv_net_disbursment">
+        </div>
+      </div>
+
+      <div id="detail_as_is_ltv_net_disbursment" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Gross Loan Amount </b></div><div class="info_equal">=</div> <div class="info_detail"><input type="text" name="gross_loan_amount_sub3" id="gross_loan_amount_sub3" onchange="return save_sub_value('gross_loan_amount', 'money',2);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input">
+            </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Improvement/Construction</b></div><div class="info_equal">=</div> <div class="info_detail"><input type="text" name="improvement_construction_sub" id="improvement_construction_sub" onchange="return save_sub_value('improvement_construction', 'money');" value="<%= @loan.info['improvement_construction'] %>" class="sub_input">
+            </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Interest Reserve </b></div><div class="info_equal">=</div> <div class="info_detail">
+              <input type="text" name="interest_reserve_sub" id="interest_reserve_sub" onchange="return save_sub_value('interest_reserve', 'money');" value="<%= @loan.info['interest_reserve'] %>" class="sub_input">
+            </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Other Reserves</b></div><div class="info_equal">=</div> <div class="info_detail">
+              <input type="text" name="other_reserves_sub" id="other_reserves_sub" onchange="return save_sub_value('other_reserves', 'money');" value="<%= @loan.info['other_reserves'] %>" class="sub_input"> 
+            </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>As-Is Value</b></div><div class="info_equal">=</div> <div class="info_detail"> <input type="text" name="as_is_value_sub3" id="as_is_value_sub3" onchange="return save_sub_value('as_is_value', 'money',3);" value="<%= @loan.info['as_is_value'] %>" class="sub_input"> </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>As-Is LTV on Net Disbursment </b></div><div class="info_equal">=</div> <div class="info_detail">(Gross Loan Amount - Improvement/Construction - Interest Reserve - Other Reserves) / As-Is Value </div>
+          </div> -->
+          
+        </div>
+      </div>
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "borrower_as_is_ltv" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_borrower_as_is_ltv" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Borrower As-Is LTV : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['borrower_as_is_ltv'] %>" onchange="save_value('<%=field_name%>','text')" id="borrower_as_is_ltv">
+        </div>
+      </div>
+      
+      <div id="detail_borrower_as_is_ltv" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Gross Loan Amount  </b></div><div class="info_equal">=</div> <div class="info_detail"> 
+            <input type="text" name="gross_loan_amount_sub4" id="gross_loan_amount_sub4" onchange="return save_sub_value('gross_loan_amount', 'money',4);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input">
+            </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Borrower Stated As-Is Value</b></div><div class="info_equal">=</div> <div class="info_detail"> <input type="text" name="borrower_stated_is_value_sub" id="borrower_stated_is_value_sub" onchange="return save_sub_value('borrower_stated_is_value', 'money', 1);" value="<%= @loan.info['borrower_stated_is_value'] %>" class="sub_input"> </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>Borrower As-Is LTV </b></div><div class="info_equal">=</div> <div class="info_detail">Gross Loan Amount / Borrower Stated As-Is Value</div>
+          </div> -->
+        </div>
+      </div>
+  </div>
+  
+
+    
+  <div class="row analysis_div">
+      
+      <% field_name = "borrower_as_improved_ltv" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_borrower_as_improved_ltv" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Borrower As-Improved LTV : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['borrower_as_improved_ltv'] %>" onchange="save_value('<%=field_name%>','text')">
+        </div>
+      </div>
+
+      <div id="detail_borrower_as_improved_ltv" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Gross Loan Amount </b></div><div class="info_equal">=</div> <div class="info_detail">
+              <input type="text" name="gross_loan_amount_sub5" id="gross_loan_amount_sub5" onchange="return save_sub_value('gross_loan_amount', 'money', 5);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input">
+             </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>Borrower Stated As-Improved Value</b></div><div class="info_equal">=</div> <div class="info_detail"><input type="text" name="borrower_stated_improved_value_sub2" id="borrower_stated_improved_value_sub2" onchange="return save_sub_value('borrower_stated_improved_value', 'money');" value="<%= @loan.info['borrower_stated_improved_value'] %>" class="sub_input">
+            </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>Borrower As-Improved LTV </b></div><div class="info_equal">=</div> <div class="info_detail">Gross Loan Amount / Borrower Stated As-Improved Value</div>
+          </div> -->
+        </div>
+      </div>
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "as_improved_ltv" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_as_improved_ltv" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">As-Improved LTV : </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['as_improved_ltv'] %>" onchange="save_value('<%=field_name%>','text')" id="as_improved_ltv">
+        </div>
+      </div>
+      
+      <div id="detail_as_improved_ltv" class="medium-12 columns detail_div" >
+        <div class="small-10 small-centered columns bordr_detail_div">
+          <div class="full_info">
+            <div class="info"><b>Gross Loan Amount </b></div><div class="info_equal">=</div> <div class="info_detail">
+            <input type="text" name="gross_loan_amount_sub6" id="gross_loan_amount_sub6" onchange="return save_sub_value('gross_loan_amount', 'money', 6);" value="<%= @loan.info['gross_loan_amount'] %>" class="sub_input"> </div>
+          </div>
+          <div class="full_info">
+            <div class="info"><b>As-Improved Value</b></div><div class="info_equal">=</div> <div class="info_detail">
+            <input type="text" name="as_improved_value_sub" id="as_improved_value_sub" onchange="return save_sub_value('as_improved_value', 'money');" value="<%= @loan.info['as_improved_value'] %>" class="sub_input">
+            </div>
+          </div>
+          <!-- <div class="full_info">
+            <div class="info"><b>As-Improved LTV </b></div><div class="info_equal">=</div> <div class="info_detail">Gross Loan Amount / As-Improved Value</div>
+          </div> -->
+        </div>
+      </div>
+  </div>
+
+  
+
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "annual_as_is_gross_income" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_annual_as_is_gross_income" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Annual As-Is Gross Income: </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['annual_as_is_gross_income'] %>" onchange="save_value('<%=field_name%>','money')" id="annual_as_is_gross_income">
+        </div>
+      </div>
+
+      <div id="detail_annual_as_is_gross_income" class="medium-12 columns detail_div" >
+          <div class="annual_gross small-10 small-centered columns bordr_detail_div">
+            <% unless @collaterals.blank? %>
+                <% s_no = 1 %>
+                <% @collaterals.each do |collateral| %>
+                  <div class="full_info">
+                    <div class="info"><b> <%= s_no %> Collateral Gross  </b> </div> <div class="info_equal">=</div> <div class="info_detail"><% unless @colgross["#{collateral.id.to_s}"].blank? %><% gross = @colgross["#{collateral.id.to_s}"] %><% else %><% gross = "-" %> <% end %>
+                    <input type="text" value="<%= gross %>" name = "grosses_<%= collateral.id %>" class="sub_input">
+                    </div> 
+                  </div>
+                  
+                  <% s_no += 1%>
+                <% end %>
+                <!-- <div class="full_info">
+                  <div class="info"><b> Total Gross</b></div><div class="info_equal">=</div><div class="info_detail total_gross"><%= @loan.total_gross %></div>
+                </div> -->
+                <div class="full_info">
+                  <div class="info"><b>Curent date  </b></div><div class="info_equal">=</div><div class="info_detail"> 
+                    <% gross_date = "" 
+                      if @loan.info['created_date_gross'].blank?
+                        unless  @loan.created_date.blank?
+                          gross_date = @loan.created_date
+                        end
+                      else
+                       unless @loan.info['created_date_gross'].blank?
+                        gross_date =@loan.info['created_date_gross']
+                       end 
+                      end
+                      if gross_date!=""
+                       date = DateTime.parse("#{gross_date}")
+                       formatted_date = date.strftime('%Y-%m-%d')
+                      else
+                        formatted_date = ""
+                      end
+                    %>
+                    
+                    <input type="text" value="<%= formatted_date %>" name = "gcreated_date" class="sub_input datepicker">
+                  </div>
+                </div>
+                
+            <% end %>
+          </div>
+      </div>
+
+  </div>
+
+  
+  <div class="row analysis_div">
+      
+      <% field_name = "annual_as_is_noi" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="analysis" id="about_annual_as_is_noi" >
+        <div class="medium-5 columns">
+          <span class="hl-l" tabindex="0">Annual As-Is NOI: </span>
+        </div>
+
+        <div class="medium-6 columns">
+          <input type="text" name="<%= field_name %>" value="<%= @loan.info['annual_as_is_noi'] %>" onchange="save_value('<%=field_name%>','money')" id="annual_as_is_noi">
+        </div>
+      </div>
+
+      <div id="detail_annual_as_is_noi" class="medium-12 columns detail_div" >
+        <div class="annual_noi small-10 small-centered columns bordr_detail_div">
+          <% unless @collaterals.blank? %>
+              <% s_no = 1 %>
+              <% @collaterals.each do |collateral| %>
+                <div class="full_info">
+                  <div class="info"><b> <%= s_no %> Collateral NOI(YTD)  </b> </div> <div class="info_equal">=</div> <div class="info_detail"><% unless @colnois["#{collateral.id.to_s}"].blank? %><% noi = @colnois["#{collateral.id.to_s}"] %><% else %><% noi = "-" %> <% end %>
+                  <input type="text" value="<%= noi %>" name = "noies_<%= collateral.id %>" class="sub_input">
+                  </div> 
+                </div>
+                
+                <% s_no += 1%>
+              <% end %>
+              <!-- <div class="full_info">
+                <div class="info"><b> Total NOI(YTD)</b></div><div class="info_equal">=</div><div class="info_detail total_noi_ytd"><%= @loan.total_noi_ytd %></div>
+              </div> -->
+              <div class="full_info">
+                <div class="info"><b>Curent date  </b></div><div class="info_equal">=</div><div class="info_detail"> 
+                  <% 
+                    noi_date = ""
+                    if @loan.info['created_date_noi'].blank?
+                      unless @loan.created_date.blank?
+                        noi_date = @loan.created_date
+                      end
+                    else
+                      unless @loan.info['created_date_noi'].blank?
+                        noi_date =@loan.info['created_date_noi']
+                      end
+                    end
+                    if noi_date!=""
+                      date = DateTime.parse("#{noi_date}")
+                      formatted_date = date.strftime('%Y-%m-%d')
+                    else
+                      formatted_date = ""
+                    end
+                  %>
+                  <input type="text" value="<%= formatted_date %>" name = "ncreated_date" class="sub_input datepicker">
+                </div>
+              </div>
+              
+          <% end %>
+        </div>
+      </div>
+
+  </div>
+  
+
+  <div class="row analysis_div">
+      
+      <% field_name = "annual_gross_income_cc" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Annual Gross Income (100% Occ.): </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['annual_gross_income_cc'] %>" onchange="save_value('<%=field_name%>','money')" id="annual_gross_income_cc">
+      </div>
+      
+
+  </div>
+
+  <div class="row analysis_div">
+      
+      <% field_name = "annual_stablized_noi" %>
+      <!-------------------- Hide/ Show ------------------------>
+      <div class="medium-1 columns">  
+        <% unless @loan.hide_fields.blank? %>
+         
+              <span id="show_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>" <% if @loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+          <% else %>
+            <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+              <a style="" onclick="show_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+                <i class="fa fa-eye-slash" tabindex="0"></i>
+              </a>
+            </span>
+
+              <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+              <a style="" onclick="hide_loan_field('<%= @loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+                <i class="fa fa-eye" tabindex="0"></i>
+              </a>
+            </span>
+        <% end %>
+      </div>
+      <!-------------------- End Hide/ Show ------------------------>
+      <div class="medium-5 columns">
+        <span class="hl-l" tabindex="0">Annual Stabilized NOI (100% Occ.): </span>
+      </div>
+
+      <div class="medium-6 columns">
+        <input type="text" name="<%= field_name %>" value="<%= @loan.info['annual_stablized_noi'] %>" onchange="save_value('<%=field_name%>','money')" id="annual_stablized_noi">
+      </div>
+      
+
+  </div>
+
+  
+
+
+</div>
+</form>

@@ -1,0 +1,41 @@
+<% unless @collateral.related_funds.blank? %>
+		<% @relates = @collateral.related_funds.split(",")
+			# abort("#{relates.inspect}")
+			i=1
+		%>
+
+  	<table border="0" cellpadding="0" cellspacing="0" class="table-related-fund">
+    
+      <tr>
+          <td></td>
+          <td style="width:35%"><strong>Use</strong></td>
+          <td style="width:33%"><strong>Beneficiary</strong></td>
+          <td style="width:30%"><strong>Amount</strong></td>
+      <!--<td><strong>Maturity / Contract Date</strong></td>
+          <td><strong>Earned Deposit/Stats</strong></td> !-->
+      </tr>
+      	
+      	
+      
+        <% @relates.each do |relate| %>
+        <% unless relate.blank? %>
+        	
+        <% end %>
+        <% fnd = UseFund.find_by_id("#{relate}") %> 
+		<% unless fnd.blank? %>
+		    	<tr id="<%= i %>_fund" class="fund_row">
+                    <td><a href="javascript:void(0);" style="color:black;" onclick="return remove_related_fund('<%= @collateral.id %>', '<%= relate %>')"><b>x</b></a></td>
+                    <td>
+                       <%= fnd.use %>
+                    </td> 
+                    <td><%= fnd.beneficiary %></td> 
+                    <td><%= fnd.amount %></td>
+                  
+                </tr>
+            <% i += 1 %>
+            <% end %>
+        	 
+        <% end %>
+      
+  	</table>
+<% end %>

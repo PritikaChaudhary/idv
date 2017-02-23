@@ -1,57 +1,479 @@
+<style type="text/css">
+		
+		.results {
+			font-family : monospace;
+			font-size   : 20px;
+		}
+		.cropFrame {
+			border : 4px solid black;
+		}
+		.image_upload_after_action {
+		    bottom: 50px;
+		    display: none;
+		    padding: 5px;
+		    position: absolute;
+		    right: 0;
+		    width: 100%;
+		    z-index: 10;
+		}
+		.image_upload_after_action_background {
+			    background: #333333 none repeat scroll 0 0;
+			    height: 40px;
+			    left: 19px;
+			    opacity: 0.58;
+			    position: absolute;
+			    top: -18px;
+			    width: 570px;
+			    z-index: 11;
+			}
+		.image_upload_after_action .pull-right {
+			    color: #ffffff;
+			    font-size: 12px;
+			    position: absolute;
+			    right: 33px;
+			    top: -10px;
+			    z-index: 27;
+			}
+		
+		button#image_cupload_save, button#image_upload_cancel {
+		    border: medium none;
+		    color: #ffffff;
+		    font-size: 12px;
+		    padding: 3px 10px;
+		}
+		.cropFrame {
+			    border: none;
+			}
+	</style>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.4/hammer.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
 <script>
 function handleMainImage(files) {
 	for (var i = 0; i < files.length; i++) {
     var file = files[i];
     var imageType = /image.*/;
     
+      checksize =""
+
+      ///////////////////////// File Storage ///////////////////////////////////////
+      <% if @adminLogin != true %>
+      	size_left = "<%= @size_left_kb %>";
+      	size_left = parseInt(size_left);
+      	$('#fimg_size').val(file.size);
+      	if(file.size > size_left)
+      	{
+      		upsize = size_left/1024;
+      		upsize = upsize/1024;
+      		upsize = upsize.toFixed(2);
+      		checksize = "exceed";
+		    msg = "You cannot upload file greater than "+upsize+"MB. Please upgrade your plan or contact admin.";
+      	}
+
+      <% end %>
+
+      ///////////////////////// End File Storage ///////////////////////////////////////
+      
+
+      ////////////////////////// Max Size Upload ///////////////////////////////////
+      <% if @adminLogin != true %>
+      	<% if @max_upload != "No File Cap"%>
+		   max_upload = "<%= @max_upload %>";
+		   max_upload = parseInt(max_upload);
+		   $('#fimg_size').val(file.size);
+		   if(file.size > max_upload) //10MB in KB
+		   {
+		   		max_up="<%= current_user.max_upload %>"
+		       if(checksize == "exceed")
+                {
+                    checksize = "exceed";
+                    msg = "You have only "+upsize+"MB storage left. Please upgrade your plan or contact admin.";  
+                }
+                else
+                {
+                    checksize = "exceed";
+                    msg = "You cannot upload file greater than "+max_up+". Please upgrade your plan or contact admin.";  
+                }
+		   }
+	  	<% end %>
+	  <% end %>
+	  ////////////////////////// End Max Size Upload ///////////////////////////////////
+	  
+
+
+	  <% if @fileUpload == "false" %>
+	        checksize = "exceed";
+	        <% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+	            msg = "Sorry, you have used your free storage. Please contact admin."
+	        <% end %>
+	        <% if !@infoBroker.blank? && @infoBroker.plan == "BUSINESS"%>
+	            msg = "Sorry, you have used your free storage. Please contact admin."
+	        <% end %>
+	  <% end %>
+	
+	if(checksize=="exceed")
+	{
+		alert(msg);
+		return false;
+	}
+
     if (!file.type.match(imageType)) {
       continue;
     }
-    
+    // alert("out")
     var img = document.createElement("img");
-    img.classList.add("obj");
+    img.classList.add("crop");
     img.file = file;
-    mainDiv = document.getElementById("main_image_preview");
+    mainDiv = document.getElementById("for_target");
     mainDiv.innerHTML = '';
+
+    // var imges = document.createElement("img");
+    // imges.classList.add("displayimg");
+    // imges.file = file;
+    // $('.displayimg').hide();
+
     
     mainDiv.appendChild(img); // Assuming that "preview" is a the div output where the content will be displayed.
+   
+ 	// mainDiv.appendChild(imges);
     
     var reader = new FileReader();
-    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+
+  
+
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; aImg.id = "target";
+    	
+    	$('#edit_control').show();
+    	$('.cropControls').show();
+		var img_src = $('#target').attr('src');
+		// $('.displayimg').attr('src', img_src);
+		// $('.displayimg').hide();
+		$('#image_cupload_save').click(function(){
+    		$('#loading_img').show();
+			var styles = dumpCSSText("target");
+			var sarray = styles.split(";");
+			processed_array = new Object();
+
+			for(i = 0; i < sarray.length; i++){
+			    m = sarray[i].split(":");
+			    processed_array[m[0]] = m[1];
+			}
+			// alert(array[0]);
+			
+			var left = processed_array['left'];
+			var width = processed_array['width'];
+			var top = processed_array['top'];
+			var height = processed_array['height'];
+			
+			var img_src = $('#target').attr('src');
+			// var decodedUri = decodeURIComponent(img_src);
+			// var decodedUri = unescape(img_src);
+			$('#img_fullpath').val(img_src)
+			// alert(base64ImageContent)
+			formdata = $('#featured_image').serialize();
+			formdata = formdata+"&left="+left+"&width="+width+"&top="+top+"&height="+height;
+			
+
+			$.ajax({
+		        type: 'POST',
+		        url: '/loans/upload_main_imagex/<%= @loan.id %>',
+		        data:formdata,
+		        success:function(data){
+		        	if(data=="true")
+		        	{
+		        		$('#loading_img').hide();
+		        		$('.cropControls').hide();
+		        		$('#edit_control').hide();
+		        		$('#target').hide();
+		        		$('.cropFrame').append('<img src='+img_src+' class="displayimg">');
+		        		// $('.cropFrame img').attr('style', 'display:inline-block !important;')
+		        		// $('.displayimg').css({'"left":"'+left+'", "width":"'+width+'", "top":"'+top+'", "height":"'+height+'"'});
+		        		$('.displayimg').attr('style', 'left:'+left+'; width:'+width+'; top:'+top+'; height:'+height+'; display:block; position:absolute; max-width:none;');
+		        		
+		        	}
+		        }
+		      });
+		
+
+		});
+
+    	$('.crop' ).each( function () {
+    		
+    				var image     = $( this )
+					, results = image.next( '.results' )
+					, x       = $( '.cropX', results )
+					, y       = $( '.cropY', results )
+					, w       = $( '.cropW', results )
+					, h       = $( '.cropH', results )
+					, crop    = image
+						.crop( {
+							controls : 'Drag to move, scroll to zoom',
+							width    : 575	
+            				, height : 300
+						} )
+
+						// display crop info
+						.on( 'crop.crop', function( event ) {
+							x.text( event.cropX );
+							y.text( event.cropY );
+							w.text( event.cropW );
+							h.text( event.cropH );
+
+						} )
+						.data( 'crop' )
+				;
+
+
+				// zoom on scroll (jquery-mousewheel dependency)
+				image
+					.on( 'mousewheel.crop', function ( event ) {
+						return event.originalEvent.wheelDelta < 0 ?
+							crop.zoomIn() :
+							crop.zoomOut();
+					} )
+				;
+
+				// zoom on pinch touch (hammer dependency)
+				Hammer( this )
+					.on( 'pinchin', function ( event ) {
+						return crop.zoomOut();
+						
+					} )
+					.on( 'pinchout', function ( event ) {
+						return 	crop.zoomIn();
+						
+					} )
+					.on( 'drag', function ( event ) {
+
+						crop.$image
+							.css( {
+								left  : '+=' + event.deltaX
+								, top : '+=' + event.deltaY
+							} )
+						;
+						
+
+						crop.update();
+					});
+			} );	
+    	
+	}; })(img);
+
+
+
     reader.readAsDataURL(file);
   }
 }
+
+function for_check()
+{
+
+	var img = $('#for_target img').attr('src');
+	// response.data = new Buffer(matches[2], 'base64');
+	// Set your data that will be sent to reflect this change
+    $('#img_fullpath').val(img);
+	data = $('#featured_image').serialize();
+      $.ajax({
+        type: 'POST',
+        url: '/loans/upload_main_imagex/<%= @loan.id %>',
+        data:data,
+        success:function(data){
+        	if(data!="true")
+        	{
+        		$('#file').hide();
+        		$('#main_image').hide();
+        		$('#nt_allowed').show();
+        	}
+        	// alert("in");
+        	// $("#main_image_preview").css({ "margin-top":"20px", "margin-right": "0px"});
+            // $('#myModal4').foundation('reveal', 'close'); 
+            // var datax = "&id=<%= @loan_id%>";
+            // $.ajax({
+            //             data: datax,
+            //             type: 'POST',
+            //             url: '/loans/loan_images',
+            //             success:function(response){
+            //                 $('#pictures-container').html(response);
+            //             }
+            //         });
+        }
+      });
+}
+
+
+function dumpCSSText(element){
+ var s = '';
+ var elem1 = document.getElementById(element);
+ var o = window.getComputedStyle(elem1);
+  
+  for(var i = 0; i < o.length; i++){
+    s+=o[i] + ':' + o.getPropertyValue(o[i])+';';
+  }
+  return s;
+}
+
+function base64ToBlob(base64, mime) 
+{
+    mime = mime || '';
+    var sliceSize = 1024;
+    var byteChars = window.atob(base64);
+    var byteArrays = [];
+
+    for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+        var slice = byteChars.slice(offset, offset + sliceSize);
+
+        var byteNumbers = new Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        var byteArray = new Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, {type: mime});
+}
+
+// function dumpCSSText(element){
+	
+//   var s = '';
+//  var elem1 = document.getElementById(element);
+//  var o = window.getComputedStyle(elem1);
+  
+//   for(var i = 0; i < o.length; i++){
+//     s+=o[i] + ':' + o.getPropertyValue(o[i])+';';
+//   }
+//   alert(s)
+// }
+//  dumpCSSText("target")
+
+$('document').ready(function(){
+	$('.cropControls').hide();
+	$('#edit_control').hide();
+});
+
+
+
 </script>
 				<% if(@brokerLogin==true) %>
-					<div class='large-12 columns'>
-						<%=form_tag({:controller=>'loans', :action=>'upload_main_image',:id=>@loan._id},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
-						<div class='small-4 columns inline' style="position:relative;">
-							<div id="file" style="position:absolute;"class='button tiny success'>Choose a Featured Image</div>
-								<%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:100%;height:100%;cursor:pointer", :id=>'main_image'%>
-						</div>
-						<div class='small-4 columns inline'><%=submit_tag 'Save Image', data: { disable_with: "Please wait..." },class:'button tiny success'%></div>
-						
+					<div class='image-upload-section show_featured_image'>
+						<%=form_tag({:controller=>'loans', :action=>'upload_main_imagex',:id=>@loan._id},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
+								<div class='small-12 medium-loan-detil columns inline' style="position:relative;">
+									<% if @fileUpload == "true" %>
+										<div id="file" style="position:absolute;"class="btn-choose-img"  >
+										Choose Image</div>
+										<%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:242px;height:41px;cursor:pointer", :id=>'main_image'%>
+									<% else %>
+										<div class="btn-choose-img"  id="file" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+									<% end %>
+
+									<div class="btn-choose-img"  id="nt_allowed" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px; display:none;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+
+								</div>
+								<input type="hidden" id="img_fullpath" name="feature_fullpath">
+								<input type="hidden" id="fimg_size" name="fimg_size">
+								<!-- <div class='small-5 columns inline'>
+									<a href="javascript:void(0);" id="checkcheck" onclick="for_check();"  class="btn-save-img">Save Image</a>
+								</div> -->
 						<%end%>
+
+						<div id='main_image_preview' class='centered large-12 columns' style='float:right;  margin-top:20px;'>
+					
+							<div id="content">
+									
+										   		<%
+							                     if @loan.featured_image %>
+							                     	<img style='max-height:400px;width:auto;' src="<%= @loan.featured_image['url']%>">
+												<% else  %>
+													<% address = "" %>
+													<% unless @loan.info['Address3'].blank?%>
+														<% address = @loan.info['Address3'] %>
+													<% else %>
+														<% if @loan.info['City3'] && @loan.info['State3']%>
+															<% address = "#{@loan.info['City3']}, #{@loan.info['State3']}"%>
+														<% end %>
+													<% end %>
+								                    <% if address!="" %>
+							                          <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-left:45px;">
+							                        <% end %>
+							                    <% end %>
+										   
+							</div>
 						</div>
+
+					</div>
 				<% else %>
 					<% if policy(@loan).update? %>
-						<div class='large-12 columns'>
-						<%=form_tag({:controller=>'loans', :action=>'upload_main_image',:id=>@loan._id},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
-						<div class='small-4 columns inline' style="position:relative;">
-							<div id="file" style="position:absolute;"class='button tiny success'>Choose a Featured Image</div>
-								<%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:100%;height:100%;cursor:pointer", :id=>'main_image'%>
-						</div>
-						<div class='small-4 columns inline'><%=submit_tag 'Save Image', data: { disable_with: "Please wait..." },class:'button tiny success'%></div>
-						
+						<div class='image-upload-section show_featured_image'>
+						<%=form_tag({:controller=>'loans', :action=>'upload_main_imagex',:id=>@loan._id},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
+								<div class='small-12 medium-loan-detil columns inline' style="position:relative;">
+									<% if @fileUpload == "true" %>
+										<div id="file" style="position:absolute;"class="btn-choose-img"  >
+										Choose Image</div>
+										<%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:242px;height:41px;cursor:pointer", :id=>'main_image'%>
+									<% else %>
+										<div class="btn-choose-img"  id="file" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+									<% end %>
+
+									<div class="btn-choose-img"  id="nt_allowed" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px; display:none;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+
+								</div>
+								<input type="hidden" id="img_fullpath" name="feature_fullpath">
+								<!-- <div class='small-5 columns inline'>
+									<a href="javascript:void(0);" id="checkcheck" onclick="for_check();"  class="btn-save-img">Save Image</a>
+								</div> -->
+
+
 						<%end%>
-						</div>	
+
+						<div id='main_image_preview' class='centered large-12 columns' style='float:right;  margin-top:20px;'>
+					
+							<div id="content">
+									
+								           <div id="for_target">
+										   		<%
+							                     if @loan.featured_image %>
+							                     <div class="cropFrame" style="width: 575px; height: 300px;">
+							                     	<% if @loan.featured_image['top'].blank? %>
+							                     		<img style='max-height:400px;width:auto;' src="<%= @loan.featured_image['url']%>">
+							                     	<% else %>
+							                     		<img style='display:block; position:absolute; max-width:none; height:<%= @loan.featured_image['height'] %>; width:<%= @loan.featured_image['width'] %>;  top:<%= @loan.featured_image['top'] %>; left:<%= @loan.featured_image['left'] %>;' src="<%= @loan.featured_image['url']%>">
+							                     	<% end %>
+							                     </div>
+												<% else  %>
+													<% address = "" %>
+													<% unless @loan.info['Address3'].blank?%>
+														<% address = @loan.info['Address3'] %>
+													<% else %>
+														<% if @loan.info['City3'] && @loan.info['State3']%>
+															<% address = "#{@loan.info['City3']}, #{@loan.info['State3']}"%>
+														<% end %>
+													<% end %>
+								                    <% if address!="" %>
+							                          <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-left:45px;">
+							                        <% end %>
+							                    <% end %>
+										   </div>
+										   <div class="image_upload_after_action image_upload_after_action_up" id="edit_control" style="display: none;">
+												<div class="image_upload_after_action_background"></div>
+												<div class="pull-right">
+													<!-- <button id="image_upload_cancel" name="cancel">Cancel</button> -->
+													<button id="image_cupload_save" name="save">Save</button>
+												</div>
+											</div>
+										  
+								    	
+							</div>
+						</div>
+
+					</div>
 					<% end %>
 				<% end %>
 				<% # abort("#{@loan.featured_image['url']}")%>
 				
-				<div id='main_image_preview' class='centered' style='width:80%;margin-left:auto;margin-right:auto;text-align:center'>
-					<% if @loan.featured_image %>
-					<img style='max-height:400px;width:auto;' src="<%=@loan.featured_image['url']%>">
-					<% end %>
-				</div>
+				
 					  	

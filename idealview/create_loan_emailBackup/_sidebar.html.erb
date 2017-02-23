@@ -1,0 +1,465 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.highlights').click(function(){
+			$('.highlight_div').slideToggle();
+		});
+
+		$('.overview').click(function(){
+			$('.overview_div').slideToggle();
+		});
+
+		$('.borrower').click(function(){
+			$('.borrower_div').slideToggle();
+		});
+
+		$('.collateral').click(function(){
+			$('.collateral_div').slideToggle();
+		});
+
+		$('.exit_strategy').click(function(){
+			$('.exit_strategy_div').slideToggle();
+		});
+
+		// $('.loan_name').click(function(){
+		// 	$('.name-div').slideToggle();
+		// });
+
+		$('#lending_cat').change(function(){
+			cat = $(this).val();
+			if(cat=="Business Financing")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').show();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+			else if(cat=="Equity and Crowdfunding")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').show();
+				$('#mortgage_type').hide();
+			}
+			else if(cat == "Residential or Commercial Mortgage")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').show();
+			}
+			else
+			{
+				$('#lending_types').show();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+		});
+
+		$('#amnt_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#amount_request').val(selection)
+		});
+
+		$('#estimate').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#estimated_val').val(selection)
+		});
+
+		$('#term_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#term_length').val(selection)
+		});
+
+		$('#summary_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loan_summary').val(selection)
+		});
+
+		$('#funds_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#funds').val(selection)
+		});
+
+		$('#city_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loc_city').val(selection)
+		});
+
+		$('#state_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loc_state').val(selection)
+		});
+
+		$('#close_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#close_date').val(selection)
+		});
+
+		$('#close_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#close_date').val(selection)
+		});
+
+		$('.btnimg').click(function(){
+			btn_id = $(this).attr('id');
+			field_id = btn_id.replace("_btn", ""); 
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#'+field_id).val(selection)
+		});
+
+		
+	});
+</script>
+<input type="hidden" name="id" value="<%= @lInfo.id %>">
+<div class="highlights left-headings"> > Hightlights</div>
+	<div class="highlight_div" style="display:none;">
+		<div class="eow-field">
+			<input type ="text" name="_NetLoanAmountRequested0" id="amount_request" placeholder = "Net Loan Amount Requested" <% if defined? @lInfo.info['_NetLoanAmountRequested0']%> value="<%= @lInfo.info['_NetLoanAmountRequested0'] %>" <% end%>> 
+			<img src="/assets/icon1.png" id="amnt_btn" class="select_img">
+		</div>
+		<div class="eow-field">
+			<input id="estimated_val" type="text" name="_EstimatedMarketValues" placeholder="Estimated Market Value" <% if defined? @lInfo.info['_EstimatedMarketValues']%> value="<%= @lInfo.info['_EstimatedMarketValues'] %>" <% end%> > 
+			<img src="/assets/icon1.png"  class="select_img" id="estimate">
+		</div>
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_EstimatedMarketValues']%>
+			<select id="_DesiredTermLength" rows="1" name="_DesiredTermLength">
+				<option value="">Desired Term Length</option>
+				<option value="3" <% if @lInfo.info['_DesiredTermLength']=="3" %> selected="selected" <% end%>>Less Than 3 Months</option>
+				<option value="6" <% if @lInfo.info['_DesiredTermLength']=="6" %> selected="selected" <% end %>>3 to 6 Months</option>
+				<option value="12" <%  if @lInfo.info['_DesiredTermLength']=="12" %> selected="selected" <% end %>>6 to 12 Months</option>
+				<option value="24" <%  if @lInfo.info['_DesiredTermLength']=="24" %> selected="selected" <% end %>>12 to 24 Months</option>
+				<option value="25"  <%   if @lInfo.info['_DesiredTermLength']=="25" %> selected="selected" <% end %>>More than 24 Months</option>
+			</select>
+		<% else %>
+			<select id="_DesiredTermLength" rows="1" name="_DesiredTermLength">
+				<option value="">Desired Term Length</option>
+				<option value="3" >Less Than 3 Months</option>
+				<option value="6">3 to 6 Months</option>
+				<option value="12">6 to 12 Months</option>
+				<option value="24">12 to 24 Months</option>
+				<option value="25">More than 24 Months</option>
+			</select>
+		<% end %>
+		</div>
+
+		<div class="eow-field">
+			<input id="loc_city" type="text" name="City3" rows="1" placeholder = "City" <% if defined? @lInfo.info['City3']%> value="<%= @lInfo.info['City3'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="city_btn" class="select_img">
+		</div>
+
+		<div class="eow-field">
+			<input id="loc_state" type="text" name="State3" rows="1" placeholder = "State" <% if defined? @lInfo.info['State3']%> value="<%= @lInfo.info['State3'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="loc_state_btn" class="select_img btnimg">
+		</div>
+
+		<div class="eow-field">
+			<input id="close_date" type="date" value="" rows="1" name="_ExpectedCloseDate" placeholder = "Expected Close Date(d-m-Y)" <% if defined? @lInfo.info['_ExpectedCloseDate']%> value="<%= @lInfo.info['_ExpectedCloseDate'] %>" <% end%> >
+			<img src="/assets/icon1.png"  id="close_btn" class="select_img">
+		</div>
+
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_LendingCategory']%>
+			<select id="lending_cat" name="_LendingCategory">
+				<option value="Private Real Estate Loan" <% if @lInfo.info['_LendingCategory']=="Private Real Estate Loan" %> selected="selected" <% end%>>Private Real Estate Loan</option>
+				<option value="Business Financing"  <% if @lInfo.info['_LendingCategory']=="Business Financing" %> selected="selected" <% end%>>Business Financing</option>
+				<option value="Equity and Crowdfunding" <% if @lInfo.info['_LendingCategory']=="Equity and Crowdfunding" %> selected="selected" <% end%>>Equity and Crowdfunding</option>
+				<option value="Residential or Commercial Mortgage" <% if @lInfo.info['_LendingCategory']=="Equity and Crowdfunding" %> selected="selected" <% end%>>Residential or Commercial Mortgage</option>
+			</select>
+		<% else %>
+			<select id="lending_cat" name="_LendingCategory">
+				<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+				<option value="Business Financing">Business Financing</option>
+				<option value="Equity and Crowdfunding">Equity and Crowdfunding</option>
+				<option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+			</select>
+		<% end %>
+		</div>
+
+		
+
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_LendingCategory'] && !@lInfo.info['_LendingCategory'].blank? 
+			%>
+		 <% if @lInfo.info['_LendingCategory']=="Private Real Estate Loan" %>
+			<select id="lending_types" name="_LendingTypes" >
+				<option value="Single Family Residence">Single Family Residence</option>
+				<option value="Multifamily">Multifamily</option>
+				<option value="Condo">Condo</option>
+				<option value="Hospitality">Hospitality</option>
+				<option value="Commercial">Commercial</option>
+				<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+				<option value="Development">Development</option>
+				<option value="Mixed Use">Mixed Use</option>
+				<option value="Retail">Retail</option>
+				<option value="Health Care">Health Care</option>
+				<option value="Industrial">Industrial</option>
+				<option value="Other">Other</option>
+			</select>
+		 <% end %>
+
+		 <% if @lInfo.info['_LendingCategory']=="Business Financing" %>
+			<select id="financing_types" name="_BusinessFinancingTypes">
+					<option value="Equipment/Inventory">Equipment/Inventory</option>
+					<option value="Working Capital">Working Capital</option>
+					<option value="Factoring">Factoring</option>
+					<option value="Cash Advances">Cash Advances</option>
+					<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+					<option value="Supply Chain Financing">Supply Chain Financing</option>
+					<option value="Expansion Capital">Expansion Capital</option>
+					<option value="Equity">Equity</option>
+					<option value="SBA Financing">SBA Financing</option>
+			</select>
+		<% end %>
+
+		 <% if @lInfo.info['_LendingCategory']=="Equity and Crowdfunding" %>
+			<select id="equity_crowd" name="_EquityandCrowdFunding">
+				<option value="Project Financing">Project Financing</option>
+				<option value="Acquisition and Development">Acquisition and Development</option>
+				<option value="Start Up">Start Up</option>
+				<option value="Business Partnership">Business Partnership</option>
+			</select>
+		<% end %>
+
+		<% if @lInfo.info['_LendingCategory']=="Residential or Commercial Mortgage" %>
+			<select id="mortgage_type" name="_MortageTypes">
+				<option value="Owner Occupied">Owner Occupied</option>
+				<option value="Second Home">Second Home</option>
+				<option value="Investment Property">Investment Property</option>
+				<option value="FHA">FHA</option>
+				<option value="VA">VA</option>
+				<option value="Reverse Mortgage">Reverse Mortgage</option>
+				<option value="Sub Prime">Sub Prime</option>
+				<option value="HUD Financing">HUD Financing</option>
+				<option value="Multifamily">Multifamily</option>
+				<option value="Hospitality">Hospitality</option>
+				<option value="Land Development">Land Development</option>
+				<option value="Mixed Use">Mixed Use</option>
+				<option value="Retail">Retail</option>
+				<option value="Industrial">Industrial</option>
+				<option value="Healthcare">Healthcare</option>
+				<option value="Other">Other</option>
+			</select>
+		<% end %>
+		<% else 
+		%>
+
+			<select id="lending_types" name="_LendingTypes" >
+								<option value="Single Family Residence">Single Family Residence</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Condo">Condo</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Commercial">Commercial</option>
+								<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+								<option value="Development">Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Health Care">Health Care</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Other">Other</option>
+							</select>
+
+							<select id="financing_types" name="_BusinessFinancingTypes" style="display:none;">
+									<option value="Equipment/Inventory">Equipment/Inventory</option>
+									<option value="Working Capital">Working Capital</option>
+									<option value="Factoring">Factoring</option>
+									<option value="Cash Advances">Cash Advances</option>
+									<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+									<option value="Supply Chain Financing">Supply Chain Financing</option>
+									<option value="Expansion Capital">Expansion Capital</option>
+									<option value="Equity">Equity</option>
+									<option value="SBA Financing">SBA Financing</option>
+							</select>
+
+							<select id="equity_crowd" name="_EquityandCrowdFunding" style="display:none;">
+								<option value="Project Financing">Project Financing</option>
+								<option value="Acquisition and Development">Acquisition and Development</option>
+								<option value="Start Up">Start Up</option>
+								<option value="Business Partnership">Business Partnership</option>
+							</select>
+
+							<select id="mortgage_type" name="_MortageTypes" style="display:none;">
+								<option value="Owner Occupied">Owner Occupied</option>
+								<option value="Second Home">Second Home</option>
+								<option value="Investment Property">Investment Property</option>
+								<option value="FHA">FHA</option>
+								<option value="VA">VA</option>
+								<option value="Reverse Mortgage">Reverse Mortgage</option>
+								<option value="Sub Prime">Sub Prime</option>
+								<option value="HUD Financing">HUD Financing</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Land Development">Land Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Healthcare">Healthcare</option>
+								<option value="Other">Other</option>
+							</select>
+		<% end %>
+		</div>
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_TransactionType0']%>
+			<select id="transaction_type" rows="1" name="_TransactionType0">
+					<option value="">Transaction Type</option>
+					<option value="Purchase" <% if @lInfo.info['_TransactionType0'] == "Purchase"%> selected="selected" <% end %>>Purchase</option>
+					<option value="Refinance" <% if @lInfo.info['_TransactionType0'] == "Refinance"%> selected="selected" <% end %>>Refinance</option>
+					<option value="Both" <% if @lInfo.info['_TransactionType0'] == "Both"%> selected="selected" <% end %>>Both</option>
+			</select>
+		<% else %>
+			<select id="transaction_type" rows="1" name="_TransactionType0">
+					<option value="">Transaction Type</option>
+					<option value="Purchase">Purchase</option>
+					<option value="Refinance">Refinance</option>
+					<option value="Both">Both</option>
+			</select>
+		<% end %>
+		</div>
+
+	</div>
+	<div class="overview left-headings"> > Overview</div>
+	<div class="overview_div" style="display:none;">
+		<div class="eow-field">
+			 <textarea placeholder="Summary" name="_LoanSummaryWhatareyoulookingfor" id="loan_summary"  rows="8"> <% if defined? @lInfo.info['_LoanSummaryWhatareyoulookingfor']%> <%= @lInfo.info['_LoanSummaryWhatareyoulookingfor'] %> <% end%></textarea>
+			<img src="/assets/icon1.png" id="summary_btn" class="select_img">
+		</div>
+		<div class="eow-field">
+			 <textarea placeholder="Use of Funds" name="_UseofFundsWhatdoyouneedthecapitalfor" id="funds" rows="8"><% if defined? @lInfo.info['_UseofFundsWhatdoyouneedthecapitalfor']%> <%= @lInfo.info['_UseofFundsWhatdoyouneedthecapitalfor'] %> <% end%></textarea>
+			<img src="/assets/icon1.png"  id="funds_btn" class="select_img btnimg">
+		</div>
+	</div>
+	<div class="borrower left-headings"> > Borrower</div>
+	<div class="borrower_div" style="display:none;">
+		<div class="eow-field">
+			<input id="fname" type="text" placeholder="First Name" name="FirstName" <% if defined? @lInfo.info['FirstName']%> value="<%= @lInfo.info['FirstName'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="fname_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="lname" type="text" placeholder="Last Name" name="LastName" <% if defined? @lInfo.info['LastName']%> value="<%= @lInfo.info['LastName'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="lname_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="email" type="text" placeholder="Email" name="Email" <% if defined? @lInfo.info['Email']%> value="<%= @lInfo.info['Email'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="email_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="birthday" type="date" placeholder = "Birthday(d-m-Y)" name="Birthday" <% if defined? @lInfo.info['Birthday']%> value="<%= @lInfo.info['Birthday'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="birthday_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="ein" type="date" placeholder = "EIN" name="_EIN" <% if defined? @lInfo.info['_EIN']%> value="<%= @lInfo.info['_EIN'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="ein_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="gross" type="date" placeholder="Gross Monthly Income" name="_GrossMonthlyIncome" <% if defined? @lInfo.info['_GrossMonthlyIncome']%> value="<%= @lInfo.info['_GrossMonthlyIncome'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="gross_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+			<input id="cash" type="date" placeholder="Borrower Cash Contribution" name="_CashContribution" <% if defined? @lInfo.info['_CashContribution']%> value="<%= @lInfo.info['_CashContribution'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="cash_btn" class="select_img btnimg">
+		</div>
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_BorrowerTimeInBusiness']%> 
+			<select name="_BorrowerTimeInBusiness" id="_BorrowerTimeInBusiness">
+				<option value="">Borrower Time In Business</option>
+				<option value="1" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "1"%> selected="selected" <% end %>>1 Year</option>
+				<option value="2" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "2"%> selected="selected" <% end %>>2 Years</option>
+				<option value="3" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "3"%> selected="selected" <% end %>>3 Years</option>
+				<option value="4" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "4"%> selected="selected" <% end %>>4 Years</option>
+				<option value="5" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "5"%> selected="selected" <% end %>>5 Years</option>
+				<option value="6" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "6"%> selected="selected" <% end %>>6 Years</option>
+				<option value="7" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "7"%> selected="selected" <% end %>>7 Years</option>
+				<option value="8" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "8"%> selected="selected" <% end %>>8 Years</option>
+				<option value="9" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "9"%> selected="selected" <% end %>>9 Years</option>
+				<option value="10" <% if @lInfo.info['_BorrowerTimeInBusiness'] == "10"%> selected="selected" <% end %>>10+ Years</option>
+			</select>
+		<% else %>
+			<select name="_BorrowerTimeInBusiness" id="_BorrowerTimeInBusiness">
+				<option value="">Borrower Time In Business</option>
+				<option value="1">1 Year</option>
+				<option value="2">2 Years</option>
+				<option value="3">3 Years</option>
+				<option value="4">4 Years</option>
+				<option value="5">5 Years</option>
+				<option value="6">6 Years</option>
+				<option value="7">7 Years</option>
+				<option value="8">8 Years</option>
+				<option value="9">9 Years</option>
+				<option value="10">10+ Years</option>
+			</select>
+		<% end %>
+		</div>
+	</div>
+	<div class="collateral left-headings"> > Collateral</div>
+	<div class="collateral_div" style="display:none;">
+		<div class="eow-field">
+			<input id="market_val" type="text" placeholder = "Estimated Property Value" rows="1" name="_EstimatedMarketValue"  <% if defined? @lInfo.info['_EstimatedMarketValue']%> value="<%= @lInfo.info['_EstimatedMarketValue'] %>" <% end%> >
+			<img src="/assets/icon1.png"  id="market_val_btn" class="select_img btnimg">
+		</div>
+
+		<div class="eow-field">
+			<input id="amount_owed" type="text" value="" rows="1" name="_AmountOwed" placeholder = "Amount Owed" <% if defined? @lInfo.info['_AmountOwed']%> value="<%= @lInfo.info['_AmountOwed'] %>" <% end%> >
+			<img src="/assets/icon1.png"  id="amount_owed_btn" class="select_img btnimg">
+		</div>
+
+		<div class="eow-field">
+		<% if defined? @lInfo.info['_FreeandClear0']%> 
+			<select rows="1" name="_FreeandClear0" id="_FreeandClear0">
+				<option value="">Mortgage Status</option>
+				<option value="1" <% if @lInfo.info['_FreeandClear0'] == 1%> selected="selected" <% end %>>Paid In Full</option>
+				<option value="0" <% if @lInfo.info['_FreeandClear0'] == 0%> selected="selected" <% end %>>Has Mortgage</option>
+			</select>
+		<% else%>
+			<select rows="1" name="_FreeandClear0" id="_FreeandClear0">
+				<option value="">Mortgage Status</option>
+				<option value="1">Paid In Full</option>
+				<option value="0">Has Mortgage</option>
+			</select>
+		<% end %>
+		</div>
+
+		<div class="eow-field">
+			<input id="monthly_income" type="text" placeholder="Gross Monthly Income" name="_HowmuchGrossMonthlyIncome"  <% if defined? @lInfo.info['_HowmuchGrossMonthlyIncome']%> value="<%= @lInfo.info['_HowmuchGrossMonthlyIncome'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="monthly_income_btn" class="select_img btnimg">
+		</div>
+
+		<div class="eow-field">
+			<input id="purchase_price" type="text" placeholder = "Purchase Price" name="_PurchasePrice" <% if defined? @lInfo.info['_PurchasePrice']%> value="<%= @lInfo.info['_PurchasePrice'] %>" <% end%>>
+			<img src="/assets/icon1.png"  id="purchase_price_btn" class="select_img btnimg">
+		</div>
+
+		<div class="eow-field">
+			<textarea rows="8" name="_AdditionalCollateralWhatelsecanyouofferassecurity0" id="additional_collateral" placeholder = "Additional Collateral"><% if defined? @lInfo.info['_AdditionalCollateralWhatelsecanyouofferassecurity0']%> <%= @lInfo.info['_AdditionalCollateralWhatelsecanyouofferassecurity0'] %> <% end%></textarea>
+			<img src="/assets/icon1.png"  id="additional_collateral_btn" class="select_img btnimg">
+		</div>
+	</div>
+	<div class="exit_strategy left-headings"> > Exit Strategy</div>
+	<div class="exit_strategy_div" style="display:none;">
+		<div class="eow-field">
+			<textarea id="exit_starategy" rows="8" name="_ExitStrategyHowwillyoupaytheloanoff" placeholder = "Exit Strategy"> <% if defined? @lInfo.info['_ExitStrategyHowwillyoupaytheloanoff']%> <%= @lInfo.info['_ExitStrategyHowwillyoupaytheloanoff'] %> <% end%> </textarea>
+			<img src="/assets/icon1.png"  id="exit_starategy_btn" class="select_img btnimg">
+		</div>
+	</div>
+
+			

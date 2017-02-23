@@ -1,0 +1,100 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+		
+		$('.fund_edit_pen').click(function(){
+	        id = $(this).attr('id')
+	        col_id = id.replace("relate_fund_edit_", "");
+	        $('#collateral_'+col_id+' .loan_all_funds').show();
+	        $('#collateral_'+col_id+' .related_collats').hide();
+	        $('#collateral_'+col_id+' .add_collateral_fund').hide();
+	    });
+
+	    $('.change_col_funds').click(function(){
+	              id = $(this).attr('id');
+	              col_id = id.replace("relate_fund_btn_", ""); 
+	              select_id = "collateral_funds_"+col_id
+	              val = $('#'+select_id).val();
+	              data = "related_funds="+val+"&collateral_id="+col_id;
+	               $.ajax({
+	                      data: data,
+	                      type: 'POST',
+	                      url: '/loans/add_collateral_funds',
+	                      success:function(response){
+	                        $('#collateral_'+col_id+' .loan_all_funds').hide();
+	                        $('#collateral_'+col_id+' .related_collats').html(response);
+	                        $('#collateral_'+col_id+' .related_collats').show();
+	                        $('#collateral_'+col_id+' .add_collateral_fund').show();
+	                      }
+	                  });
+	    });
+	
+	    // $('.select_related_fund').click(function(){
+	    // 	check_name = $(this).attr('name');
+	    //     alert(check_name);
+	    //     // col_id = id.replace("relate_fund_btn_", ""); 
+	    // });
+	});
+	function select_relate_funds(collateral_id)
+    {
+        var allVals=[];
+        $('#collateral_'+collateral_id+' input[name="related_fund"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+
+        data = "related_funds="+allVals+"&collateral_id="+collateral_id;
+       	$.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/add_collateral_funds',
+              success:function(response){
+                $('#collateral_'+collateral_id+' .loan_all_funds').hide();
+                $('#collateral_'+collateral_id+' .related_collats').html(response);
+                $('#collateral_'+collateral_id+' .related_collats').show();
+                $('#collateral_'+collateral_id+' .add_collateral_fund').show();
+              }
+          });
+	}
+	
+</script>
+<table border="0" cellpadding="0" cellspacing="0" class="table-related-fund">
+
+  <tr>
+      <td>Select</td>
+      <td style="width:35%"><strong>Use</strong></td>
+      <td style="width:33%"><strong>Beneficiary</strong></td>
+      <td style="width:30%"><strong>Amount</strong></td>
+  <!--<td><strong>Maturity / Contract Date</strong></td>
+      <td><strong>Earned Deposit/Stats</strong></td> !-->
+  </tr>
+  <% unless @collateral.related_funds.blank? %>
+	<% @relates = @collateral.related_funds.split(",") %>
+  <% else %>
+		<% @relates = "" %>
+  <% end %>
+  <% unless @funds.blank? %>
+		  <% @funds.each do |loan_fund|%>
+		 	<% @fndInfo = "#{loan_fund.use}#{ loan_fund.beneficiary}#{loan_fund.amount}" %>
+				<% if !@fndInfo.blank? %>
+				  	<tr>
+				  		<td><input type="checkbox" class="select_related_fund" name="related_fund" value="<%= loan_fund.id %>" <% if @relates.include? "#{loan_fund.id}"%> checked <% end %>></td>
+				  		<td><%= loan_fund.use %></td>
+				  		<td><%= loan_fund.beneficiary %></td>
+				  		<td><%= loan_fund.amount %></td>
+				  	</tr>
+				<% end %>
+		   <% end %>
+  <% else %>
+  	<tr>
+  		<td colspan="4">No use of funds added.</td>
+  	</tr>
+ 
+  <% end %>
+ 
+</table>
+
+ <input type="button" class="button" value="Done" id="relate_fund_btn_<%= @collateral.id %>" onclick="select_relate_funds('<%= @collateral.id %>')" >
+

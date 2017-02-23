@@ -1,0 +1,74 @@
+<style>
+    li { cursor: pointer; cursor: all-scroll; list-style: none; }
+</style>
+<script type="text/javascript">
+    $('document').ready(function(){
+        $('ul').sortable({
+                            axis: 'y',
+                            stop: function (event, ui) {
+                                var record = $("#sortable").sortable("toArray");
+                                var data = $(this).sortable('serialize')+ "&moredata=" + record;
+                                $.ajax({
+                                        data: data,
+                                        type: 'POST',
+                                        url: '/loans/lender_order'
+                                        });
+                            }
+                        });
+    })
+</script>
+<% color_class = ''%>
+<% 
+if !@alllenders.blank? %>
+   <ul id="sortable">
+<% @alllenders.each do |llender|%>
+        <li id= '<%= llender.id %>'>
+            <div class='row <%=color_class%> bottom-space text-left'>
+
+                <div class="large-3 columns">
+                    <% if llender.lender.name==nil %>
+                        <%= llender.lender.email %>
+                    <% else %>
+                        <%= llender.lender.name %>
+                    <% end %>
+                </div>
+                <div class="large-4 columns">
+                    <%= fd_money(llender.lender.loanMinDropDown) %> 
+					 <% if llender.lender.loanMaxDropDown!="No Max" %>
+						- <%= fd_money(llender.lender.loanMaxDropDown) %>
+					 <% else %>
+					 	- <%= llender.lender.loanMaxDropDown %>
+					 <% end %>           
+                </div>
+                <div class="large-3 columns">
+                     <% unless llender.lender.city.blank? %>
+                            <%= llender.lender.city %>, <%= llender.lender.state %>
+                        <% else %>
+                            N/A
+                        <% end %>
+                </div>
+                <div class="large-2 columns">
+                  <a href="javascript:void(0);" id="<%= llender.id %>" class="remove_lender" onclick="remove_lender('<%= llender.id %>')">    Remove </a>
+                </div>
+                
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+        </li>
+    <%
+    end %>
+ </ul>
+ <% else %>
+          <div class='row <%=color_class%> bottom-space text-left'>
+
+                <div class="large-12 columns">
+                    No lenders matching this loan.           
+                </div>
+        
+        
+             </div>   
+<%
+end 
+%>
+

@@ -1,0 +1,170 @@
+<% Loan.file_categories.each do |cat| %>
+<% if cat=='Other' %>
+		<h3><%=cat%></h3>
+		<%
+		 #abort("#{@loan.documents}")
+		 @loan.documents.each do |doc| 
+		 	if doc.category.blank? && doc.delete!=1 %>
+		      	<% if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin') ) && controller.action_name=="show" %>
+				  <div class="doc_show" style="height:56px;" id="del_<%= doc.id %>">
+					    <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+					    <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+					   
+					    <div class="hide_del" style="width: 24%; float:right;">
+						    <div class="hidebtn" style="width:80px; float:left;" id="hidebtn_<%= doc.id %>">
+							    
+							    <div id="hidefor_<%= doc.id %>" <% if doc.hide==1 %> style="display:none;" <% end %> >
+							   		<%= button_tag "Hide", onclick:"hide_file('#{doc.id}');", class: 'tiny button alert'%>
+							   	</div>
+							   	
+							   	<div id="showfor_<%= doc.id %>" <% if doc.hide!=1 %> style="display:none;" <% end %>>
+							   		<%= button_tag "Show", onclick:"show_file('#{doc.id}')", class: 'tiny button'%> 
+							   	</div>
+							   	
+						   	</div>
+
+						   	<div class="del" style="width:80px; float:left;">
+						   		<%= button_tag "Delete", onclick:"if(confirm('Are you sure? You want to delete this file')){del_file('#{doc.id}')}", class: 'tiny button'%>
+						   	</div> 
+					   	</div>
+				  </div>
+			   	  <BR> 
+		       <% else %>
+		       		<% if doc.hide!=1 %>
+			       		 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+					    <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+					<% end %> 
+				    <BR> 
+		       <% end %>
+		    <% end %>
+		<% end %>			    
+<%end%>
+	
+		
+	
+	<%@loan.docs_by_category(cat).each do |doc| 
+		#abort("#{doc.inspect}")
+		%>
+		<% if doc.delete!=1 %>
+		   <% if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin') ) && controller.action_name=="show" %>
+			  <div class="doc_show" style="height:56px;" id="del_<%= doc.id %>">
+				    <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+				   
+				    <div class="hide_del" style="width: 24%; float:right;">
+					    <div class="hidebtn" style="width:80px; float:left;" id="hidebtn_<%= doc.id %>">
+						    
+						    <div id="hidefor_<%= doc.id %>" <% if doc.hide==1 %> style="display:none;" <% end %> >
+						   		<%= button_tag "Hide", onclick:"hide_file('#{doc.id}');", class: 'tiny button alert'%>
+						   	</div>
+						   	
+						   	<div id="showfor_<%= doc.id %>" <% if doc.hide!=1 %> style="display:none;" <% end %>
+						   		<%= button_tag "Show", onclick:"show_file('#{doc.id}')", class: 'tiny button'%> 
+						   	</div>
+						   	
+					   	</div>
+
+					   	<div class="del" style="width:80px; float:left;">
+					   		<%= button_tag "Delete", onclick:"if(confirm('Are you sure? You want to delete this file')){del_file('#{doc.id}')}", class: 'tiny button'%>
+					   	</div> 
+				   	</div>
+			  </div>
+			   <BR> 
+	       <% else %>
+	       		<% if doc.hide!=1 %>
+		       		 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+				 <% end %> 
+			    <BR> 
+	       <% end %>
+	    <% end %>
+	<% end %>
+			<div style='margin-top:30px;width:100%'>
+				<%
+				formId=cat.gsub(',','_') 
+				formId=formId.gsub('&','_') 
+				formId=formId.gsub(' ','_') 
+				%>
+				<%= render partial: 'file_upload', locals:{contact_id:@loan._id, form_id:formId+'_upload', controller:'loans', action:'upload_doc', category:cat, multiple:'true', type:'full', button_label:'Add Files to: '+cat}
+				%>
+			</div>	
+
+
+<%end %>
+<% unless @folders.blank? %>
+	<h3 style="text-align:center;"> Custom Folders </h3>
+<% end %>
+ <% unless current_user.blank? %>
+	<div class="custom_folder" style="width:100%; margin-left:40%;"><input type="button" class="tiny button success" value="Add Custom Folder" id="add_custom_folder"></div>
+<% end %>
+
+<div class="add_new_folder" style="display:none; border: 3px solid rgb(231, 231, 231); padding: 12px; margin-bottom: 23px;">
+	<form method="post" id="add_folder_form">
+		<label> Folder Name</label><input type="text" name="folder_name" class="folder_name">
+		<input type="hidden" name="loan_id" value="<%= @loan.id %>">
+		<% unless current_user.blank? %>
+			<input type="hidden" name="user_id" value="<%= current_user.id %>">
+		<% end %>
+		<input type="button" class="tiny button success" value="SAVE" id="add_folder"> <input type="button" class="tiny button alert" value="CANCEL" id="cancel_add_folder">
+	</form>
+</div>
+
+<div class="custom_folders">
+<%
+  unless @folders.blank?
+	@folders.each do |folder| %>
+		<div id="folder_<%= folder.id %>">
+		<% 
+		all_files = folder.files_by_folder(@loan._id)
+		unless all_files.blank? 
+			all_files.each do |file| %>
+				
+				<div class="file_show" style="height:56px;" id="del_file<%= file.id %>">
+				   <% url=url_for :controller=>'loans', :action=>'view_file',:id=>file[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=file.name%></a>
+				   <% unless current_user.blank? %>
+					    <div class="hide_del" style="width: 24%; float:right;">
+						    <div class="hidebtn" style="width:80px; float:left;" id="hidebtn_<%= file.id %>">
+							    
+							    <div id="hidefile_<%= file.id %>" <% if file.hide==1 %> style="display:none;" <% end %> >
+							   		<%= button_tag "Hide", onclick:"hide_doc('#{file.id}');", class: 'tiny button alert'%>
+							   	</div>
+							   	
+							   	<div id="showfile_<%= file.id %>" <% if file.hide!=1 %> style="display:none;" <% end %>
+							   		<%= button_tag "Show", onclick:"show_doc('#{file.id}')", class: 'tiny button'%> 
+							   	</div>
+							   	
+						   	</div>
+
+						   	<div class="del" style="width:80px; float:left;">
+						   		<%= button_tag "Delete", onclick:"if(confirm('Are you sure? You want to delete this file')){del_doc('#{file.id}')}", class: 'tiny button'%>
+						   	</div> 
+					   	</div>
+				   <% end %>
+
+			  </div>
+	 		<% end
+		end
+		%>
+
+		<div  class="folder_content" style='margin-top:30px;width:100%'>
+		<% unless current_user.blank? %>
+			<div class="del" style="width:auto; float:left;">
+					   		<%= button_tag "Delete Folder", onclick:"if(confirm('Are you sure? You want to delete this folder')){del_folder('#{folder.id}')}", class: 'alert tiny button'%>
+			</div>
+		<% end %>
+			<%
+				fldr = folder.folder_name
+				formId=fldr.gsub(',','_') 
+				formId=formId.gsub('&','_') 
+				formId=formId.gsub(' ','_') 
+				%>
+				<%= render partial:'folder_file', locals:{contact_id:@loan._id, form_id:formId+'_upload', controller:'loans', action:'upload_file', folder:folder.id, multiple:'true', type:'full', button_label:'Add Files to: '+folder.folder_name}
+				%>
+				
+		</div>
+	  </div>
+	<% end
+   end
+  %>
+</div>

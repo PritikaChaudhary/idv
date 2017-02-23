@@ -1,0 +1,177 @@
+<script type="text/javascript">
+    $('document').ready(function(){
+     $('.click_hide').click(function(){
+            var c_id=$(this).attr('id');
+            var lendr_id=c_id.replace("click_hide_","");
+            var div_id="click_"+lendr_id;
+            $("#"+div_id).show();
+            $("#"+c_id).hide();
+            $("#sub_brokers"+lendr_id).hide();
+
+        });
+    });
+</script>
+<%= render partial: 'layouts/messages' %>
+<div class="small-12 columns">
+<table width="100%" class="list_loans">
+	<thead>
+		<tr>
+            <th><input id="all_brokers" type="checkbox"  name="all_loans"></th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Plan</th>
+			<th>Users</th>
+			<th>Share/Lenders</th>
+			<th>Upload Max</th>
+			<th>File Storage</th>
+        </tr>
+	</thead>
+	<tbody>
+<% color_class = ''%>
+<% @brokers.each do |broker| 
+	@roles = broker.roles
+              
+    @names = Array.new
+    unless  broker.broker.blank?
+    	@roles.each do |role|
+      		@names = role['name']
+    	end	
+    end
+    
+    unless @names.include?('Admin')   %>
+
+
+    <% unless broker.broker.blank? %>     
+        <tr>
+            <td><input type="checkbox" id="check_<%= broker.id %>" name="select_loan" value="<%= broker.id %>" style="float:left;margin-top:7px; margin-right:5px;" class="single_loan">
+                <div id="click_<%= broker.id %>" style="float:left;"> 
+                    <% @url=url_for :controller=>'account_management', :action=>'fetch_sub_brokers', :id=>broker.id %>
+                    <a class="more-option" href="javascript:void(0);"  onclick="callAjax('<%= @url %>','sub_brokers<%= broker.id %>', 'lender_loans')"><i class="fa fa-plus"></i></a>
+                    </div>
+                    <div id="click_hide_<%= broker.id %>" style="float:left; display:none;" class="click_hide"  onclick="order_brokerhide('<%= broker.id %>')">
+                        <a class="less-option" href="javascript:void(0);" class="hide_broker_<%= broker.id %>"><i class="fa fa-minus-circle"></i></a>
+                </div>
+            </td>
+        	<td>
+                <a href="<%= request.base_url %>/account_management/edit_account/<%= broker.id %>">
+                    <% unless broker.name.blank? %>
+                        <%= broker.name %>
+                    <% else %>
+                         "N/A"
+                    <% end %>
+                </a>
+                <br>
+                    
+
+                <div id="sub_brokers<%= broker.id %>">
+                
+                </div>
+            </td>
+
+            <td>
+                <%= broker.email %>
+            </td>
+             	
+            <td>
+
+            	<% 
+            		if defined? broker.broker['plan']
+                		if broker.broker['plan'].blank?
+                			plan = "free"
+                	    elsif broker.broker['plan'] == "Pro"
+                            plan = "free"
+                        else
+                	   	 	plan = broker.broker['plan'].downcase
+                	    end
+            		else
+            			plan = "free"
+            		end
+            	%>	
+            
+
+                <%= plan.camelcase %>
+            </td>
+
+            <td>
+            	<% if broker.broker['plan'] != "lender" %>
+                        <% 
+                            
+                                    
+                            num = broker.count_users
+                            if plan == "free"
+                                total_users = 1
+                                num = num+1
+                            elsif plan == "business"
+                                total_users = 5
+                                num = num+1
+                            elsif plan == "enterprise"
+                                total_users = 15
+                                num = num+1
+                            end
+                        %>
+                        <% usr_cal = "#{num}/#{broker.max_users}" %>
+                        <%= usr_cal %>
+                    <% else %>
+                        -
+                    <% end %>
+            </td>
+            <td>
+            	 <% if broker.broker['plan'] != "lender" %>
+                    <% 
+                        snum = broker.share_lenders
+                        if plan == "free"
+                            stotal_users = 5
+                        elsif plan == "business"
+                            stotal_users = "No Limit"
+                        elsif plan == "enterprise"
+                            stotal_users = "No Limit"
+                        end
+
+                    %>
+                    <%= share = "#{snum}/#{broker.max_lenders}"%>
+                   <% else %>
+                        -
+                   <% end %>
+            </td>
+            <td>
+            	 <% if broker.broker['plan'] != "lender" %>
+                        <% 
+                            if plan == "free"
+                                max_upload = "10MB"
+                            elsif plan == "business"
+                                max_upload = "25MB"
+                            elsif plan == "enterprise"
+                                max_upload = "No File Cap"
+                            end
+                        %>
+                        <%= broker.max_upload %>
+                    <% else %>
+                        -
+                    <% end %>
+            </td>
+            <td>
+            	
+                <% if broker.memory.blank? 
+                     mem = 0
+                   else 
+                     mem = broker.memory
+                   end %>
+                <% if broker.broker['plan'] != "lender" %>
+                    <%= mem %>MB/<%= broker.max_storage %>
+    		    <% else %>
+                      <%= mem %>MB/-
+                <% end %>
+            </td>
+            
+        </tr>
+    <% end %>
+    <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+     <%
+end
+end %>
+</tbody>
+</table>
+</div>
+
+
+ 

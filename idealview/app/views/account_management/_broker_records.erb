@@ -1,0 +1,31 @@
+<table>
+	<% if @sub_brokers.empty? %>
+		<td colspan="2">
+		No sub broker found.
+		</td>
+	<% else  %>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<% @sub_brokers.each do |broker|%>
+			<% color_class = ''%>
+			<% uInfo = User.find_by_email("#{broker.email}") %>
+			<tbody>
+				<tr>
+					<td>
+						<a href="<%= request.base_url %>/account_management/edit_account/<%= uInfo.id %>"><%= broker.name %>
+						</a>
+					</td>
+					<td>
+						<%= broker.email %>
+					</td>
+				</tr>
+			</tbody>		
+
+		 <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+		<% end %>
+	<% end %>
+</table>		

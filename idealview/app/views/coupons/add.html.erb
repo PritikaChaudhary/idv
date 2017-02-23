@@ -1,0 +1,200 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('input[name="redeem_by_date"]').inputmask('yyyy/mm/dd',{placeholder:"YYYY/MM/DD"});	
+		$("#discount_type").change(function(){
+			dis_val = $(this).val();
+			if(dis_val=="percent")
+			{
+				$('#dollars').hide();
+				$('#percentage').show();
+			}
+			else if(dis_val=="dollars")
+			{
+				$('#dollars').show();
+				$('#percentage').hide();
+			}
+		});
+
+		$("#duration").change(function(){
+			duration_val = $(this).val();
+			if(duration_val=="temporal")
+			{
+				$('#duration_temporal').show();
+			}
+			else
+			{
+				$('#duration_temporal').hide();	
+			}
+		});
+
+		$("#select_max_redemptions").change(function(){
+			redemption = $(this).val();
+			if(redemption=="specific_number")
+			{
+				$('#num_max').show();
+			}
+			else
+			{
+				$('#num_max').hide();
+			}
+		});
+
+		$("#select_redeem_by_date_option").change(function(){
+			redeem_val = $(this).val();
+			if(redeem_val=="before_specific_date")
+			{
+				$('#redeem_date').show();
+			}
+			else
+			{
+				$('#redeem_date').hide();
+			}
+		});
+
+		$( "#couponForm" ).validate({
+				rules: {
+				coupon_code: {
+					required: true,
+					remote: {
+		                        url: "/coupons/check",
+		                        type: "post"
+		                     }
+					},
+				name: {
+					required: true
+					},
+				discount_type: {
+					required: true
+					},
+				duration: {
+					required: true
+					},
+				temporal_unit: {
+					required: true,
+					
+					},
+				select_max_redemptions: {
+					required: true,
+					},		
+				select_redeem_by_date_option: {
+					required: true
+					},
+				redeem_by_date: {
+					required: true
+					}
+				},
+				 messages: {
+			                coupon_code: {
+			                    remote: "Coupon code already in use!"
+			                }
+			    }
+			});
+	});
+	
+</script>
+<div class='row'>
+	<div class="small-8 small-centered columns">
+
+		<h3 style="text-align:center;">Add Coupon</h3>
+		  <form action="https://dash.idvstage.us/coupons/create" id="couponForm" method="post">
+		  
+		  <div class="field">
+				<label for="coupon_code">Coupon Code</label>
+				<br>
+				<input id="coupon_code" type="text" name="coupon_code" autofocus="autofocus" >
+		  		<input type="hidden" name="user_id" value="<%= current_user.id %>">
+		  </div>
+
+		  <div class="field">
+				<label for="coupon_name">Name</label>
+				<br>
+				<input id="name" type="text" name="name" autofocus="autofocus">
+		  </div>
+
+		  <div class="field">
+				<label for="discount_type ">Discount Type</label> 	 	
+				<br>
+				<select name="discount_type" id="discount_type">
+					<option value="dollars">Dollars</option>
+					<option value="percent">Percent</option>
+				</select>
+		  </div>
+
+		   
+		 <div class="field" id="type_val">
+		 	<div id="percentage" style="display:none;">
+				<label for="percentage">Percentage</label>
+				<br>
+				<input type="text" name="percentage" autofocus="autofocus">
+			</div>
+			<div id="dollars">
+				<label for="dollar">Dollar</label>
+				<br>
+				<input type="text" name="dollar" autofocus="autofocus">
+			</div>
+		</div>
+
+		<div class="field">
+			<label for="duration">Duration of the discount</label>
+			<br>
+			<select name="duration" id="duration">
+				<option value="">Select</option>
+				<option value="forever"> Forever </option>
+				<option value="single_use"> Single use </option>
+				<option value="temporal"> Limited time </option>
+			</select>
+		</div>
+		
+		<div class="field" id="duration_temporal" style="display:none;">
+			<label for="duration">Duration of the discount</label>
+			<br>
+			<input type="number" name="temporal_amount" id="temporal_amount" style="width: 49%; float: left;">
+			<select id="temporal_unit" class="SelectInput-select" name="temporal_unit" style="float:left; margin-left: 10px; width: 48%;">
+				<option value=""> Select </option>
+				<option value="day">Days</option>
+				<option value="week">Weeks</option>
+				<option value="month">Months</option>
+				<option value="year">Years</option>
+			</select>
+		</div>
+
+		<div class="field">
+			<label for="select_max_redemptions">Maximum number of times that the coupon can be redeemed across all customers</label>
+			<br>
+			<select name="select_max_redemptions" id="select_max_redemptions">
+				<option value="">Select</option>
+				<option value="unlimited"> Unlimited </option>
+				<option value="specific_number"> Specific number </option>
+			</select>
+		</div>
+		
+		<div id="num_max" class="field" style="display:none;">
+			<label for="max_redemptions">Maximum Number Of Redemptions</label>
+			<br>
+			<input id="max_redemptions" name="max_redemptions" size="30" type="number">
+		</div>
+
+		<div class="field">
+			<label for="select_redeem_by_date_option">When can a customer redeem this code on an account?</label>
+			<br>
+			<select name="select_redeem_by_date_option" id="select_redeem_by_date_option">
+				<option value="">Select</option>
+				<option value="anytime"> Anytime </option>
+				<option value="before_specific_date"> Before a specific date </option>
+			</select>
+		</div>
+
+		<div id="redeem_date" class="field" style="display:none;">
+			<label for="redeem_by_date">Redeem By Date</label>
+			<br>
+			<input id="redeem_by_date" name="redeem_by_date" type="text">
+		</div>
+
+
+
+		<div class="actions">
+		   <input type="submit" value="SUBMIT" class="tiny button success" id="save_broker">
+		  </div>
+		  </form>
+	</div>
+</div>

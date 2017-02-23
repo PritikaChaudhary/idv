@@ -1,0 +1,1419 @@
+<script type="text/javascript">
+$('document').ready(function(){
+	$('#download_pdf').click(function(){
+		content = $('.loanpdf_content').html();
+		data = "content="+content
+		 $.ajax({
+                data: {
+				   	content: content,
+				    loan: "<%= @loan.id %>",
+				   	},
+                	type: 'POST',
+                	url: '/loans/loan_generate_pdf',
+                	success:function(response){
+                		location.href = 'http://localhost:3000/loans/show_pdf/'+response
+					}	
+
+
+            });
+	});
+});
+</script>
+<input type="botton" class="button" value="PDF" id="download_pdf">
+<div class="loanpdf_content" style="display:block;">
+	<style type="text/css">
+	tr, td, th, tbody, thead, tfoot {
+		    page-break-inside: avoid !important;
+		}
+
+
+
+	</style>
+    <div style="border-bottom:4px solid; width:100%;">
+      <img class="idealview_main_logo" alt="Idealview logo" src="https://kellenjones.idealview.us/assets/idealview-logo-00f5073c5caccaeaf3e9a5a7089f1a79.png" style=" height: 45px; width:auto;">
+
+      <% now_date = Time.now.strftime("%d %B, %Y")%>
+      <b style="float:right; margin-top:14px;"><%=  now_date %></b>
+    </div>
+    <div style="width:100%; text-align:center">
+        <h1>Summary of <%= @loan.name %></h1>
+        <% if @loan.featured_image %>
+                   <img style="margin-top:10px;" src="<%= @loan.featured_image['url']%>" width="600">    
+            <% else  %>
+              <% @address ="#{@loan.info['Address3']}, #{@loan.info['City3']}, #{@loan.info['State3']}" %>
+              <% if @address%>
+                  <div class="item">
+                      <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= @address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-top:10px;" width="600"> 
+                  </div>
+              <% end %>
+            <% end %>
+    </div>
+    <style>
+      .loanpdf_content table{
+          border: 1px solid;
+      }
+      .loanpdf_content th{
+          border: 1px solid;
+      }
+      .loanpdf_content td {
+          border: 1px solid;
+      }
+    </style>
+
+    <div>
+      <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+        Highlights
+      </div>
+      <table style="margin:auto; margin-top:10px; border: 1px solid; width:90%"> 
+        <% if !@loan.info['_NetLoanAmountRequested0'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%"><b>Net Loan Amount Requested:</b></td>
+            <td style="border:1px solid;"><%= @loan.info['_NetLoanAmountRequested0'] %></td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_EstimatedMarketValue'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Estimated Market Value:</b></td>
+            <td style="border:1px solid;"><%= @loan.info['_EstimatedMarketValue'] %></td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_DesiredTermLength'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Desired Term Length:</b></td>
+            <td style="border:1px solid;">
+              <% if @loan.info['_DesiredTermLength'] == "3" %>
+                Less Than 3 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "6" %>
+                3 to 6 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "12" %>
+                6 to 12 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "24" %>
+                12 to 24 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "25" %>
+                More than 24 Months
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['Address3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Address:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['Address3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['City3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>City:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['City3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['State3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>State:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['State3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_ExpectedCloseDate'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Expected Close Date:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['_ExpectedCloseDate']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_LendingCategory'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Lending Category:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['_LendingCategory']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['lending_type'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Asset Type:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['lending_type']  %>
+            </td>
+          </tr>
+        <% end %>
+
+      </table>
+    </div>
+    
+    <% if !@loan.info['_LoanSummaryWhatareyoulookingfor'].blank?%>
+      <div style="width:100%; margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Summary
+        </div>
+        <%= @loan.info['_LoanSummaryWhatareyoulookingfor'] %>
+      </div>
+    <% end %>
+
+      <% if !@loan.info['transaction_type'].blank?%>
+      <div>
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid; margin-top:15px;">
+          Transaction Information
+        </div>
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+            <% if !@loan.info['transaction_type'].blank?  %>
+              <% if !@loan.info['transaction_type'].blank?%>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Transaction Type:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['transaction_type'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['transaction_type']=="Purchase" %>
+                <% if !@loan.info['contract_closing_date'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Contract Closing Date:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['contract_closing_date'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['purchase_price'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Purchase Price:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['purchase_price'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['rehab_amount'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Rehab Amount:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['rehab_amount'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['purchase_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['purchase_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+
+              <% if !@loan.info['transaction_type']=="Refinance" %>
+                <% if !@loan.info['maturity_date'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Maturity Date:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['maturity_date'] %></td>
+                  </tr>
+                <% end %>
+
+                <% if !@loan.info['refinance_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['refinance_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+
+                <% if !@loan.info['refinance_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['refinance_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %> 
+            <% if !@loan.info['isBroker'].blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Submitted By Broker:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['isBroker'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['isBroker'].blank? %>
+              <% if !@loan.info['who_broker'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Who is the broker:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['who_broker'] %></td>
+                </tr>
+              <% end %>
+            <% end %>
+            <% if !@loan.info['free_clear'].blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Free and clear:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['free_clear'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['free_clear'].blank? %>
+              <% if !@loan.info['original_purchase_price'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Original Purchase Price:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['original_purchase_price'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['original_purchase_date'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Original Purchase Date:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['original_purchase_date'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['vested_by'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Vested by:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['vested_by'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['cash_contributed'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Cash contributed:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['cash_contributed'] %></td>
+                </tr>
+              <% end %>
+
+            <% end %>
+            
+          
+
+        </table>
+        
+      </div>
+      <% end %>
+      
+      <% if !@loan.borrower.blank? %>
+        <div style=" margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Borrowers
+        </div>
+        
+        <% i =1 %>
+          <% @loan.borrower.each do |borrower| %>
+            <div style="text-align:center; width:100%; font-weight:bold; text-decoration:underline;">
+              Borrower Profile <%= i %>
+            </div>
+            <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+              <tr>
+                <th colspan="2" style="text-align:center;"> Borrower Information </th>
+              </tr>
+              <% if !borrower.borrower_type.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Type:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.borrower_type %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_name.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Name:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_name %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_phone.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Phone:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_phone %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_email.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Email:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_email %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_monthly_income.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Monthly Income:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_monthly_income %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_address.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Address:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_address %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_city.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>City:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_city %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_state.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>State:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_state %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_postalcode.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Postal Code:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_postalcode %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_income_source.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Income Source:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_income_source %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.income_how_long.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;">
+                  <b>  How long has income been derived from this source?:</b>
+                </td>
+                <td style="border:1px solid;">
+                  <%= borrower.income_how_long %>
+                </td>
+              </tr>
+              <% end %>
+              <% if !borrower.personal_dob.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Birthday:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_dob %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.ever_borrow_money.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Have you ever borrowed private money?:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.ever_borrow_money %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.net_worth.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Net Worth:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.net_worth %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.estimated_fico.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Estimated FICO score:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.estimated_fico %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_cashContribution.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Cash Contribution:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_cashContribution %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.borrower_guarantor.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Also The Guarantor:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.borrower_guarantor %>
+                  </td>
+                </tr>
+              <% end %>
+
+            </table>
+
+            <% if borrower.borrower_type == "Company or Trust" %>
+              <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+                <tr>
+                  <th colspan="2" style="text-align:center;"> Business Information </th>
+                </tr>
+
+                <% if !borrower.business_name.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Name:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_name %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.business_phone.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Phone:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_phone %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.business_phone.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Time In Business:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.time_in_business %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.revenue_time_period.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business years of Revenue:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.revenue_time_period %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_ein.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business EIN:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_ein %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_type.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Type:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_type %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.state_of_incorporation.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business state of Incorporation:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.state_of_incorporation %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_balance_sheet.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Balance Sheet Value:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_balance_sheet %>
+                    </td>
+                  </tr>
+                <% end %>
+
+              </table>
+            <% end %>
+
+            <% if borrower.borrower_type == "Individual" %>
+              <% if !borrower.bio.blank? %>
+                <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%;"> 
+                  <tr>
+                    <th style="text-align:center;"> Borrower Bio </th>
+                  </tr>
+                  <tr>
+                    <td style="border:1px solid;">
+                      <%= borrower.bio %>
+                    </td>
+                  </tr>
+                </table>
+              <% end %>
+            <% end %>
+
+            <% if borrower.borrower_guarantor == "No" %>
+              <table style="margin:auto; margin-top:10px; width:90%; border: 1px solid;"> 
+                  <tr>
+                    <th colspan="2" style="text-align:center;"> Guarantor Information  </th>
+                  </tr>
+                  <% if !borrower.guarantor_name.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Name:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_name %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_phone.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Phone:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_phone %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_email.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Email:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_email %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_monthly_income.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Monthly Income:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_monthly_income %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_income_source.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Income Source:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_income_source %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_income_how_long.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>How long has income been derived from this source?(Months):</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_income_how_long %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_address.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Address:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_address %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_city.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor City:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_city %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_state.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor State:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_state %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_postalcode.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Postalcode:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_postalcode %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_estimated_ficco.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Estimated FICO:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_estimated_ficco %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_net_worth.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Net Worth:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_net_worth %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_borrow_money.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Have you ever borrowed private money?:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_borrow_money %></td>
+                    </tr>
+                  <% end %>
+
+                </table>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if !@loan.collateral.blank? %>
+      <div>
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;  margin-top:15px;">
+          Collaterals
+        </div>
+        <% c = 1 %>
+        <% @loan.collateral.each do |collateral| %>
+          <div style="text-align:center; width:100%; font-weight:bold; text-decoration:underline;">
+            Collateral Profile <%= c %>
+          </div>
+          <table style="margin:auto; margin-top:10px; border: 1px solid;  width:90%;"> 
+            <tr>
+              <th colspan="2" style="text-align:center;"> Collateral Information </th>
+            </tr>
+            <% if !collateral.address.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Address: </b></td>
+                <td style="border:1px solid;"><%= collateral.address %></td>
+              </tr>
+            <% end %>
+            <% if !collateral.city.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>City: </b></td>
+                <td style="border:1px solid;"><%= collateral.city %></td>
+              </tr>
+            <% end %>
+            <% if !collateral.state.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>State: </b></td>
+                <td style="border:1px solid;"><%= collateral.state %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.postalcode.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Postalcode: </b></td>
+                <td style="border:1px solid;"><%= collateral.postalcode %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.estimated_value.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Estimated Property Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.estimated_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.source_of_value.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.source_of_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.mortgage_status %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.source_of_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Mortgage Status: </b></td>
+                <td style="border:1px solid;"><%= collateral.mortgage_status %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.amount_owed.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Amount Owed:</b></td>
+                <td style="border:1px solid;"><%= collateral.amount_owed %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.asset_type.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Asset Type:</b></td>
+                <td style="border:1px solid;"><%= collateral.asset_type %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Land Size:</b></td>
+                <td style="border:1px solid;"><%= collateral.size %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <% if !collateral.size == "Sq Footage" %>
+                <% if !collateral.sq_footage.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Land Sq Footage:</b></td>
+                    <td style="border:1px solid;"><%= collateral.sq_footage %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <% if !collateral.size == "Acres" %>
+                <% if !collateral.acres.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Land Sq Footage:</b></td>
+                    <td style="border:1px solid;"><%= collateral.acres %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %>
+
+              <% if !collateral.structural_size.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Structural Size:</b></td>
+                  <td style="border:1px solid;"><%= collateral.structural_size %></td>
+                </tr>
+              
+                <% if collateral.structural_size == "Sq Footage" %>
+                  <% if !collateral.structural_sq_footage.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Sq Footage: </b></td>
+                      <td style="border:1px solid;"><%= collateral.structural_sq_footage %></td>
+                    </tr>
+                  <% end %>
+                <% end %>
+
+                <% if collateral.structural_size == "Units" %>
+                  <% if !collateral.units.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>How Many Units?:</b></td>
+                      <td style="border:1px solid;"><%= collateral.units %></td>
+                    </tr>
+                  <% end %>
+                  <% if !collateral.sf_per_unit.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>SF per Unit:</b></td>
+                      <td style="border:1px solid;"><%= collateral.sf_per_unit %></td>
+                    </tr>
+                  <% end %>
+
+                <% end %>
+              <% end %>
+
+              <% if !collateral.noi_ytd.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI (YTD):</b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_ytd %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_last_year.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI (Last Year):</b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_last_year %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_two_years_ago.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI ( Two Years Ago): </b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_two_years_ago %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_two_years_ago.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Collateral Value: </b></td>
+                  <td style="border:1px solid;"><%= collateral.collateral_value %></td>
+                </tr>
+              <% end %>
+          </table>
+
+          <% unless collateral.related_funds.blank? %>
+            <% @relates = collateral.related_funds.split(",")
+                # abort("#{@relates.inspect}")
+                i=1
+              %>
+            <table  style="margin:auto; margin-top:10px; width:90%; border: 1px solid;">
+              <tr>  
+                <th colspan="3"> Collateral related funds: </th>
+              </tr>
+              <tr> 
+                <th style="border:1px solid;">Use</th>
+                <th style="border:1px solid;">Beneficiary</th>
+                <th style="border:1px solid;">Amount</th>
+              </tr>
+              <% @relates.each do |relate| %>
+                <% fnd = UseOfFund.find_by_id("#{relate}") 
+
+                %> 
+                <% unless fnd.blank? %>
+                  <tr id="<%= i %>_fund" class="fund_row">
+                            <td style="border:1px solid;"><%= fnd.use %></td> 
+                            <td style="border:1px solid;"><%= fnd.beneficiary %></td> 
+                            <td style="border:1px solid;"><%= fnd.amount %></td>
+                        </tr>
+                  <% end %>
+              <% end %>
+            </table>
+          <% end %>
+
+
+        <% end %>
+      </div>
+      <% end %>
+
+      <% if !@loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank?%>
+        <div style="width:100%;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Exit Strategy
+          </div>
+          <%= @loan.info['_ExitStrategyHowwillyoupaytheloanoff'] %>
+        </div>
+      <% end %>
+
+      <% if !@loan.images.blank? %>
+        <div style="width:100%; float:left;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Images
+          </div>
+          <div style="margin-left:94px;">
+            <% @loan.images.each do |img|%> 
+              
+                <img src="<%= img['url']%>" style="width:21%; float:left; margin-left:10px; height:151px; margin-top:10px;">
+             
+            <% end %>
+           </div>
+        </div>
+      <% end %>
+      <% if !@loan.info['FirstName'].blank? || !@loan.info['Email'].blank? || !@loan.info['Phone'].blank?%>
+        <div style="width:100%; float:left;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Contact Information
+          </div>
+          <table style="margin: 10px auto auto; width:90%; border: 1px solid;">
+            <% if !@loan.info['FirstName'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>First Name:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['FirstName'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['Email'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>Email:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['Email'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['Phone'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>Phone:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['Phone'] %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+
+      <div style=" margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Analysis
+        </div>
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+            Key Metrics
+            </th>
+          </tr>
+           <% if !@loan.info['gross_loan_amount'].blank?%>
+           <tr>
+              <td style="border:1px solid; width:30%;"><b>Gross Loan Amount: </b></td>
+              <td style="border:1px solid;"><%= fd_money(@loan.info['gross_loan_amount']) %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['land_square_footage'].blank?%>
+            
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Land Square Footage:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['land_square_footage'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['structural_square_footage'].blank?%>
+             
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Structural Square Footage:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['structural_square_footage'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_is_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Is Value: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_is_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> As-Improved Value:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['borrower_stated_improved_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Borrower Stated As-Is Value:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_stated_improved_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['borrower_as_improved_ltv'].blank?%>
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Borrower Stated As-Improved Value: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['value_source'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Value Source: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['value_source'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['value_date'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Value Date: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['value_date'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['completed_square_footage'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Completed Square Footage: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['completed_square_footage'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['improved_sale_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improved/For Sale SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improved_sale_sf'] %></td>
+            </tr>
+           <% end %>
+
+           <% if !@loan.info['unimproved_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Unimproved SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['unimproved_sf'] %></td>
+            </tr>
+           <% end %><% if !@loan.info['begining_structural_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Beginning $/Structural SF: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['begining_structural_sf'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['begining_price_perunit'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Beginning Price Per Unit: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['begining_price_perunitbegining_price_perunit'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['improve_value_perunit'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improve Value Per Unit:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improve_value_perunit'] %></td>
+            </tr>
+           <% end %>
+
+           <% if !@loan.info['improve_value_persf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improved Value Per SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improve_value_persf'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['acash_to_contribute'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Cash to Contribute:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['acash_to_contribute'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['down_payment_percentage'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Down Payment Percentage:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['down_payment_percentage'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['apurchase_price'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Purchase Price: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['apurchase_price'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['as_is_ltv'].blank?%>
+             
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is LTV:   </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_ltv'] %></td>
+              </tr>
+         <% end %>
+           <% if !@loan.info['as_is_ltv_net_disbursment'].blank?%>
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Is LTV on Net Disbursment:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_is_ltv_net_disbursment'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['borrower_as_is_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>  Borrower As-Is LTV: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_is_ltv'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['borrower_as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Borrower As-Improved LTV:   </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_as_is_gross_income'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual As-Is Gross Income:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_as_is_gross_income'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_as_is_noi'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual As-Is NOI:</b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_as_is_noi'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_gross_income_cc'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual Gross Income (100% Occ.):  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_gross_income_cc'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual Stabilized NOI (100% Occ.):  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_stablized_noi'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_stablized_noi'] %></td>
+            </tr>
+           <% end %>
+        </table>
+
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+            Transaction Detail
+            </th>
+          </tr>
+          <% if !@loan.info['purchas_refi_amount'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Purchasor Refi Amount: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['purchas_refi_amount'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['improvement_construction'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Improvement/Construction: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['improvement_construction'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['additional_uses'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Additional Uses: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['additional_uses'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['interest_reserve'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Interest Reserves:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['interest_reserve'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['other_reserves'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Reserves: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_reserves'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['other_loan_costs'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Loan Costs: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_loan_costs'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['lender_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Lender Fees: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['lender_fees'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['broker_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Broker Fees: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['broker_fees'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['est_title_escrow'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Est. Title & Escrow: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['est_title_escrow'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['est_title_escrow'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Est. Title & Escrow: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['est_title_escrow'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['legal_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Legal Fees (Transactional): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['legal_fees'] %></td>
+              </tr>
+           <% end %> 
+           <% if !@loan.info['gross_pre_down_payment'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Gross (Pre Down-Payment):</b></td>
+                <td style="border:1px solid;"><%= @loan.info['gross_pre_down_payment'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['net_proceeds'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Net Proceeds (After Down): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['net_proceeds'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['term_in_months'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> Term In Months: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['term_in_months'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['monthly_payment_amnt'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Monthly Payment Amt.: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['monthly_payment_amnt'] %></td>
+              </tr>
+           <% end %>
+        </table>
+
+         <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+              Profitability
+            </th>
+          </tr>
+          <% if !@loan.info['interest_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Interest Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['interest_income'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['other_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['fee_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Fee Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['fee_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['total_regular_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Total Regular Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['total_regular_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['half_term_roi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Half Term ROI: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['half_term_roi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['half_term_roi_annualized'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Half Term ROI (Annualized): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['half_term_roi_annualized'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['full_term_roi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Full Term ROI:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['full_term_roi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_income_subject'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is Income (Subject): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_income_subject'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['secondary_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Secondary NOI:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['secondary_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['total_as_is_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Total As-Is NOI:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['total_as_is_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['projected_stabilized_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Projected Stabilized NOI: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['projected_stabilized_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_dscr'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>As-Is DSCR:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_dscr'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_dscr'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>As-Improved DSCR: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_improved_dscr'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_cap_rate'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is Cap Rate:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_cap_rate'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_cap_rate'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Improved Cap Rate:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_improved_cap_rate'] %></td>
+              </tr>
+           <% end %>
+
+
+        </table>
+      </div>
+
+       <div style="margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Documents
+          </div>
+          <% @documents = Document.all(:loan_id => @loan.id)
+          @folders = CustomFolder.where(:loan_id => @loan.id.to_i).fields(:folder_name).all 
+          # abort("#{@folders.inspect}")
+          doc_cat = Array.new
+          unless @documents.blank?
+            @documents.each do |documnt|
+              if !doc_cat.include? "#{documnt.category}"
+                doc_cat << "#{documnt.category}"
+              end
+            end
+          end
+
+          unless @folders.blank?
+            @folders.each do |folder|
+              if !doc_cat.include? "#{folder.folder_name}"
+                doc_cat << "#{folder.folder_name}"
+              end
+            end
+          end
+
+          @fol_files = FolderFile.all(:loan_id => @loan.id)
+          # abort("#{doc_cat.inspect}")
+          %>
+
+          <% unless doc_cat.blank?%>
+            <% doc_cat.each do |cat|%>
+              <table style="margin:auto; margin-top:10px; border: 1px solid;  width:90%"> 
+                <tr>  
+                  <th colspan="2" style="text-align:center;"> 
+                    <%= cat %>
+                  </th>
+                </tr>
+                 <% d=1%>
+                 <% if !@documents.blank?%>
+                   
+                   <% @documents.each do |document|%>
+                     <% if document.category == "#{cat}"%>
+                     <tr>
+                        <td style="border:1px solid; width:10%;"><%= d %></td>
+                        <td style="border:1px solid;"><%= document.url %> </td>
+                      </tr>
+                      <% d=d+1%>
+                      <% end %>
+                    
+                    <% end %>
+                 <% end %>
+                 <% f=1%>
+                 <% if !@fol_files.blank? %>
+                    
+                   <% @fol_files.each do |file|
+                       if file.folder_name == "#{cat}"%>
+                        <tr>
+                          <td style="border:1px solid; width:10%;"><%= f %></td>
+                          <td style="border:1px solid;"><%= file.url %></td>
+                        </tr>
+                        <% f=f+1%>
+                      <% end %>
+                      
+                    <% end %>
+                 <% end %>
+               </table>
+             <% end %>
+           <% end %>
+       </div>
+       <a href="<%= request.base_url %>/loans/detail_loan/<%= @loan.id %>/required" class="detail_login hide_link" > Click here to view this loan</a>
+</div>

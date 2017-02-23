@@ -1,0 +1,371 @@
+<style>
+
+  .top-bar-section li a:not(.button) {
+    background:white !important;
+    color: black !important;
+    }
+
+  .top-bar-section li a:not(.button):hover {
+      background:white !important;
+      color: black !important;
+      text-decoration: underline !important;
+      }
+   .top-bar-section .has-dropdown > a:after
+      {
+        border-color:rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+      }
+  .top_plan_name:hover
+  {
+    text-decoration: none;
+  }
+  .modal_msg_outer
+  {
+    border: 1px solid rgba(204, 204, 204, 0.8);
+    color: #000000;
+    margin-top: 0;
+  }
+  .modal_msg
+  {
+    color: #ff0000;
+    font-size: 14px;
+    margin-bottom: 0;
+    padding: 2px;
+  }
+  .close_modal
+  {
+    font-size: 1.5rem !important; 
+  }
+</style>
+<script type="text/javascript">
+  $('document').ready(function(){
+    $('#free_application').click(function(){
+      $('#modalApplication').foundation('reveal', 'open');
+    });
+
+    $('#restrict_pipeline').click(function(){
+      $('#modalPipeline').foundation('reveal', 'open');
+    });
+
+    $('#restrict_users').click(function(){
+      $('#modalUsers').foundation('reveal', 'open');
+    });
+
+    $('#restrict_email').click(function(){
+      $('#modalEmails').foundation('reveal', 'open');
+    });
+
+  });  
+</script>
+
+<!-------------------- Restrict Popup -------------------------->
+
+    <div id="modalApplication" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg"> Share and Embed loan applications directly with borrowers and brokers when you upgrade.</p>
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="modalPipeline" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg"> Please upgrade your plan or contact admin to use pipeline feature. </p>
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="modalUsers" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg">Please upgrade your plan or contact admin to manage users.</p>
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="modalEmails" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg">Please upgrade your plan or contact admin to use this feature.</p>
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+<!-------------------- Restrict Popup -------------------------->
+
+<section class="top-bar-section">
+
+    <ul class="right">
+      <!-- <li class="divider"></li> -->
+      <% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+%>
+
+      <% 
+      if !current_user.blank?
+        roles=current_user.roles
+        @names = Array.new
+        roles.each do |role|
+          @names << role.name
+        end
+        #abort("#{@names}")
+        checkAdmin = @names.include?('Admin') 
+        checkBroker = @names.include?('Broker')
+      end
+      if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin')) %>
+        	<li>
+            <a href="http://<%= @hostname %>/loans/market_place/list">Marketplace</a>
+          </li>
+          <li class="has-dropdown">
+        		<%= link_to('Loans',  loans_path) %>
+        	   <ul class="dropdown">
+                <li>
+                    <a href="http://<%= @hostname %>/loans/application/create">Application</a>
+                </li>
+             </ul>
+          </li>
+
+          <% unless @dropInfo.blank? %>
+            <li id="dropboxbulk_upload">
+              <a href="<%= request.base_url %>/bulkupload">Bulk Upload</a>
+            </li>
+          <% else %>
+            <li id="dropboxbulk_upload" style="display:none;">
+              <a href="<%= request.base_url %>/bulkupload">Bulk Upload</a>
+            </li>
+          <% end %>
+
+         	<li class="has-dropdown">
+                   <a href="javascript:void(0);">Lenders</a>
+                  <ul class="dropdown">
+      					<li><a href="http://<%= @hostname %>/lenders">View</a></li>
+                <li><a href="http://<%= @hostname %>/lenders/add">Add</a></li>
+                <li><a href="http://<%= @hostname %>/lenders/lender_agreements">Edit Agreement</a></li>
+      			  </ul>
+          </li>
+           <% if checkAdmin== true 
+               if defined? @infoUser.system_email
+                   unless @infoUser.system_email.blank? %>
+                   <li>
+                   <a href="http://<%= @hostname %>/emails/received_emails">Forwarded Emails</a>
+                  </li>
+                <% end 
+              end%>
+           <% elsif @brokerLogin == true && current_user.forward_email == 1%>
+              <% if defined? @infoUser.system_email
+                   unless @infoUser.system_email.blank? %>
+                   <li>
+                   <a href="http://<%= @hostname %>/emails/received_emails">Forwarded Emails</a>
+                  </li>
+                 <% end 
+               end %>
+           <% end %>
+          <li>
+                  <a href="http://<%= @hostname %>/emails">Notifications</a>
+          </li>
+          <li><a href="http://<%= @hostname %>/loans/pdf_files/listing">Pipelines</a></li>
+          <li class="has-dropdown">
+                 <a href="http://<%= @hostname %>/loans/shop_loans/listing" >Shop</a>
+            <ul class="dropdown">
+            <% if checkAdmin== true %>
+                <li><a href="http://<%= @hostname %>/lenders/groups">Lists</a></li>
+              <% end %>
+              <li><a href="http://<%= @hostname %>/loans/terms/conditions">Terms</a></li>
+            </ul>
+          </li>
+          <% if @lenderLogin == true || @brokerLogin == true %>
+            <li class="has-dropdown">
+                   <a href="javascript:void(0);" >Lending</a>
+              <ul class="dropdown">
+                <li><a href="http://<%= @hostname %>/lenders/prefrences">Prefrences</a></li>
+                <% if @lenderLogin == true %>
+                  <li><a href="http://<%= @hostname %>/lenders/potential_deals">Potential Deals</a></li>
+                <% end %>
+              </ul>
+            </li>
+
+
+           <% end %>
+           <li class="has-dropdown">
+             <a href="http://<%= @hostname %>/settings">Settings</a>
+             <ul class="dropdown">
+
+                <!-- <li><%= link_to('Change Password',  edit_user_registration_path) %></li> -->
+                
+                <% if checkAdmin!= true %>
+                  <li><a href="https://<%=@hostname%>/payments/billing">Billing</a></li>
+                <% end %>
+                <li><a href="https://<%= @hostname %>/brokers">Brokers</a></li>
+                <!-- <li><a href="https://<%= @hostname %>/account_management">Account Management</a></li> -->
+                <% if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin'))  %>
+                  <li><%= link_to('Admin',  admin_path) %></li>
+                <% end %>
+                <!-- <li>
+                  <a href="http://<%= @hostname %>/subscribers">Subscribers</a>
+                </li> -->
+                <li><a href="https://<%=@hostname%>/home/logout">Logout</a></li>
+             </ul>
+            </li>
+     <% end %>
+
+     <% if checkBroker==true && checkAdmin==false %>
+        <li>
+          <a href="javascript:void(0);" class="top_plan_name" style=" color: #007ebf !important;
+  cursor: default; text-decoration:none !important;">
+            <% if @infoBroker.plan == "free"%>
+              Solo 
+            <% elsif @infoBroker.plan == "BUSINESS" %>
+              Business
+            <% elsif @infoBroker.plan == "ENTERPRISE" %>
+              Enterprise
+            <% end %>
+          </a>
+        </li>
+        
+        <% if current_user.market_access == 1 %>
+          <li>
+            <a href="http://<%= @hostname %>/loans/market_place/list">Marketplace</a>
+          </li>
+        <% end %>
+        
+        <% if @lenderLogin == true && @brokerLogin == false %>
+        <% elsif @infoBroker.plan != "lender"%>
+          <li class="has-dropdown">
+              <%= link_to('Loans',  loans_path) %>
+               <ul class="dropdown">
+                  <li>
+                      <a <% if @infoBroker.plan == "free" %> id="free_application" href = "javascript:void(0);"<% else %>  href="http://<%= @hostname %>/loans/application/create" <% end %>>Application</a>
+                  </li>
+               </ul>
+          </li>
+
+        <% 
+         unless @dropInfo.blank? %>
+            <li id="dropboxbulk_upload">
+              <a href="<%= request.base_url %>/bulkupload">Bulk Upload</a>
+            </li>
+          <% else %>
+            <li id="dropboxbulk_upload" style="display:none;">
+              <a href="<%= request.base_url %>/bulkupload">Bulk Upload</a>
+            </li>
+          <% end %>
+         
+          <li><a <% if current_user.pipelines == 1 %> href="http://<%= @hostname %>/loans/pdf_files/listing" <% else %> id="restrict_pipeline"  href = "javascript:void(0);" <% end %>>Pipelines</a></li>
+        
+        
+        <% unless @infoBroker.permissions.blank? 
+               
+                @acess = @infoBroker.permissions.split(",")
+                @check_permission = @acess.include? 'add_users'
+                
+                if @check_permission == true
+                    add_subuser = "true"
+                end 
+        end
+         if @infoBroker.parent_user.blank?
+                add_subuser = "true"
+         end %>
+        <% unless @infoBroker.parent_broker.blank? %>
+          <% unless @infoBroker.permissions.blank? %>
+            <% if @infoBroker.permissions.include? "add_users" %>
+              <li>
+                  <a href='http://<%= @hostname %>/brokers/sub_brokers'>Manage Users</a>
+              </li>
+            <% end %>
+          <% end %>
+        <% else %> 
+          <% if current_user.sub_users == 1  %>
+            <li>
+                <a href='http://<%= @hostname %>/brokers/sub_brokers'>Manage Users</a>
+            </li>
+         <% else %>
+            <li>
+              <a href='javascript:void(0);' id="restrict_users" >Manage Users</a>
+            </li>
+         <% end %>
+       <% end %>
+        <% end %>
+        
+        <% if current_user.plan == "lender" %>
+            <li class="has-dropdown">
+                   <a href="javascript:void(0);" >Lending</a>
+              <ul class="dropdown">
+                <li><a href="http://<%= @hostname %>/lenders/prefrences">Prefrences</a></li>
+                <% if @lenderLogin == true %>
+                  <li><a href="http://<%= @hostname %>/lenders/potential_deals">Potential Deals</a></li>
+                <% end %>
+              </ul>
+            </li>
+        <% end %>
+
+        <% if @infoBroker.parent_broker.blank? %>
+          <% @createEmail = ""%>
+          <% if @brokerLogin==true && current_user.forward_email == 1%>
+            <% @createEmail = "yes"%>
+          <% end %>
+           
+          <% if @infoBroker.plan != "lender" %>
+            <% if current_user.forward_email == 1 %>
+              <% if @createEmail == "yes"%>
+                <li>
+                   <a href="http://<%= @hostname %>/emails/received_emails">Forwarded Emails</a>
+                </li>
+              <% end %>
+            <% else %>
+                <li>
+                 <a href="javascript:void(0);" id="restrict_email" >Forwarded Emails</a>
+              </li>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <li class="has-dropdown">
+             <a href="http://<%= @hostname %>/settings">Settings</a>
+             <ul class="dropdown">
+                <!-- <li><%= link_to('Change Password',  edit_user_registration_path) %></li> -->
+                
+                <% if @infoBroker.plan == "ENTERPRISE" %>
+                  <% if @alert_msg=="true"%>
+                    <li><a href="http://<%=@hostname%>/payments/expand_memory">Expand Memory</a></li>
+                  <% end %>
+                <% end %>
+                <% if @infoBroker.plan != "lender" %>
+                  <% if @infoBroker.parent_broker.blank? %>
+                    <% if @infoBroker.plan == "free"%>
+                      <li><a href="https://<%=@hostname%>/payments/subscribe_plan">Billing</a></li>
+                    <% elsif @infoBroker.plan.blank?%>
+                      <li><a href="https://<%=@hostname%>/payments/subscribe_plan">Billing</a></li>
+                    <% else %>
+                      <li><a href="https://<%=@hostname%>/payments/billing">Billing</a></li>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <li><a href="https://<%=@hostname%>/home/logout">Logout</a></li>
+             </ul>
+        </li>
+        
+        
+        
+       <% end %>
+       
+				<% if user_signed_in? %>
+				
+				
+
+				<% else %>
+          <% if params[:action] != "funding_login" %>
+            <% if params[:action] == "sign_up" %>
+              <li><a href="https://idealview.us">Home</a></li>
+              <li><a href="https://idealview.us/pricing/">Pricing</a></li>
+              <li><a href="https://idealview.us/contact/">Contact</a></li>
+            <% end %>
+            <% if params[:action] != "cpc_login_page" %>
+  					 <li><%= link_to('Login', new_user_session_path)  %></li>
+            <% end %>
+          <% end %>
+				<% end %>
+
+			</ul>
+</section>

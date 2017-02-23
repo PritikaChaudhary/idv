@@ -1,0 +1,66 @@
+<tr>
+  <td></td>
+  <td><strong>Description</strong></td>
+  <td><strong>Beneficiary</strong></td>
+  <td><strong>Amount</strong></td>
+	<!--<td><strong>Maturity / Contract Date</strong></td>
+  <td><strong>Earned Deposit/Stats</strong></td> !-->
+</tr>
+<% unless @funds.blank? %>
+	<% i=1 %>
+	<% @funds.each do |fund| %>
+	    <tr id="<%= i %>_fund" class="fund_row">
+	        <td><a href="javascript:void(0);" style="margin-bottom:12px; float:left;" class="remove_funds"><b>x</b></a></td>
+	        <td>
+	            <select class="use" name="use[]" style="width:125px;">
+	              <option value="">Select</option>
+	              <option value="Payoff" <% if fund.use=="Payoff" %> selected="selected" <% end %>>Payoff</option>
+	              <option value="Improvement" <% if fund.use=="Improvement" %> selected="selected" <% end %>>Improvement</option>
+	              <option value="Construction" <% if fund.use=="Construction" %> selected="selected" <% end %>>Construction</option>
+	              <option value="Operations" <% if fund.use=="Operations" %> selected="selected" <% end %>>Operations</option>
+	              <option value="Purchase" <% if fund.use=="Purchase" %> selected="selected" <% end %>>Purchase</option>
+	              <option value="Other" <% if fund.use=="Other" %> selected="selected" <% end %>>Other</option>
+	            </select>
+	        </td> 
+	        <td><input type="text" placeholder="Beneficiary" name="beneficiary[]" value="<%= fund.beneficiary %>"></td> 
+	        <td><input type="text" placeholder="Amount" name="amount[]" value="<%= fund.amount %>"></td>
+	       <!-- <td>
+
+	          <input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" value="<%= fund.maturityDate%>" <% if fund.use!="Payoff" %> style="display:none" <% end %>>
+	          <input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" value="<%= fund.contractDate %>" name="contractDate[]" <% if fund.use!="Purchase" %> style="display:none" <% end %>>
+	        </td>
+	        <td>
+	          <input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" <% if fund.use!="Purchase" %> style="display:none" <% end %> class="purchase_funds" value="<%= fund.earnedDeposit %>">
+	          <input type="text" placeholder="Stats" name="stats[]" value="<%= fund.stats %>" <% if fund.use!="Payoff" %> style="display:none" <% end %> class="payoff_funds">
+	        
+	        </td> -->
+	    </tr>
+	<% i += 1 %>  
+	<% end %>
+<% else %>
+	<tr id="1_fund" class="fund_row">
+	    <td>
+	        <select class="use" name="use[]" style="width:125px;">
+	          <option value="">Select</option>
+	          <option value="Payoff">Payoff</option>
+	          <option selected="selected" value="Improvement">Improvement</option>
+	          <option value="Construction">Construction</option>
+	          <option value="Operations">Operations</option>
+	          <option value="Purchase">Purchase</option>
+	          <option value="Other">Other</option>
+	        </select>
+	    </td>
+	    <td><input type="text" placeholder="Beneficiary" name="beneficiary[]"></td>
+	    <td><input type="text" placeholder="Amount" name="amount[]"></td>
+	    <!--<td><input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" style="display:none"><input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" name="contractDate[]" style="display:none"></td>
+	    <td><input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" style="display:none;" class="purchase_funds"><input type="text" placeholder="Stats" name="stats[]" style="display:none;" class="payoff_funds"></td>-->
+	</tr>
+<% end %>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.remove_funds').click(function(){
+        rmvId = $(this).closest('.fund_row').attr('id');
+        $('#'+rmvId).remove();
+      });
+	});
+</script>

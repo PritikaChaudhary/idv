@@ -1,0 +1,52 @@
+<% types = Loan.category_type_fields%>
+<%loanCat = contact.info['_LendingCategory']%>
+<% 
+if defined? types[loanCat] != 'nil'
+	if defined? contact.info[types[loanCat]]!= 'nil'
+		loan_type = contact.info[types[loanCat]]
+	else
+		loan_type = ''
+	end
+else
+	loan_type = ''
+end
+
+if loanCat.blank? && edit
+	loanCat = 'Private Real Estate Loan'
+end
+
+		
+%>
+
+<%= form_tag({:controller=>'loans', :action=>'edit_categorys',:id=>contact['_id'], :edit=>false}, :onSubmit => 'return false', :id=>'loan-category-form') do %>
+	<%if edit%>
+
+		<%loan_type_options = Loan.loan_type_options %>
+		<%@url = url_for :controller=>'loans', :action=>'edit_loan_types'%>
+		<span style='font-weight:bold'>Lending Category</span><BR>
+		<%=select_tag '_LendingCategory', options_for_select(Loan.category_options, contact.info['_LendingCategory']), onchange: "callAjax('#{@url}','loan-type','loan-category-form');$('#loan-type').hide();$('#loan-type').slideDown()"%>
+		
+		<span style='font-weight:bold'>Loan Type</span><BR>
+		<div id='loan-type'>
+			<%=render partial: 'loan_type_form', locals:{category: types[loanCat], options:loan_type_options[loanCat], field_value:loan_type}%>
+		</div>
+		<% @url=url_for :controller=>'loans', :action=>'edit_categorys',:id=>contact['_id'], :edit=>false%>
+		<%= button_tag "Save", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','loan-category', 'loan-category-form' )", class: 'tiny button'%>
+			<% @url=url_for :controller=>'loans', :action=>'edit_categorys',:id=>contact['_id'], :edit=>false, :cancel=>true%>
+		  <%= button_tag "Cancel", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','loan-category', 'loan-category-form'  )", class: 'tiny button'%>
+
+		
+	<%else%>
+	
+		<% @url=url_for :controller=>'loans', :action=>'edit_categorys',:id=>contact['_id'], :edit=>true%>
+		<div <% if policy(Loan).update? %> ondblclick='callAjax("<%=@url%>","loan-category","loan-category-form")' <% end %>>
+			
+			<div class='bottom-space' ><span style='font-weight:bold'>Lending Category</span><BR><%=loanCat%></div>
+			
+			<div class='bottom-space'><span style='font-weight:bold'>Loan Type</span><BR><%=loan_type%></div>
+		</div>
+		 <%= hidden_field_tag '_LendingCategory', loanCat %>
+		 <%= hidden_field_tag types[loanCat], loan_type %>
+
+	<%end%>
+<% end %>

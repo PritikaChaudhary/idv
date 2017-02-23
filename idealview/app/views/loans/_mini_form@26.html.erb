@@ -1,0 +1,261 @@
+<% if (!field_value.blank? && field_value != 0) || current_user
+  %>
+<%= form_tag({:controller=>'loans', :action=>'edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type}, :onSubmit => 'return false', :id=>field_name+'-form') do %>
+		  <%= hidden_field_tag 'contact_id', contact_id %>
+		  <%= hidden_field_tag 'field_type', field_type %>
+		  <%= hidden_field_tag 'field_name', field_name %>
+		  <%= hidden_field_tag 'field_label', field_label %>
+		  <%= hidden_field_tag 'field_options', field_options %>
+
+	<%if edit%>
+		  <div>
+		  <% if field_name=="_NetLoanAmountRequested0" || field_name=="_EstimatedMarketValues" ||  field_name=="_DesiredTermLength" || field_name=="_ExpectedCloseDate" || field_name=="_TransactionType0" || 
+					field_name=="FirstName" || field_name=="Email" || field_name=="Phone"%>
+		    	<b><%= field_label %></b>  <br>
+		  <% else %>
+		  	<% if field_name != "_LoanSummaryWhatareyoulookingfor" && field_name != "_BorrowerBio" && field_name != "_ExitStrategyHowwillyoupaytheloanoff" && field_name != "_AdditionalCollateralWhatelsecanyouofferassecurity0"%>
+						<b><%= field_label %></b>  <br>
+					<% else  %>
+						<b class="detail_title"><%= field_label %></b>  <br>
+					<% end %>
+		  		
+		  <% end %>
+
+
+
+		    <%
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options[field_value].blank?
+				   		field_value=options[field_value]
+				   end
+				end
+		    	field_value=options_for_select(options,field_value)
+		    end
+		    
+		    if field_type == 'date_field_tag'
+		    	if !field_value.blank?
+     				field_value = Date.strptime(field_value.to_date.strftime("%d/%m/%Y"), '%d/%m/%Y')
+  				end
+		    end
+		    %>
+	    	<%
+	    	html_options = [rows:1]
+	    	if field_type=='text_area_tag'
+	    		html_options = [rows:15]
+	    	end
+	    		
+	    	%>
+
+	    	<%
+			  extra_callback = '';
+			  if field_name =='_FreeandClear0'
+			  	extra_url = url_for :controller=>'loans', :action=>'update_amount_owed',:id=>contact_id
+			  	extra_callback = "callAjax('#{extra_url}','_AmountOwed', '#{field_name}-form' );"
+			  end
+			  %>
+		    <div style='max-width:800px;margin-left:auto;margin-right:auto;'><%= send(field_type, field_name, field_value, html_options[0])  %></div>
+		  </div>
+		  
+
+		  
+			<% @url=url_for :controller=>'loans', :action=>'edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type%>
+		  <%= button_tag "Save", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form','save' );#{extra_callback}", class: 'tiny button'%>
+			<% @url=url_for :controller=>'loans', :action=>'edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type, :cancel=>true%>
+		  <%= button_tag "Cancel", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form','cancel' );", class: 'tiny button'%>
+		  
+		
+	<%else%>
+		<%
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options.key(field_value).blank?
+				   		field_value=options.key(field_value)
+				    end
+			        if !options.key(field_value.to_s).blank?
+				   		field_value=options.key(field_value.to_s)
+				    end
+				end
+		    end
+		 %>
+
+		<% @url=url_for :controller=>'loans', :action=>'edit_field',:id=>contact_id, :field=>field_name, :edit=>true, :format_type=>format_type%>
+		<% #roleCheck = policy(Loan).update
+			#abort("#{roleCheck.inspect}")
+			 %>
+
+		<!---------------------- Hide/Edit ---------------------->
+		<div <% if field_name=="_NetLoanAmountRequested0" || field_name=="_EstimatedMarketValues" ||  field_name=="_DesiredTermLength" || field_name=="_ExpectedCloseDate" || field_name=="_TransactionType0"%> class="" <% else %> class="hide_edit_btns" <% end %>>
+			<% if field_name=="_NetLoanAmountRequested0" || field_name=="_EstimatedMarketValues" ||  field_name=="_DesiredTermLength" || field_name=="_ExpectedCloseDate" || field_name=="_TransactionType0" || 
+					field_name=="FirstName" || field_name=="Email" || field_name=="Phone" || field_name=="transaction_type" || field_name=="contract_closing_date" || field_name=="purchase_price" || field_name=="rehab_amount" || field_name=="purchase_cash_contribute" || field_name=="maturity_date" || field_name=="refinance_cash_contribute" || field_name=="original_purchase_price" || field_name=="original_purchase_date"  || field_name=="vested_by"  || field_name=="cash_contributed"   || field_name=="who_broker"   || field_name=="gross_loan_amount"   || field_name=="analysis_units"   || field_name=="as_is_value"   || field_name=="as_improved_value"   || field_name=="value_source"   || field_name=="value_date"   || field_name=="completed_square_footage"   || field_name=="improved_sale_sf"   || field_name=="unimproved_sf"   || field_name=="begining_unit"   || field_name=="improved_unit"   || field_name=="cash_to_contribute"   || field_name=="cash_value_ratio"   || field_name=="purchase_price"    || field_name=="as_is_ltv"    || field_name=="as_is_ltc"    || field_name=="as_is_ltv_purchaseprice"    || field_name=="as_is_ltv_borrower_purchaseprice"    || field_name=="as_improved_ltv"    || field_name=="as_is_ltc_completed"    || field_name=="begining_sales"     || field_name=="ending_sale"     || field_name=="begining_project_completion"     || field_name=="ending_project_completion"     || field_name=="sales_upb"    || field_name=="sale_gross_income"   || field_name=="ending_sale_noi"   || field_name=="post_sales_upb"   || field_name=="post_sales_value"   || field_name=="post_sales_ltv" %>
+					
+					<span class="edit_pen" style="float:right;" onclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'>
+						<img src="/assets/edit-icon.png" style="width:15px;">
+					</span>
+				
+					<% 
+						@loanInfo = Loan.find_by_id(contact_id.to_i)
+					   
+					   %>
+
+			 <% unless @loanInfo.hide_fields.blank? %>
+			   
+			   	<span id="show_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+					<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+						<i class="fa fa-eye-slash" tabindex="0"></i>
+					</a>
+				</span>
+
+			  	<span id="hide_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+					<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+						<i class="fa fa-eye" tabindex="0"></i>
+					</a>
+				</span>
+			<% else %>
+				<span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+					<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+						<i class="fa fa-eye-slash" tabindex="0"></i>
+					</a>
+				</span>
+
+			  	<span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+					<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+						<i class="fa fa-eye" tabindex="0"></i>
+					</a>
+				</span>
+			<% end %>
+					  
+
+				<% else %>
+					
+					<% if field_name != "_LoanSummaryWhatareyoulookingfor" && field_name != "_BorrowerBio" && field_name != "_ExitStrategyHowwillyoupaytheloanoff" && field_name != "_AdditionalCollateralWhatelsecanyouofferassecurity0"%>
+					<% else %>
+						<span class="edit_pen" style="float:right;" onclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'>
+							<img src="/assets/edit-icon.png" style="width:15px;">
+						</span>
+					<% end %>
+
+
+					<% 	@loanInfo = Loan.find_by_id(contact_id.to_i) %>
+
+					<% unless @loanInfo.hide_fields.blank? %>
+			   
+					   	<span id="show_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+							<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan_<%=field_name%>" <% if @loanInfo.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+							<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% else %>
+						<span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+							<a style="" onclick="show_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+							<a style="" onclick="hide_loan_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% end %>
+
+				<% end %>
+			<% end %>
+		</div>
+		<!---------------------- End Hide/Edit ------------------>
+
+
+		<% if(@brokerLogin==true) 
+		 %>
+				<span style='min-width:20px;min-height:20px'   ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'  >
+		<% else %>
+				<span style='min-width:20px;min-height:20px' <% if policy(Loan).update? %> ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")' <% end %>>
+		<% end %>
+			<% if !field_label.blank? %>
+				<% if field_name=="_NetLoanAmountRequested0" || field_name=="_EstimatedMarketValues" ||  field_name=="_DesiredTermLength" || field_name=="_ExpectedCloseDate" || field_name=="_TransactionType0" || 
+					field_name=="FirstName" || field_name=="Email" || field_name=="Phone"%>
+					<% @cls = "hl-l highlight_header"%>
+					<% @clsv = "valuex_container" %>
+				<% else %>
+					<% if field_name != "_LoanSummaryWhatareyoulookingfor" && field_name != "_BorrowerBio" && field_name != "_ExitStrategyHowwillyoupaytheloanoff" && field_name != "_AdditionalCollateralWhatelsecanyouofferassecurity0"%>
+						<% @cls = "hl-l"%>
+					<% else  %>
+						<% @cls = "hl-l detail_title"%>
+					<% end %>
+					<% @clsv = "valuex_container" %>
+				<% end %>
+
+				<span class='<%= @cls %>'><%=field_label.upcase%> : </span>
+				
+
+				
+			<%
+				if field_value == 'Both'
+					field_text = 'Purchase & Refinance'
+				else
+					field_text = field_value
+				end
+				
+				if field_value.blank?
+					if field_label.blank?
+						field_text = ''
+					else
+						field_text = ''
+					end	
+				end
+			%>
+			<% if @cls!="hl-l" %>
+			<span class="<%= @clsv %>">
+				<% if field_value.blank? %>
+					 	<%= field_text %>
+				<% else %>
+					<% if format_type=="fd_money" 
+						 if field_text.include? "$"
+						 	field_text = field_text.gsub('$', '')
+						 end
+					 end %>
+					<%=  send(format_type, field_text) %>			
+				<% end %>
+			</span>
+			<% else %>
+				<br>
+				<% if field_value.blank? %>
+					 	<%= field_text %>
+				<% else
+				
+					# if format_type=="fd_date"
+					# 	field_value=""
+					# else	
+
+				%>
+					<% if format_type=="fd_money" 
+						 if field_text.include? "$"
+						 	field_text = field_text.gsub('$', '')
+						 end
+					 end %>
+					<%= send(format_type, field_text) %>
+				<%
+					# end
+				 end %>
+			<% end %>
+		</span>
+		<%= hidden_field_tag field_name, field_value %>
+	<%end%>
+<% end %>
+<% end %>
+<script type="text/javascript">
+	
+	 $('document').ready(function(){
+	 	$('input[name="maturity_date"]').mask("99/99/9999",{placeholder:"MM/DD/YYYY"});
+	 	$('input[name="original_purchase_date"]').mask("99/99/9999",{placeholder:"MM/DD/YYYY"});
+	 	$('input[name="contract_closing_date"]').mask("99/99/9999",{placeholder:"MM/DD/YYYY"});
+	 });
+</script>

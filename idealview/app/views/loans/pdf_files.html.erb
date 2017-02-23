@@ -24,61 +24,267 @@ ul {
 {
     margin-top: 10px !important;
 }
+form#search_form {
+    right: 0;
+    top: 0;
+}
+.form_wrap {
+    float: right;
+    position: relative;
+    width: 64%;
+}
+.form_wrap > input#search_btn {
+    background-image: url("/assets/search.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: medium none;
+    cursor: pointer;
+    height: 34px;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    width: 36px;
+}
+
+
+@media all and (max-width: 569px){
+    .form_wrap {
+      width: 115px;
+    }
+
+    .pdf_total
+    {
+      width: 152px;
+    }
+  }
 
 </style>
+<% @base = request.base_url
+# abort("#{@base}")%>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script type="text/javascript">
 
+ $('document').ready(function(){
+    
+    $('.pdf_total').change(function(){
+        pg = $(this).val();
+         window.location.replace("<%= @base %>/loans/pdf_files/listing?per_page="+pg);
+    });
+
+    
+
+//     $('.sort_paginate_ajax').html("<%= escape_javascript(render("pdf_listing"))%>");
+//     $(".sort_paginate_ajax th a, .sort_paginate_ajax .pagination a").on("click", function(){
+//       resp= $.getScript(this.href);
+//       alert(JSON.stringify(resp))
+//       return false;
+//     });
+   
+ });
+
+  function delete_pdf(id)
+   {
+      var pdf = id
+      $.ajax({
+                data: {
+                  pdf_id: pdf
+                },
+                type: 'POST',
+                url: '/loans/delete_pdf',
+                success:function(response){
+                  $('#pdf_'+pdf).hide();
+               }
+               
+            });
+   }
+
+    function delete_pdfs()
+    {
+        var allVals=[];
+        $('input[name="delete_ids"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one pipeline.");
+            return false;
+        }
+        
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/delete_pdfs',
+                 success:function(data){
+                    $('.all_pdfs').html(data);
+                }
+                
+            });
+
+    }
+
+    function search_fun()
+    {
+       var data=$('#search_form').serialize();
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/custom_search_pdf',
+                success:function(response){
+                    $('.all_pdfs').html(response);
+                }
+            });
+     }
+
+     function checkForAjaxPaginate(controller,make_ajax){
+    var href = "";
+    $(".pagination").find("ul").each(function(){
+        $(this).find("li").each(function(){
+            $(this).find("a").each(function(){
+                href = $(this).attr("href");
+                if(href.indexOf(controller+".js") != -1){
+                    if(make_ajax){
+                        $(this).attr("data-remote","true");
+                    }
+                    else{
+                        $(this).attr("href",href.replace(".js",""));
+                    }
+                }
+            });
+        });
+    });
+}
+</script>
 
 
 <h3 class='text-center' style="width:100%">Pipeline Summaries</h3>
-<div class='row' id="loan_records" style="border-top: 7px solid rgb(242, 242, 242); width:100%">
+<div class="row">
+  <div class="small-4 columns"> 
+  <% 
+
+  %>
+      <select class="pdf_total">
+          <option value="">Number Of records</option>
+          <option value="50" <% if params[:per_page]=="50"%> selected="selected" <% end %>> 50 </option>
+          <option value="100"<% if params[:per_page]=="100"%> selected="selected" <% end %>> 100 </option>
+          <option value="150"<% if params[:per_page]=="150"%> selected="selected" <% end %>> 150 </option>
+          <option value="200"<% if params[:per_page]=="200"%> selected="selected" <% end %>> 200 </option>
+          <option value="250"<% if params[:per_page]=="250"%> selected="selected" <% end %>> 250 </option>
+          <option value="300"<% if params[:per_page]=="300"%> selected="selected" <% end %>> 300 </option>
+          <option value="350"<% if params[:per_page]=="350"%> selected="selected" <% end %>> 350 </option>
+          <option value="400"<% if params[:per_page]=="400"%> selected="selected" <% end %>> 400 </option>
+          <option value="450"<% if params[:per_page]=="450"%> selected="selected" <% end %>> 450 </option>
+          <option value="500"<% if params[:per_page]=="500"%> selected="selected" <% end %>> 500 </option>
+      </select>
+  </div>
+
+  <div class="small-4 columns"> </div>
+  <div class="small-4 columns"> 
+      <form id="search_form" name="search_form">
+        <div class="form_wrap">
+          <input type="text" onkeyup="return search_fun();" name="search_txt" placeholder="Search">
+          <input id="search_btn" type="button">
+        </div>
+      </form>
+  </div>
+</div>
+<!-- <div class='row' id="loan_records" style="border-top: 7px solid rgb(242, 242, 242); width:100%">
 <% color_class = ''%>
 <div class='row <%=color_class%> bottom-space text-left'>
-<div class='large-2 columns'><h5>Filename</h5></div>
-<div class='large-2 columns'><h5>Emails</h5></div>
+<div class='small-1 columns'><a onclick="if(confirm('Are you sure you want to delete these items?')){delete_pdfs()}" href="javascript:void(0);" style="color:#000000; margin-left:3px;">
+                    <i class="fa fa-trash"></i>
+                </a></div>
+<div class='small-3 columns'><h5>Filename</h5></div>
+<div class='small-4 columns'><h5>Emails</h5></div>
+<div class='small-4 columns'><h5>Loan Names</h5></div> -->
+
 <!-- <div class='large-2 columns'><h5>Created Date</h5></div> -->
-<div class='large-2 columns'><h5>Edit</h5></div>
+<!-- <div class='large-3 columns'><h5>Edit</h5></div> -->
+<!-- </div> -->
+
+<div class="large-10 large-centered columns all_pdfs sort_paginate_ajax">
+  <% color_class = ''%>
+  <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+<table style="width:100%">
+  <tr>
+    <th>
+      <a onclick="if(confirm('Are you sure you want to delete these items?')){delete_pdfs()}" href="javascript:void(0);" style="color:#000000; margin-left:3px;">
+        <i class="fa fa-trash"></i>
+      </a>
+    </th>
+    <th>Filename</th>
+    <th>Emails</th>
+    <th>Loan Names</th>
+
+  </tr>
+  <% @pdfs.each do |pdf|  
+
+    %>
+      <tr>
+          <%  @loans = pdf.pdf_by_loan
+          unless @loans.blank?
+            lname = Array.new
+            @loans.each do |loan|
+              lname<<loan.loan_name
+            end
+
+            unless lname.blank?
+              loan_names = lname.join(", ")
+            end
+          end %>
+            <td> <input type="checkbox" name="delete_ids" value="<%= pdf.id %>"> </td>
+            <td>
+              
+               <% file = pdf.file_name %>
+               <% if file.blank?%>
+                     N/A
+               <% else %>
+                  <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
+                    <%= file %>
+                  </a>
+               <% end %>
+              
+            </td>
+            
+            <td>
+               <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
+                <% if pdf.emails.blank?%>
+                     N/A 
+               <% else %>
+                  <%= pdf.emails %>
+               <% end %>
+               </a>
+            </td>
+
+            <td>
+             <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
+              <% unless @loans.blank? %>
+                <%= loan_names %>
+              <% end %>
+              </a>
+            </td>
+            
+            
+
+            <!-- <div class='large-2 columns'>
+            <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
+                <input type="button" class="tiny button" value="Edit">
+            </a>
+            <a href='javascript:void(0);' onclick = "if(confirm('Are you sure you want to delete this?')){delete_pdf('<%= pdf.id %>')}">
+                <input type="button" class="tiny button alert" value="Delete">
+            </a>
+            </div> -->
+
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+      </tr>
+  <% end %>
+</table>
+
 </div>
-<% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-<% @pdfs.each do |pdf|  %>
-<% if pdf.name.blank? || pdf.file_name.blank?%>
-<% else %>
-<div class='row <%=color_class%> bottom-space text-left'>
-    
-    <div class='large-2 columns'>
-      
-       <% file = pdf.file_name %>
-       <% if file.blank?%>
-             N/A
-       <% else %>
-          <a href='javascript:void(0);'>
-            <%= file %>
-          </a>
-       <% end %>
-      
-    </div>
-    
-    <div class='large-2 columns'>
-        <% if pdf.emails.blank?%>
-             N/A 
-       <% else %>
-          <%= pdf.emails %>
-       <% end %>
-    </div>
-    
-    
-
-    <div class='large-2 columns'>
-    <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
-        <input type="button" class="tiny button" value="Edit">
-    </a>
-    </div>
-
+<div class="large-10 large-centered columns" >
+ <%= will_paginate @pdfs, :params => { :my_excluded_param => nil } %>
 </div>
 
-<% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-
-<% end %>
-<% end %>
-
-
+     
  

@@ -1,7 +1,7 @@
 <div class='row'>
 	<div class="small-8 small-centered columns">
 
-		<h2>Edit User</h2>
+		<h2>Edit Admin</h2>
 		  <%= form_for(@user, :url => admins_edit_user_path) do |f| %>
 
 		  <div class="field">
@@ -23,8 +23,9 @@
 		    <%= f.password_field :password, autocomplete: "off" %>
 		  </div>
 
+		  	<input id="roles_Admin" type="hidden" name="roles[Admin]" value="Admin" type="checkbox">
 
-		  <div class="field">
+		  <!-- <div class="field">
 		    <%= f.label :roles %>
 		
 			<% User.valid_roles.each do |role| %>
@@ -33,7 +34,7 @@
 			<% end %>
 
 			
-		  </div>
+		  </div> -->
 
 
 

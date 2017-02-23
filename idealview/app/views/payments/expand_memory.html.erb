@@ -1,0 +1,86 @@
+<style type="text/css">
+	.expire
+  {
+    width : 100%;
+  }
+  .half_text
+	{
+		width : 40% !important;
+		float: left;
+    margin-right: 10px;
+	}
+  .payment-errors
+  {
+    color: red;
+  }
+</style>
+<% if defined? params[:id] %>
+  <% if params[:id].blank? %>
+    <script type="text/javascript">
+    $('document').ready(function(){
+      $('.flash_notice').hide();
+    });
+    </script>
+  <% else %>
+    <script type="text/javascript">
+      $('document').ready(function(){
+        $('.flash_notice').show();
+      });
+    </script>
+  <% end %>
+<% end %>
+
+<div class='row'>
+  <div class="flash_notice" style="display:none;">Your memory has been expanded successfuly. </div>
+	<div class="small-8 small-centered columns">
+
+		<h3 style="text-align:center;"> Expand Memory to 10Gb </h3>
+<% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+%>
+
+<% if @hostname == "localhost" %>
+  <form action="http://<%=@hostname%>:<%=@portnum%>/payments/expand_memory_payment" method="POST" id="payment-form">
+<% else %>
+  <form action="https://<%= @hostname%>/payments/expand_memory_payment" method="POST" id="payment-form">
+<% end %>
+  <span class="payment-errors"></span>
+  <div class="form-row">
+    <label>
+      <span >Amount</span>
+      <input type="text" value="$20" readonly="readonly">
+    </label>
+  </div>
+  <!--
+  <div class="form-row" style="margin-top:10px;">
+   <label>
+    <span>Card Type</span> <br>
+   </label>   
+      <input type="radio" data-stripe="brand" value="Visa" />  Visa  <br>
+      <input type="radio" data-stripe="brand" value="MasterCard" /> MasterCard <br>
+      <input type="radio" data-stripe="brand" value="American Express" />  American Express 
+    
+  </div>
+  -->
+ <input type="hidden" name="plan" value="expandmemory">
+<input type="hidden" name="email" value="<%= @infoBroker.email %>">
+<input type="hidden" name="broker_id" value="<%= @infoBroker.id %>">
+<input type="hidden" name="user_id" value="<%= current_user.id %>">
+<% unless current_user.subscription_id.blank? %>
+  <input type="hidden" name="subscription_id" value="<%= current_user.subscription_id %>" >
+<% else %>
+  <input type="hidden" name="subscription_id"  >
+<% end %>
+  
+
+  
+
+
+  <button type="submit" class="tiny button">Proceed Payment</button>
+</form>
+
+
+	</div>
+</div>

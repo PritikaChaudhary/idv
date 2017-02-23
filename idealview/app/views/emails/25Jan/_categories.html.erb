@@ -1,0 +1,104 @@
+<script type="text/javascript">
+$('.select_cat').change(function(){
+						var cat_val = $(this).val();
+						var loan_val = $('.loan_id').val();
+						var user_id = $('.userId').val();
+						var id = $(this).attr('id');
+						sid= id.replace("select_category_", ""); 
+						if (cat_val == "custom_folder")
+						{
+							var folder_name = prompt("Please enter folder name", "");
+    
+						    if (folder_name != null) {
+						   var data = "&id="+loan_val+"&fname="+folder_name+"&userId="+user_id+"&num="+sid;
+						         	$.ajax({
+							                data: data,
+							                type: 'POST',
+							                url: '/emails/custom_folder',
+							                 success:function(data){
+							                  $('.select_folder'+sid).html(data)
+							                  $("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+							                  cat_find(sid);
+							                  return false;
+							                  
+							                }
+							            });
+							            
+						    }
+						}
+						else
+						{
+								var id = $(this).attr('id');
+								sid= id.replace("select_category_", ""); 
+								loan_id = $('.loan_id').val();
+								file_name = $('#img_val_'+sid).val();
+								catname= $('#'+id).val();
+								if(loan_id=="")
+								{
+									alert("Please add or select loan first");
+									return false;
+								}
+								var data = "&loan_id="+loan_id+"&file_name="+file_name+"&category="+catname;
+								$.ajax({
+					                data: data,
+					                type: 'POST',
+					                url: '/emails/add_file',
+					                 success:function(data){
+					                 	
+					                }
+					            });
+								 $("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+							
+
+						}
+					});
+
+
+
+function cat_find(mclass)
+{
+	this_val = $("#select_category_"+mclass).val();
+	sid= mclass; 
+	loan_id = $('.loan_id').val();
+	file_name = $('#img_val_'+sid).val();
+	if(loan_id=="")
+	{
+		alert("Please add or select loan first");
+		return false;
+	}
+	var data = "&loan_id="+loan_id+"&file_name="+file_name+"&category="+this_val;
+	$.ajax({
+        data: data,
+        type: 'POST',
+        url: '/emails/add_file',
+         success:function(data){
+         	
+        }
+    });
+	 $("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+}
+</script>
+<%
+if @folderName.blank?
+	folder_name="nothing"
+else
+ 	folder_name="#{@folderName}"
+ end
+ %>
+<select name="categories[<%= @i %>]" class="select_cat" id="select_category_<%= @i %>">
+	<option value="none" selected="selected">Select Category</option>
+	<option value="Borrower Info & Corporate Docs">Borrower Info & Corporate Docs</option>
+	<option value="Environmental">Environmental</option>
+	<option value="Property Inspections">Property Inspections</option>
+	<option value="Project">Project</option>
+	<option value="Title,Taxes & Insurance">Title,Taxes & Insurance</option>
+	<option value="Valuation">Valuation</option>
+	<option value="Other">Other</option>
+	<% 
+	if !@customs.empty?
+		@customs.each do |custom| %>
+			<option value="<%= custom.id %>" <% if folder_name=="#{custom.id}" && folder_name!="nothing"  %> selected="selected" <% end %> ><%= custom.folder_name %></option>
+		<% end
+	end %>
+	<option value="custom_folder">Add Custom Folder</option>
+</select>

@@ -1,0 +1,11 @@
+<% @notes.each do |nt| %>
+<div class="row">
+	<div class="large-4 columns"><%= nt.user.name %></div>
+    <div class="large-4 columns"><%= nt.content %></div>
+    <div class="large-4 columns">
+    <% adate = Date.parse nt.date_added
+          add_date = adate.strftime("%d %b, %Y") %>
+          <%= add_date %></div>
+</div>
+<% end %>
+		

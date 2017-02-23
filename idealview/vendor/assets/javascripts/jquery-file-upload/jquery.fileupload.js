@@ -59,6 +59,7 @@
 
     // Helper function to create drag handlers for dragover/dragenter/dragleave:
     function getDragHandler(type) {
+
         var isDragOver = type === 'dragover';
         return function (e) {
             e.dataTransfer = e.originalEvent && e.originalEvent.dataTransfer;

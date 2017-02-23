@@ -1,0 +1,895 @@
+<% if @borrowers.empty? %>
+	<input type="button" value="Add Borrower" class="button" id="add_new_borrower">
+<% else %>
+	<input type="button" value="Add More Borrower" class="button" id="add_new_borrower">
+<% end %>
+<div id="all_new_borrowers">
+<% serial_num=1 %>
+	<% if !@borrowers.empty? %>
+		<% @borrowers.each do |borrower| %>
+			<div class="borrower_main" id="borrow_<%= borrower.id %>">
+				<div class="content-white-box one_div">
+				    <div class="cwb-header">
+				        <h3><%= serial_num %>. Borrower Information</h3>
+				        <!---------------- Hide/Show ---------------->
+				        <div class="cwb-controls">
+				            <div id="hideborrower_<%= borrower['_id'] %>" <% if borrower.hide == 1 %> style="display:none; float:right; margin-top:7px; margin-left:10px;" <% else %> style="float:right; margin-top:7px; margin-left:10px;" <% end %>>
+								<a style="color:black; float:right;" onclick="hide_borrower('<%= borrower['_id'] %>');" title = "Hide">
+									<img src="/assets/eye-icon.png">
+								</a>
+							</div>	
+							
+							<div id="showborrower_<%= borrower['_id'] %>"  <% if borrower.hide != 1 %> style="display:none; float:right; margin-top:7px; margin-left:10px;" <% else %> style="float:right; margin-top:7px; margin-left:10px;" <% end %>>
+								<a style="color:black; float:right;" onclick="show_borrower('<%= borrower['_id'] %>');" title = "Show">
+									<img src="/assets/eye-icon-slash.png">
+								</a>
+							</div>
+				        </div>
+				        <!-------------- Hide/Show ------------------>
+				    </div>
+				    <div class="cwb-content">
+				        <div class="row">
+				        	<div class="columns medium-12">
+					                <div class="trans-info-item">
+					                    <strong>Borrower Type :</strong>
+					                    <select id="borrower_type_<%= borrower.id %>" rows="1" name="borrower_type" class="borrower_edit_field">
+					                    	<option value="">Select Type</option>
+											<option value="Individual" <% if borrower.borrower_type == "Individual" %> selected="selected" <% end %>>Individual</option>
+											<option value="Company or Trust" <% if borrower.borrower_type == "Company or Trust" %> selected="selected" <% end %>>Company or Trust</option>
+										</select>
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"borrower_type"}%>
+					                    </div>
+					                </div>
+					        </div>
+
+					        <div class="personal_info" <% if borrower.borrower_type == "Company or Trust" %> style="display:none;" <% end %>>
+					        <div class="columns medium-6 border-right for_both individual_border">
+					                <div class="trans-info-item">
+					                    <strong>Name :</strong>
+					                    <input id="personal_name_<%= borrower.id %>" type="text" name="personal_name" value="<%= borrower.personal_name %>"  class="borrower_edit_field">
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_name"}%>
+					                    </div>
+					                </div>
+					        </div>
+					        <div class="columns medium-6 individual_div">
+					                <div class="trans-info-item">
+					                    <strong>Phone  :</strong>
+					                    <input id="personal_phone_<%= borrower.id %>" type="text" rows="1" name="personal_phone" value="<%= borrower.personal_phone %>"  value="<%= borrower.personal_phone %>" class="borrower_edit_field">
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_phone"}%>
+					                    </div>
+					                </div>
+					        </div>
+					        <div class="columns medium-6 border-right individual_div">
+					                <div class="trans-info-item">
+					                    <strong>Email :</strong>
+					                    <input id="personal_email_<%= borrower.id %>" type="email" name="personal_email" value="<%= borrower.personal_email %>" value="<%= borrower.personal_email %>" class="borrower_edit_field">
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_email"}%>
+					                    </div>
+					                </div>
+					        </div>
+					        <div class="columns medium-6 for_both">
+				                <div class="trans-info-item">
+				                    <strong> Monthly Income  :</strong>
+				                      <% 
+								      	mincome = ""
+								      	unless borrower.personal_monthly_income.blank?
+								      		mincome = fd_money(borrower.personal_monthly_income.to_i)
+								      	end
+								      %>
+				                    <p><input id="personal_monthly_income_<%= borrower.id %>" type="text"  name="personal_monthly_income" value="<%= mincome %>" class="borrower_edit_field"></p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_monthly_income"}%>
+				                    </div>
+				                </div>
+				            </div>
+					        <div id="personal_loc_<%= borrower['_id']  %>">
+						        <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>Address :</strong>
+						                    <input class="personal_address borrower_edit_field autocomplete" type="text" value="<%= borrower.personal_address %>" placeholder="Address" name="personal_address" id="personal_address_<%= borrower.id %>">
+						                    <div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_address"}%>
+						                    </div>
+						                </div>
+						        </div>
+						        <div class="columns medium-6">
+						                <div class="trans-info-item">
+						                    <strong>City :</strong>
+						                    <input class="field locality borrower_edit_field" type="text" placeholder="City" value="<%= borrower.personal_city %>" name="personal_city" id="personal_city_<%= borrower.id %>">
+						                    <div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_city"}%>
+						                    </div>
+						                </div>
+						        </div>
+						        <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>State :</strong>
+						                    <input class="field administrative_area_level_1 borrower_edit_field" type="text" value="<%= borrower.personal_state %>" placeholder="State" name="personal_state" id="personal_state_<%= borrower.id %>">
+						                    <div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_state"}%>
+						                    </div>
+						                </div>
+						        </div>
+						        <div class="columns medium-6">
+						                <div class="trans-info-item">
+						                    <strong>PostalCode :</strong>
+						                    <input class="field postal_code borrower_edit_field" type="text" value="<%= borrower.personal_postalcode %>" placeholder="PostalCode" name="personal_postalcode" id="personal_postalcode_<%= borrower.id %>">
+						                    <div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"postal_code"}%>
+						                    </div>
+						                </div>
+						        </div>
+					        </div>
+				        	
+
+				            
+				            <div class="columns medium-6 border-right for_both">
+				                <div class="trans-info-item" style="height:107px;">
+				                    <strong> Income Source :</strong>
+				                    <p><input id="personal_income_source_<%= borrower.id %>" type="text" rows="1" name="personal_income_source" value="<%= borrower.personal_income_source %>" class="borrower_edit_field"></p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_income_source"}%>
+				                    </div>
+				                </div>
+				            </div>
+				            <div class="columns medium-6  for_both individual_border">
+				                <div class="trans-info-item">
+				                    <strong> How long derived income from this source? :</strong>
+					                    <select id="income_how_long_<%= borrower.id %>" rows="1" name="income_how_long" class="borrower_edit_field">
+											<option value="1" <% if borrower.income_how_long=="1"%> selected="selected" <% end %>>1 to 24 Months</option>
+											<option value="2" <% if borrower.income_how_long=="2"%> selected="selected" <% end %>>24 Months to 5 Years</option>
+											<option value="3" <% if borrower.income_how_long=="3"%> selected="selected" <% end %>>5 Years + </option>
+										</select>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"income_how_long"}%>
+				                    </div>
+				                </div>
+				            </div>
+				            
+				            <div class="columns medium-6  border-right individual_div">
+				                <div class="trans-info-item">
+				                    <strong>Birthday :</strong>
+				                    <input id="personal_dob_<%= borrower.id %>" type="text" name="personal_dob" maxlength="20" value="<%= borrower.personal_dob %>" class="borrower_edit_field">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_dob"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				           
+
+				            <div class="columns medium-6 ">
+				                <div class="trans-info-item">
+				                    <strong>Ever Borrow Money? :</strong>
+				                    <select id="ever_borrow_money_<%= borrower.id %>" class="borrower_edit_field" name="ever_borrow_money">
+										<option value="Yes" <% if borrower.ever_borrow_money=="Yes"%> checked="checked" <% end %>>Yes</option>
+										<option value="No" <% if borrower.ever_borrow_money=="No"%> checked="checked" <% end %>>No</option>
+									</select>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"ever_borrow_money"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>EIN  :</strong>
+				                    <p><input id="personal_ein_<%= borrower.id %>" type="text" class="borrower_edit_field" name="personal_ein" value="<%= borrower.personal_ein %>"></p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_ein"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 individual_div">
+				                <div class="trans-info-item">
+				                    <strong>Estimated FICO score :</strong>
+				                    <p><input id="estimated_fico_<%= borrower.id %>" type="text" name="estimated_fico" class="borrower_edit_field" value="<%= borrower.estimated_fico %>"></p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"estimated_fico"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right individual_div">
+				                <div class="trans-info-item">
+				                    <strong>Net Worth :</strong>
+				                     <% 
+								      	networth = ""
+								      	unless borrower.net_worth.blank?
+								      		networth = fd_money(borrower.net_worth.to_i)
+								      	end
+								      %>
+				                    <p><input id="net_worth_<%= borrower.id %>" type="text" value="<%= networth %>" class="borrower_edit_field" name="net_worth"></p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"net_worth"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 individual_div">
+				                <div class="trans-info-item">
+				                    <strong>Gross Monthly Income :</strong>
+				                     <% 
+								      	gross_mincome = ""
+								      	unless borrower.personal_gross.blank?
+								      		gross_mincome = fd_money(borrower.personal_gross.to_i)
+								      	end
+								      %>
+				                    <p><input id="personal_gross_<%= borrower.id %>" type="text" value="<%= gross_mincome %>" class="borrower_edit_field" rows="1" name="personal_gross"></p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_gross"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right individual_div">
+				                <div class="trans-info-last">
+				                    <strong>Borrower Cash Contribution :</strong>
+				                    <% 
+								      	pcash = ""
+								      	unless borrower.personal_cashContribution.blank?
+								      		pcash = fd_money(borrower.personal_cashContribution.to_i)
+								      	end
+								      %>
+				                    <p><input id="personal_cashContribution" type="text" value="<%= pcash %>" name="personal_cashContribution" class="borrower_edit_field"></p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"personal_cashContribution"}%>
+				                    </div>
+				                </div>
+				            </div>
+				           
+				           	<div class="columns medium-6 individual_div">
+				                <div class="trans-info-last">
+				                    <strong>Borrower Also The Guarantor? :</strong>
+				                    <p>
+				                    <select id="borrower_guarantor_<%= borrower.id %>" name="borrower_guarantor" class="borrower_edit_field">
+				                    	<option value="">Select</option>
+										<option value="Yes" <% if borrower.borrower_guarantor=="Yes" %> selected="selected" <% end %>>Yes</option>
+										<option value="No" <% if borrower.borrower_guarantor=="No" %> selected="selected" <% end %>>No</option>
+									</select>
+									</p>
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"borrower_guarantor"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				        </div>
+				        </div>
+				    </div>
+				</div><!-- content-white-box -->
+
+				<% if borrower.borrower_type == "Company or Trust" %>
+					<div class="content-white-box business_info" <% if borrower.borrower_type=="Company or Trust" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+					    <div class="cwb-header">
+					        <h3>Business Information</h3>
+					    </div>
+					    <div class="cwb-content">
+					        <div class="row">
+
+					        	<div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Business Name :</strong>
+					                    <input id="business_name_<%= borrower.id %>" type="text" name="business_name" class="borrower_edit_field" value="<%= borrower.business_name %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_name"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Business Phone :</strong>
+					                    <input id="business_phone_<%= borrower.id %>" type="text" class="borrower_edit_field" name="business_phone" value="<%= borrower.business_phone %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_phone"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <!-- <div id="business_loc_<%= borrower.id %>">
+						            <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>Business Address :</strong>
+						                    <input class="business_address autocomplete borrower_edit_field" type="text" placeholder="Address" name="business_address" id="business_address_<%= borrower.id %>" value="<%= borrower.business_address %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_address"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6">
+						                <div class="trans-info-item">
+						                    <strong>Business City :</strong>
+						                    <input class="field locality borrower_edit_field" type="text" placeholder="City" name="business_city" id="business_city_<%= borrower.id %>" value="<%= borrower.business_city %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_address"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>Business State :</strong>
+						                    <input class="field administrative_area_level_1 borrower_edit_field" type="text" placeholder="State" name="business_state" id="business_state_<%= borrower.id %>" value="<%= borrower.business_state %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_state"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6">zazawqsxqdddddddddddddddddddddddddddddddddddddddddddddddddddd
+						                <div class="trans-info-item">
+						                    <strong>Business Postal Code :</strong>
+						                    <input class="field postal_code borrower_edit_field" type="text" placeholder="Postalcode" name="business_postalcode" id="business_postalcode_<%= borrower.id %>" value="<%= borrower.business_postalcode %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_postalcode"}%>
+						                    </div>
+						                </div>
+						            </div>
+					            </div> -->
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Time In Business :</strong>
+					                    <select id="time_in_business_<%= borrower.id %>" name="time_in_business" class="borrower_edit_field">
+											<option value="1" <% if borrower.time_in_business=="1" %> selected="selected" <% end %>>Less Than A Year</option>
+											<option value="2" <% if borrower.time_in_business=="2" %> selected="selected" <% end %>>1 - 3 Years</option>
+											<option value="3" <% if borrower.time_in_business=="3" %> selected="selected" <% end %>>3 - 10 Years</option>
+											<option value="10" <% if borrower.time_in_business=="4" %> selected="selected" <% end %>>10+ Years</option>
+											
+										</select>
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"time_in_business"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Business years of Revenue :</strong>
+					                    <select id="revenue_time_period_<%= borrower.id %>" rows="1" name="revenue_time_period" class="borrower_edit_field">
+											<option value="1" <% if borrower.revenue_time_period=="1" %> selected="selected" <% end %>>Less Than A Year</option>
+											<option value="2" <% if borrower.revenue_time_period=="2" %> selected="selected" <% end %>>1 - 3 Years</option>
+											<option value="3" <% if borrower.revenue_time_period=="3" %> selected="selected" <% end %>>3 - 10 Years</option>
+											<option value="10" <% if borrower.revenue_time_period=="4" %> selected="selected" <% end %>>10+ Years</option>
+											
+										</select>
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"revenue_time_period"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Business EIN :</strong>
+					                    <input id="business_ein_<%= borrower.id %>" type="text" rows="1" name="business_ein" class="borrower_edit_field" value="<%= borrower.business_ein %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_ein"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Business Type :</strong>
+					                    <input id="business_type_<%= borrower.id %>" type="text"  name="business_type" class="borrower_edit_field" value="<%= borrower.business_type %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_type"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-last">
+					                    <strong>Business state of Incorporation :</strong>
+					                    <input id="state_of_incorporation_<%= borrower.id %>" type="text" name="state_of_incorporation" class="borrower_edit_field"  value="<%= borrower.state_of_incorporation %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"state_of_incorporation"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-last">
+					                    <strong>Business Balance Sheet Value :</strong>
+					                    <input id="business_balance_sheet_<%= borrower.id %>" type="text" name="business_balance_sheet" class="borrower_edit_field"  value="<%= borrower.business_balance_sheet %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_balance_sheet"}%>
+					                    </div>
+					                </div>
+					            </div>	
+					        </div>
+					    </div>
+					</div>
+					<div class="content-white-box borrower_bio" <% if borrower.borrower_type=="Company or Trust" %> style="display:none;" <% else %> style="display:block;" <% end %>>
+						<div class="cwb-header">
+							<h3>Borrower Bio</h3>
+							<div class="cwb-controls">
+								<%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"bio"}%>
+							</div>
+						</div>
+						<div class="cwb-content">
+							<textarea  name="bio" class="borrower_edit_field" id="bio_<%= borrower.id %>"><%= borrower.bio %></textarea>
+						</div>
+					</div>
+				
+				<% else %>
+					<div class="content-white-box borrower_bio">
+						<div class="cwb-header">
+							<h3>Borrower Bio</h3>
+							<div class="cwb-controls">
+								<%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"bio"}%>
+							</div>
+						</div>
+						<div class="cwb-content">
+							<textarea  name="bio" class="borrower_edit_field" id="bio_<%= borrower.id %>"><%= borrower.bio %></textarea>
+						</div>
+					</div>
+					<div class="content-white-box business_info" <% if borrower.borrower_type=="Company or Trust" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+					    <div class="cwb-header">
+					        <h3>Business Information</h3>
+					    </div>
+					    <div class="cwb-content">
+					        <div class="row">
+
+					        	<div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Name :</strong>
+					                    <input id="business_name_<%= borrower.id %>" type="text" name="business_name" class="borrower_edit_field" value="<%= borrower.business_name %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_name"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Phone :</strong>
+					                    <input id="business_phone_<%= borrower.id %>" type="text" class="borrower_edit_field" name="business_phone" value="<%= borrower.business_phone %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_phone"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div id="business_loc_<%= borrower.id %>">
+						            <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>Address :</strong>
+						                    <input class="business_address autocomplete borrower_edit_field" type="text" placeholder="Address" name="business_address" id="business_address_<%= borrower.id %>" value="<%= borrower.business_address %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_address"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6">
+						                <div class="trans-info-item">
+						                    <strong>City :</strong>
+						                    <input class="field locality borrower_edit_field" type="text" placeholder="City" name="business_city" id="business_city_<%= borrower.id %>" value="<%= borrower.business_city %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_address"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6 border-right">
+						                <div class="trans-info-item">
+						                    <strong>State :</strong>
+						                    <input class="field administrative_area_level_1 borrower_edit_field" type="text" placeholder="State" name="business_state" id="business_state_<%= borrower.id %>" value="<%= borrower.business_state %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_state"}%>
+						                    </div>
+						                </div>
+						            </div>
+
+						            <div class="columns medium-6">
+						                <div class="trans-info-item">
+						                    <strong>Postal Code :</strong>
+						                    <input class="field postal_code borrower_edit_field" type="text" placeholder="Postalcode" name="business_postalcode" id="business_postalcode_<%= borrower.id %>" value="<%= borrower.business_postalcode %>">
+											<div class="tii-controls">
+						                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_postalcode"}%>
+						                    </div>
+						                </div>
+						            </div>
+					            </div>
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Time In Business :</strong>
+					                    <select id="time_in_business_<%= borrower.id %>" name="time_in_business" class="borrower_edit_field">
+											<option value="1" <% if borrower.time_in_business=="1" %> selected="selected" <% end %>>1 Year</option>
+											<option value="2" <% if borrower.time_in_business=="2" %> selected="selected" <% end %>>2 Years</option>
+											<option value="3" <% if borrower.time_in_business=="3" %> selected="selected" <% end %>>3 Years</option>
+											<option value="4" <% if borrower.time_in_business=="4" %> selected="selected" <% end %>>4 Years</option>
+											<option value="5" <% if borrower.time_in_business=="5" %> selected="selected" <% end %>>5 Years</option>
+											<option value="6" <% if borrower.time_in_business=="6" %> selected="selected" <% end %>>6 Years</option>
+											<option value="7" <% if borrower.time_in_business=="7" %> selected="selected" <% end %>>7 Years</option>
+											<option value="8" <% if borrower.time_in_business=="8" %> selected="selected" <% end %>>8 Years</option>
+											<option value="9" <% if borrower.time_in_business=="9" %> selected="selected" <% end %>>9 Years</option>
+											<option value="10" <% if borrower.time_in_business=="10" %> selected="selected" <% end %>>10+ Years</option>
+										</select>
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"time_in_business"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Years of Revenue :</strong>
+					                    <select id="revenue_time_period_<%= borrower.id %>" rows="1" name="revenue_time_period" class="borrower_edit_field">
+											<option value="1" <% if borrower.revenue_time_period=="1" %> selected="selected" <% end %>>1 Year</option>
+											<option value="2" <% if borrower.revenue_time_period=="2" %> selected="selected" <% end %>>2 Years</option>
+											<option value="3" <% if borrower.revenue_time_period=="3" %> selected="selected" <% end %>>3 Years</option>
+											<option value="4" <% if borrower.revenue_time_period=="4" %> selected="selected" <% end %>>4 Years</option>
+											<option value="5" <% if borrower.revenue_time_period=="5" %> selected="selected" <% end %>>5 Years</option>
+											<option value="6" <% if borrower.revenue_time_period=="6" %> selected="selected" <% end %>>6 Years</option>
+											<option value="7" <% if borrower.revenue_time_period=="7" %> selected="selected" <% end %>>7 Years</option>
+											<option value="8" <% if borrower.revenue_time_period=="8" %> selected="selected" <% end %>>8 Years</option>
+											<option value="9" <% if borrower.revenue_time_period=="9" %> selected="selected" <% end %>>9 Years</option>
+											<option value="10" <% if borrower.revenue_time_period=="10" %> selected="selected" <% end %>>10+ Years</option>
+										</select>
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"revenue_time_period"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Business EIN :</strong>
+					                    <input id="business_ein_<%= borrower.id %>" type="text" rows="1" name="business_ein" class="borrower_edit_field" value="<%= borrower.business_ein %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_ein"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>Business Type :</strong>
+					                    <input id="business_type_<%= borrower.id %>" type="text"  name="business_type" class="borrower_edit_field" value="<%= borrower.business_type %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_type"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-last">
+					                    <strong>State of Incorporation :</strong>
+					                    <input id="state_of_incorporation_<%= borrower.id %>" type="text" name="state_of_incorporation" class="borrower_edit_field"  value="<%= borrower.state_of_incorporation %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"state_of_incorporation"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-last">
+					                    <strong>Business Balance Sheet Value :</strong>
+					                    <input id="business_balance_sheet_<%= borrower.id %>" type="text" name="business_balance_sheet" class="borrower_edit_field"  value="<%= borrower.business_balance_sheet %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"business_balance_sheet"}%>
+					                    </div>
+					                </div>
+					            </div>	
+					        </div>
+					    </div>
+					</div>
+				<% end %>
+				<div class="content-white-box business_financials" <% if borrower.borrower_type=="Company or Trust" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+				    <div class="cwb-header">
+				        <h3>Business Financials </h3>
+				    </div>
+				    <div class="cwb-content">
+				        <div class="row">
+				        	<div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Cash On Hand :</strong>
+				                     <% 
+								      	cash_hand = ""
+								      	unless borrower.cash_on_hand.blank?
+								      		cash_hand = fd_money(borrower.cash_on_hand.to_i)
+								      	end
+								      %>
+				                    <input id="cash_on_hand_<%= borrower.id %>" type="text" rows="1" name="cash_on_hand" class="borrower_edit_field" value="<%= cash_hand %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"cash_on_hand"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <!-- <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Est. Fico :</strong>
+				                    <input id="est_fico_<%= borrower.id %>" type="text" rows="1" name="est_fico" class="borrower_edit_field" value="<%= borrower.est_fico %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"est_fico"}%>
+				                    </div>
+				                </div>
+				            </div> -->
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Available Credit :</strong>
+				                     <% 
+								      	available_credit = ""
+								      	unless borrower.available_credit.blank?
+								      		available_credit = fd_money(borrower.available_credit.to_i)
+								      	end
+								      %>
+				                    <input id="available_credit_<%= borrower.id %>" type="text" value="<%= available_credit %>" rows="1" name="available_credit" class="borrower_edit_field">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"available_credit"}%>
+				                    </div>
+				                </div>
+				            </div>
+				        	
+				        	<div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong> Monthly NOI  :</strong>
+				                    <% 
+								      	monthly_noi = ""
+								      	unless borrower.monthly_noi.blank?
+								      		monthly_noi = fd_money(borrower.monthly_noi.to_i)
+								      	end
+								      %>
+				                    <input id="monthly_noi_<%= borrower.id %>" type="text" rows="1" name="monthly_noi" class="borrower_edit_field" value="<%= monthly_noi %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"monthly_noi"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong> Annual NOI :</strong>
+				                     <% 
+								      	annual_noi = ""
+								      	unless borrower.annual_noi.blank?
+								      		annual_noi = fd_money(borrower.annual_noi.to_i)
+								      	end
+								      %>
+				                    <input id="annual_noi_<%= borrower.id %>" type="text" value="<%= annual_noi %>" rows="1" name="annual_noi" class="borrower_edit_field">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"annual_noi"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong> Accounts Receivable :</strong>
+				                    <% 
+								      	account_recievable = ""
+								      	unless borrower.account_recievable.blank?
+								      		account_recievable = fd_money(borrower.account_recievable.to_i)
+								      	end
+								      %>
+				                    <input id="account_recievable_<%= borrower.id %>" type="text" value="<%= account_recievable %>" rows="1" name="account_recievable" class="borrower_edit_field">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"account_recievable"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-last">
+				                    <strong> Accounts Payable :</strong>
+				                    <% 
+								      	account_payable = ""
+								      	unless borrower.account_payable.blank?
+								      		account_payable = fd_money(borrower.account_payable.to_i)
+								      	end
+								      %>
+				                    <input id="account_payable_<%= borrower.id %>" type="text" rows="1" name="account_payable" class="borrower_edit_field" value="<%= account_payable %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"account_payable"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+
+				        </div>
+				    </div>
+				</div>
+
+				<div class="content-white-box guarantor_info"  <% if borrower.borrower_type=="Individual" && borrower.borrower_guarantor=="No"  %> style="display:block;" <% else %> style="display:none;" <% end %>style="display:none;">
+				    <div class="cwb-header">
+				        <h3>Guarantor Information  </h3>
+				    </div>
+				    <div class="cwb-content">
+				        <div class="row">
+				        	
+				        	<div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Guarantor Name :</strong>
+				                    <input id="guarantor_name_<%= borrower.id %>" type="text" name="guarantor_name" class="borrower_edit_field" value="<%= borrower.guarantor_name %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_name"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Guarantor Phone :</strong>
+				                    <input id="guarantor_phone_<%= borrower.id %>" type="text" name="guarantor_phone" class="borrower_edit_field" value="<%= borrower.guarantor_phone %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_phone"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6  border-right">
+				                <div class="trans-info-item">
+				                    <strong>Guarantor Email :</strong>
+				                    <input id="guarantor_email_<%= borrower.id %>" type="text" name="guarantor_email" class="borrower_edit_field" value="<%= borrower.guarantor_email %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_email"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Guarantor Monthly Income :</strong>
+				                    <% 
+		                              gmincome = ""
+		                              unless borrower.guarantor_monthly_income .blank?
+		                                gmincome = fd_money(borrower.guarantor_monthly_income.to_i)
+		                              end
+		                            %>
+				                    <input id="guarantor_monthly_income_<%= borrower.id %>" type="text" value="<%= gmincome %>" rows="1" name="guarantor_monthly_income" class="borrower_edit_field">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_monthly_income"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+				            <div id="guarantor_loc_<%= borrower.id %>">
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>Address :</strong>
+					                    <input class="guarantor_address autocomplete borrower_edit_field" type="text" id="guarantor_address_<%= borrower.id %>" name="guarantor_address" placeholder="Address" autocomplete="off" value="<%= borrower.guarantor_monthly_income %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_address"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>City :</strong>
+					                    <input class="field locality borrower_edit_field" type="text" placeholder="City" name="guarantor_city" id="guarantor_city_<%= borrower.id %>" value="<%= borrower.guarantor_city %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_city"}%>
+					                    </div>
+					                </div>
+					            </div>
+				            	
+				            	<div class="columns medium-6 border-right">
+					                <div class="trans-info-item">
+					                    <strong>State :</strong>
+					                    <input class="field administrative_area_level_1 borrower_edit_field" type="text" placeholder="State" name="guarantor_state" id="guarantor_state_<%= borrower.id %>" value="<%= borrower.guarantor_state %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_state"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+					            <div class="columns medium-6">
+					                <div class="trans-info-item">
+					                    <strong>PostalCode :</strong>
+					                    <input class="field postal_code borrower_edit_field" type="text" placeholder="Postalcode" name="guarantor_postalcode" id="guarantor_postalcode_<%= borrower.id %>" value="<%= borrower.guarantor_postalcode %>">
+										<div class="tii-controls">
+					                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_postalcode"}%>
+					                    </div>
+					                </div>
+					            </div>
+
+				            </div>
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Income Source :</strong>
+				                    <input id="guarantor_income_source_<%= borrower.id %>" type="text" rows="1" name="guarantor_income_source" class="borrower_edit_field" value="<%= borrower.guarantor_income_source %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_income_source"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+					        <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>How long income derived from this source? :</strong>
+				                   <input id="guarantor_income_how_long_<%= borrower.id %>" type="text" rows="1" name="guarantor_income_how_long" class="borrower_edit_field" value="<%= borrower.guarantor_income_how_long %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_income_how_long"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+					        <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                   <strong>Birthday :</strong>
+				                   <input id="guarantor_birthday_<%= borrower.id %>" type="text" name="guarantor_birthday" class="borrower_edit_field" value="<%= borrower.guarantor_birthday %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_birthday"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+					        <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                   <strong>SSN :</strong>
+				                   <input id="guarantor_ssn_<%= borrower.id %>" type="text" name="guarantor_ssn" class="borrower_edit_field" value="<%= borrower.guarantor_ssn %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_ssn"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+					        <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                   <strong>Estimated FICO :</strong>
+				                   <input id="guarantor_estimated_ficco_<%= borrower.id %>" type="text" name="guarantor_estimated_ficco" class="borrower_edit_field" value="<%= borrower.guarantor_estimated_ficco %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_estimated_ficco"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+				        	<div class="columns medium-6">
+				                <div class="trans-info-item">
+				                   <strong> Guarantor Net Worth  :</strong>
+				                   <% 
+								      	guarantor_net_worth = ""
+								      	unless borrower.guarantor_net_worth.blank?
+								      		guarantor_net_worth = fd_money(borrower.guarantor_net_worth.to_i)
+								      	end
+								      %>
+				                   <input id="guarantor_net_worth_<%= borrower.id %>" type="text" name="guarantor_net_worth" class="borrower_edit_field" value="<%= guarantor_net_worth %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_net_worth"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+					        <div class="columns medium-12">
+				                <div class="trans-info-last">
+				                   <strong> Ever Borrow Money?  :</strong>
+				                   <input id="guarantor_borrow_money_<%= borrower.id %>" type="text" class="borrower_edit_field" name="guarantor_borrow_money" value="<%= borrower.guarantor_borrow_money %>">
+									<div class="tii-controls">
+				                        <%= render partial: 'show_hide_borrower', locals:{borwr: borrower, field_name:"guarantor_borrow_money"}%>
+				                    </div>
+				                </div>
+					        </div>
+
+				        </div>
+				    </div>
+				</div>
+		 
+			</div>
+		<% serial_num = serial_num+1 %>
+		<% end %>
+	<% end %>
+</div>
+
+
+
+
+
+
+
+
+			

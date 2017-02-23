@@ -1,0 +1,27 @@
+<div class='row'>
+	
+		  <!-------------------------------- Change Password -------------------------->
+
+			<div class="small-8 small-centered columns">
+				<h2>Change Password</h2>
+				<form id="edit_password" class="edit_user" method="post" action="http://<%= @hostname %>:3000/homes/change_password">
+					<div class="field">
+						<label for="user_password">Password</label>
+						<br>
+						<input id="user_password" type="password" name="password" autocomplete="off">
+					</div>
+
+					<div class="field">
+						<label for="user_cpassword">Confirm Password</label>
+						<br>
+						<input id="user_cpassword" type="password" name="confirm_password" autocomplete="off">
+					</div>
+
+					<div class="field">
+						<input type="submit" class="button secondary tiny" value="Submit">
+					</div>
+				</form>
+			</div>
+		  <!-------------------------------- End Change password ---------------------->
+	
+</div>

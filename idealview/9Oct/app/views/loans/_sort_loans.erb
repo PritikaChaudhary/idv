@@ -1,0 +1,129 @@
+<style>
+li { cursor: pointer; cursor: all-scroll; list-style: none; }
+.large-2 {
+    width: 11.667%;
+} 
+</style>
+<script type="text/javascript">
+
+$(function(){
+$("#offices").children("tbody").sortable({
+    stop: function (event, ui) {
+        countRows(); // re-number rows after sorting
+    }
+});
+});
+function countRows() {
+    var i = 0;
+    var ids=[];
+    $('#offices td input:hidden').each(function () {
+        //$(this).attr("value", ++i);
+        my_id = $(this).attr('value');
+    	ids.push(my_id); 
+    });
+    var data =  "&moredata=" + ids;
+    $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/changeorder'
+            });
+
+}
+</script>
+<%= render partial: 'layouts/messages' %>
+
+<div class="small-12 columns">
+	<table width="100%" class="list_loans" id="offices">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Loan Name</th>
+				<th>Net Amount</th>
+				<th>Location</th>
+				<% if @checkBroker==true  && @checkAdmin==false %>
+					<th></th>
+				<% end %>
+			</tr>
+		</thead>
+		<tbody class="ui-sortable">
+<% unless @loans.blank? %>
+	
+	<% @loans.each do |loan_rec|
+	loan=loan_rec.info || Loan.new
+	%>
+	
+	<tr class="crsr">
+	<td width="55" value="<%= loan_rec.id %>">
+		<input type="hidden" value="<%= loan_rec.id %>">
+		<% 
+			if @checkAdmin==true %>
+				<input type="checkbox" id="check_<%= loan_rec.id %>" name="select_loan" value="<%= loan_rec.id %>" style="float:left;margin-top:7px; margin-right:5px;">
+				<div id="click_<%= loan_rec.id %>" style="float:left;">
+					<% @url=url_for :controller=>'loan_urls', :action=>'fetch_lenders', :id=>loan_rec.id %>
+					<a class="more-option" href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= loan_rec.id %>', 'lender_loans')"><i class="fa fa-plus-circle"></i></a>
+				</div>
+				<div id="click_hide_<%= loan_rec.id %>" style="float:left; display:none;" class="click_hide"  onclick="order_lenderhide('<%= loan_rec.id %>')">
+					<a class="less-option" href="javascript:void(0);" class="hide_lender_<%= loan_rec.id %>"><i class="fa fa-minus-circle"></i></a>
+				</div>
+			<% end %>
+	</td>
+	<td>
+	
+		<% if loan_rec.name.blank?
+			loan_name = 'No Loan Title'
+		  else
+			loan_name = loan_rec.name
+		  end
+
+		%>
+		<h5><a href='<%=url_for :controller=>'loans', :action=>'show',:id=>loan_rec.id%>'><%=loan_name%></a></h5><br>
+		<div id="loan_lenders<%= loan_rec.id %>">
+
+		</div> 
+	</td>
+	<td>
+	
+		<% if loan['_NetLoanAmountRequested0'].blank? %>
+			N/A
+		<% else %>
+			<%=fd_money(loan['_NetLoanAmountRequested0'])%>
+		<% end %>
+	</td>
+	<td>
+		<% if loan['City3'].blank? && loan['State3'].blank? %>
+		   N/A
+		<% else %>
+		  <%=loan['City3']+', '%> <%=loan['State3']%>
+		<% end %>
+
+	</td>
+	<% if @checkBroker==true  && @checkAdmin==false %>
+	<td>
+			<div class="large-3 columns">
+			<% unless loan_rec.doc_url.blank?%>
+				<a href="localhost:3000/loans/docs/<%= loan_rec.doc_url %>"> <input type="button"  class="tiny button" value="Upload Docs"></a>
+			<% else %>
+				<a href="javascript:void(0);"> <input type="button"  class="tiny button" value="Upload Docs" style="background-color:#999289; border-color:#999289;"></a>
+			<% end %>
+			</div>
+	</td>
+	<% end %>
+
+	</tr>
+	
+	
+	<% end %>
+<% else %>
+<tr>
+	<td colspan="4">
+	<% if @empty.blank? %>
+			You have not submitted any loans yet. Submit a loan here.
+	<% else %> 
+			<%= @empty %>
+	<%  end %>
+	</td>
+</tr>
+<% end %>
+</tbody>
+	</table>
+</div>

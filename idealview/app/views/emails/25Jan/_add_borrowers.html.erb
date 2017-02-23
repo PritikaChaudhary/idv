@@ -1,0 +1,68 @@
+<div class="large-12 columns">
+	<form method="post" class="add_borrower">
+			<input type="hidden" name="loan_id" value="<%= @loanId %>">
+			<input type="hidden" class="borrower_id" <% unless @brwr.blank? %> value="<%= @brwr.id %>" <% end %>>
+			<div class="row">
+				<div class="small-6 columns">
+					<label for="">  Name </label>
+					<br>
+					<input class="personal_name" type="text" name="personal_name" style="float:left; width:141px;"  <% unless @brwr.blank? %> value="<%= @brwr.personal_name %>" <% end %> onchange="setvalue('personal_name')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px;" onclick="return menuBorrower('personal_name')">
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for="">  Email  </label>
+					<br>
+					<input class="personal_email" type="text" name="personal_email" style="float:left; width:141px;" <% unless @brwr.blank? %> value="<%= @brwr.personal_email %>" <% end %>  onchange="setvalue('personal_email')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px;" onclick="return menuBorrower('personal_email')">
+			  	</div>
+			</div>
+
+
+			<div class="row">
+				<div class="small-6 columns">
+					<label for=""> Address </label>
+					<br>
+					<input type="text" class="personal_address" name="personal_address" style="float:left; width:141px;" <% unless @brwr.blank? %> value="<%= @brwr.personal_address %>" <% end %> onchange="setvalue('personal_address')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px;"  onclick="return menuBorrower('personal_address')">
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for=""> Zip </label>
+					<br>
+					<input type="text" class="personal_postalcode" name="personal_postalcode"  style="float:left; width:141px;" <% unless @brwr.blank? %> value="<%= @brwr.personal_postalcode %>" <% end %> onchange="setvalue('personal_postalcode')">
+					<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px;" title="Paste" onclick="return menuBorrower('personal_postalcode')">
+			  	</div>
+			</div>
+
+			<div class="row">
+				<div class="small-6 columns">
+					<label for=""> Gross Monthly Income </label>
+					<br>
+					<input type="text" class="personal_gross" name="personal_gross" style="float:left; width:141px;" <% unless @brwr.blank? %> value="<%= @brwr.personal_gross %>" <% end %> onchange="setvalue('personal_gross')">
+					<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px;" title="Paste" onclick="return menuBorrower('personal_gross')">
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for=""> Borrower Cash Contribution </label>
+					<br>
+					<input type="text" class="personal_cashContribution" name="personal_cashContribution"  style="float:left; width:141px;" <% unless @brwr.blank? %> value="<%= @brwr.personal_cashContribution %>" <% end %>  onchange="setvalue('personal_cashContribution')">
+					<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px;" title="Paste" onclick="return menuBorrower('personal_cashContribution')">
+			  	</div>
+			</div>
+
+			<div class="row">
+				<div class="small-12 columns">
+					<label for=""> Borrower Bio</label>
+					<br>
+					<% unless @brwr.blank? %> 
+						<% bio= @brwr.bio %> 
+					<% else %>
+						<% bio="" %>
+					<% end %>
+					<textarea name="bio" id="bio" style="float:left; width:339px;" onchange="textval('bio')"><%= bio %></textarea>
+					<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px;" title="Paste" onclick="return textborrower('bio')">
+			  	</div>
+			</div>
+	</form>
+</div>

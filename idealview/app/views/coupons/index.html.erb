@@ -1,0 +1,406 @@
+<style>
+.text-center {
+    text-align: center;
+}
+
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+$('document').ready(function(){
+     $('#search_form').submit(function() {
+      return false;
+    });
+
+     $('.click_hide').click(function(){
+            var c_id=$(this).attr('id');
+            var lendr_id=c_id.replace("click_hide_","");
+            var div_id="click_"+lendr_id;
+            $("#"+div_id).show();
+            $("#"+c_id).hide();
+            $("#sub_brokers"+lendr_id).hide();
+
+        });
+
+     $("#all_loans").change(function () {
+        $(".single_loan").prop('checked', $(this).prop("checked"));
+      });
+
+     $('#save_broker').click(function(){
+        var status = "true";
+        bemail = $('.broker_email').val();
+        uname = $('.broker_username').val();        
+
+        bpass = $('.broker_password').val();
+        var pcount = bpass.length;
+        if(pcount<8)
+        {
+            $('.too_short').show();
+            status = "false";
+        }
+
+        if(bemail=="")
+        {
+            $('.email_empty').show();
+            $('.existed').hide();
+            status = "false";
+        }
+
+        if(uname=="")
+        {
+            $('.uname_empty').show();
+            $('.uexisted').hide();
+            status = "false";
+        }
+        
+        this_email = "email="+bemail;
+        $.ajax({
+            data: this_email,
+            type: 'POST',
+            url: '/brokers/check_email',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.existed').show();
+                    $('.email_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+
+        this_uname = "username="+uname;
+        $.ajax({
+            data: this_uname,
+            type: 'POST',
+            url: '/admin/check_uname',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.uexisted').show();
+                    $('.uname_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+        
+        setTimeout(function() {
+           // return false;
+          if(status=="false")
+          {
+
+            return false;
+          }
+          else
+          {
+              $('#brokerForm').submit(); 
+          } 
+      }, 2000);
+
+     });
+
+      // $('.brokers_total').change(function(){
+      //   pg = $(this).val();
+      //    window.location.replace("<%= @base %>/account_management/?per_page="+pg);
+      //  });
+
+      $("#all_brokers").change(function () {
+        $(".single_user").prop('checked', $(this).prop("checked"));
+      });
+
+
+      $(".add_broker").click(function(){
+        $('#myModal1').foundation('reveal', 'open');
+    });
+
+      $(".market_access").change(function(){
+         mkt_id = $(this).prop('id');
+         id = mkt_id.replace('market_access_', '');  
+
+
+        if ($(this).is(':checked')) {
+          data = "broker_id="+id+"&market_access=1";
+        }
+        else
+        {
+          data = "broker_id="+id+"&market_access=0"; 
+        }
+
+         $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/account_management/market_access',
+             success:function(data){
+            
+            }
+            
+        });
+      });
+
+      $('.desc_sort').click(function(){
+        id = $(this).attr('id');
+        value = id.replace('desc_','');
+        $('.sort_by').val(value);
+        $('.sort_order').val('desc');
+        paging('1');
+      });
+
+      $('.asc_sort').click(function(){
+        id = $(this).attr('id');
+        value = id.replace('asc_','');
+        $('.sort_by').val(value);
+        $('.sort_order').val('asc');
+        paging('1');
+      });
+
+});
+
+function sort_order(type, field)
+{
+    $('.sort_by').val(field);
+    $('.sort_order').val(type);
+    paging('1');
+}
+
+function delete_brokers()
+{
+    var allVals=[];
+    $('input[name="select_broker"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one broker.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/delete_brokers',
+             success:function(data){
+                $('#broker_records').html(data);
+            }
+            
+        });
+
+}
+
+function search_fun()
+{
+    var data=$('#search_form').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/account_management/search',
+            success:function(response){
+                $('#broker_records').html(response);
+            }
+        });
+}
+
+    function delete_users()
+    {
+        var allVals=[];
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one user.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/account_management/delete_users',
+                 success:function(data){
+                    location.reload();
+                }
+                
+            });
+
+    }
+
+    function callAjax(customUrl, divId, formId){
+    if(typeof(formId)==='undefined')
+    {
+        data = '';
+    } 
+    else     
+    {
+        data = $('#'+formId).serialize();
+
+    }
+    if(typeof(divId)===undefined) divId ='';
+     $('#loan_lenders').html('loading...');
+    $.ajax({
+        type: 'POST',
+        url: customUrl,
+        data:data,
+        success:function(data){
+                $('#'+divId).html(data);    
+            
+            
+            if(formId=="lender_loans")
+            {
+                var a_id=divId.replace('sub_brokers','');
+                $('#click_'+a_id).hide();
+                $('#click_hide_'+a_id).show();
+                $("#sub_brokers"+a_id).show();
+            }
+
+                },
+        error:function(data){
+            alert('Something went wrong.');
+            
+            },
+        dataType: 'html',
+
+
+    });
+        
+}
+
+    function paging(pgnum){
+        page = pgnum;
+        $('.page_number').val(page);
+        // sorting_type = $('#sorting').val();
+        records = $('.brokers_total').val();
+        user_type = $('.user_type').val();
+        sort_by = $('.sort_by').val();
+        sort_order = $('.sort_order').val();
+        if(records=="")
+        {
+            records = 10;
+        }
+        var sinput =  $('.search_input').val();
+        
+        customUrl='/coupons/paging'
+        data = "&page="+page;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: customUrl,
+                
+                success:function(response){
+                   $('#broker_records').html(response);
+                   $(document).foundation('tooltip');
+                }
+
+            });   
+        
+       
+    }
+
+    function approve_request(id)
+    {
+        data = "loan_id="+id;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/market_access',
+                 success:function(data){
+                    
+                }
+            });
+    }
+
+
+    function delete_coupon()
+    {
+        var allVals=[];
+        $('input[name="select_coupon"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one coupon.");
+            return false;
+        }
+        page = $(".page_number").val();
+        var data = "&moredata="+allVals+"&delete=yes&page="+page;
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/coupons/paging',
+                     success:function(data){
+                        $('#broker_records').html(data);
+                        $(document).foundation('tooltip');
+                    }
+                    
+                });
+
+    }
+
+
+</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+
+        <h3 class='text-center'>Coupons</h3>
+        
+    </div>
+</div>
+<div class="row" style="margin-top:25px">
+    <a href="<%= request.base_url %>/coupons/add" class="button" style="margin-left:17px;"> Add Coupon </a> 
+    <a class="button secondary tiny trash" href="javascript:void(0);" onclick="if(confirm('Are you sure you want to delete this?')){delete_coupon()}">
+<i class="fa fa-trash"></i>
+</a>
+
+</div>
+<input type="hidden" class="page_number" value="1">
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <%= render partial: 'all_coupons'%>
+</div>
+
+
+ 

@@ -1,0 +1,182 @@
+<style type="text/css">
+ 
+  .recurly-hosted-field
+  {
+     background-color: #f1f1f1;
+      border: 1px solid #cccccc;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+      box-sizing: border-box;
+      color: rgba(0, 0, 0, 0.75);
+      display: block;
+      font-family: inherit;
+      font-size: 0.875rem;
+      height: 2.3125rem;
+      margin: 0 0 1rem;
+      padding: 0.5rem;
+      transition: box-shadow 0.45s ease 0s, border-col
+  or 0.45s ease-in-out 0s;
+      width: 100%;
+  }
+  
+</style>
+<div class='row'>
+  <div class="small-8 small-centered columns">
+    <% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+  %>
+  <% if @hostname == "localhost" %>
+    <form action="http://<%=@hostname%>:<%=@portnum%>/payments/proceed_payment" method="POST" id="payment-form">
+  <% else %>
+    <form action="https://<%= @hostname%>/payments/proceed_payment" method="POST" id="payment-form">
+  <% end %>
+        <h3 class="heading_signup">You currently have a solo plan account</h3>
+        <div class="medium-12 column">
+         <label>
+          <span >Select Plan</span>
+          <select name="plan">
+            <% @all_plans.each do |plan|%>
+              <% pln =  plan.amount.to_i/100 %>
+             <option value="<%= plan.plan_id %>"><%= plan.name %> - $<%= pln %> </option>
+            <% end %>
+          </select>
+        </label>
+        </div>
+        <div class="medium-12 column">
+          <h5>Billing Information</h5>
+        </div>
+        <div class="medium-6 column">
+          <input type="text" data-recurly="first_name" name="firstName" id="firstName" placeholder="First Name" class="required" style="background-color: #f1f1f1;">
+        </div>
+        <div class="medium-6 column">
+          <input type="text" name="lastName" placeholder="Last Name" class="form- control" data-recurly="last_name" style="background-color: #f1f1f1;">
+        </div>
+        <input type="hidden" name="user_id" value="<%= current_user.id %>">
+        <input type="hidden" name="broker_id" value="<%= @infoBroker.id %>">
+        <input type="hidden" name="recurlytoken" data-recurly="token">
+        <div class="medium-12 column">
+          <div data-recurly="number" id= "recurly-number"></div>
+        </div>
+        <div class="medium-12 column">
+          <div data-recurly="cvv" id="recurly-cvv"></div>
+        </div>
+        <div class="medium-6 column">
+          <div data-recurly="month" id="recurly-month"></div> 
+        </div>
+        <div class="medium-6 column">
+          <div data-recurly="year" id="recurly-year"></div>
+        </div>
+        <div class="medium-12 column">
+          <input type="text" id="coupon_code"  name="coupon_code" placeholder="Coupon (If any)" style="margin-bottom:0px;">
+          <label class="error" id="coupon_error" style="display:none;">Invalid coupon code.</label>
+        </div>
+        <div class="medium-12 column" style="margin-top:10px;">
+              <input type="submit" value="SUBMIT" class="tiny button">
+        </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://js.recurly.com/v4/recurly.js"></script>
+<script type="text/javascript">
+  
+  $('document').ready(function(){
+ $('#payment-form').on('submit', function (event) {
+  var form = this;
+    event.preventDefault();
+    recurly.token(form, function (err, token) {
+    if (err) {
+      // alert(JSON.stringify(err.fields));
+      errors = err.fields;
+    $.each(errors, function( index, value ) 
+      { 
+        if(value=="number")
+        {
+          alert("Please enter valid card number.")  
+        }
+        if(value=="month")
+        {
+          alert("Please enter valid expiry month.") 
+        }
+        if(value=="year")
+        {
+          alert("Please enter valid expiry year.")  
+        }
+      });
+      return false;
+      // handle error using err.code and err.fields
+    } else {
+      //alert(token.id);
+      coupon_code = $('input[name="coupon_code"]').val();
+      if(coupon_code != "")
+      {
+        data = "coupon_code="+coupon_code
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/home/check_coupon',
+                 success:function(data){
+                    if(data == "true")
+                    {
+                       $('input[name="recurly-token"]').val(token.id);
+                       $('#coupon_error').hide();
+                       form.submit();
+                    }
+                    else
+                    {
+                      $('input[name="recurly-token"]').val(token.id);
+                      $('#coupon_error').show();
+                    }
+                }
+            });
+      }
+      else
+      {
+        $('input[name="recurly-token"]').val(token.id);
+        form.submit();  
+      }
+      
+    }
+});
+});
+ })
+</script>
+
+  <script>
+  // recurly.readyState = 0;
+  // recurly.configure('ewr1-Si1772BTvzpk8Qer5H6Oys');
+   recurly.configure({
+      publicKey: 'ewr1-Si1772BTvzpk8Qer5H6Oys',
+       fields: {
+      number: '#recurly-number',
+      month: '#recurly-month',
+      year: '#recurly-year',
+      cvv: '#recurly-cvv'
+    },
+      style: {
+        
+        all: {
+          fontFamily: 'inherit',
+          fontSize: '1rem',
+          fontColor: 'inherit', 
+      border:'1px solid'
+    },
+        number: {
+          placeholder: 'Card Number'
+          
+        },
+        month: {
+          placeholder: 'MM'
+        },
+        year: {
+          placeholder: 'YY  '
+        },
+        cvv: {
+          placeholder: 'CVV'
+        }
+      }
+    });
+
+</script>
+

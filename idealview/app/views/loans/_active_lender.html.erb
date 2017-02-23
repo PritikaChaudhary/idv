@@ -1,0 +1,62 @@
+<script>
+	$('document').ready(function(){
+        /**
+         * Set timer countdown in seconds with callback
+         */
+         $('#dcountdown').timeTo({
+            timeTo: new Date(new Date('<%= @endt %>')),
+            displayDays: 2,
+            theme: "black",
+            displayCaptions: true
+          });
+    });
+</script>
+
+<style>
+	.dcountdown ul
+	{
+	    line-height:1 !important;
+	    font-size: 2rem;
+	    margin-bottom: 10px;
+	}
+
+	.dcountdown
+	{
+	    margin-bottom: 10px;
+	}
+	.timeTo ul li
+	{
+	    font-size: 30px !important;
+	}
+
+</style>
+<% if !@active.blank? %>
+	<table>
+		  <thead>
+		    <tr>
+		      <th width="200">Lender Name</th>
+		      <th width="230">Lender Email</th>
+		      <th width="300">Time Left</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+
+		  	<tr>
+		  		<td>
+		  			<% if !@active.lender.name.blank?
+		  				if defined? @active.lender.name %>
+		  					<%= @active.lender.name %>
+		  					<% end %>
+		  			<% else %>
+		  					&nbsp;
+		  			<% end %>
+
+		  		</td>
+		  		<td><%= @active.lender.email %></td>
+		  		<td>
+		  			<div id="dcountdown" class = "dcountdown" ></div>
+		  		</td>
+		  	</tr>
+		  </tbody>
+	</table>
+<% end %>

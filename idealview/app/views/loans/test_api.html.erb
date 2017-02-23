@@ -1,0 +1,147 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script type="text/javascript">
+  var autocomplete = {};
+    var autocompletesWraps = ['test', 'test2'];
+
+     
+  autocompletesWraps.forEach(function(this_form) {
+       window[this_form+'_form']  = { street_number: 'short_name', route: 'long_name', locality: 'long_name', administrative_area_level_1: 'long_name', country: 'long_name', postal_code: 'short_name' };
+        ++this.count;
+      }, this);
+
+    function initialize() {
+
+      $.each(autocompletesWraps, function(index, name) {
+      
+        if($('#'+name).length == 0) {
+          return;
+        }
+
+        autocomplete[name] = new google.maps.places.Autocomplete($('#'+name+' .autocomplete')[0], { types: ['geocode'] });
+          
+        google.maps.event.addListener(autocomplete[name], 'place_changed', function() {
+          
+          var place = autocomplete[name].getPlace();
+          var form = eval(name+'_form');
+          // var form = eval(name);
+
+          for (var component in form) {
+            $('#'+name+' .'+component).val('');
+            $('#'+name+' .'+component).attr('disabled', false);
+          }
+          
+          for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (typeof form[addressType] !== 'undefined') {
+              var val = place.address_components[i][form[addressType]];
+              $('#'+name+' .'+addressType).val(val);
+            }
+          }
+        });
+      });
+    }
+</script>
+<style type="text/css">
+    html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+     #locationField, #controls {
+        position: relative;
+        width: 480px;
+      }
+      #autocomplete {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 99%;
+      }
+      .label {
+        text-align: right;
+        font-weight: bold;
+        width: 100px;
+        color: #303030;
+      }
+      table {
+        border: 1px solid #000090;
+        background-color: #f0f0ff;
+        width: 480px;
+        padding-right: 2px;
+      }
+      table td {
+        font-size: 10pt;
+      }
+      .field {
+        width: 99%;
+      }
+      .slimField {
+        width: 80px;
+      }
+      .wideField {
+        width: 200px;
+      }
+      #locationField {
+        height: 20px;
+        margin-bottom: 2px;
+      }
+</style>
+<body onload="initialize()">
+  
+  <div id="test">
+    
+    <input class="autocomplete" placeholder="Enter your address" type="text" style="margin-top:100px;"></input>
+
+    <table>
+      <tr>
+        <td class="label">Street address</td>
+        <td class="slimField"><input class="field street_number" disabled="true"></input></td>
+        <td class="wideField" colspan="2"><input class="field route" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">City</td>
+        <td class="wideField" colspan="3"><input class="field locality" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">State</td>
+        <td class="slimField"><input class="field administrative_area_level_1" disabled="true"></input></td>
+        <td class="label">Zip code</td>
+        <td class="wideField"><input class="field postal_code" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">Country</td>
+        <td class="wideField" colspan="3"><input class="field country" disabled="true"></input></td>
+      </tr>
+    </table>
+</div>
+
+<br /><br />
+  
+<div id="test2">  
+  
+    <input class="autocomplete" placeholder="Enter your address" type="text"></input>
+    
+  <table>
+      <tr>
+        <td class="label">Street address</td>
+        <td class="slimField"><input class="field street_number" disabled="true"></input></td>
+        <td class="wideField" colspan="2"><input class="field route" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">City</td>
+        <td class="wideField" colspan="3"><input class="field locality" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">State</td>
+        <td class="slimField"><input class="field administrative_area_level_1" disabled="true"></input></td>
+        <td class="label">Zip code</td>
+        <td class="wideField"><input class="field postal_code" disabled="true"></input></td>
+      </tr>
+      <tr>
+        <td class="label">Country</td>
+        <td class="wideField" colspan="3"><input class="field country" disabled="true"></input></td>
+      </tr>
+    </table>
+</div>

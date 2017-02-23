@@ -1,0 +1,31 @@
+<div class="owl-carousel">
+  <% images.each do |image| %>
+    <%if !image.url.blank? %>
+      <div  class="item" id="<%=image._id%>" style="float:left;">
+        
+        <a class='th' href="<%=image.url %>">
+          <img style='height:100px;width:100px;' src="<%=image.url %>">
+        </a>
+        <BR>
+        <div class = "row">
+
+       <% # if policy(Loan).update? %>
+          <% url=url_for :controller=>'loans', :action=>'edit_delete_image',:id=>image['_id'] %>
+              <!-- <div  onclick="if(confirm('Are you sure? You want to delete this image')){
+              callAjax('<%=url%>','<%=image._id%>' );}"style='cursor: pointer; color: red; margin-left:61px; float: left;'>
+                <i class="fa fa-remove"></i>
+              </div> -->
+        <% # end %>
+        </div>
+        </div>
+    <% end %>
+  <% end %>
+</div>
+
+
+<div id="myModal4" class="reveal-modal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead" id="edit_pictures_popup">
+           
+           </div>
+ <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+</div>

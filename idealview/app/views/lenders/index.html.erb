@@ -1,12 +1,5 @@
 <style>
-.br-header {
-    float: left;
-    margin-left: 203px;
-    margin-top: 10px;
-    position: relative;
-    width: 89%;
-}
- form#search_form {position: absolute;right: 0;top: 0;}
+form#search_form {position: absolute;right: 0;top: 0;}
  .form_wrap{float: left; width: 100%; position: relative;}
  .form_wrap > input#search_btn {
     height: 34px;
@@ -20,32 +13,36 @@
     background-position: center;
     cursor: pointer;
 }
-.large-3
-{
-    width: 23%;
-    word-wrap: break-word;
-}
-.large-2
-{
-    width:6%;
-}
-.loan_info
-{
-    width:50%;
-}
-.info
-{
-    float: left;
-     
-}
+
 label
 {
     font-weight: bold;
 }
 .half
 {
-    width:40%;
+    width:39% !important;
 }
+
+/*************** lENDERS ********************/
+    
+
+    .lender_page_search
+    {
+        width:250px;
+    }
+/**************** End Lenders ***************/
+
+/************** Lender Responsive ***************/
+    @media all and (max-width: 500px){
+        .lender_page_search
+        {
+            width:30% !important;
+        }
+    }
+
+
+    
+/************** End Lender Responsive ***********/
 </style>
 <script type="text/javascript">
 
@@ -100,6 +97,16 @@ $('document').ready(function(){
       return false;
      });
 
+     $('.search_change').change(function(){
+        // alert("hello");
+        this_val = $(this).val();
+        if(this_val!="")
+        {
+            $('#search_custom_input').val(1);    
+        }
+        custom_searchForm();
+     });
+
      $('.click_hide').click(function(){
             var c_id=$(this).attr('id');
             var lendr_id=c_id.replace("click_hide_","");
@@ -144,6 +151,8 @@ $('document').ready(function(){
 
 });
 
+
+
 function delete_lenders()
 {
     var allVals=[];
@@ -160,7 +169,22 @@ function delete_lenders()
             type: 'POST',
             url: '/lenders/delete_lenders',
              success:function(data){
-                $('#lender_records').html(data);
+                var srch_txt = $('input[name="search"]').val();
+                 var csearch = $('#search_custom_input').val();
+                if(srch_txt!="")
+                {
+                    search_fun();
+                } 
+                else if(csearch==1)
+                {
+                    custom_searchForm();
+                } 
+                else
+                {
+                   $('#lender_records').html(data);    
+                }
+               
+                
             }
             
         });
@@ -189,6 +213,7 @@ function custom_searchForm()
             url: '/lenders/custom_search',
             success:function(response){
                 $('#lender_records').html(response);
+                $('input[name="search"]').val('');
             }
         });
 }
@@ -237,93 +262,101 @@ function order_lenderhide(id)
 }
 
 </script>
-<div class="container"  style="padding-left:48px; padding-right:60px;">
+<div class="container">
 <div class="row" >
     
         <h3 class='text-center'>Lenders</h3>
         
 </div>
-<div class="row" >
-    <div class="br-header">
-        <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_lenders()}">
-        
-        <div class="broker_search">
-            <form name="search_form" id="search_form" style="width:250px;">
-                <div class="form_wrap">
-                    <input type="text" name="search" placeholder="Search">
-                    <input type="button" id="search_btn" onclick="search_fun();">
-                </div>
-            </form>
-        </div>
-    
-    </div>
-</div>
-<div class="search_div" style="float:left; width:25%; text-align:center; ">
+
+<div class="search_div medium-3 small-12 column" >
 <form class="custom_search" name="custom_search" id="custom_search">
         <div class="input_container">
         <label>Loan Range</label>
-        <select name="loanMinDropDown" class="half">
+        <select name="loanMinDropDown" class="half search_change">
             <option value="">From</option>
-            <option value="0">0</option>
-            <option value="1000">1000</option>
-            <option value="10000">10000</option>
-            <option value="50000">50000</option>
-            <option value="100000">100000</option>
-            <option value="500000">500000</option>
-            <option value="1000000">1000000</option>
-            <option value="2000000">2000000</option>
-            <option value="5000000">5000000</option>
+            <option value="0">$0</option>
+            <option value="10000">$10,000</option>
+            <option value="50000">$50,000</option>
+            <option value="100000">$100,000</option>
+            <option value="500000">$500,000</option>
+            <option value="1000000">$1,000,000</option>
+            <option value="2000000">$2,000,000</option>
+            <option value="5000000">$5,000,000</option>
         </select>
-        <select name="loanMaxDropDown" class="half">
+        <select name="loanMaxDropDown" class="half search_change">
             <option value="">To</option>
-            <option value="50000">50000</option>
-            <option value="100000">100000</option>
-            <option value="250000">250000</option>
-            <option value="500000">500000</option>
-            <option value="1000000">1000000</option>
-            <option value="2000000">2000000</option>
-            <option value="5000000">5000000</option>
             <option value="No Max">No Max</option>
+            <option value="50000">$50,000</option>
+            <option value="100000">$100,000</option>
+            <option value="500000">$500,000</option>
+            <option value="1000000">$1,000,000</option>
+            <option value="2000000">$2,000,000</option>
+            <option value="5000000">$5,000,000</option>
         </select>
         </div>
 
         <div class="input_container">
         <label>Loan Value</label>
-        <select name="loanToValueMin" class="half">
+        <select name="loanToValueMin" class="half search_change">
             <option value="">From</option>
-            <% 1.upto(100) do |i| %>
-                <option value="<%= i %>"><%= i %></option>  
-            <% end %>
             <option value="None">None</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+            <option value="35">35</option>
+            <option value="40">40</option>
+            <option value="45">45</option>
+            <option value="50">50</option>
+            <option value="55">55</option>
+            <option value="60">60</option>
+            <option value="65">65</option>
+            <option value="70">70</option>
+            <option value="75">75</option>
+            <option value="80">80</option>
+            <option value="85">85</option>
+            <option value="90">90</option>
+            <option value="95">95</option>
+            <option value="100">100</option>
          </select>
-        <select name="loanToValueMax" class="half">
+
+
+
+        <select name="loanToValueMax" class="half search_change">
             <option value="">To</option>
-            <% 1.upto(100) do |i| %>
-                <option value="<%= i %>"><%= i %></option>  
-            <% end %>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="60">60</option>
+            <option value="70">70</option>
+            <option value="80">80</option>
+            <option value="90">90</option>
+            <option value="100">100</option>
             <option value="None">None</option>
          </select> 
         </div>
 
-        <div class="input_container">
+      <!--   <div class="input_container">
         <label>Points</label>
-        <select name="pointsMin" class="half">
+        <select name="pointsMin" class="half search_change">
             <option value="">From</option>
             <% 1.upto(20) do |i| %>
                 <option value="<%= i %>"><%= i %></option>  
             <% end %>
           </select>
-         <select name="pointsMax" class="half">
+         <select name="pointsMax" class="half search_change">
             <option value="">To</option>
             <% 1.upto(20) do |i| %>
                 <option value="<%= i %>"><%= i %></option>  
             <% end %>
           </select> 
-        </div>
+        </div> -->
 
         <div class="input_container">
         <label>Lending Category</label>
-        <select name="lendingCategory" style="width:80%" id="lendingCategory">
+        <select name="lendingCategory" style="width:80%" id="lendingCategory" class="search_change">
             <option value="">All</option>
             <option value="Private Real Estate Loan">Private Real Estate Loan</option>
             <option value="Business Financing">Business Financing</option>
@@ -334,7 +367,7 @@ function order_lenderhide(id)
 
         <div class="input_container">
         <label>Lending Types</label>
-        <select name="lendingTypes" style="width:80%" id="lendingTypes">
+        <select name="lendingTypes" style="width:80%" id="lendingTypes" class="search_change">
             <option value="">All</option>
             <option value="Single Family Residence">Single Family Residence</option>
             <option value="Multifamily">Multifamily</option>
@@ -348,7 +381,7 @@ function order_lenderhide(id)
             <option value="Industrial">Industrial</option>
             <option value="Other">Other</option>
         </select> 
-        <select name="businessFinancingTypes" style="display:none;" style="width:80%" id="businessFinancingTypes">
+        <select name="businessFinancingTypes" style="display:none; width:80%"  id="businessFinancingTypes" class="search_change">
             <option value="">All</option>
             <option value="Equipment/Inventory">Equipment/Inventory</option>
             <option value="Working Capital">Working Capital</option>
@@ -361,7 +394,7 @@ function order_lenderhide(id)
             <option value="SBA Financing">SBA Financing</option>
             <option value="Other">Other</option>
         </select>
-        <select name="equityandCrowdFunding" style="display:none;" style="width:80%" id="equityandCrowdFunding">
+        <select name="equityandCrowdFunding" style="display:none; width:80%" id="equityandCrowdFunding" class="search_change">
             <option value="">All</option>
             <option value="Project Financing">Project Financing</option>
             <option value="Acquisition and Development">Acquisition and Development</option>
@@ -369,7 +402,7 @@ function order_lenderhide(id)
             <option value="Business Partnership">Business Partnership</option>
             <option value="Other">Other</option>
         </select>  
-        <select name="mortageTypes" style="display:none;" style="width:80%" id="mortageTypes">
+        <select name="mortageTypes" style="display:none; width:80%"  id="mortageTypes" class="search_change">
             <option value="">All</option>
             <option value="Owner Occupied">Owner Occupied</option>
             <option value="Second Home">Second Home</option>
@@ -391,8 +424,8 @@ function order_lenderhide(id)
 
         <div class="input_container">
         <label>Interest Rate</label>
-        <select name="interestRateMin" class="half">
-            <option value="0">From</option>
+        <select name="interestRateMin" class="half search_change">
+            <option value="">From</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -415,8 +448,8 @@ function order_lenderhide(id)
             <option value="20">20</option>
         </select>
 
-        <select name="interestRateMax" class="half">
-            <option value="0">To</option>
+        <select name="interestRateMax" class="half search_change">
+            <option value="">To</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -441,7 +474,7 @@ function order_lenderhide(id)
         </div>
         <div class="input_container">
         <label>States</label>
-        <select size="10" multiple="" id="lendingStates0" name="lendingStates0[]" style="width:80%; height:178px;">
+        <select size="10" multiple="" id="lendingStates0" name="lendingStates0[]" style="width:80%; height:178px;" class="search_change">
             <option value="">Select States</option>
             <option value="Nationwide">Nationwide</option>
             <option value="Alabama">Alabama</option>
@@ -497,16 +530,17 @@ function order_lenderhide(id)
 
         <div class="input_container">
           <label>Term Length Type</label>
-           <select name="termLengthType" style="width:80%">
+           <select name="termLengthType" style="width:80%" class="search_change">
+                <option value="">Select</option>
                 <option value="month(s)">month(s)</option>
-                <option selected="selected" value="year(s)">year(s)</option>
+                <option value="year(s)">year(s)</option>
             </select>
         </div>
 
         <div class="input_container">
           <label>Term Length</label>
-           <select name="termLengthMin" id="termLengthMin" class="half">
-            <option value="0">From</option>
+           <select name="termLengthMin" id="termLengthMin" class="half search_change">
+            <option value="">From</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -545,8 +579,8 @@ function order_lenderhide(id)
             <option value="36">36</option>
             </select>
 
-            <select name="termLengthMax" class="half">
-            <option value="0">To</option>
+            <select name="termLengthMax" class="half search_change">
+            <option value="">To</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -586,79 +620,120 @@ function order_lenderhide(id)
             </select>
            </div>
 
-        <div class="input_container">
-        <input type="button" value="Search" onclick="custom_searchForm();">
-        </div>
+        
 
   </form>
 
 
 </div>
-<div class='row' id="lender_records" style="border-top: 7px solid rgb(242, 242, 242); float:left; width:75%">
-    <%= render partial: 'layouts/messages' %>
-    <% color_class = ''%>
-    <% @lenders.each do |lender| 
-        unless lender['delete']==1 
-                #abort("#{lender.inspect}")
-            %>
-        <div class='row <%=color_class%> bottom-space text-left'>
-            
-            <div class='large-2 columns'>
-            <input type="checkbox" id="check_<%= lender.id %>" name="select_broker" value="<%= lender.id %>" style="float:left;margin-top:7px;">
-            <div id="click_<%= lender.id %>" style="float:left;">
-           <% @url=url_for :controller=>'lenders', :action=>'fetch_detail', :id=>lender.id %>
-                <a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= lender.id %>', 'lender_loans')">[+]</a>
-            </div>
-            <div id="click_hide_<%= lender.id %>" style="display:none; float:left;" class="click_hide" onclick="order_lenderhide('<%= lender.id %>')">
-                <a href="javascript:void(0);" class="hide_lender_<%= lender.id %>">[-]</a>
-            </div>
-            </div>
-            
-            <div class='large-3 columns'>
+<div class='row medium-9 small-12 column'>
+
+<div class="small-12 column" >
+    <div >
+        <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_lenders()}">
+        <% 
+            @baseurl = request.base_url
+            if @baseurl.include? "idealview"
+                @burl = "https://dash.idealview.us/"
+            elsif @baseurl.include? "idvstage"
+                @burl = "https://dash.idvstage.us/"
+            else
+                @burl = "http://localhost:3000/"
+            end
+        %>
+        <a href="<%= @burl%>lenders/download_csv_lender" class="tiny button" style="margin-left:10px;"> Download CSV </a>
+        <div class="broker_search">
+            <form name="search_form" id="search_form" class="lender_page_search">
+                <div class="form_wrap">
+                    <input type="text" name="search" onkeyup="search_fun();" placeholder="Search">
+                    <input type="button" id="search_btn">
+                </div>
+            </form>
+        </div>
+    
+    </div>
+</div>
+<div class="clender_listing small-12 column"  id="lender_records">
+    <input type="hidden" id="search_custom_input" value="0">
+        <%= render partial: 'layouts/messages' %>
+        <table width="100%" class="list_loans">
+          <thead>
+            <tr>
+                <th></th>
+                <th>Company</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Email</th>
+            </tr>
+          </thead>
+        
+            <% color_class = ''%>
+            <% @lenders.each do |lender| 
+                unless lender['delete']==1 
+                        #abort("#{lender.inspect}")
+                    %>
+                <!-- <div class='row <%=color_class%> bottom-space text-left'> -->
+                <tr>    
+                    <td>
+                        <input type="checkbox" id="check_<%= lender.id %>" name="select_broker" value="<%= lender.id %>" style="float:left;margin-top:7px;">
+                        <div id="click_<%= lender.id %>" style="float:left;">
+                       <% @url=url_for :controller=>'lenders', :action=>'fetch_detail', :id=>lender.id %>
+                            <a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= lender.id %>', 'lender_loans')">[+]</a>
+                        </div>
+                        <div id="click_hide_<%= lender.id %>" style="display:none; float:left;" class="click_hide" onclick="order_lenderhide('<%= lender.id %>')">
+                            <a href="javascript:void(0);" class="hide_lender_<%= lender.id %>">[-]</a>
+                        </div>
+                    </td>
+                    
+                    <td>
+                        
+                            <% unless lender.company.blank? %>
+                                <%= lender.company %>
+                            <% else %>
+                                 N/A
+                            <% end %>
+
+                            <div id="loan_lenders<%= lender.id %>" class="<%=color_class%>" style="display:none; margin-top:10px;">
+                            </div>
+                         
+                    </td>
+
+                    <td>
+                        <% unless lender.phone1.blank? %>
+                                <%= lender.phone1 %>
+                            <% else %>
+                                 N/A
+                            <% end %>
+                    </td>
+                    
+                    <td>
+                       
+                         
+                                <% unless lender.city.blank? %>
+                                    <%= lender.city %>, <%= lender.state %>
+                                <% else %>
+                                    N/A
+                                <% end %>
+                          
+
+                      
+                    </td>
+                     
+
+                    <td>
+                        <%= lender.email %>
+                    </td>
+                    
                 
-                    <% unless lender.company.blank? %>
-                        <%= lender.company %>
-                    <% else %>
-                         N/A
-                    <% end %>
                  
-            </div>
 
-            <div class='large-3 columns'>
-                <% unless lender.phone1.blank? %>
-                        <%= lender.phone1 %>
-                    <% else %>
-                         N/A
-                    <% end %>
-            </div>
-            
-            <div class='large-3 columns'>
-               
-                 
-                        <% unless lender.city.blank? %>
-                            <%= lender.city %>, <%= lender.state %>
-                        <% else %>
-                            N/A
-                        <% end %>
-                  
-
-              
-            </div>
-             
-
-            <div class='large-3 columns'>
-                <%= lender.email %>
-            </div>
-            <div id="loan_lenders<%= lender.id %>" class="<%=color_class%>" style="float:left; min-height:10px; margin-left:73px; display:none; width:100%">
-        </div>
-        </div>
-         
-
-        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-
-    <%
-    end
-end %>
+                <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+                </tr>
+            <%
+            end 
+             end %>
+        </table>
+</div>
 
 </div>
 </div>

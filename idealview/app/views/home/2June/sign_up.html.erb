@@ -1,0 +1,330 @@
+<!-- <link rel="stylesheet" href="http://jqueryvalidation.org/files/demo/site-demos.css">
+<script src="http://jqueryvalidation.org/files/dist/jquery.validate.min.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script> -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script>
+	$('document').ready(function(){
+		$('#change').click(function(){
+			$('.plan_change').slideToggle();
+		});
+
+		$('#change_plan').change(function(){
+			val = $(this).val();
+			window.location = "http://<%= @hostname %>/home/sign_up/"+val;
+		});
+	});
+</script>
+<style type="text/css">
+	#change
+	{
+		border: 1px solid #d4d4d4;
+    	padding: 5px;
+	}
+	.to_left {
+     font-size: 17px;
+	}
+	input[type="text"], input[type="password"], textarea
+	{
+		background-color: #f1f1f1 !important;
+	}
+	.outerdiv
+	{
+		background-color: #ffffff;
+	}
+	body
+	{
+		background-color: #f1f1f1;
+	}
+	header
+	{
+		border-top:none;
+	}
+	.right {
+    	margin-right: 138px !important;
+	}
+</style>
+<% if @plan!="free" %>
+	<script>
+
+
+
+	$('document').ready(function(){
+	
+	// just for the demos, avoids form submit
+	jQuery.validator.setDefaults({
+	debug: true,
+	success: "valid"
+	});
+	$( "#signupForm" ).validate({
+		rules: {
+		firstName: {
+			required: true
+			},
+		lastName: {
+			required: true
+			},
+		company: {
+			required: true
+			},
+		jobTitle: {
+			required: true
+			},
+		email: {
+			required: true,
+			email: true,
+			 remote: {
+	                        url: "/home/checkemail",
+	                        type: "post"
+	                     }
+			},
+		username: {
+			required: true,
+			remote: {
+	                        url: "/home/checkuname",
+	                        type: "post"
+	                     }
+			},		
+		number: {
+			required: true
+			},
+		cvc: {
+		required: true
+		},
+		},
+		 messages: {
+	                email: {
+	                    remote: "Email already in use!"
+	                },
+
+	                username: {
+	                    remote: "Username already in use!"
+	                }
+	            }
+	});
+	});
+	</script>
+<% else %>
+	<script>
+	$('document').ready(function(){
+	
+	$( "#signupForm" ).validate({
+		rules: {
+		firstName: {
+			required: true
+			},
+		lastName: {
+			required: true
+			},
+		company: {
+			required: true
+			},
+		jobTitle: {
+			required: true
+			},
+		email: {
+			required: true,
+			email: true,
+			 remote: {
+	                        url: "/home/checkemail",
+	                        type: "post"
+	                     }
+			},
+		username: {
+			required: true,
+			remote: {
+	                        url: "/home/checkuname",
+	                        type: "post"
+	                     }
+			},		
+	},
+		 messages: {
+	                email: {
+	                    remote: "Email already in use!"
+	                },
+	                 username: {
+	                    remote: "Username already in use!"
+	                }
+	            }
+
+	
+	});
+	});
+	</script>
+<% end %>
+<% if @plan!="free" %>
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script type="text/javascript">
+	  // This identifies your website in the createToken call below
+	  Stripe.setPublishableKey('pk_test_HMXVQvXP0VhCtre2zqVRWtvA');
+	  // ...
+	  jQuery(function($) {
+	  $('#signupForm').submit(function(event) {
+	  	var $form = $(this);
+
+	    // Disable the submit button to prevent repeated clicks
+	    $form.find('button').prop('disabled', true);
+
+	    Stripe.card.createToken($form, stripeResponseHandler);
+
+	    // Prevent the form from submitting with the default action
+	    return false;
+	  });
+	});
+
+	function stripeResponseHandler(status, response) {
+	  var $form = $('#signupForm');
+
+	  if (response.error) {
+	    // Show the errors on the form
+	   // $form.find('.payment-errors').text(response.error.message);
+	    alert(response.error.message);
+	    $form.find('button').prop('disabled', false);
+	  } else {
+	    // response contains id and card, which contains additional card details
+	    var token = response.id;
+	    // Insert the token into the form so it gets submitted to the server
+	    $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+	    // and submit
+	    $form.get(0).submit();
+	  }
+	};
+	</script>
+<% end %>
+<div class="row outerdiv" >
+	<div class="left-col medium-4 column">
+		<div >
+			<div class="medium-12 column left_img">
+				<img src="/assets/sign_up.png">
+			</div>
+			<div class="medium-12 column summary">
+				<div class="row">
+					<div class="medium-7 column to_left">Order Summary</div>
+					<div class="medium-5 column plan_def"><a href="javascript:void(0);" id="change">UPGRADE</a></div>
+				</div>
+				<div class="plan_change" >
+					<select name="plan" id="change_plan">
+							<option <% if @plan == "free"%> selected <% end %> value="free">FREE</option>
+							<% @plans.each do |plan| %>
+								<option <% if @plan == "#{plan.plan_id}"%> selected <% end %> value="<%= plan.plan_id %>"><%= plan.name %></option>
+							<% end %>
+					</select>
+
+				</div>
+			</div>
+			<% if @plan!="free" %>
+				<div class="medium-12 column summary">
+					<div class="row">
+						<div class="medium-9 column">
+							<label class="to_left"><i class="fa fa-check fa-3" aria-hidden="true" style="color:#008cba"></i><%= @pInfo.name %></label><br>
+							<% amnt = @pInfo.amount.to_i/100 %>
+							<div class="plan_def">
+								Month to month plan @ $<%= amnt %><br>
+								Auto renewing
+							</div>
+						</div>
+						<div class="medium-3 column amount_plan">
+							$<%= amnt %>
+						</div>
+					</div>
+				</div>
+				<div class="medium-12 column total summary">
+				  <div class="row">
+					<label class="medium-8 column to_left">Total</label>
+					<label class="medium-4 column amount_plan">$<%= amnt %></label>
+				  </div>
+				</div>
+			<% else %>
+				<div class="medium-12 column summary">
+					<label class="to_left"><i class="fa fa-check fa-3" aria-hidden="true" style="color:#008cba"></i> Free Plan</label><br>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	
+		
+	
+	<div class="right-col medium-8 column">
+		<div class="sign_up_form">
+		<div class="notice"><%= flash[:notice] %></div>
+			<div class="row">
+			
+			<form method="post" id="signupForm" action="https://<%= @hostname %>/home/create_broker">
+				<h3 class="heading_signup"> Personal Information </h3>
+					<input type="hidden" name="plan" value="<%= @plan %>">
+					<div class="medium-6 column">
+						<input type="text" name="firstName" id="firstName" placeholder="First Name" class="required" >
+					</div>
+					<div class="medium-6 column"><input type="text" name="lastName" placeholder="Last Name" class="form-control" ></div>
+					<div class="medium-12 column">
+						<input type="text" name="company" placeholder="Company" >
+					</div>
+					<div class="medium-12 column">
+						<input type="text" name="jobTitle" placeholder="Job Title" >
+					</div>	
+					
+					<div class="medium-12 column" style="margin-bottom:20px;">
+						<textarea name="streetAddress1" placeholder="Address"></textarea>
+					</div>
+					<div class="medium-4 column">
+						<input type="text" name="city" id="city" placeholder="City">
+					</div>
+					<div class="medium-4 column">
+						<input type="text" name="state" id="state" placeholder="State">
+					</div>
+					<div class="medium-4 column">
+						<input type="text" name="postalCode" id="postalCode" placeholder="Postal Code">
+					</div>
+
+				<% if @plan!="free" %>	
+					<h3 class="heading_signup">Billing Information</h3>
+					<div class="medium-12 column">
+							<input type="text" id="number" placeholder="Credit Card Number" size="20" data-stripe="number" name="number" >
+						</div>
+						<div class="medium-12 column">
+							<input type="text" id="cvc" placeholder="CVC" size="4" data-stripe="cvc" name="cvc" >
+						</div>
+						<div class="medium-6 column">
+							<select name=""  data-stripe="exp-month">
+								<option value="01"> 01 - Jan </option>
+								<option value="02"> 02 - Feb </option>
+								<option value="03"> 03 - Mar </option>
+								<option value="04"> 04 - Apr </option>
+								<option value="05"> 05 - May </option>
+								<option value="06"> 06 - Jun </option>
+								<option value="07"> 07 - Jul </option>
+								<option value="08"> 08 - Aug </option>
+								<option value="09"> 09 - Sep </option>
+								<option value="10"> 10 - Oct </option>
+								<option value="11"> 11 - Nov </option>
+								<option value="12"> 12 - Dec </option>
+							</select>
+						</div>
+						<div class="medium-6 column">
+							<select name="" data-stripe="exp-year">
+								<% 
+
+								for i in 2015..2030
+							    %>
+							     <option value="<%= i %>"><%= i %></option>
+							    <% end %>
+							</select>
+						</div>
+					<%  end %>
+					<h3 class="heading_signup">Account Information</h3>
+					<div class="medium-12 column">
+						<input type="text" id="username"  name="username" placeholder="Username" >
+					</div>
+					<div class="medium-12 column">
+						<input type="text" id="email"  name="email" placeholder="Email" >
+					</div>
+					<div class="medium-12 column">
+						<input type="password" id="password" name="password" placeholder="Password" >
+					</div>
+					<div class="medium-12 column">
+					<input type="submit" value="SUBMIT" class="tiny button">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

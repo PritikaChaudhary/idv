@@ -1,0 +1,227 @@
+<%temp_name = 'purchas_refi_amount'%>
+  <div id='<%=temp_name%>' class='bottom-space'>
+    <%= render partial: 'side_mini_forms', locals:
+      {
+        edit: false,
+        contact_id:@loan['_id'],
+        format_type:'fd_money',
+        field_type: 'text_field_tag', 
+        field_label: 'PurchasOr Refi Amount', 
+        field_name:temp_name,
+        field_value:@loan.info[temp_name],
+        field_options:''
+      } %>
+  </div>
+
+  <% temp_name = 'improvement_construction'%>
+    <div id='<%=temp_name%>' class='bottom-space'>
+      <%= render partial: 'side_mini_forms', locals:
+        {
+          edit: false,
+          contact_id:@loan['_id'],
+          format_type:'fd_money',
+          field_type: 'text_field_tag', 
+          field_label: 'Improvement/Construction', 
+          field_name:temp_name,
+          field_value:@loan.info[temp_name],
+          field_options:''
+        } %>
+    </div>
+
+              <%temp_name = 'additional_uses'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Additional Uses', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+               <%temp_name = 'interest_reserve'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Interest Reserve', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'other_reserves'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Other Reserves', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+
+              <%temp_name = 'other_loan_costs'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Other Loan Costs', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'lender_fees'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Lender Fees (Points)', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'broker_fees'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Broker Fees (Points)', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'est_title_escrow'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Est. Title & Escrow', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'legal_fees'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Legal Fees (transactional)', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'gross_pre_down_payment'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Gross (Pre Down-Payment)', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'net_proceeds'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Net Proceeds (After Down)', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'interest_rate'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_text',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Interest Rate', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'term_in_months'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_text',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Term in Months', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              <%temp_name = 'monthly_payment_amnt'%>
+              <div id='<%=temp_name%>' class='bottom-space'>
+                <%= render partial: 'side_mini_forms', locals:
+                  {
+                    edit: false,
+                    contact_id:@loan['_id'],
+                    format_type:'fd_money',
+                    field_type: 'text_field_tag', 
+                    field_label: 'Monthly Payment Amt.', 
+                    field_name:temp_name,
+                    field_value:@loan.info[temp_name],
+                    field_options:''
+                  } %>
+              </div>
+
+              

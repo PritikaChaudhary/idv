@@ -1,0 +1,35 @@
+<form method="post" class="relationEdit">
+	<select name="related_funds[]" multiple="multiple" style="height:100px;">
+		<% @funds.each do |fund|%>
+			<option value="<%= fund.id %>" <% unless @relat_arr.blank? %> <% if @relat_arr.include? "#{fund.id}" %> selected <% end %>  <% end %>> Amount - <%= fd_money(fund.amount.to_i) %> Beneficiary - <%= fund.beneficiary %> </option>
+		<% end %>
+	</select>
+	<input type="hidden" name="collateral_id" value="<%= @collateral%>">
+	<input type="button" value="Save" class="save_relation" class="tiny_button">
+	<input type="button" value="Cancel" class="cancel_relation" class="alert tiny button">
+</form>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.save_relation').click(function(){
+			mainId = $(this).parents('.main_collateral').attr('id');
+			var data=$('#'+mainId+' .relationEdit').serialize();
+			$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/add_funds_relation',
+		            success:function(response){
+		            	$('#'+mainId+' .edit_relation').hide();
+		            	$('#'+mainId+' .related_collats').html(response);
+		            	$('#'+mainId+' .related_collats').show();
+		           }
+		        });
+		});
+
+		$('.cancel_relation').click(function(){
+			mainId = $(this).parents('.main_collateral').attr('id');
+
+			$('#'+mainId+' .edit_relation').hide();
+		    $('#'+mainId+' .related_collats').show();
+		});
+	});
+</script>

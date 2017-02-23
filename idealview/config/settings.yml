@@ -1,0 +1,5 @@
+default: &default
+  cloud_storage:
+    bucket: 'ideal_bucket'
+    access_key_id: 'GOOGBBBZNVPE5AVSSDKJ'
+    secret_access_key: 'yR5ofXTe0FH9NxdYE/eA4mhrW5Ai3ZqlCik5YJJA'

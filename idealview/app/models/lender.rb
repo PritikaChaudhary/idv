@@ -36,7 +36,7 @@ class Lender
   key :numberOfClosedDeals, String
   key :fDRanking, String
   key :loanMinDropDown, Integer
-  key :loanMaxDropDown, String
+  key :loanMaxDropDown, Integer
   key :pointsMin, Integer
   key :pointsMax, Integer
   key :interestRateMin, Integer
@@ -48,8 +48,8 @@ class Lender
   key :timeInBusiness, Integer
   key :lendingStates0, String
   key :otherLendingPreferences, String
-  key :loanToValueMin, String
-  key :loanToValueMax, String
+  key :loanToValueMin, Integer
+  key :loanToValueMax, Integer
   key :lendingCountries, String
   key :lendingCategory, String
   key :lendingTypes, String
@@ -57,6 +57,12 @@ class Lender
   key :equityandCrowdFunding, String
   key :mortageTypes, String
   key :broker, Integer
+  key :acept_agreement, Integer
+  key :agreement_id, String
+  key :signature, String
+  key :agreement_date, String
+  key :agreement_date_time, String
+  key :ip_address, String
   key :password, String
   key :delete, Integer
 

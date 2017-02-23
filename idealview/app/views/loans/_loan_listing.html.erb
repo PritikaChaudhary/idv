@@ -1,4 +1,12 @@
-<% @pdfs.each do |pdf| %>
+<% @pdfs.each do |pdf| 
+		if pdf.loan_name == nil
+			pdf.loan_name = ""
+		end
+
+		if pdf.location == nil
+			pdf.location = ""
+		end
+	%>
 					<li id="<%= pdf.id %>">
 
 						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
@@ -10,6 +18,10 @@
 							<br><br>
 							<b>Summary : </b><%= pdf.summary %>
 							<br>
+							<% if !pdf.loan_id.blank? %>
+								<a href="<%= request.base_url %>/loans/detail_loan/<%= pdf.loan_id %>/info" class="loan_detail"  style="display:none;"> Click here to view this loan  </a>
+								<a href="<%= request.base_url %>/loans/detail_loan/<%= pdf.loan_id %>/required" class="detail_login"  style="display:none;"> Click here to view this loan </a>
+							<% end %>
 						</div>
 						
 						<div class="not_print" style="height:40px;border:1px solid red; display:none; ">
@@ -22,7 +34,7 @@
 								<br>
 								<b>Location : </b><input type="text" value="<%= pdf.location%>" name="location">
 								<br>
-								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>">
+								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>" name="amount">
 								<br>
 								<b>Summary : </b><textarea name="summary"><%= pdf.summary %></textarea>
 								<br>

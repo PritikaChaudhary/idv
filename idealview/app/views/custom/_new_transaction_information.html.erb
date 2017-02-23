@@ -1,0 +1,148 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Transaction Information</h3></label>
+      
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12" id="transaction_information_transaction_type" <% if @transaction_information_tab.custom_fields.include? "transaction_type"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <label><strong>Transaction Type:</strong></label>
+          <p>
+            <select name="transaction_type" id="transaction_type" class="loan_info_fields">
+                <option value=""> Select Transaction Type </option>
+                <option value="Purchase">Purchase</option>
+                <option value="Refinance">Refinance</option>
+            </select>
+          </p>
+         
+        </div>
+      </div>
+      <div class="columns medium-6 border-right purchase"  id="transaction_information_contract_closing_date" <% if @transaction_information_tab.custom_fields.include? "contract_closing_date"%> style="display:none;" <% end %>>
+        
+        <div class="trans-info-item">
+            <label><strong>Contract Closing Date:</strong></label>
+            <p><input id="contract_closing_date" name="contract_closing_date" type="text"  class="loan_info_fields"></p>
+           
+        </div>
+        
+      </div>
+
+      <div class="columns medium-6 purchase" id="transaction_information_purchase_price" <% if @transaction_information_tab.custom_fields.include? "purchase_price"%> style="display:none;" <% end %>>
+        
+        <div class="trans-info-item">
+            <label><strong>Purchase Price:</strong></label>
+            <p><input id="purchase_price" name="purchase_price" rows="1"  type="text" class="loan_info_fields"></p>
+           
+        </div>
+       
+      </div>
+
+      <div class="columns medium-6 border-right purchase"  id="transaction_information_rehab_amount" <% if @transaction_information_tab.custom_fields.include? "rehab_amount"%> style="display:none;" <% end %> >
+        
+        <div class="trans-info-item">
+            <label><strong>Rehab Amount:</strong></label>
+            <p><input id="rehab_amount" name="rehab_amount" rows="1"  type="text" class="loan_info_fields"></p>
+           
+        </div>
+      </div>
+
+      <div class="columns medium-6 purchase" id="transaction_information_purchase_cash_contribute" <% if @transaction_information_tab.custom_fields.include? "purchase_cash_contribute"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+            <label><strong>Cash To Contribute:</strong></label>
+            <p><input id="purchase_cash_contribute" name="purchase_cash_contribute" rows="1" type="text" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right refinance"  style="display:none;">
+        <div class="trans-info-item">
+            <strong>Maturity Date:</strong>
+            <p><input id="maturity_date" type="text" rows="1" name="maturity_date" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+      <div class="columns medium-6 refinance" style="display:none;" >
+        <div class="trans-info-item">
+            <strong>Refinance Cash Contribute:</strong>
+            <p><input id="refinance_cash_contribute" name="refinance_cash_contribute" rows="1"  type="text" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+      
+      <div class="columns medium-6 ask_broker" id="transaction_information_isBroker" <% if @transaction_information_tab.custom_fields.include? "isBroker"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong> Submitted By Broker:</strong>
+          <p>
+            <input type="radio" name="isBroker" value="Yes" class="loan_info_fields"  ><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="isBroker" value="No" ><label> No </label>
+          </p>
+        
+        </div>
+      </div>
+
+      <div class="columns medium-6 yes_broker"  style="display:none;">
+        <div class="trans-info-item">
+          <strong> Who is the broker?:</strong>
+          <p>
+            <input id="who_broker" type="text" fsUBMITTE rows="1" name="who_broker" class="loan_info_fields">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-12" id="transaction_information_free_clear" <% if @transaction_information_tab.custom_fields.include? "free_clear"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong> Free and Clear:</strong>
+          <p>
+            <input type="radio" name="free_clear" value="Yes" class="loan_info_fields"><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="free_clear" value="No"><label> No </label>
+          </p>
+          
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear"  id="transaction_information_original_purchase_price"  <% if @transaction_information_tab.custom_fields.include? "original_purchase_price"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+          <strong>Original Purchase Price:</strong>
+          <p>
+            <input id="original_purchase_price" type="text"  class="loan_info_fields" name="original_purchase_price">
+          </p>
+        
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear"   id="transaction_information_original_purchase_date"   <% if @transaction_information_tab.custom_fields.include? "original_purchase_date"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+          <strong>Original Purchase Date:</strong>
+          <p>
+            <input id="original_purchase_date" type="text"  class="loan_info_fields" name="original_purchase_date" maxlength="20">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear"   id="transaction_information_vested_by"  <% if @transaction_information_tab.custom_fields.include? "vested_by"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+          <strong>Vested by:</strong>
+          <p>
+            <input id="vested_by" type="text" rows="1" name="vested_by" maxlength="20" class="loan_info_fields ">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear"  id="transaction_information_cash_contributed" <% if @transaction_information_tab.custom_fields.include? "cash_contributed"%> style="display:none;" <% end %> >
+        <div class="trans-info-item">
+          <strong>Cash contributed:</strong>
+          <p>
+            <input id="cash_contributed" type="text" rows="1" name="cash_contributed" maxlength="20" class="loan_info_fields">
+          </p>
+         
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- content-white-box -->
+

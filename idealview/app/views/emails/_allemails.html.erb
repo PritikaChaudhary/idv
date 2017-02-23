@@ -1,0 +1,57 @@
+
+    <div class="flash_notice" style="display:none">Emails are deleted successfully.</div>
+    <table style="width:100%"> 
+        <thead>
+            <tr>   
+                <th>
+                    <a  onclick="if(confirm('Are you sure you want to delete these emails?')){delete_emails()}" href="javascript:void(0);">
+                        <img src='/assets/bin2.png'  class='bin'>   
+                    </a>
+                </th>
+                <th><b>From</b></th>
+                <th><b>Subject</b></th>
+                <th><b>Content</b></th>
+            </tr>
+        </thead>
+        <tbody>
+        <% color_class = ''%>
+        <% 
+        if !@emails.blank?
+            @emails.each do |email|%>
+                <tr>
+                    <td>
+                        <input type="checkbox" name="select_email" value="<%= email.id %>">
+                        <% if email.read_status == 1 %>
+                            <img src='/assets/read.png'  class='read_status'>            
+                        <% else %>
+                            <img src='/assets/unread.png'  class='unread_status'>
+                        <% end %>
+                    </td>
+                    <td>
+                        <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>"> <%= email.from %> </a>
+                    </td>
+                    <td>
+                       <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>"> <%= email.subject %> </a>
+                    </td>
+                    <td>
+                       <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>"> <%= email.body[0, 20] %>....</a>
+                    </td>
+                  </tr>  
+                
+
+
+                <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+            <%
+        end
+         else %>
+                <tr>
+                        <td colspan="4">
+                            You have not received any email yet.           
+                        </td>
+                </tr>   
+        <%
+        end 
+        %>
+        </tbody>
+    </table>

@@ -1,0 +1,77 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+</style>
+
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Recieved Emails</h3>
+        <div class="broker_search">
+            
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="large-4 columns"><b>From</b></div>
+    <div class="large-4 columns"><b>Subject</b></div>
+    <div class="large-4 columns"><b>Content</b></div>
+</div>
+
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <%= render partial: 'layouts/messages' %>
+    <% color_class = ''%>
+    <% 
+    if !@emails.blank?
+        @emails.each do |email|%>
+
+            <div class='row <%=color_class%> bottom-space text-left'>
+
+                <div class="large-4 columns">
+                     <%= email.from %>            
+                </div>
+                <div class="large-4 columns">
+                    <%= email.subject %>
+                </div>
+                <div class="large-4 columns">
+                   <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>"> <%= email.body[0, 20] %>....</a>
+                </div>
+                
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <%
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        You have not received any email yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>
+
+</div>
+
+ 

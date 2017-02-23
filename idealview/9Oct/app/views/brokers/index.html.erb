@@ -1,0 +1,161 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+$('document').ready(function(){
+     $('#search_form').submit(function() {
+      return false;
+    });
+})
+
+function delete_brokers()
+{
+    var allVals=[];
+    $('input[name="select_broker"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one broker.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/delete_brokers',
+             success:function(data){
+                $('#broker_records').html(data);
+            }
+            
+        });
+
+}
+
+function search_fun()
+{
+    var data=$('#search_form').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/search',
+            success:function(response){
+                $('#broker_records').html(response);
+            }
+        });
+}
+
+</script>
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_brokers()}">
+        <h3 class='text-center'>Brokers</h3>
+        <div class="broker_search">
+            <form name="search_form" id="search_form" style="width:250px;">
+                <div class="form_wrap">
+                    <input type="text" name="search" placeholder="Search">
+                    <input type="button" id="search_btn" onclick="search_fun();">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <%= render partial: 'layouts/messages' %>
+    <% color_class = ''%>
+    <% @brokers.each do |broker| 
+         unless broker['delete']==1 %>
+        <div class='row <%=color_class%> bottom-space text-left'>
+            
+            <div class='large-2 columns'>
+            <input type="checkbox" id="check_<%= broker.id %>" name="select_broker" value="<%= broker.id %>" style="float:left;margin-top:7px;">
+            </div>
+            
+            <div class='large-3 columns'>
+                <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
+                    <% unless broker.name.blank? %>
+                        <%= broker.name %>
+                    <% else %>
+                         "N/A"
+                    <% end %>
+                 </a>
+            </div>
+
+            <div class='large-2 columns'>
+                <%= broker.email %>
+            </div>
+            
+            <div class='large-2 columns'>
+                <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
+            </div>
+        </div>
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+    <%
+    end
+end %>
+
+</div>
+
+ 

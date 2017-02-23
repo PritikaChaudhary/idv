@@ -20,7 +20,10 @@ require "rails/test_unit/railtie"
 
 ENV['INFUSIONSOFT_URL'] = "tb173.infusionsoft.com"
 ENV['INFUSIONSOFT_KEY'] = "f65f9f22eb0af1fb5544f6ced683aeaf"
-
+ENV['RECURLY_SUBDOMAIN']= "idealview"
+ENV['RECURLY_API_KEY'] = "f20bfe7c234c4b17bd5bf009315be5c7"
+ENV['RECURLY_PUBLIC_API_KEY'] = "ewr1-Si1772BTvzpk8Qer5H6Oys"
+# protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
 Bundler.require(*Rails.groups)
 
 module FundingDatabase
@@ -36,6 +39,10 @@ module FundingDatabase
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+    # config.assets.image_optim = false
+     # config.paperclip_defaults = { :compression => { :png => '-optimize', :jpeg => '-optimize' } }
+    # ...
+    # protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
     config.generators do |g|
       g.orm :mongo_mapper
 

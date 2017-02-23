@@ -1,0 +1,184 @@
+<style type="text/css">
+	.column, .columns {
+    padding-left: 8px;
+    padding-right: 1px;
+    }
+</style>
+<form method="post" id="fundsForm">
+							<div class="funds_add_edit">
+								<div class="large-12 columns">
+										<div class="small-4 columns"> <b>Description</b> </div>
+										
+										<div class="small-2 columns"> <b>Benificiary</b> </div>
+										<div class="small-2 columns"> <b>Amount</b> </div>
+										<div class="small-2 columns"> &nbsp; </div>
+										<div class="small-2 columns"> &nbsp; </div>
+								</div>
+
+								<% if @funds.blank?  %>
+									<div class="fund_div" id="funds_add_edit1">
+										<div class="large-12 columns">
+											<div class="small-4 columns"> 
+												<select name="use[]" class="uses">
+													<option value="">Select</option>
+													<option value="Payoff">Payoff</option>
+													<option value="Improvement">Improvement</option>
+													<option value="Construction">Construction</option>
+													<option value="Operations">Operations</option>
+													<option value="Purchase">Purchase</option>
+													<option value="Other">Other</option>
+												</select>
+											</div>
+											
+											<div class="small-2 columns"><input type="text" name="beneficiary[]" placeholder="Beneficiary">
+											</div>
+
+											<div class="small-2 columns"><input type="text" name="amount[]" placeholder="Amount">
+											</div>
+
+											<input type="hidden" name="id[]" value="">
+											
+											<div class="small-2 columns payoff_funds" style="display:none"><input type="text" name="maturityDate[]" placeholder="Maturity Date" class="maturityDates">
+											</div>
+											<div class="small-2 columns payoff_funds" style="display:none"><input type="text" name="stats[]" placeholder="Stats">
+											</div>
+											
+											<div class="small-2 columns purchase_funds" style="display:none"><input type="text" name="contractDate[]" class="contractDates" placeholder="Contract Date">
+											</div>
+											<div class="small-2 columns purchase_funds" style="display:none"><input type="text" name="earnedDeposit[]" placeholder="Earned Deposit">
+											</div>
+
+										</div>
+										
+										
+									
+									</div>
+								<% else %>
+									<% @funds.each do |fund| %>
+										<div class="fund_div" id="funds_add_edit<%= fund.id %>">
+										<div class="large-12 columns" >
+											
+											<div class="small-4 columns"> 
+												<select name="use[]" class="uses" id="use_<%= fund.id %>">
+													<option value="">Select</option>
+													<option value="Payoff" <% if fund.use == "Payoff"%> selected="selected" <% end %> >Payoff</option>
+													<option value="Improvement" <% if fund.use == "Improvement"%> selected="selected" <% end %>>Improvement</option>
+													<option value="Construction" <% if fund.use == "Construction"%> selected="selected" <% end %>>Construction</option>
+													<option value="Operations" <% if fund.use == "Operations"%> selected="selected" <% end %>>Operations</option>
+													<option value="Purchase" <% if fund.use == "Purchase"%> selected="selected" <% end %>>Purchase</option>
+													<option value="Other" <% if fund.use == "Other"%> selected="selected" <% end %>>Other</option>
+												</select>
+											</div>
+											
+											<div class="small-2 columns"><input type="text" name="beneficiary[]" placeholder="Beneficiary" value="<%= fund.beneficiary %>">
+											</div>
+
+											<div class="small-2 columns"><input type="text" name="amount[]" placeholder="Amount" value="<%= fund.amount %>">
+											</div>
+
+											<input type="hidden" name="id[]" value="<%= fund.id %>">
+											<div class="payoff_funds" <% if fund.use == "Payoff"%> style="display:block" <% else %> style="display:none" <% end %>>
+												<div class="small-2 columns"><input type="text" name="maturityDate[]" placeholder="Maturity Date" value="<%= fund.maturityDate %>" class="maturityDates">
+												</div>
+												<div class="small-2 columns"><input type="text" name="stats[]" placeholder="Stats" value="<%= fund.stats %>">
+												</div>
+											</div>	
+											<div class="purchase_funds" <% if fund.use == "Purchase"%> style="display:block" <% else %> style="display:none" <% end %>>
+											<div class="small-2 columns"><input type="text" name="contractDate[]" placeholder="Contract Date" value="<%= fund.contractDate %>" class="contractDates">
+											</div>
+											<div class="small-2 columns"><input type="text" name="earnedDeposit[]" placeholder="Earned Deposit" value="<%= fund.earnedDeposit %>">
+											</div>
+										</div>
+										</div>
+										
+										
+									</div>
+									<% end %>
+								<% end %>
+
+							</div>
+							<div class="large-12 columns">
+								<div class="small-7 columns"></div>
+								<div class="small-4 columns"></div>
+								<div class="small-1 columns"><b><a href="javascript:void(0);" class="add_more" style="font-size:24px;">+</a></b></div>
+							</div>
+							<div class="large-12 columns">
+								<input type="hidden" name="loan_id" value="<%= @loan_id %>">
+								<input type="button" value="SAVE" class="tiny button" id="save_funds" >
+								<input type="button" value="CANCEL" class="alert tiny button" id="cancel_funds">
+
+							</div>
+</form>
+
+<script type="text/javascript">
+	
+  $('document').ready(function(){
+
+  		
+	 	$('.maturityDates').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+	 	$('.contractDates').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+	 	
+
+
+  	 $('.add_more').click(function(){
+
+		 	var div = $('div[id^="funds_add_edit"]:last');
+			var num = parseInt( div.prop("id").match(/\d+/g), 10 ) +1;
+			clon = div.clone('true').prop('id', 'funds_add_edit'+num );
+			clon.find('.payoff_funds').hide();
+			clon.find('.purchase_funds').hide();
+			clon.find('input:text').val('');
+			clon.find('input:hidden').val('');
+			// clon.find('input:checkbox').attr('checked', false); 
+			clon.find('input:checkbox').val('1'); 
+			clon.find('.class_input').val('1');
+			clon.find('.maturityDates').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+	 		clon.find('.contractDates').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+			$('.funds_add_edit').append(clon);
+		});
+
+	 $('.uses').change(function(){
+	  	this_val = $(this).val();
+	  	this_id = $(this).attr('id');
+	  	mainId = $(this).parents('.fund_div').attr('id');
+
+	  	if(this_val=="Payoff")
+	  	{
+	  		$('#'+mainId+' .payoff_funds').show();
+	  		$('#'+mainId+' .purchase_funds').hide();
+	  	}
+	  	else if(this_val=="Purchase")
+	  	{
+	  		$('#'+mainId+' .purchase_funds').show();
+	  		$('#'+mainId+' .payoff_funds').hide();
+	  	}
+	  	else
+	  	{
+	  		$('#'+mainId+' .purchase_funds').hide();	
+	  		$('#'+mainId+' .payoff_funds').hide();
+	  	}
+	  });
+
+
+  $('#save_funds').click(function(){
+    var data=$('#fundsForm').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/add_loan_funds',
+            success:function(response){
+              $('#fund_info').html(response);
+            $('#fund_add_edit').hide();
+        $('#fund_info').show();     
+            }
+        });
+  });
+
+  $('#cancel_funds').click(function(){
+		$('#fund_add_edit').html('');
+		$('#fund_add_edit').hide();
+		$('#fund_info').show();
+	});
+
+  });
+</script>

@@ -1,0 +1,23 @@
+<style type="text/css">
+	.gallery_header
+	{
+		    font-size: 22px;
+		    font-weight: bold;
+		    text-align: center;
+		    text-decoration: underline;
+	}
+	.gallery_images
+	{
+	 width:19%; 
+	 float:left;
+	 margin-left:10px; 
+	 height:151px; 
+	 margin-top:10px;
+	}
+</style>
+<div class="row gallerydiv">
+	<div class="gallery_header"><%= @loan.name %> - Image Gallery</div>
+	<% @loan.images.each do |image|%>
+		<a href="<%= image['url']%>"><img src="<%= image['url']%>" class="gallery_images"></a>
+	<% end %>
+</div>

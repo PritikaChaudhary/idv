@@ -1,0 +1,8 @@
+<% @reminders.each do |reminder| %>
+    <div class="row" id="rem_<%= reminder.id %>">
+        <div class="small-3 columns">&nbsp;</div>
+        <div class="small-3 columns"> <%= reminder.num %> <%= reminder.units%> </div>
+        <div class="small-3 columns"> <a href="javascript:void(0);" class="rmv_reminder" id="reminder_<%= reminder.id %>">Remove</a> </div>
+        <div class="small-3 columns"></div>
+    </div>
+<% end %>

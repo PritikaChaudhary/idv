@@ -1,0 +1,28 @@
+<div id="accordion">
+	<% @emails.each do |email|%>
+		<h3><%= email.name %></h3>
+		<div class="all_content" >
+			<div class="show_data" id="content_<%= email.id %>">
+				<p style="float:left; width:92%"><b>Subject: </b> <%= email.subject %> </p>
+				<input type="button" value="EDIT" class="tiny button edit" id="edit_<%= email.id %>">
+				<div style="border:1px solid; padding:5px;">
+					<%= raw email.content %>
+				</div>
+			</div>
+
+			<div id="edit_content_<%= email.id %>" style="display:none;">
+			 <form class="form_<%= email.id %>">
+				<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > Subject: </label><input type = "text" name="subject" value="<%= email.subject %>" style="width:90%;  float:left;"> <br>
+				<textarea name="content" style = "width: 921px; height: 297px;" ><%= email.content %></textarea>
+				<input type="hidden" value="<%= email.id %>" name="id">
+				<b>Note:</b> Please don't change these words <b>"<%= email.fixed_variables %>"</b>.
+				<br>
+				<div style="margin-top:15px;">
+					<input type="button" class="tiny button success save" value="SAVE" id="<%= email.id %>" onclick = "save_email('<%= email.id %>')"> 
+					<input type="button" class="tiny button alert" value="CANCEL" onclick="cancel_save('<%= email.id %>')"  style="margin-left:10px;">
+				</div>
+			</form>
+			</div>
+		</div>
+	<% end %>
+</div>

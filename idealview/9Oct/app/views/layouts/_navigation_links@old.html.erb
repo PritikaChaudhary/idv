@@ -1,0 +1,117 @@
+<section class="top-bar-section">
+    <ul class="right">
+      <li class="divider"></li>
+     <% 
+      if !current_user.blank?
+        roles=current_user.roles
+        @names = Array.new
+        roles.each do |role|
+          @names << role.name
+        end
+        #abort("#{@names}")
+        checkAdmin = @names.include?('Admin') 
+        checkBroker = @names.include?('Broker')
+      end
+      if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin')) %>
+      	<li class="has-dropdown">
+      		<%= link_to('Admin',  admin_path) %>
+      		<ul class="dropdown">
+      			<li><%= link_to('New User',  admins_new_user_path) %></li>
+                <li><a href="http://<%= @hostname %>/loans/pdf_files/listing">Pipelines</a></li>
+      		</ul>
+      	</li>
+      	<li>
+      		<%= link_to('All Loans',  loans_path) %>
+      	</li>
+      	 	<li class="has-dropdown">
+                   <a href="javascript:void(0);">Lenders</a>
+                  <ul class="dropdown">
+      					<li><a href="http://<%= @hostname %>/lenders">View</a></li>
+                        <li><a href="http://<%= @hostname %>/lenders/add">Add</a></li>
+      			  </ul>
+            </li>
+            <li>
+                  <a href="http://<%= @hostname %>/brokers">Brokers</a>
+            </li>
+            <li>
+                  <a href="http://<%= @hostname %>/loans/application/create">Application</a>
+            </li>
+            <li>
+                  <a href="http://<%= @hostname %>/emails">Emails</a>
+            </li>
+      	
+      <% end %>
+
+       <% if checkBroker==true && checkAdmin==false %>
+        <li>
+             <a href="http://<%= @hostname %>/brokers/settings">Settings</a>
+        </li>
+        <li>
+          <%= link_to('All Loans',  loans_path) %>
+        </li>
+        <li>
+          <a href="http://<%= @hostname %>/loans/application/create">Application</a>
+        </li>
+        
+        <% unless @infoBroker.permissions.blank? 
+               
+                @acess = @infoBroker.permissions.split(",")
+                @check_permission = @acess.include? 'add_users'
+                
+                if @check_permission == true
+                    add_subuser = "true"
+                end 
+        end
+         if @infoBroker.parent_user.blank?
+                add_subuser = "true"
+         end %>
+
+        <% if @infoBroker.plan != "SOLO" %>
+            <li class="has-dropdown">
+                <a href='http://<%= @hostname %>/brokers/sub_brokers'>Sub Brokers</a>
+              <% if add_subuser=="true" %>
+                 <ul class="dropdown">
+                  <li><a href="http://<%= @hostname %>/brokers/add_user">Add Broker</a></li>
+                 </ul> 
+              <% end %>
+            </li>
+        <% end %>
+       <% end %>
+
+				<% if user_signed_in? %>
+				
+				<li class="has-dropdown">
+					<a href='#'><%= current_user.email %></a>
+					
+					<ul class="dropdown">
+						<li><%= link_to('Change Password',  edit_user_registration_path) %></li>
+            <% unless @infoBroker.blank? %>
+              <% if @hostname == "localhost" %>
+              <% #abort("#{@infoBroker.user.inspect}") 
+                if @infoBroker.user.customer_id == nil
+              %>
+                <li><a href="http://<%=@hostname%>:<%=@portnum%>/payments/select_plan"> Buy Plan </a></li>
+              <% 
+              end %>
+              </li>
+              <% else %>
+              <% #abort("#{@infoBroker.user.inspect}") 
+                if @infoBroker.user.customer_id == nil
+              %>
+                <li><a href="http://<%=@hostname%>/payments/select_plan"> Buy Plan </a></li>
+              <% 
+              end
+              end %>
+            <% end %>
+						<li><%= link_to('Logout', destroy_user_session_path) %></li>
+					</ul> 
+				</li>
+      <!--  <li>
+          <img src="assets/DUMMY_USER.png" style="width:20px; height:20px;">
+        </li> -->
+				<% else %>
+					<li><%= link_to('Login', new_user_session_path)  %></li>
+				<% end %>
+
+			</ul>
+</section>

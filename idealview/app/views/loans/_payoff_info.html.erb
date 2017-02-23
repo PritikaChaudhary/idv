@@ -1,0 +1,6 @@
+<% @payoffs.each do |payoff| %>
+	<div class="row show_amnt">
+	 	<div class="medium-6 columns"><%= payoff.amount %></div>
+		<div class="medium-6 columns"> <%= payoff.recipient%></div>
+	</div>
+<% end %>

@@ -1,0 +1,22 @@
+<input type="button" class="success button"  value="Property Data" onclick="fetch_property_info('<%= @collateral.id %>')">
+<% @loc = "#{@collateral.postalcode}, #{@collateral.address}, #{@collateral.city}, #{@collateral.state}" %>
+	<% #abort("#{@loc}") %>
+	<script type="text/javascript">
+		$('document').ready(function(){
+
+			if($('#property<%= @collateral.id %>').html().length==0){
+
+					var embed = '<iframe'+
+					' width="600"'+
+					' height="450"'+
+					' frameborder="0" style="border:0"'+
+					' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loc%>&zoom=15">'+
+					'</iframe>';
+
+
+				$('#property<%= @collateral.id %>').html(embed);
+			}
+		});
+	</script>
+
+	<div id='property<%= @collateral.id %>' class="flex-video"></div>

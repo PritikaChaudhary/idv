@@ -1,0 +1,337 @@
+<script type="text/javascript">
+$('document').ready(function(){
+ 
+  $('.credit_portion').click(function(){
+   $('.credit_portion').removeClass('credit_active');
+   div_id = $(this).attr('id');
+   id = div_id.replace("_link","")
+   $(this).addClass('credit_active');
+   $('.credit_details').hide();
+   $('#'+id).show();
+
+  });
+
+  $('#submit_credit_info').click(function(){
+    card_number = $('#card_number').val();
+    card_name = $('#card_name').val();
+    card_address = $('#card_address').val();
+    card_city = $('#card_city').val();
+    card_state = $('#card_state').val();
+    card_postal = $('#card_postal').val();
+    card_expiry = $('#card_expiry').val();
+    card_cvv = $('#card_cvv').val();
+    ein = $('#ein').val();
+
+    form_data = $('#credit_detail_form').serialize();
+     $.ajax({
+                data: form_data,
+                type: 'POST',
+                url: '/loans/save_credit_info',
+                success:function(response){
+                  if(response=="done")
+                  {
+                    after_credit_report()
+                  }
+                  else if(response=="empty_fields")
+                  {
+                    if(card_number=="")
+                    {
+                      $('#card_number-error').show();
+                    }
+                    if(card_name=="")
+                    {
+                      $('#card_name-error').show();
+                    }
+                     if(card_address=="")
+                    {
+                      $('#card_address-error').show();
+                    }
+                    if(card_city=="")
+                    {
+                      $('#card_city-error').show();
+                    }
+                    if(card_state=="")
+                    {
+                      $('#card_state-error').show();
+                    }
+                     if(card_postal=="")
+                    {
+                      $('#card_postal-error').show();
+                    }
+                    if(card_expiry=="")
+                    {
+                      $('#card_expiry-error').show();
+                    }
+                    if(card_cvv=="")
+                    {
+                      $('#card_cvv-error').show();
+                    }
+                    if(ein=="")
+                    {
+                      $('#ein-error').show();
+                    }
+                    
+                  }
+                  else
+                  {
+                    if(response=="error")
+                    {
+                      alert("Please check your input data.");
+                    }
+                    else
+                    {
+                      if(response == "Login failed")
+                      {
+                        alert("Login Failed, Please check your username and password.");  
+                      }
+                      else
+                      {
+                        alert(response);
+                      }
+                      
+                    }
+                   
+                  }
+                }
+            });
+  
+  });
+
+});
+</script>
+<style type="text/css">
+  .credit_portion
+  {
+    color: black;
+    
+  }
+  .credit_portion:hover
+  {
+    text-decoration: underline;
+    /*color: black;*/
+    font-weight: bold;
+  }
+  .credit_active
+  {
+    text-decoration: underline;
+    color: #008cba;
+    font-weight: bold;
+  }
+  label {
+    line-height: 0.5 !important;
+  }
+  .error
+  {
+    display:none;
+  }
+  input
+  {
+    margin-bottom: 0px !important;
+  }
+</style>
+<div class="columns small-12">
+<b>You will be billed $18</b>
+</div>
+<!-- <div class="columns small-12">
+  <div class="columns small-4" style="width:190x;">
+      <a href="javascript:void(0);" id="user_information_link" class="credit_portion credit_active" >User Information</a>
+  </div>
+  <div class="columns small-4">
+      <a href="javascript:void(0);" id="payment_information_link" class="credit_portion">Payment Information</a>
+  </div>
+  <div class="columns small-2">
+  </div>
+  <div class="columns small-2">
+  </div>
+  
+</div> -->
+
+<!-------------------------------- User Information ---------------------------->
+<div id="user_information" class="credit_details" aria-hidden="false" style="display:none;">
+  <div class="row">
+    <form method="post" id="credit_detail_fsorm">
+      <input type="hidden" name="borrower_id" value="<%= @borrower.id %>">
+      <input type="hidden" name="form_type" value="personal_form">
+      <input type="hidden" name="personal_form_status" value="0">
+       
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>Name:</strong>
+            <input type="text" name="name" value="<%= @borrower.personal_name %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>EIN/SSN:</strong>
+            <input type="text" name="ein"  value="<%= @borrower.personal_ein %>">
+        </div>
+      </div>
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>Address:</strong>
+            <input type="text" name="address" value="<%= @borrower.personal_address %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>City:</strong>
+            <input type="text" name="city" value="<%= @borrower.personal_city %>">
+        </div>
+      </div>
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>State:</strong>
+            <input type="text" name="state" value="<%= @borrower.personal_state %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>Postalcode:</strong>
+            <input type="text" name="postal_code" value="<%= @borrower.personal_postalcode %>">
+        </div>
+      </div>
+      <div class="columns medium-12">
+       
+          <input class="button" type="button" value="Submit" style="margin-top:10px;">
+       
+      </div>
+    </form>
+  </div>
+</div>
+<!-------------------------------- User Information ---------------------------->
+
+<!-------------------------------- Payment Information ---------------------------->
+<div id="payment_information" class="credit_details" aria-hidden="false" style="display:block;">
+  <div class="row">
+    <div class="columns medium-12">
+      <form method="post" id="credit_detail_form">
+        <input type="hidden" name="borrower_id" value="<%= @borrower.id %>">
+        <input type="hidden" name="form_type" value="credit_form">
+        <input type="hidden" name="payment_form_status" value="1">
+        <% if !@borrower.personal_name.blank?%>
+          <% @split_name = @borrower.personal_name.split(" ")
+            if @split_name.length > 1 
+              @last_name = @split_name.last
+              if @split_name.length > 2
+                @mid_name = @split_name[1]
+              else
+                @mid_name = ""
+              end
+              @first_name = @split_name[0]
+            else
+              @last_name = ""
+              @mid_name = ""
+              @first_name = ""
+            end
+         %>
+        <% else %>
+        <% end %>
+         <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Username:</strong>
+              <input type="text" name="username">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Password:</strong>
+              <input type="password" name="password">
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>First Name:</strong>
+              <input type="text" name="name" value="<%= @first_name %>">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Middle Name:</strong>
+              <input type="text" name="name" value="<%= @mid_name %>">
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Last Name:</strong>
+              <input type="text" name="name" value="<%= @last_name %>">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>EIN/SSN:</strong>
+              <input type="text" name="ein"  value="<%= @borrower.personal_ein %>" id="ein">
+              <label id="ein-error" class="error" for="ein">This field is required.</label>
+
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Credit Card Number:</strong>
+              <input type="text" name="card_number" id="card_number">
+              <label id="card_number-error" class="error" for="card_number">This field is required.</label>
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Name On Card:</strong>
+              <input type="text" name="card_name" value="<%= @borrower.personal_name %>" id="card_name">
+              <label id="card_name-error" class="error" for="card_name">This field is required.</label>
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Address:</strong>
+              <input type="text" name="card_address" value="<%= @borrower.personal_address %>" id="card_address">
+              <label id="card_address-error" class="error" for="card_address">This field is required.</label>
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>City:</strong>
+              <input type="text" name="card_city" value="<%= @borrower.personal_city %>" id="card_city">
+              <label id="card_city-error" class="error" for="card_city">This field is required.</label>
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>State:</strong>
+              <input type="text" name="card_state" value="<%= @borrower.personal_state %>" id="card_state">
+              <label id="card_state-error" class="error" for="card_state">This field is required.</label>
+
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Postalcode:</strong>
+              <input type="text" name="card_postal" value="<%= @borrower.personal_postalcode%>" id="card_postal">
+              <label id="card_postal-error" class="error" for="card_postal">This field is required.</label>
+
+          </div>
+        </div>
+        <div class="columns medium-6  border-right">
+          <div class="trans-info-item">
+              <strong>Expiry:</strong>
+              <input type="text" name="card_expiry" placeholder = "Expiry Date(YYYY-DD-MM)" id="card_expiry">
+              <label id="card_expiry-error" class="error" for="card_expiry">This field is required.</label>
+          </div>
+        </div>
+        <div class="columns medium-6  border-right">
+          <div class="trans-info-item">
+              <strong>CVC/CVV:</strong>
+              <input type="text" name="card_cvv" id="card_cvv">
+              <label id="card_cvv-error" class="error" for="card_cvv">This field is required.</label>
+
+          </div>
+        </div>
+        <div class="columns medium-12">
+         
+            <input class="button" type="button" value="Submit" style="margin-top:10px;" id="submit_credit_info">
+         
+        </div>
+      </form>
+    </div>
+</div>
+<!-------------------------------- User Information ---------------------------->
+
+
+</div>

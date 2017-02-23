@@ -1,0 +1,66 @@
+<script type="text/javascript">
+// $('document').ready(function(){
+// 	// $('#user_password').change(function(){
+// 	// 	value = $(this).val();
+// 	// 	alert(value);
+// 	// 	return false
+// 	// });
+	
+// 		$( "form" ).submit(function(event ) {
+// 			rsp = $("#data_save").val();
+// 			if(rsp!="yes")
+// 			{
+// 				event.preventDefault();
+// 				pass_val = $('#user_password').val();
+// 				var data = "&val=" + pass_val;
+// 			    $.ajax({
+// 	              data: data,
+// 	              type: 'POST',
+// 	              url: '/home/save_val',
+// 	              success:function(response){
+// 	              	if(response=="done")
+// 	              	{
+// 	              		$("#data_save").val('yes');
+// 	              		$("form").submit();
+// 	              	}
+// 	             }
+// 	          });
+// 			}
+// 		});	
+
+
+// });
+</script>
+
+<script type="text/javascript">
+    $('document').ready(function(){
+         $( "form" ).submit();
+    });
+</script>
+
+<div class="small-8 small-centered columns">
+    <h5 id="modalTitle" style="font-weight:bold; text-align:center;">Log In</h5>
+
+<div class="row">
+        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+            
+        </div>
+        <%= form_for(:user, :id =>'login_form', :url => session_path(:user)) do |f| %>
+            <div class="medium-12 column">
+                Email : <input id="user_email" type="text" name="user[email]" value="<%=@email %>">
+               <input type="hidden" name="lenderDetail" value="yes">
+            </div>
+            <div class="medium-12 column">
+                Password:  <input id="user_password" type="password" name="user[password]" value="<%=@password%>">
+            </div>
+            <div class="medium-12 column">
+            <div class="field">
+                <%= f.check_box :remember_me %>
+            </div>
+            <input type="hidden" id="data_save">
+            </div>
+            
+        <% end %>
+    </div>
+
+</div>

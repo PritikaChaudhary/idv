@@ -1,0 +1,45 @@
+<div class='row'>
+	<div class="small-8 small-centered columns">
+
+		<h2>Edit User</h2>
+		  <%= form_for(@user, :url => admins_edit_user_path) do |f| %>
+
+		  <div class="field">
+		    <%= f.label :name %><br />
+		    <%= f.text_field :name, autofocus: true %>
+		  </div>
+
+		  <div class="field">
+		    <%= f.label :email %><br />
+		    <%= f.email_field :email %>
+		  </div>
+
+
+		  <div class="field">
+		    <%= f.label :password %>
+		    <% if @validatable %>
+		    <em>(<%= @minimum_password_length %> characters minimum)</em>
+		    <% end %><br />
+		    <%= f.password_field :password, autocomplete: "off" %>
+		  </div>
+
+
+		  <div class="field">
+		    <%= f.label :roles %>
+		
+			<% User.valid_roles.each do |role| %>
+			  <%= check_box_tag 'roles['+role+']', role, @user.role?(role)%>
+			  <label><%= role %></label><BR>
+			<% end %>
+
+			
+		  </div>
+
+
+
+		  <div class="actions">
+		    <%= f.submit "Save Changes" %>
+		  </div>
+		  <% end %>
+	</div>
+</div>

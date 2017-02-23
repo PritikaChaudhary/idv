@@ -1,0 +1,224 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <h3>Summary</h3>
+  </div>
+  <div class="cwb-content">
+    <% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+      <textarea class="loan_summary"><%= @loan.info['_LoanSummaryWhatareyoulookingfor'] %></textarea>
+    <% else %>
+      <textarea class="loan_summary"></textarea>
+    <% end %>
+  </div>
+</div><!-- content-white-box -->
+
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Transaction Information</h3></label>
+      
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <label><strong>Transaction Type:</strong></label>
+          <p>
+            <select name="transaction_type" id="transaction_type" class="loan_info_fields">
+                <option value=""> Select Transaction Type </option>
+                <option value="Purchase" <% if defined? @loan.info['transaction_type']%><% if @loan.info['transaction_type']=="Purchase" %> selected="selected"<% end %><% end %>>Purchase</option>
+                <option value="Refinance" <% if defined? @loan.info['transaction_type']%><% if @loan.info['transaction_type']=="Refinance" %> selected="selected"<% end %><% end %>>Refinance</option>
+            </select>
+          </p>
+          
+        </div>
+      </div>
+      <div class="columns medium-6 border-right purchase" <% if @loan.info['transaction_type']=="Purchase" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        
+        <div class="trans-info-item">
+            <label><strong>Contract Closing Date:</strong></label>
+            <p><input id="contract_closing_date" name="contract_closing_date" type="text" value="<%= @loan.info['contract_closing_date'] %>" class="loan_info_fields"></p>
+        </div>
+        
+      </div>
+
+      <div class="columns medium-6 purchase" <% if @loan.info['transaction_type']=="Purchase" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        
+        <div class="trans-info-item">
+            <label><strong>Purchase Price:</strong></label>
+            <p><input id="purchase_price" name="purchase_price" rows="1" value="<%= @loan.info['purchase_price'] %>" type="text" class="loan_info_fields"></p>
+        </div>
+       
+      </div>
+
+      <div class="columns medium-6 border-right purchase" <% if @loan.info['transaction_type']=="Purchase" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        
+        <div class="trans-info-item">
+            <label><strong>Rehab Amount :</strong></label>
+            <p><input id="rehab_amount" name="rehab_amount" rows="1" value="<%= @loan.info['rehab_amount'] %>" type="text" class="loan_info_fields"></p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 purchase" <% if @loan.info['transaction_type']=="Purchase" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+            <label><strong>Cash To Contribute:</strong></label>
+            <p><input id="purchase_cash_contribute" name="purchase_cash_contribute" rows="1" value="<%= @loan.info['purchase_cash_contribute'] %>" type="text" class="loan_info_fields"></p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right refinance" <% if @loan.info['transaction_type']=="Refinance" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+            <strong>Maturity Date :</strong>
+            <p><input id="maturity_date" type="text" value="<%= @loan.info['maturity_date'] %>" rows="1" name="maturity_date" class="loan_info_fields"></p>
+        </div>
+      </div>
+      <div class="columns medium-6 refinance" <% if @loan.info['transaction_type']=="Refianance" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+            <strong>Cash To Contribute:</strong>
+            <p><input id="refinance_cash_contribute" name="refinance_cash_contribute" rows="1" value="<%= @loan.info['refinance_cash_contribute'] %>" type="text" class="loan_info_fields"></p>
+        </div>
+      </div>
+      
+      <div class="columns medium-6 ask_broker <% if @loan.info['isBroker']=="Yes" %>  border-right <% end %>>">
+        <div class="trans-info-item">
+          <strong> Submitted By Broker :</strong>
+          <p>
+            <input type="radio" name="isBroker" value="Yes" class="loan_info_fields"  <% if @loan.info['isBroker'] == "Yes" %> checked="checked" <% end %>><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="isBroker" value="No"  <% if @loan.info['isBroker'] == "No" %> checked="checked" <% elsif @loan.info['isBroker'] != "Yes" %> checked="checked" <% end %>><label> No </label>
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 yes_broker" <% if @loan.info['isBroker']=="Yes" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong> Who is the broker? :</strong>
+          <p>
+            <input id="who_broker" type="text" value="<%= @loan.info['who_broker']%>" rows="1" name="who_broker" class="loan_info_fields">
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong> Free and Clear :</strong>
+          <p>
+            <input type="radio" name="free_clear" value="Yes" class="loan_info_fields"  <% if @loan.info['free_clear'] == "Yes" %> checked="checked" <% end %>><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="free_clear" value="No"  <% if @loan.info['free_clear'] == "No" %> checked="checked" <% elsif @loan.info['free_clear'] != "Yes" %> checked="checked" <% end %>><label> No </label>
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear" <% if @loan.info['free_clear']=="Yes" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong>Original Purchase Price :</strong>
+          <p>
+            <input id="original_purchase_price" type="text" value="<%= @loan.info['original_purchase_price'] %>" class="loan_info_fields" name="original_purchase_price">
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear" <% if @loan.info['free_clear']=="Yes" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong>Original Purchase Date :</strong>
+          <p>
+            <input id="original_purchase_date" type="text" value="<%= @loan.info['original_purchase_date'] %>" class="loan_info_fields" name="original_purchase_date" maxlength="20">
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear" <% if @loan.info['free_clear']=="Yes" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-last">
+          <strong>Vested by :</strong>
+          <p>
+            <input id="vested_by" type="text" value="<%= @loan.info['vested_by'] %>" rows="1" name="vested_by" maxlength="20" class="loan_info_fields ">
+          </p>
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear" <% if @loan.info['free_clear']=="Yes" %> style="display:block;" <% else %> style="display:none;" <% end %>>
+        <div class="trans-info-last">
+          <strong>Cash contributed :</strong>
+          <p>
+            <input id="cash_contributed" type="text" value="<%= @loan.info['cash_contributed'] %>" rows="1" name="cash_contributed" maxlength="20" class="loan_info_fields">
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- content-white-box -->
+
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Use of Funds</h3></label>
+      
+  </div>
+  <div class="cwb-content">
+    <form id="all_funds_form" method="post">
+      <table border="0" cellpadding="0" cellspacing="0" class="table-use-fund">
+        
+          <tr>
+              <td><strong>Description</strong></td>
+              <td><strong>Beneficiary</strong></td>
+              <td><strong>Amount</strong></td>
+          <!--<td><strong>Maturity / Contract Date</strong></td>
+              <td><strong>Earned Deposit/Stats</strong></td> !-->
+          </tr>
+          <% unless @funds.blank? %>
+            <% i=1 %>
+            <% @funds.each do |fund| %>
+                <tr id="<%= i %>_fund" class="fund_row">
+                    <td><a href="javascript:void(0);" style="margin-bottom:12px; float:left;" class="remove_funds"><b>x</b></a></td>
+                    <td>
+                        <select class="use" name="use[]" style="width:125px;">
+                          <option value="">Select</option>
+                          <option value="Payoff" <% if fund.use=="Payoff" %> selected="selected" <% end %>>Payoff</option>
+                          <option value="Improvement" <% if fund.use=="Improvement" %> selected="selected" <% end %>>Improvement</option>
+                          <option value="Construction" <% if fund.use=="Construction" %> selected="selected" <% end %>>Construction</option>
+                          <option value="Operations" <% if fund.use=="Operations" %> selected="selected" <% end %>>Operations</option>
+                          <option value="Purchase" <% if fund.use=="Purchase" %> selected="selected" <% end %>>Purchase</option>
+                          <option value="Other" <% if fund.use=="Other" %> selected="selected" <% end %>>Other</option>
+                        </select>
+                    </td> 
+                    <td><input type="text" placeholder="Beneficiary" name="beneficiary[]" value="<%= fund.beneficiary %>"></td> 
+                    <td><input type="text" placeholder="Amount" name="amount[]" value="<%= fund.amount %>"></td>
+                   <!-- <td>
+
+                      <input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" value="<%= fund.maturityDate%>" <% if fund.use!="Payoff" %> style="display:none" <% end %>>
+                      <input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" value="<%= fund.contractDate %>" name="contractDate[]" <% if fund.use!="Purchase" %> style="display:none" <% end %>>
+                    </td>
+                    <td>
+                      <input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" <% if fund.use!="Purchase" %> style="display:none" <% end %> class="purchase_funds" value="<%= fund.earnedDeposit %>">
+                      <input type="text" placeholder="Stats" name="stats[]" value="<%= fund.stats %>" <% if fund.use!="Payoff" %> style="display:none" <% end %> class="payoff_funds">
+                    
+                    </td> -->
+                </tr>
+            <% i += 1 %>  
+            <% end %>
+          <% else %>
+            <tr id="1_fund" class="fund_row">
+                <td>
+                    <select class="use" name="use[]" style="width:125px;">
+                      <option value="">Select</option>
+                      <option value="Payoff">Payoff</option>
+                      <option selected="selected" value="Improvement">Improvement</option>
+                      <option value="Construction">Construction</option>
+                      <option value="Operations">Operations</option>
+                      <option value="Purchase">Purchase</option>
+                      <option value="Other">Other</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="Beneficiary" name="beneficiary[]"></td>
+                <td><input type="text" placeholder="Amount" name="amount[]"></td>
+                <!--<td><input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" style="display:none"><input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" name="contractDate[]" style="display:none"></td>
+                <td><input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" style="display:none;" class="purchase_funds"><input type="text" placeholder="Stats" name="stats[]" style="display:none;" class="payoff_funds"></td>-->
+            </tr>
+          <% end %>
+      </table>
+    </form>
+    <div class="add_more">
+          <input type="button" value="Save" class="tiny button" id="save_use_funds">
+        <b>
+          <a class="add_more_fund" style="font-size:24px; float:right;" href="  javascript:void(0);">+</a>
+        </b>
+    </div>
+  </div>
+</div><!-- content-white-box -->

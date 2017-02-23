@@ -1,0 +1,11 @@
+<%
+	abort("#{@loans.inspect}")
+	@content = @email.content
+	rplc = {"broker_email" => @broker_email, "broker_id"=>@broker_id, "subbroker_id" => @sub_broker_id}
+	changed = @content.gsub(/\w+/) { |m| rplc.fetch(m,m)}
+%>
+<div style='max-height:75px;text-align:center'><img style='max-height:75px;width:auto;' src="https://s3-us-west-2.amazonaws.com/idealview/idealview-logo.png"></div>
+<div style='text-align:center;border-bottom: 1px double #000000;padding:5px'>
+</div>
+<%= raw changed %>
+

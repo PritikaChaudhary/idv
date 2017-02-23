@@ -1,43 +1,56 @@
- <%= render partial: 'layouts/messages' %>
+<input type="hidden" id="search_custom_input" value="0">
+        <%= render partial: 'layouts/messages' %>
+<table width="100%" class="list_loans">
+      <thead>
+        <tr>
+            <th></th>
+            <th>Company</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th>Email</th>
+        </tr>
+      </thead>
+
     <% color_class = ''%>
-    <%
-    unless @lenders.blank?
-     @lenders.each do |lender| 
+    <% @lenders.each do |lender| 
         unless lender['delete']==1 
                 #abort("#{lender.inspect}")
             %>
-        <div class='row <%=color_class%> bottom-space text-left'>
+        <!-- <div class='row <%=color_class%> bottom-space text-left'> -->
+        <tr>    
+            <td>
+                <input type="checkbox" id="check_<%= lender.id %>" name="select_broker" value="<%= lender.id %>" style="float:left;margin-top:7px;">
+                <div id="click_<%= lender.id %>" style="float:left;">
+               <% @url=url_for :controller=>'lenders', :action=>'fetch_detail', :id=>lender.id %>
+                    <a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= lender.id %>', 'lender_loans')">[+]</a>
+                </div>
+                <div id="click_hide_<%= lender.id %>" style="display:none; float:left;" class="click_hide" onclick="order_lenderhide('<%= lender.id %>')">
+                    <a href="javascript:void(0);" class="hide_lender_<%= lender.id %>">[-]</a>
+                </div>
+            </td>
             
-            <div class='large-2 columns'>
-            <input type="checkbox" id="check_<%= lender.id %>" name="select_broker" value="<%= lender.id %>" style="float:left;margin-top:7px;">
-            <div id="click_<%= lender.id %>" style="float:left;">
-           <% @url=url_for :controller=>'lenders', :action=>'fetch_detail', :id=>lender.id %>
-                <a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= lender.id %>', 'lender_loans')">[+]</a>
-            </div>
-            <div id="click_hide_<%= lender.id %>" style="display:none; float:left;" class="click_hide" onclick="order_lenderhide('<%= lender.id %>')">
-                <a href="javascript:void(0);" class="hide_lender_<%= lender.id %>">[-]</a>
-            </div>
-            </div>
-            
-            <div class='large-3 columns'>
+            <td>
                 
                     <% unless lender.company.blank? %>
                         <%= lender.company %>
                     <% else %>
                          N/A
                     <% end %>
-                 
-            </div>
 
-            <div class='large-3 columns'>
+                    <div id="loan_lenders<%= lender.id %>" class="<%=color_class%>" style="display:none; margin-top:10px;">
+                    </div>
+                 
+            </td>
+
+            <td>
                 <% unless lender.phone1.blank? %>
                         <%= lender.phone1 %>
                     <% else %>
                          N/A
                     <% end %>
-            </div>
+            </td>
             
-            <div class='large-3 columns'>
+            <td>
                
                  
                         <% unless lender.city.blank? %>
@@ -48,25 +61,19 @@
                   
 
               
-            </div>
-            <div class='large-3 columns'>
-                        <% unless lender.lendingStates0.blank? %>
-                           Lending States : <%= lender.lendingStates0 %>
-                        <% else %>
-                            N/A
-                        <% end %>
-             </div>
-            <div class='large-3 columns'>
+            </td>
+             
+
+            <td>
                 <%= lender.email %>
-            </div>
-            <div id="loan_lenders<%= lender.id %>" class="<%=color_class%>" style="float:left; min-height:10px; margin-left:73px; display:none; width:100%">
-        </div>
-        </div>
+            </td>
+            
+        
          
 
         <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-
+        </tr>
     <%
-    end
-end
-end %>
+    end 
+     end %>
+</table>

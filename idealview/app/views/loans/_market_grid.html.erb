@@ -1,0 +1,148 @@
+<% unless @market_loans.blank? %>
+<ul class="small-block-grid market_info">
+
+		  <% i = 1 %>
+		  <% @market_loans.each do |mloan| %>
+		  	<% if !mloan.loanInfo.blank?%>
+			  	<li>
+			  		<div class="inner_info_container">
+			  		<span class="loanType" style="background-color:white;">
+			  		<% unless mloan.type.blank? %> 
+			  			<%= mloan.type %>
+			  		 <% else %>
+			  		 	Loan Offer
+			  		 <% end %>
+			  		 </span>
+			  		<% unless mloan.info['_NetLoanAmountRequested0'].blank? %> 
+			  		 <span class="loanAmount" style="background-color:white;">
+				  		<%   unless mloan.info['_NetLoanAmountRequested0'].blank? 
+			                  loan_amnt = mloan.info['_NetLoanAmountRequested0']
+			                 
+			               %>
+			               <%= fd_money(loan_amnt.to_i) %> 
+			            <% end %>
+			  		 </span>
+					<% end %>
+					  	<%
+
+		                 if mloan.loanInfo.featured_image %>
+		                 	 <% #abort("#{mloan.loan.featured_image['name']}")
+		                 	 check = File.exist?("#{Rails.root}/public/temp/thumbnails_#{mloan.loanInfo.featured_image['name']}") %>
+		                 	 <% if check== true %>
+		                 		<img src="/temp/thumbnails_<%= mloan.loanInfo.featured_image['name']%>">
+		                 	 <% else %>
+		                 	 	<img src="/temp/<%= mloan.loanInfo.featured_image['name']%>">
+		                 	 <% end %>
+						<% else  %>
+							<% address = "" %>
+							<% unless mloan.info['Address3'].blank?%>
+								<% address = mloan.info['Address3'] %>
+							<% else %>
+								<% if mloan.info['City3'] && mloan.info['State3']%>
+									<% address = "#{mloan.info['City3']}, #{mloan.info['State3']}"%>
+								<% end %>
+							<% end %>
+		                    <% if address!="" %>
+		                      <img src="https://maps.googleapis.com/maps/api/streetview?size=250x200&location=<%= address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60">
+		                    <% else %>
+		                    	<img src="/assets/no-image-available.jpg" width="250" height="200">
+		                    <% end %>
+		                <% end %>
+					  	<!-- <div class="market_div"  <% if @adminLogin != "true" %> <% unless  mloan.access.blank? %> <% if mloan.access.user_id != "#{current_user.id}"  %> style = "min-height:231px;" <% end %><% end %> <% end %>> -->
+					  	<div class="market_div" >
+					  		<div class="inner_market_div">
+						  		<div class="row">
+						  			<div class="large-12 columns">
+						  				<% citystate = "#{mloan.info['City3']}, #{mloan.info['State3']}"%>
+						  				<span class="mloan_name"><%= mloan.name %></span>
+						  				<span class="loan_location"><% if citystate.length!=2 %> <%= citystate %><% end %></span>
+						  			</div>
+						  		</div>
+						  		<div class="sub_mkt_info">
+							  		<div class="row">
+							  			<div class="small-6 columns low_res"> 
+							  				<span class="mkt_header">Term:</span>
+							  				<span class="mkt_val">
+							  					<% if mloan.info['_DesiredTermLength'] == "3" %>
+							  						Less Than 3 Months 
+							  					<% elsif mloan.info['_DesiredTermLength'] == "6" %>
+							  						3 to 6 Months
+							  					<% elsif mloan.info['_DesiredTermLength'] == "12" %>
+							  						6 to 12 Months
+							  					<% elsif mloan.info['_DesiredTermLength'] == "24" %>
+							  						12 to 24 Months
+							  					<% elsif mloan.info['_DesiredTermLength'] == "25" %>
+							  						More than 24 Months
+							  					<% else %>
+							  						-
+							  					<% end %>
+							  				</span>
+							  			</div>
+							  			<div class="small-6 columns low_res">
+							  				<span class="mkt_header">Category:</span>
+							  				<span class="mkt_val">
+							  					<% unless mloan.info['_LendingCategory'].blank? %>
+							  						<%= mloan.info['_LendingCategory'] %>	
+							  					<% else %>
+							  						-
+							  					<% end %>
+							  					
+							  				</span>
+							  			</div>
+							  		</div>
+							  		<div class="row">
+							  			<div class="small-6 columns low_res">
+							  				<span class="mkt_header">Asset Type:</span>
+							  				<span class="mkt_val">
+							  					<% if mloan.info['_LendingCategory'] == "Private Real Estate Loan" %>
+							  						<%= mloan.info['_LendingTypes'] %>
+							  					<% elsif mloan.info['_LendingCategory'] == "Business Financing" %>
+							  						<%= mloan.info['_BusinessFinancingTypes'] %>
+							  					<% elsif mloan.info['_LendingCategory'] == "Equity and Crowdfunding"%>
+							  						<%= mloan.info['_EquityandCrowdFunding'] %>
+							  					<% elsif mloan.info['_LendingCategory'] == "Residential or Commercial Mortgage"%>
+							  						<%= mloan.info['_MortageTypes'] %>
+							  					<% else %>
+							  						-
+							  					<% end %>	
+							  				</span>
+							  			</div>
+
+							  			<div class="small-6 columns low_res">
+							  				<span class="mkt_header">Interest-</span>
+							  				<span class="mkt_val">
+							  					<%= mloan.info['interest_rate'] %>%
+							  				</span>
+							  			</div>
+							  		</div>
+
+						  		</div>
+					  		</div>
+					  		
+					  	</div>
+					  	<% if @adminLogin != true %>
+						  	<% if mloan.access.blank? %>
+					  			
+								<a class="tiny button success request_btn"  href="javascript:void(0);" onclick="request_access('<%= mloan.id %>')"  id="request_access_<%= mloan.id %>"  <% unless mloan.access.blank? %> style="display:none; width: 100%; font-weight:bold;" <% else %> style="width:100%;  font-weight:bold;" <% end %>>Request Access</a>
+
+								<a class="tiny button success" id="market_access_<%= mloan.id %>" <% unless mloan.access.blank? %> style="width: 100%;  font-weight:bold;" <% else %> style="display:none;  width: 100%;  font-weight:bold;" <% end %> href="<%= request.base_url %>/loans/market_loan_detail/<%= mloan.id %>" target="_blank">Loan Preview</a>
+								
+							<% else %>
+								<% if mloan.access.user_id == "#{current_user.id}"%>
+									
+									<a class="tiny button success" id="market_access_<%= mloan.id %>" <% unless mloan.access.blank? %> style="width: 100%; font-weight:bold;" <% else %> style="display:none;  width: 100%; font-weight:bold;" <% end %> href="<%= request.base_url %>/loans/market_loan_detail/<%= mloan.id %>" target="_blank">Loan Preview</a>
+										
+								<% end %>
+							<% end %>
+						<% end %>
+					  	<a class="button secondary tiny grid_market_detail"  href="javascript:void(0);" onclick="more_details('<%= mloan.id %>')">More Details</a>
+				  	</div>
+				</li>
+			<% end %>
+		  <% end %>
+		  
+		  	
+		</ul>
+<% else %>
+	Sorry, No record found.
+<% end %>

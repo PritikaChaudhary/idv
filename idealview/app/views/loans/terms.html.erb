@@ -1,0 +1,30 @@
+<div class="row">
+	<div class="small-8 small-centered columns">
+	<% if @success == "yes" %>
+		<div class="flash_notice">Terms and conditions are updated successfully.</div>
+	<% end %>
+		<form method="post" id="signupForm" action="https://<%= @hostname %>/loans/save_conditions">
+			<h3 class="heading_signup"> Terms & Conditions </h3>
+				
+				<% if defined? @detail.id %>
+					<input type="hidden" name="id" value="<%= @detail.id %>">
+				<% end %>
+				
+				<div class="medium-12 column">
+					<label> Header </label>
+					<input type="text" name="header" id="header" <% if defined? @detail.header %> value="<%= @detail.header %>" <% end %>>
+				</div>
+				<div class="medium-12 column">
+					<label>Second Header </label>
+					<input type="text" name="second_header" <% if defined? @detail.second_header %> value="<%= @detail.second_header %>" <% end %> >
+				</div>
+				<div class="medium-12 column">
+					<label> Terms & Conditions </label>
+					<textarea name="content" style="width: 603px; height: 181px;"><%if defined? @detail.content %> <%= @detail.content %> <% end %> </textarea>
+				</div>
+				<div class="medium-12 column">
+					<input type="submit" value="SAVE" class="tiny button" style="margin-top:10px;">
+				</div>
+		</form>
+	</div>
+</div>

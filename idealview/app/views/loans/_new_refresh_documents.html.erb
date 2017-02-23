@@ -1,0 +1,249 @@
+<script type="text/javascript">
+  $('document').ready(function(){
+       <% if @alert_msgdocs == 'true' %> 
+	        $('.file_uploading').click(function(){
+	         var r=confirm("You have less then 10gb of memmory left. Press cancel to cancel uploading or Ok to proceed.");
+	          if (r == false) {
+	           return false;
+	          }
+	        });
+    	<% end %>
+
+    	$("#add_custom_folder").click(function(){
+		    $(".add_new_folder").slideToggle();   
+		  });
+
+
+
+		  $("#cancel_add_folder").click(function(){
+		    $(".add_new_folder").hide();
+		    $(".folder_name").val("")
+		  });
+
+		  $("#add_folder").click(function(){
+		    var data=$('#add_folder_form').serialize();
+		    $.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/add_folder',
+		            success:function(response){
+		              var datax = "&id=<%= @loan.id %>";
+		             $.ajax({
+
+                        data: datax,
+                        type: 'POST',
+                        url: '/loans/new_loan_documents',
+                        beforeSend: function(jqXHR, settings) {
+                            jqXHR.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+                        },
+                        success:function(response){
+                            $('#documents').html(response);
+                        }
+                    	});
+		            }
+		        });
+  			});
+	});
+ </script>
+<style type="text/css">
+	.folder_name
+	{
+		color: #f09569;
+	}
+	
+	.add_new_folder
+	{
+		display:none;
+	    border: 3px solid rgb(231, 231, 231); 
+		padding: 12px; 
+		margin-bottom: 23px;
+	}
+	.folder_content
+	{
+		margin-top:30px;
+		width:100%
+	}
+	.hidebtn
+	{
+		width:26px; 
+		float:left;	
+	}
+	.hide_del
+	{
+		width: 8%; 
+		float:right;
+	}
+	.del
+	{
+		float:left;
+	}
+	.folder_namex
+	{
+		float: left;
+		color: #f09569;
+	}
+	.del_span
+	{
+		float:right; 
+		font-size: 12px;
+    	margin-right: 14px;
+	}
+	.hide_span
+	{
+		float: left;
+		font-size: 12px;	
+		margin-left: -17px;
+	}
+	.add_bottom
+	{
+		border-bottom: medium solid rgb(248, 248, 248);
+	}
+	.tiny.button.fileinput-button 
+	{
+		    float: right;
+		    margin: -31px 0 10px;
+	}
+	.progress
+	{
+		display: none;
+	}
+</style>
+
+<!---------------------------------- Loan Detail Custom Folder ---------------------->
+
+<% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+
+<% else %>
+		<% if params[:action] != "docs"%>
+			 <% unless current_user.blank? %>
+				<div class="custom_folder"><input type="button" class="tiny button add-custom" value="Add Custom Folder" id="add_custom_folder"></div>
+			<% end %>
+		 <% end %>
+<% end %>
+<div class="add_new_folder">
+	<form method="post" id="add_folder_form">
+		<label> Folder Name</label><input type="text" name="folder_name" class="folder_name">
+		<input type="hidden" name="loan_id" value="<%= @loan.id %>">
+		<% unless current_user.blank? %>
+			<input type="hidden" name="user_id" value="<%= current_user.id %>">
+		<% end %>
+		<input type="button" class="tiny button success" value="SAVE" id="add_folder"> <input type="button" class="tiny button alert" value="CANCEL" id="cancel_add_folder">
+	</form>
+</div>
+
+<div class="row custom_folders">
+<%
+  unless @folders.blank?
+
+	@folders.each do |folder| %>
+
+		<div  class="folder_content" id="foldr_<%= folder.id %>" >
+			<%
+					fldr = folder.folder_name
+					formId=fldr.gsub(',','_') 
+					formId=formId.gsub('&','_') 
+					formId=formId.gsub(' ','_') 
+					%>
+			<div style='margin-top:30px;width:100%' class="small-12 column droparea" id="dropzone_<%= formId %>_upload">
+				<div class="small-12 column">
+					
+							<b class="folder_namex"><%= folder.folder_name %></b>
+							<% if params[:action] != "docs" %>
+								<% unless current_user.blank? %>
+									<a  onclick="if(confirm('Are you sure? You want to delete this folder')){del_folder('<%= folder.id %>')}" style="color:red; margin-left:10px;"><i class="fa fa-times-circle"></i></a>
+								<% end %>
+							<% end %>
+							
+					</div>
+				
+				<div class="small-12 column" >
+				
+					<% if @fileUpload == "true" %>
+						<%= render partial:'new_folder_file', locals:{contact_id:@loan._id, form_id:formId+'_upload', controller:'loans', action:'upload_file', folder:folder.id, multiple:'true', type:'full', button_label:'Upload new files'}
+						%>
+					<% else %>
+						<ul class="button-group">
+							<li class="tiny button fileinput-button" tabindex="0" onclick = "alert('Please update your plan.')">
+								<span tabindex="0">
+									<i class="fa fa-cloud-upload" tabindex="0"></i>
+									Upload new files
+								</span>
+							</li>
+						</ul>
+					<% end %>
+
+
+				
+				</div>
+			</div>
+			
+		</div>
+
+
+		<div id="folder_<%= folder.id %>" >
+		<% if params[:action] != "docs" %>
+			<% if params[:action] != "docs" %>
+				<% unless current_user.blank? %>
+					<% 
+					all_files = folder.files_by_folder(@loan._id)
+					unless all_files.blank?  %>
+						<div class="small-12 column ">
+							<div class="small-12 column add_bottom" >
+								<div class="small-6 column">
+									<span class="hide_span"></span>
+								</div>
+								<div class="small-6 column">
+									<span class="del_span">Delete</span>
+								</div>
+							</div>
+						</div>
+					<% end %>
+				<% end %>
+			<% end %>
+		<% end %>
+		<% 
+		all_files = folder.files_by_folder(@loan._id)
+		unless all_files.blank? 
+			all_files.each do |file| %>
+				
+				<div class="file_show small-12 column" id="del_file<%= file.id %>">
+				  <div class="small-12 column add_bottom">
+				  <% if params[:action] != "docs" %>
+				   	<% unless current_user.blank? %>
+					    
+						    <div class="hidebtn" id="hidebtn_<%= file.id %>">
+							    
+							    <div id="showfile_<%= file.id %>" <% if file.hide!=1 %> style="display:none;" <% end %>>
+							   		<a  onclick="show_doc('<%= file.id %>');" style="color:black;"><i class="fa fa-eye"></i></a>
+							   	</div>
+							   	
+						   	</div>
+					<% end %>
+				  <% end %>
+				   <% url=url_for :controller=>'loans', :action=>'view_file',:id=>file[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=file.name%></a>
+				   <% if params[:action] != "docs" %>
+					   <% unless current_user.blank? %>
+						    <div class="hide_del" >
+								<div class="del">
+							   		<a  onclick="if(confirm('Are you sure? You want to delete this file')){del_doc('<%= file.id %>')}" style="color:red;"><i class="fa fa-times-circle"></i></a>
+							   	</div> 
+						   	</div>
+					   <% end %>
+				   <% end %>
+
+			  </div>
+			</div>
+	 		<% end
+		end
+		%>
+
+		
+	  </div>
+	<% end
+   end
+  %>
+</div>
+
+
+<!---------------------------------- End Loan Detail Custom Folder ------------------>

@@ -1,0 +1,164 @@
+<script type="text/javascript">
+$('document').ready(function(){
+  $('.credit_portion').click(function(){
+   $('.credit_portion').removeClass('credit_active');
+   div_id = $(this).attr('id');
+   id = div_id.replace("_link","")
+   $(this).addClass('credit_active');
+   $('.credit_details').hide();
+   $('#'+id).show();
+
+  });
+});
+</script>
+<style type="text/css">
+  .credit_portion
+  {
+    color: black;
+    
+  }
+  .credit_portion:hover
+  {
+    text-decoration: underline;
+    /*color: black;*/
+    font-weight: bold;
+  }
+  .credit_active
+  {
+    text-decoration: underline;
+    color: #008cba;
+    font-weight: bold;
+  }
+</style>
+<div class="columns small-12">
+<b>You will be billed $18</b>
+</div>
+<div class="columns small-12">
+  <div class="columns small-4" style="width:190x;">
+      <a href="javascript:void(0);" id="user_information_link" class="credit_portion credit_active" >User Information</a>
+  </div>
+  <div class="columns small-4">
+      <a href="javascript:void(0);" id="payment_information_link" class="credit_portion">Payment Information</a>
+  </div>
+  <div class="columns small-2">
+  </div>
+  <div class="columns small-2">
+  </div>
+  
+</div>
+
+<!-------------------------------- User Information ---------------------------->
+<div id="user_information" class="credit_details" aria-hidden="false" style="display:block;">
+  <div class="row">
+    <form method="post" id="credit_detail_form">
+      <input type="hidden" name="borrower_id" value="<%= @borrower.id %>">
+      <input type="hidden" name="form_type" value="personal_form">
+      <input type="hidden" name="personal_form_status" value="0">
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>Name:</strong>
+            <input type="text" name="name" value="<%= @borrower.personal_name %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>EIN/SSN:</strong>
+            <input type="text" name="ein"  value="<%= @borrower.personal_ein %>">
+        </div>
+      </div>
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>Address:</strong>
+            <input type="text" name="address" value="<%= @borrower.personal_address %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>City:</strong>
+            <input type="text" name="city" value="<%= @borrower.personal_city %>">
+        </div>
+      </div>
+      <div class="columns medium-6 border-right">
+        <div class="trans-info-item">
+            <strong>State:</strong>
+            <input type="text" name="state" value="<%= @borrower.personal_state %>">
+        </div>
+      </div>
+      <div class="columns medium-6">
+        <div class="trans-info-item">
+            <strong>Postalcode:</strong>
+            <input type="text" name="postal_code" value="<%= @borrower.personal_postalcode %>">
+        </div>
+      </div>
+      <div class="columns medium-12">
+       
+          <input class="button" type="button" value="Submit" style="margin-top:10px;">
+       
+      </div>
+    </form>
+  </div>
+</div>
+<!-------------------------------- User Information ---------------------------->
+
+<!-------------------------------- Payment Information ---------------------------->
+<div id="payment_information" class="credit_details" aria-hidden="false" style="display:none;">
+  <div class="row">
+    <div class="columns medium-12">
+      <form method="post" id="credit_detail_form">
+        <input type="hidden" name="borrower_id" value="<%= @borrower.id %>">
+        <input type="hidden" name="form_type" value="credit_form">
+        <input type="hidden" name="credit_submit_status" value="0">
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Credit Card Number:</strong>
+              <input type="text" name="card_number">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Name On Card:</strong>
+              <input type="text" name="card_name"  value="<%= @borrower.personal_name %>">
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>Address:</strong>
+              <input type="text" name="card_address" value="<%= @borrower.personal_address %>">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>City:</strong>
+              <input type="text" name="card_city" value="<%= @borrower.personal_city %>">
+          </div>
+        </div>
+        <div class="columns medium-6 border-right">
+          <div class="trans-info-item">
+              <strong>State:</strong>
+              <input type="text" name="card_state" value="<%= @borrower.personal_state %>">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Postalcode:</strong>
+              <input type="text" name="card_postal" value="<%= @borrower.personal_postalcode %>">
+          </div>
+        </div>
+        <div class="columns medium-6">
+          <div class="trans-info-item">
+              <strong>Expiry:</strong>
+              <input type="text" name="card_expiry" placeholder = "Expiry Date(YYYY-DD-MM)">
+          </div>
+        </div>
+        <div class="columns medium-12">
+         
+            <input class="button" type="button" value="Submit" style="margin-top:10px;">
+         
+        </div>
+      </form>
+    </div>
+</div>
+<!-------------------------------- User Information ---------------------------->
+
+
+</div>

@@ -1,21 +1,31 @@
 class AdminController < ApplicationController
 
   def index
-    @users = User.all
-    #usr = User.find_by_email("lloveland@cacheprivatecapital.com")
-    #usr.password= "12345678"
-    #usr.save
-    #abort("#{usr.inspect}")
+    # uses = User.all
+    # uses.each do |use|
+    #   roles=use.roles
+    #   roles.each do |role|
+    #     if role.name=="Admin"
+    #       use.is_admin=true
+    #     end
+    #   end
+    #   use.save
+    # end
+    # uInfo = User.find_by_email("pritika26@digimantra.com");
+    # abort("#{uInfo.inspect}")
+    
+
+
+    @users = User.all(:is_admin => true)
+    # abort("#{@users}")
     authorize User
   end
   
 
 
  def new_user
-   #string = (0...8).map { (65 + rand(26)).chr }.join
-   #abort("#{string}")
    @user = User.new
-   authorize @user
+    authorize @user
  end
  
  
@@ -26,48 +36,59 @@ class AdminController < ApplicationController
  
  
  def create_user
-    #abort("#{params[:user]}")
+
+    # abort("#{params}")
     user_info=params[:user] 
     roles=params[:roles]
-    unless roles['Broker'].blank?
-      broker = Broker.new
-      broker.name = user_info['name']
-      broker.email = user_info['email']
-      broker.password = user_info['password']
-      broker.save
-      broker_id=broker.id
-    end
-    #abort("#{params}")
-    @user = User.new(params[:user])
-    authorize @user
-    
-    @user.password_confirmation = @user.password
-    
-    @roles = Array.new
-    if !params[:roles].blank?
-      params[:roles].each do |item|
-        @roles.push(Role.new(:name=>item[1]))
+    uInfo = User.find_by_email("#{user_info['email']}")
+    if uInfo.blank?
+      
+      unless roles['Broker'].blank?
+        broker = Broker.new
+        broker.name = user_info['name']
+        broker.email = user_info['email']
+        broker.password = user_info['password']
+        broker.save
+        broker_id=broker.id
       end
-    end
+     
 
-    @user.roles = @roles
+      @user = User.new(params[:user])
 
-    unless broker_id.blank?
-      @user.broker_id = broker_id
-    end
-    
-    if @user.save :safe => true
-      unemail = user_info['email'].split("@")[0]
-      uemail = unemail.gsub!(/[^0-9A-Za-z]/, '')
-      bucket_name = @user.id.to_s+uemail.to_s 
-      bucket = S3.create_bucket(bucket: bucket_name)
-      @user.bucket_name = bucket_name
-      @user.save
-      flash[:notice] = @user.email + " Created Successfully"
-    else
-     flash[:alert] = "Something went wrong! You may need a longer password. Please try again."
-     redirect_to action: 'new_user'
-     return
+      # authorize @user
+      # abort("#{@user.inspect}")
+      
+      @user.password_confirmation = @user.password
+      
+      @roles = Array.new
+      if !params[:roles].blank?
+        params[:roles].each do |item|
+          @roles.push(Role.new(:name=>item[1]))
+        end
+      end
+      @user.roles = @roles
+
+      unless broker_id.blank?
+        @user.broker_id = broker_id
+      end
+      @user.is_admin = true
+      usrname = user_info['username'].downcase
+      @user.username = usrname.gsub(' ','')
+      uname = usrname.gsub(' ','')
+      sub_domain =  uname.gsub(/[^0-9A-Za-z]/, '')
+      @user.subdomain = sub_domain
+      @user.user_password = user_info['password']
+      @user.password = "#{user_info['password']}"
+     
+      
+      if @user.save :safe => true
+       LoanUrlMailer.admin_credentials("#{@user.id}").deliver
+       flash[:notice] = @user.email + " Created Successfully"
+      else
+       flash[:alert] = "Something went wrong! You may need a longer password. Please try again."
+       redirect_to action: 'index'
+       return
+      end
     end
     
     redirect_to action: 'index'
@@ -75,7 +96,19 @@ class AdminController < ApplicationController
  end
  
  
- 
+ def download_csv_admin
+    @users = User.all(:is_admin => true)
+    filename="admin_"+Time.now.strftime("%m%d%y%H%M%S")
+    save_path = Rails.root.join('csvs',filename+'.csv')
+    CSV.open(save_path, "wb") do |csv|
+      csv << ["Name", "Email"]
+      @users.each do |user|
+        csv << ["#{user.name}", "#{user.email}"]
+      end
+    end
+    send_file 'csvs/'+filename+'.csv', :type => 'text/csv'
+ end
+
  def update_user
     @user = User.find(params[:id])
 
@@ -126,9 +159,67 @@ class AdminController < ApplicationController
   end   
  end
  
+ def settings
+      @user=User.find_by_id(current_user.id)
+      #abort("#{@user.inspect}")
+     # @broker=Broker.find_by_email(current_user.email)
+      #abort("#{current_user.email}")
+  end
  
+  def update
+    @user = User.find_by_email(params[:email])
+    #abort("#{@user.inspect}")
+    @user.system_email = params[:system_email]
+    @user.name = params[:name]
+    if @user.save
+     redirect_to action: 'settings'
+    end
+  end
 
- 
+  def delete_admins
+    ids=params[:moredata].split(",")
+    require "stripe"
+     Stripe.api_key = "sk_test_rL51BkW2eNDeonJ6mn5LsW6q"
+    ids.each do |number|
+      #abort("#{brokerRecord.inspect}")
+      user = User.find(number)
+      unless user.blank? 
+        User.delete(user.id)
+        if defined? user.customer_id
+          if user.customer_id != nil
+            cu = Stripe::Customer.retrieve(user.customer_id )
+            cu.delete
+          end
+        end
+      end
+   end 
+    @users = User.all(:is_admin => true)  
+    flash.now[:notice] = "Brokers deleted successfully"
+    render partial: 'admin/all_admins'
+  end
+
+  def check_email
+    users = User.find_by_email(params[:email])
+    if users.blank?
+      @rsp = "yes"
+    else
+      @rsp = "no"
+    end
+    render plain: @rsp
+  end
+
+  def check_uname
+    usrname = params[:username].downcase
+    usrname = usrname.gsub(' ','')
+    users = User.find_by_username("#{usrname}")
+    # abort("#{users.inspect}")
+    if users.blank?
+      @rsp = "yes"
+    else
+      @rsp = "no"
+    end
+    render plain: @rsp
+  end
  
 end
 

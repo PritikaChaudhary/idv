@@ -1,0 +1,22 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <h3>Custom Fields</h3>
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+
+      <% @new_custom_fields.each do |custom_field|%>
+          <div class="columns medium-12">
+            <div class="trans-info-item">
+              <strong><%= custom_field.name %>:</strong>
+                <p><input id="<%= custom_field.field_name %>" name="<%= custom_field.field_name %>" type="text" value="<%= @loan.info[custom_field.field_name] %>" class="loan_info_fields"></p>
+                <div class="tii-controls">
+                    <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"#{custom_field.field_name}"} %>
+                </div>
+            </div>
+          </div>
+      <% end %>
+    
+    </div>
+  </div>
+</div><!-- content-white-box -->

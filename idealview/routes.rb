@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   post 'loans/upload_doc/:id'=>'loans#upload_doc'
   post 'loans/update_amount_owed/:id'=>'loans#update_amount_owed'
   post 'loans/archive/:id'=>'loans#archive'
+  post 'loans/remove_reminder'=>'loans#remove_reminder'
 
   post 'loan_urls/:id/generate_url'=>'loan_urls#generate_url'
   post 'loan_urls/:id/extend_date'=>'loan_urls#extend_date'  

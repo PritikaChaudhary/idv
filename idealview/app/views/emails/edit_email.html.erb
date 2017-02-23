@@ -1,0 +1,1275 @@
+<style type="text/css">
+	/*form#search_form {
+    float: left;
+    margin-left: 11px;
+    top: 0;
+    width: 137px;
+    }*/
+ .form_wrap {
+     position: relative;
+     width: 272px;
+	}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("/assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+	}
+</style>
+<script type="text/javascript">
+	$('document').ready(function(){
+
+		$('#myModal').foundation('reveal', 'open'); 
+
+		$('.highlights').click(function(){
+			$('.highlight_div').slideToggle();
+		});
+
+		$('.overview').click(function(){
+			$('.overview_div').slideToggle();
+		});
+
+		$('.borrowers').click(function(){
+			$('.borrower_div').slideToggle();
+		});
+
+		$('.collaterals').click(function(){
+			$('.collateral_div').slideToggle();
+		});
+
+		$('.exit_strategy').click(function(){
+			$('.exit_strategy_div').slideToggle();
+		});
+
+		$('.loan_name').click(function(){
+			$('.name-div').slideToggle();
+		});
+
+		$('#lending_cat').change(function(){
+			cat = $(this).val();
+			if(cat=="Business Financing")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').show();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+			else if(cat=="Equity and Crowdfunding")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').show();
+				$('#mortgage_type').hide();
+			}
+			else if(cat == "Residential or Commercial Mortgage")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').show();
+			}
+			else
+			{
+				$('#lending_types').show();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+		});
+
+		
+	$("#existing_loan").click(function(){
+			$('.select_box').slideToggle();
+		});
+
+	$("#existing_loan1").click(function(){
+			$('.select_box').slideToggle();
+		});
+	
+	
+
+		$('.select_category').click(function(){
+			var id = $(this).attr('id');
+			var loan_id = $('.loan_id').val();
+			var data = "&id="+loan_id+"&num="+id+"&i="+id;
+		     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/emails/all_categories',
+                 success:function(data){
+                 	
+                 	$('.select_folder'+id).html(data)
+                }
+            
+      		  });
+			$('#cat_'+id).slideToggle();
+			//$('#'+id).html("<img src='/assets/icon2.png'  class='select_img btnimg'>")
+		});
+
+		$('.select_cat').change(function(){
+			var id = $(this).attr('id');
+			sid= id.replace("select_category_", ""); 
+			$("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+		});
+
+		$('.img_btn').click(function(){
+			var id= $(this).attr('id');
+			nId = id.replace("img","img_");
+			inpt = id.replace("img","img_val_");
+			fname = $('#'+inpt).val();
+			$('#'+nId).val(fname);
+			$('#'+id).html("<img src='/assets/icon6.png'  class='select_img btnimg1'>");
+		});
+
+		$("#new_loan").click(function(){
+       	 
+       	 	 var data =  $('.add_loan').serialize();
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/add_loan',
+	                 success:function(data){
+	                    $('.loan_id').val(data);
+	                    $('#myModal').foundation('reveal', 'close');
+					}
+
+                
+          		  });
+
+		});
+
+	});
+
+
+</script>
+
+ <script type="text/javascript">
+     
+
+      $(document).ready(function() {
+       
+       $("select.flexselect").flexselect({
+			  allowMismatch: true,
+			  inputNameTransform:  function(name) 
+			  { return "new_" + name; 
+			  
+				}
+			  
+			});
+
+       $(".flexselect").change(function(){
+       	 current= $(this).val();
+       	 var option = $('option:selected', this).attr('mytag');
+       	$(".loan_name").html(option);
+       	$("#loan_name").val(option);
+       	if ($.isNumeric(current)) {
+       	 	 var data = "&loanId=" + current;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/loan_detail',
+	                 success:function(data){
+	                    $('.left_tab').html(data);
+	                	$('#myModal').foundation('reveal', 'close');
+					}
+
+                
+          		  });
+			}
+			
+       });
+
+       /******************* New Code ******************/
+       $('.add_new_borrower').click(function(){
+       		var loan_id = $('.loan_id').val();
+	        var data = 'loanId='+loan_id;
+	        $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/add_borrower',
+	                success:function(response){
+	                    $('.add_borrower').html(response);
+	                    $('#myModal3').foundation('reveal', 'open');
+	                }
+	            });
+       });
+
+       $('.add_new_collateral').click(function(){
+       		var loan_id = $('.loan_id').val();
+	        var data = 'loanId='+loan_id;
+	        $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/add_collateral',
+	                success:function(response){
+	                    $('.add_collateral').html(response);
+	                    $('#myModal5').foundation('reveal', 'open');
+	                }
+	            });
+       });
+
+       /******************* New Code ******************/
+
+      });
+
+
+
+	
+    </script>
+
+
+<div class="row main_div">
+
+<!-------------------- Loan ---------------------->
+	<div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  <h2 id="modalTitle">Would you like to: </h2>
+	  <p>Create New Loan:  <input type="radio" name="loan_type" id="new_loan"></p>
+	  <p>Ammend Existing Loan:  <input type="radio" name="loan_type" id="existing_loan1"></p>
+	  <div class="select_box" style="display:none;">
+			<label> Select Loan </label>
+			<select id="flexselect" name="president" class="flexselect">
+				<option value=""></option>
+				<% @loans.each do |loan| %>
+					<option value="<%= loan.id %>" mytag="<%= loan.name %>"> <%= loan.name %> </option>
+				<% end %>
+			</select>
+	  </div>
+	</div>
+<!------------------ Loan ---------------------->
+
+<!------------------ For Borrower -------------------->
+	
+
+	<div id="myModal2" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  <h4 style="text-align:center;"><u>Borrowers </u></h4>
+	  
+	  <div class="large-12 column">
+	  	<div class="large-8 column">
+	  		<div class="form_wrap" style="float:left;  ">
+                    <input type="text" placeholder="Search" name="search" onkeyup="search_fun();" class="search_input">
+                    <input id="search_btn" type="button" >
+            </div>
+	  	</div>
+	  	<div class="large-4 column">
+	  		<a href="javascript:void(0);" class="add_new_borrower" title="Add New" style="font-size: 24px; font-weight: bold;"> + </a>
+	  	</div>
+	  	<div class="large-4 column">
+	  	</div>
+	  </div>
+	  <div class="row allborrowers" >
+			
+	  </div>
+	   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+	</div>
+
+
+	<div id="myModal3" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  <h2 id="modalTitle"> Add Borrower </h2>
+	  
+	  <div class="large-12 column add_borrower">
+	  	
+	  </div>
+	   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+	</div>
+
+
+
+<!------------------ End Borrower ---------------->
+<!------------------ For Collateral -------------->
+	
+	<div id="myModal4" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  <h4 style="text-align:center;"><u>Collaterals </u></h4>
+	  
+	  <div class="large-12 column">
+	  	<div class="large-8 column">
+	  		<div class="form_wrap" style="float:left;  ">
+                    <input type="text" placeholder="Search" name="search_collateral" onkeyup="search_collateral();" class="search_col">
+                    <input id="search_btn" type="button" >
+            </div>
+	  	</div>
+	  	<div class="large-4 column">
+	  		<a href="javascript:void(0);" class="add_new_collateral" title="Add New Collateral" style="font-size: 24px; font-weight: bold;"> + </a>
+	  	</div>
+	  	<div class="large-4 column">
+	  	</div>
+	  </div>
+	  <div class="row allcollaterals" >
+			
+	  </div>
+	   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+	</div>
+
+	<div id="myModal5" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+	  <h2 id="modalTitle"> Add Collateral </h2>
+	  
+	  <div class="large-12 column add_collateral">
+	  	
+	  </div>
+	   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+	</div>
+
+<!------------------ End Collateral -------------->
+
+	<form action="http://<%= @hostname %>/emails/create_application" method="post" class="add_loan">  
+		<div class="large-12 columns center_txt">
+		<input type="hidden" name="uId" value="<%= @infoUser.id %>" class="userId">
+			<div class="loan_name"><span>  Loan Name </span> </div>
+			<div class="small-6 large-centered columns name-div" style="display:none;">
+				<div class="eow-field">
+					<input type="text" name="_LoanName" id="loan_name" placeholder="Loan Name">
+					<img src="/assets/icon1.png"  class="select_img btnimg" id="loan_name_btn" onclick="return forloan('_LoanName')">
+				</div>
+			</div>
+			
+		</div>
+		
+			<div class="large-12 columns btn-div">
+						<b>Would you like to Ammend Existing Loan:</b> <input type="radio" name="loan_type" id="existing_loan">
+						<div class="select_box" style="display:none;">
+								<label> Select Loan </label>
+								<select id="flexselect" name="president" class="flexselect">
+									<option value=""></option>
+									<% @loans.each do |loan| %>
+										<option value="<%= loan.id %>" mytag="<%= loan.name %>"> <%= loan.name %> </option>
+									<% end %>
+								</select>
+						  </div>
+			</div>
+	
+		<div class="large-12 columns btn-div">
+					<input type="submit" value="Save" class="tiny button save_loan">
+		</div>
+
+
+		<div class="email-outer-wrap add_edit">
+			<!-- <div class="large-3 columns left_tab">
+				<input type="hidden" name="id" class="loan_id">
+					<div class="highlights left-headings"> > Hightlights</div>
+					<div class="highlight_div" style="display:none;">
+						<div class="eow-field">
+							<input type ="text" name="_NetLoanAmountRequested0" id="amount_request" placeholder = "Net Loan Amount Requested"> 
+							<img src="/assets/icon1.png" id="amnt_btn" class="select_img" onclick="return forloan('_NetLoanAmountRequested0')">
+						</div>
+						<div class="eow-field">
+							<input id="estimated_val" type="text" name="_EstimatedMarketValues" placeholder="Estimated Market Value"> 
+							<img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return forloan('_EstimatedMarketValues')">
+						</div>
+						<div class="eow-field">
+							<select id="_DesiredTermLength" rows="1" name="_DesiredTermLength">
+								<option value="">Desired Term Length</option>
+								<option value="3">Less Than 3 Months</option>
+								<option value="6">3 to 6 Months</option>
+								<option value="12">6 to 12 Months</option>
+								<option value="24">12 to 24 Months</option>
+								<option value="25">More than 24 Months</option>
+							</select>
+							<img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return selectloan('_DesiredTermLength')">
+						</div>
+
+						<div class="eow-field">
+							<input id="loc_city" type="text" name="City3" rows="1" placeholder = "City">
+							<img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return forloan('City3')">
+						</div>
+
+						<div class="eow-field">
+							<input id="loc_state" type="text" name="State3" rows="1" placeholder = "State">
+							<img src="/assets/icon1.png"  class="select_img btnimg" onclick="return forloan('State3')">
+						</div>
+
+						<div class="eow-field">
+							<input id="close_date" type="text" value="" rows="1" name="_ExpectedCloseDate" placeholder = "Expected Close Date(dd-mm-yyyy)">
+							<img src="/assets/icon1.png"   class="select_img" onclick="return forloan('_ExpectedCloseDate')">
+						</div>
+
+						<div class="eow-field">
+							<select id="lending_cat" name="_LendingCategory">
+								<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+								<option value="Business Financing">Business Financing</option>
+								<option value="Equity and Crowdfunding">Equity and Crowdfunding</option>
+								<option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+							</select>
+							<img src="/assets/icon1.png"   class="select_img" onclick="return selectloan('_LendingCategory')">
+						</div>
+
+						
+
+						<div class="eow-field">
+							<select id="lending_types" name="_LendingTypes" >
+								<option value="Single Family Residence">Single Family Residence</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Condo">Condo</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Commercial">Commercial</option>
+								<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+								<option value="Development">Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Health Care">Health Care</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Other">Other</option>
+							</select>
+							<img src="/assets/icon1.png"   class="lending_types select_img" onclick="return selectloan('_LendingTypes')" style="display:none">
+
+							<select id="financing_types" name="_BusinessFinancingTypes" style="display:none;">
+									<option value="Equipment/Inventory">Equipment/Inventory</option>
+									<option value="Working Capital">Working Capital</option>
+									<option value="Factoring">Factoring</option>
+									<option value="Cash Advances">Cash Advances</option>
+									<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+									<option value="Supply Chain Financing">Supply Chain Financing</option>
+									<option value="Expansion Capital">Expansion Capital</option>
+									<option value="Equity">Equity</option>
+									<option value="SBA Financing">SBA Financing</option>
+							</select>
+							<img src="/assets/icon1.png"   class="financing_types select_img" onclick="return selectloan('_BusinessFinancingTypes')" style="display:block">
+
+							<select id="equity_crowd" name="_EquityandCrowdFunding" style="display:none;">
+								<option value="Project Financing">Project Financing</option>
+								<option value="Acquisition and Development">Acquisition and Development</option>
+								<option value="Start Up">Start Up</option>
+								<option value="Business Partnership">Business Partnership</option>
+							</select>
+							<img src="/assets/icon1.png"   class="equity_crowd select_img" onclick="return selectloan('_EquityandCrowdFunding')" style="display:none">
+
+
+							<select id="mortgage_type" name="_MortageTypes" style="display:none;">
+								<option value="Owner Occupied">Owner Occupied</option>
+								<option value="Second Home">Second Home</option>
+								<option value="Investment Property">Investment Property</option>
+								<option value="FHA">FHA</option>
+								<option value="VA">VA</option>
+								<option value="Reverse Mortgage">Reverse Mortgage</option>
+								<option value="Sub Prime">Sub Prime</option>
+								<option value="HUD Financing">HUD Financing</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Land Development">Land Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Healthcare">Healthcare</option>
+								<option value="Other">Other</option>
+							</select>
+							<img src="/assets/icon1.png"   class="mortgage_type select_img" onclick="return selectloan('_MortageTypes')" style="display:none">
+
+						</div>
+						<div class="eow-field">
+							<select id="transaction_type" rows="1" name="_TransactionType0">
+									<option value="">Transaction Type</option>
+									<option value="Purchase">Purchase</option>
+									<option value="Refinance">Refinance</option>
+									<option value="Both">Both</option>
+							</select>
+							<img src="/assets/icon1.png"   class="select_img" onclick="return selectloan('_TransactionType0')" >
+
+						</div>
+
+					</div>
+					<div class="overview left-headings"> > Overview</div>
+					<div class="overview_div" style="display:none;">
+						<div class="eow-field">
+							 <textarea placeholder="Summary" name="_LoanSummaryWhatareyoulookingfor" id="loan_summary"  rows="8"></textarea>
+							<img src="/assets/icon1.png" id="summary_btn" class="select_img" onclick="return textloan('_LoanSummaryWhatareyoulookingfor')">
+						</div>
+						
+					</div>
+					<div class="borrowers left-headings"> > Borrower</div>
+					<div class="borrower_div" style="display:none;">
+						<div class="eow-field">
+						<input type="hidden" class="borrower_id" >
+							<select  class="borrower" name="borrower_type">
+								<option value="Individual" selected="selected">Individual</option>
+								<option value="Company or Trust">Company or Trust</option>
+							</select>
+							<img src="/assets/icon1.png"   class="select_img btnimg " id="borrower_type" onclick="return selectBorrower('borrower_type')">
+						</div>
+						<div class="eow-field">
+							<input type="text" placeholder="Name" name="personal_name" class="borrower">
+							<img src="/assets/icon1.png"  class="select_img btnimg " id="personal_name" onclick="return menuBorrower('personal_name')">
+						</div>
+						
+						
+						<div class="eow-field">
+							<input  type="text" placeholder="Email" name="personal_email" class="borrower">
+							<img src="/assets/icon1.png"   class="select_img btnimg " id="personal_email" onclick="return menuBorrower('personal_email')">
+						</div>
+						<div class="eow-field">
+							<input  type="text" placeholder = "Monthly Income" name="Monthly Income" class="borrower">
+							<img src="/assets/icon1.png" class="select_img btnimg" id= "personal_monthly_income" onclick="return menuBorrower('personal_monthly_income')">
+						</div>
+						<div class="eow-field">
+							<select name="time_in_business" >
+								<option value="">Borrower Time In Business</option>
+								<option value="1">1 Year</option>
+								<option value="2">2 Years</option>
+								<option value="3">3 Years</option>
+								<option value="4">4 Years</option>
+								<option value="5">5 Years</option>
+								<option value="6">6 Years</option>
+								<option value="7">7 Years</option>
+								<option value="8">8 Years</option>
+								<option value="9">9 Years</option>
+								<option value="10">10+ Years</option>
+							</select>
+							<img src="/assets/icon1.png"   class="select_img btnimg " id="time_in_business" onclick="return selectBorrower('time_in_business')">
+						</div>
+					</div>
+					<div class="collaterals left-headings"> > Collateral</div>
+					<div class="collateral_div" style="display:none;">
+					<input type="hidden" class="collateral_id" >
+						<div class="eow-field">
+							<input  type="text" class="collateral" placeholder = "Address" rows="1" name="address">
+							<img src="/assets/icon1.png"  id="market_val_btn" class="select_img btnimg" onclick="return menuCollateral('address')">
+						</div>
+
+						<div class="eow-field">
+							<input class="collateral" type="text" value="" rows="1" name="estimated_value" placeholder = "Estimated Property Value ">
+							<img src="/assets/icon1.png"  class="select_img btnimg"  onclick="return menuCollateral('estimated_value')">
+						</div>
+
+						<div class="eow-field">
+							<input class="collateral" type="text" value="" rows="1" name="amount_owed" placeholder = "Amount Owed">
+							<img src="/assets/icon1.png"  id="amount_owed" class="select_img btnimg" onclick="return menuCollateral('amount_owed')">
+						</div>
+
+						<div class="eow-field">
+							<select rows="1" name="mortgage_status" class="collateral">
+								<option value="">Mortgage Status</option>
+								<option value="1">Paid In Full</option>
+								<option value="0">Has Mortgage</option>
+							</select>
+
+							<img src="/assets/icon1.png"  id="mortgage_status" class="select_img btnimg"  onclick="return selectCollateral('mortgage_status')" >
+						</div>
+
+						
+					</div>
+					<div class="exit_strategy left-headings"> > Exit Strategy</div>
+					<div class="exit_strategy_div" style="display:none;">
+						<div class="eow-field">
+							<textarea id="exit_starategy" rows="8" name="_ExitStrategyHowwillyoupaytheloanoff" placeholder = "Exit Strategy"></textarea>
+							<img src="/assets/icon1.png"  id="exit_starategy_btn" class="select_img btnimg" onclick="textloan('_ExitStrategyHowwillyoupaytheloanoff')">
+						</div>
+					</div>
+			</div> -->
+			<div class="large-12 columns">
+			<input type="hidden" name="id" class="loan_id">
+				<div class="row">
+					<div class="large-12 columns bordr_top">
+						Subject : Test Abc
+					</div>
+					<div class="large-12 columns esummary" id="target">
+						Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. Lorem Ipsum nis a dummy text. 
+						
+							
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+var option = { width: 150, items: [
+        { text: "Loan Name", alias: "_LoanName", action: menuAction },
+        { type: "splitLine" },
+        //this is a parent item, which has some sub-menu items
+        { text: "Highlights", alias: "1-4", type: "group", width: 170, items: [
+         { text: "Net Loan Amount Requested", alias: "_NetLoanAmountRequested0", action: menuAction},
+         { text: "Estimated Market Value", alias: "_EstimatedMarketValue", action: menuAction },
+         { text: "City", alias: "City3", action: menuAction },
+         { text: "State",  alias: "State3", action: menuAction },
+         { text: "Expected Close Date(dd-mm-yyyy)",  alias: "_ExpectedCloseDate", action: menuAction },
+        ]
+        },
+
+        { type: "splitLine" },
+        { text: "Overview", alias: "overview", type: "group", width: 170, items: [
+         { text: "Summary", alias: "_LoanSummaryWhatareyoulookingfor", action: menuAction},
+        ]
+        },
+
+        { type: "splitLine" },
+        { text: "Borrower", alias: "borrower", action: borrower_popup},
+
+        { type: "splitLine" },
+        { text: "Collateral", alias: "collateral", action: collateral_popup},
+        
+        { type: "splitLine" },
+        { text: " Exit Strategy",alias: "_ExitStrategyHowwillyoupaytheloanoff", action: menuAction},
+      ]
+};
+
+$("#target").contextmenu(option); 
+
+
+
+ function menuAction() {
+
+                if (window.getSelection) {
+			      selection = window.getSelection();
+			  	}
+			  	nameinput = this.data.alias;
+			 //  	$('#'+input_id).val(selection);
+				
+				// var nameinput = $('#'+input_id).attr('name');
+				 var loan_id = $('.loan_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_loan',
+	                success:function(data){
+                 		$('.loan_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 
+			 }
+
+function forloan(lname) {
+                selection = $('input[name="'+lname+'"]').val();
+               
+			  	this_type= $('input[name="'+lname+'"]').attr('type');
+			  	input_id = lname;
+			  	$('#'+input_id).val(selection);
+				
+				var nameinput = $('#'+input_id).attr('name');
+				
+				var loan_id = $('.loan_id').val();
+				
+				var data = "&id="+loan_id+"&"+input_id+"="+selection;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_loan',
+	                success:function(data){
+                 		$('.loan_id').val(data);
+                 		if(lname=="_LoanName")
+                 		{
+                 			$('.loan_name').html("<span>"+selection+"</span> ")
+                 		}
+                	}
+	                 
+				});
+			 }
+
+	 function selectloan(lname) {
+        selection = $('select[name="'+lname+'"]').val()
+        
+	  	this_type= $('input[name="'+lname+'"]').attr('type');
+	  	input_id = lname;
+	  	$('#'+input_id).val(selection);
+		
+		var nameinput = $('#'+input_id).attr('name');
+		
+		var loan_id = $('.loan_id').val();
+		
+		var data = "&id="+loan_id+"&"+input_id+"="+selection;
+	     $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/emails/new_loan',
+            success:function(data){
+         		$('.loan_id').val(data);
+         		
+        	}
+             
+		});
+	 }
+
+	function textloan(lname){
+		selection = $('textarea[name="'+lname+'"]').val()
+
+	  	input_id = lname;
+	  	$('#'+input_id).val(selection);
+		
+		var nameinput = $('#'+input_id).attr('name');
+		
+		var loan_id = $('.loan_id').val();
+		
+		var data = "&id="+loan_id+"&"+input_id+"="+selection;
+	     $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/emails/new_loan',
+            success:function(data){
+         		$('.loan_id').val(data);
+         		
+        	}
+             
+		});
+	}
+
+function menuCollaterals(nameinput) {
+               	if (window.getSelection) {
+			      selection = window.getSelection();
+			  	}
+			  	input_id = this.data.alias;
+			  	$('#'+input_id).val(selection);
+				
+				var nameinput = $('#'+input_id).attr('name');
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+function menuCollateral(nameinput) {
+               	selection = $('input[name="'+nameinput+'"]').val();
+				
+				
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+
+function selectCollateral(nameinput) {
+               	selection = $('select[name="'+nameinput+'"]').val();
+				
+				
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+function forCollateral(lname) {
+                 selection = $('input[name="'+lname+'"]').val();
+			  	input_id = this.data.alias;
+			  	
+				
+				
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+lname+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+function menuBorrowers(nameinput) {
+                if (window.getSelection) {
+			      selection = window.getSelection();
+			  	}
+			  	input_id = this.data.alias;
+			  	$('#'+input_id).val(selection);
+				
+				var nameinput = $('#'+input_id).attr('name');
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+
+
+			
+
+function selectBorrower(nameinput) {
+                selection = $('select[name="'+nameinput+'"]').val();
+				
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+	function menuCollaterals(nameinput) {
+               	if (window.getSelection) {
+			      selection = window.getSelection();
+			  	}
+			  	input_id = this.data.alias;
+			  	$('#'+input_id).val(selection);
+				
+				var nameinput = $('#'+input_id).attr('name');
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+			 function menuBorrowers(nameinput) {
+                if (window.getSelection) {
+			      selection = window.getSelection();
+			  	}
+			  	input_id = this.data.alias;
+			  	$('#'+input_id).val(selection);
+				
+				var nameinput = $('#'+input_id).attr('name');
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+/************************** New Code *********************************/ 
+	function menuBorrower(nameinput) {
+				
+				inputVal = $('input[name="'+nameinput+'"]').val();
+				
+				selection = getCookie('select');
+			   
+				$('input[name="'+nameinput+'"]').val(selection);
+					
+				
+				var loan_id = $('.loan_id').val();
+				var borrower_id = $('.borrower_id').val();
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+
+
+			 function menuCollateral(nameinput) {
+               	
+				selection = getCookie('select');
+
+				$('input[name="'+nameinput+'"]').val(selection);
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+			 function selectCollateral(nameinput) {
+               	
+				var selection = $('select[name="'+nameinput+'"]').val();
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+
+
+
+			function getCookie(cname) {
+			    var name = cname + "=";
+			    var ca = document.cookie.split(';');
+			    for(var i=0; i<ca.length; i++) {
+			        var c = ca[i];
+			        while (c.charAt(0)==' ') c = c.substring(1);
+			        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+			    }
+			    return "";
+			} 
+
+			 function borrower_popup()
+			{
+
+
+				if (window.getSelection) {
+				      selection = window.getSelection();
+				    }
+
+				document.cookie="select="+selection;
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+				var data = "&loanId=" + loan_id;
+					     $.ajax({
+			                data: data,
+			                type: 'POST',
+			                url: '/emails/all_borrowers',
+			                 success:function(data){
+			                    $('.allborrowers').html(data);
+			                	$('#myModal2').foundation('reveal', 'open');
+							}
+
+		                
+		          		  }); 
+
+			}
+
+			function collateral_popup()
+			{
+
+				if (window.getSelection) {
+				      selection = window.getSelection();
+				    }
+
+				document.cookie="select="+selection;
+
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+				var data = "&loanId=" + loan_id;
+					     $.ajax({
+			                data: data,
+			                type: 'POST',
+			                url: '/emails/all_collaterals',
+			                 success:function(data){
+			                    $('.allcollaterals').html(data);
+			                	$('#myModal4').foundation('reveal', 'open');
+							}
+
+		                
+		          		  }); 
+
+			}
+
+			function search_fun()
+		    {
+		        var fdata=$('.search_input').val();
+		        var loan_id = $('.loan_id').val();
+		        var data = '&search='+fdata+'&loanId='+loan_id;
+		        $.ajax({
+		                data: data,
+		                type: 'POST',
+		                url: '/emails/all_borrowers',
+		                success:function(response){
+		                    $('.allborrowers').html(response);
+		                }
+		            });
+		     }
+
+		     function search_collateral()
+		    {
+		        var fdata = $('.search_col').val();
+		        var loan_id = $('.loan_id').val();
+		        var data = '&search='+fdata+'&loanId='+loan_id;
+		        $.ajax({
+		                data: data,
+		                type: 'POST',
+		                url: '/emails/all_collaterals',
+		                success:function(response){
+		                    $('.allcollaterals').html(response);
+		                }
+		            });
+		     }
+
+		     function edit_borrower(id)
+		     {
+		     	var loan_id = $('.loan_id').val();
+		        var data = 'loanId='+loan_id+'&borrower_id='+id;
+		        $.ajax({
+		                data: data,
+		                type: 'POST',
+		                url: '/emails/add_borrower',
+		                success:function(response){
+		                    $('.add_borrower').html(response);
+		                    $('#myModal3').foundation('reveal', 'open');
+		                }
+	            });
+		     }
+
+		     function textborrower(nameinput){
+				inputVal = $('textarea[name="'+nameinput+'"]').val();
+				
+				selection = getCookie('select');
+
+				$('textarea[name="'+nameinput+'"]').val(selection);
+					
+				var loan_id = $('.loan_id').val();
+				
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			}
+
+			function edit_collateral(id)
+		     {
+		     	var loan_id = $('.loan_id').val();
+		        var data = 'loanId='+loan_id+'&collateral_id='+id;
+		        $.ajax({
+		                data: data,
+		                type: 'POST',
+		                url: '/emails/add_collateral',
+		                success:function(response){
+		                    $('.add_collateral').html(response);
+		                    $('#myModal5').foundation('reveal', 'open');
+		                }
+	            });
+		     }
+
+		/************************ Onchange Functions ******************/
+		function setvalue(name)
+		{
+				inputVal = $('input[name="'+name+'"]').val();
+
+				selection = inputVal;
+					
+				
+				var loan_id = $('.loan_id').val();
+				
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+name+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+		}
+
+		function textval(name)
+		{
+			inputVal = $('textarea[name="'+name+'"]').val();
+			selection = inputVal;
+					
+				
+				var loan_id = $('.loan_id').val();
+				
+				var borrower_id = $('.borrower_id').val();
+				
+				var data = "&id="+loan_id+"&"+name+"="+selection+"&borrower_id="+borrower_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_borrower',
+	                success:function(data){
+                 		$('.borrower_id').val(data);
+                 		
+                	}
+	                 
+				});
+			
+		}
+
+		function collateralVal(nameinput) {
+               	
+				inputVal = $('input[name="'+nameinput+'"]').val();
+				selection = inputVal;
+				
+				$('input[name="'+nameinput+'"]').val(selection);
+				
+				var loan_id = $('.loan_id').val();
+				if(loan_id=="")
+				{
+					alert("Please select loan or add new loan.");
+					return false;
+				}
+
+				var collateral_id = $('.collateral_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection+"&collateral_id="+collateral_id;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_collateral',
+	                success:function(data){
+                 		$('.collateral_id').val(data);
+                 		
+                	}
+	                 
+				});
+			 }
+		/************************ End Onchange Functions ******************/
+
+
+</script>
+<style type="text/css">
+	.b-m-arrow
+	{
+		padding: 2px;
+	}
+	.b-m-ibody
+	{
+		padding: 2px;
+	}
+</style>

@@ -1,0 +1,5 @@
+<% date = DateTime.parse("#{@subscription.current_period_ends_at}")
+  formatted_date = date.strftime('%b %d, %Y')
+  %>
+
+  Your next billing date is <b><%= formatted_date %></b>.

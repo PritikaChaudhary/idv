@@ -1,0 +1,28 @@
+<% if @collaterals.blank? %>
+	<div class="large-12 columns">
+		No Collateral Found.
+	</div>
+<% else %>
+    <div class="large-12 columns">
+		<table style="width:100%">
+		    <% @collaterals.each do |collateral| 
+
+		    	%>
+				<% 	if collateral.asset_type.blank? 
+				 		@name = "No Asset Type" 
+				 	else 
+				 		@name = collateral.asset_type
+				  	end %>
+					<tr>
+
+						<td>
+							<a href="javascript:void(0);" rel="<%= collateral.id %>" onclick = "edit_collateral('<%= collateral.id %>')">
+								<%= @name %>
+							</a>
+						</td>
+					</tr>
+					
+			<% end %>
+		</table>
+	</div>
+<% end %>

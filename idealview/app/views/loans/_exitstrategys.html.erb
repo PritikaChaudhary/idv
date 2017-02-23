@@ -1,0 +1,15 @@
+<div class="content-white-box">
+	<div class="cwb-header">
+      <h3>Exit Strategy</h3>
+      <div class="cwb-controls">
+          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_ExitStrategyHowwillyoupaytheloanoff"} %>
+      </div>
+  	</div>
+  	<div class="cwb-content">
+	    <% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+	      <textarea class="loan_info_fields" name="_ExitStrategyHowwillyoupaytheloanoff"><%= @loan.info['_ExitStrategyHowwillyoupaytheloanoff'] %></textarea>
+	    <% else %>
+	      <textarea class="loan_info_fields" name="_ExitStrategyHowwillyoupaytheloanoff"></textarea>
+	    <% end %>
+  	</div>
+</div>

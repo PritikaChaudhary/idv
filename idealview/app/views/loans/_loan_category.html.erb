@@ -23,7 +23,7 @@ end
 
 		<%loan_type_options = Loan.loan_type_options %>
 		<%@url = url_for :controller=>'loans', :action=>'edit_loan_type'%>
-		<span style='font-weight:bold'>Lending Category</span><BR>
+		<span style='font-weight:bold' >Lending Category</span><BR>
 		<%=select_tag '_LendingCategory', options_for_select(Loan.category_options, contact.info['_LendingCategory']), onchange: "callAjax('#{@url}','loan-type','loan-category-form');$('#loan-type').hide();$('#loan-type').slideDown()"%>
 		
 		<span style='font-weight:bold'>Loan Type</span><BR>
@@ -41,9 +41,97 @@ end
 		<% @url=url_for :controller=>'loans', :action=>'edit_category',:id=>contact['_id'], :edit=>true%>
 		<div <% if policy(Loan).update? %> ondblclick='callAjax("<%=@url%>","loan-category","loan-category-form")' <% end %>>
 			
-			<div class='bottom-space' ><span style='font-weight:bold'>Lending Category</span><BR><%=loanCat%></div>
+			<div class='bottom-space' ><span style='font-weight:bold' class="hl-l highlight_header">LENDING CATEGORY : </span>
+			<span class="edit_pen" style="float:right;" onclick='callAjax("<%=@url%>","loan-category","loan-category-form")'>
+				<img src="/assets/edit-icon.png" style="width:15px;">
+			</span>
 			
-			<div class='bottom-space'><span style='font-weight:bold'>Loan Type</span><BR><%=loan_type%></div>
+			<!-------- Show/Hide ------>
+				<% @loan = Loan.find_by_id(contact['_id'].to_i) %>
+				<% unless @loan.hide_fields.blank? %>
+
+						<span id="show_loan__LendingCategory" <% if @loan.hide_fields.include? "_LendingCategory" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+							<a style="" onclick="show_loan_field('<%= @loan.id %>', '_LendingCategory');" tabindex="0" title = "Show">
+									<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan__LendingCategory" <% if @loan.hide_fields.include? "_LendingCategory" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+							<a style="" onclick="hide_loan_field('<%= @loan.id %>', '_LendingCategory');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+
+
+					<% else %>
+						
+						<span id="show_loan__LendingCategory" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+							<a style="" onclick="show_loan_field('<%= @loan.id %>', '_LendingCategory');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan__LendingCategory"  style="float:right; margin-top:0px; margin-right:2px;">
+							<a style="" onclick="hide_loan_field('<%= @loan.id %>',  '_LendingCategory');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+
+					<% end %>
+
+
+			<!-------- End Show/Hide ------>
+
+			<span class="valuex_container">
+				<%=loanCat%>
+			</span>
+			</div>
+			
+			<div class='bottom-space'>
+			<span  class="hl-l highlight_header" style='font-weight:bold'>LOAN TYPE : </span>
+			
+			<span class="edit_pen" style="float:right;" onclick='callAjax("<%=@url%>","loan-category","loan-category-form")'>
+				<img src="/assets/edit-icon.png" style="width:15px;">
+			</span>
+			<!-------- Show/Hide ------>
+				<% @loan = Loan.find_by_id(contact['_id'].to_i) %>
+				<% unless @loan.hide_fields.blank? %>
+
+						<span id="show_loan__LendingTypes" <% if @loan.hide_fields.include? "_LendingTypes" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+							<a style="" onclick="show_loan_field('<%= @loan.id %>', '_LendingTypes');" tabindex="0" title = "Show">
+									<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan__LendingTypes" <% if @loan.hide_fields.include? "_LendingTypes" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+							<a style="" onclick="hide_loan_field('<%= @loan.id %>', '_LendingTypes');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+
+
+					<% else %>
+						
+						<span id="show_loan__LendingTypes" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+							<a style="" onclick="show_loan_field('<%= @loan.id %>', '_LendingTypes');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hide_loan__LendingTypes"  style="float:right; margin-top:0px; margin-right:2px;">
+							<a style="" onclick="hide_loan_field('<%= @loan.id %>','_LendingTypes);" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+
+					<% end %>
+
+
+			<!-------- End Show/Hide ------>
+			<span class="valuex_container">
+				<%=loan_type%>
+			</span>
+			</div>
 		</div>
 		 <%= hidden_field_tag '_LendingCategory', loanCat %>
 		 <%= hidden_field_tag types[loanCat], loan_type %>

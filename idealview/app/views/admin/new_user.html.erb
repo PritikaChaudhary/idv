@@ -1,7 +1,7 @@
 <div class='row'>
 	<div class="small-8 small-centered columns">
 
-		<h2>Create New User</h2>
+		<h2>Add Admin</h2>
 		  <%= form_for(@user, :url => admins_create_user_path) do |f| %>
 
 		  <div class="field">
@@ -22,15 +22,16 @@
 		    <%= f.password_field :password, autocomplete: "off" %>
 		  </div>
 
-
-		  <div class="field">
+		  <input id="roles_Admin" type="hidden" value="Admin" name="roles[Admin]">
+		  <input  type="hidden" value="true" name="admin_user">
+		  <!-- <div class="field">
 		    <%= f.label :roles %>
 			<% User.valid_roles.each do |role| %>
 			  <%= check_box_tag 'roles['+role+']', role %>
 			  <label><%= role %></label><BR>
 			<% end %>
 			
-		  </div>
+		  </div> -->
 
 
 

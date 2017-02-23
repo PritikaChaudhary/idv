@@ -8,6 +8,15 @@ class Loan
   many :loan_urls
 
   key :name, String
+  key :sort_name, String
+  key :sort_location, String
+  key :progress, String
+  key :dropbox_name, String
+  key :net_loan_amount, Integer
+  key :loan_state, String
+  key :lending_type, String
+  key :transaction_type, String
+  key :estimated_value, Integer
   key :info, Object
   key :published, Boolean
   key :allowed_emails, String
@@ -17,12 +26,76 @@ class Loan
   key :nda_signed, Boolean
   key :archived, Boolean
   key :delete, Integer
+  key :delete_admin, Integer
+  key :delete_broker, Integer
   key :sort_id, Integer
   key :email, String
   key :created_date, String
   key :completed, Integer
   key :incomplete, Integer
+  key :added_by, String
+  key :stepping, Integer
+  key :created_at, Time
+  key :updated_at, Time
+  key :complete_email, Integer
+  key :fd_id, Integer
+  key :on_priority, Integer
+  key :priority_num, Integer
+  key :hide_fields, String
+  key :created_by_email, String
+  key :created_by_info, String
+  key :created_by_name, String
+  key :gross_loan_amount, String
+  key :units, String
+  key :as_is_value, String
+  key :as_improved_value, String
+  key :value_source, String
+  key :value_date, String
+  key :completed_square_footage, String
+  key :improved_sale_sf, String
+  key :unimproved_sf, String
+  key :begining_unit, String
+  key :improved_unit, String
+  key :cash_to_contribute, String
+  key :cash_value_ratio, String
+  key :purchase_price, String
+  key :as_is_ltv, String
+  key :as_is_ltc, String
+  key :as_is_ltv_purchaseprice, String
+  key :as_is_ltv_borrower_purchaseprice, String
+  key :as_improved_ltv, String
+  key :as_is_ltc_completed, String
+  key :begining_sales, String
+  key :ending_sale, String
+  key :sales_upb, String
+  key :sale_gross_income, String
+  key :ending_sale_noi, String
+  key :post_sales_upb, String
+  key :post_sales_value, String
+  key :post_sales_ltv, String
+  key :total_primary_sf, String
+  key :total_secondary_size, String
+  key :total_gross, String
+  key :total_noi_ytd, String
+  key :enterprise_id, String
+  key :cpc_loan_id, Integer
+  key :not_sync, Integer
+  key :progress, Integer
+  key :sender_username, String
+  key :receiver_email, String
   
+  # belongs_to :market_place 
+  # key :who_broker, String
+
+  def pay_offs
+    PayOffAmount.all(:loan_id => self.id)
+  end
+
+  def acres
+    Acre.all(:loan_id => self.id)
+  end
+
+
   def address
     if !self.info['Address3Street1'].blank? && defined? self.info['City3'] && defined? self.info['State3'] && defined? self.info['PostalCode3']
       self.info['Address3Street1'].to_s+','+self.info['City3'].to_s+','+self.info['State3'].to_s+','+self.info['PostalCode3'].to_s
@@ -31,7 +104,18 @@ class Loan
     end
   end
 
-  
+  def new_db id
+    abort("#{@user_config}")
+       file_path = "#{Rails.root}/config/settings/#{current_user.id}.yml"
+        #abort("#{file_path}")
+        @user_config =  YAML.load_file("#{file_path}")
+      
+  abort("#{@user_config}")
+  connection(Mongo::Connection.new('localhost', 27017))
+  set_database_name "#{@user_config['settings']['db']}"
+
+
+  end
   #def category
    #temp =  Infusionsoft.data_load('Contact', self._id, [:_LendingCategory])
    #abort("#{temp.inspect}")
@@ -88,8 +172,26 @@ class Loan
 
 
 
+  def use_of_fund
+    UseOfFund.all(:loan_id => self.id)
+  end
 
+  def borrower
+    Borrower.all(:loan_id => self.id, :order => :id.desc)
+  end
+
+  def collateral
+    Collateral.all(:loan_id => self.id, :order => :id.desc)
+  end
   
+  def fimage
+    Image.where(:loan_id => self.id, :featured => true).fields(:name, :url).all
+  end
+
+  def other_files
+    FolderFile.all(:loan_id => self.id)
+  end
+
   def get_images
     fields = ['ContactId', 'Extension','FileName','Id','Public']
    # files = Infusionsoft.data_find_by_field('FileBox',1000,0,'ContactId', self._id, fields)
@@ -144,7 +246,7 @@ class Loan
 
   
   def docs_by_category category
-    Document.find_all_by_loan_id_and_category(self._id, category)
+    Document.find_all_by_loan_id_and_category(self._id.to_i, category)
   end
   
   
@@ -196,6 +298,51 @@ class Loan
 
    }
   end
+
+  # def self.month_options
+  #   {
+  #     '1 Month'=>'1',
+  #     '2 Months'=>'2',
+  #     '3 Months'=>'3',
+  #     '4 Months'=>'4',
+  #     '5 Months'=>'5',
+  #     '6 Months'=>'6',
+  #     '7 Months'=>'7',
+  #     '8 Months'=>'8',
+  #     '9 Months'=>'9',
+  #     '10 Months'=>'10',
+  #     '11 Months'=>'11',
+  #     '12 Months'=>'12',
+  #  }
+  # end
+
+  def self.month_options
+    {
+      '1 to 24 Months'=>'1',
+      '24 Months to 5 Years'=>'2',
+      '5 Years + '=>'3',
+   }
+  end
+
+  def self.asset_types 
+  {
+
+      'Single Family Residence' => 'Single Family Residence',
+      'Multifamily'=>'Multifamily',
+      'Condo'=>'Condo',
+      'Hospitality'=>'Hospitality',
+      'Commercial'=>'Commercial',
+      'Short Term Real Estate Loan'=>'Short Term Real Estate Loan',
+      'Development'=>'Development',
+      'Mixed Use'=>'Mixed Use',
+      'Retail'=>'Retail',
+      'Health Care'=>'Health Care',
+      'Industrial'=>'Industrial',
+      'Other'=>'Other'
+    
+  }
+  end
+     
 
   def self.loan_type_options 
    
@@ -613,6 +760,50 @@ class Loan
       'More than 24 Months'=>'25'      
       }
     
+  end
+
+  def self.source_of_values
+    { 
+      "Appraisal"=>'Appraisal', 
+      'BPO/CMA'=>'BPO/CMA',
+      'Market Research'=>'Market Research',
+    }
+    
+  end
+
+  def self.sizes
+    { 
+      "Sq Footage"=>'Sq Footage', 
+      'Acres'=>'Acres',
+    }
+  end
+
+  def self.structural_size
+    { 
+      "Sq Footage"=>'Sq Footage', 
+      'Units'=>'Units',
+    }
+  end
+
+  def self.transaction_types
+    { 
+      "Purchase"=>'Purchase', 
+      'Refinance'=>'Refinance'
+    }
+  end
+
+  def self.borrower_types
+    { 
+      "Individual"=>'Individual', 
+      'Company or Trust'=>'Company or Trust',
+    }
+  end
+
+  def self.is_guarantor
+    { 
+      "Yes"=>'Yes', 
+      'No'=>'No',
+    }
   end
 
 

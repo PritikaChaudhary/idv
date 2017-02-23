@@ -1,0 +1,129 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.large-3 {
+    width: 33%;
+}
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+</script>
+<div class="row">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Group Details</h3>
+        
+    </div>
+</div>
+<div class="row">
+    <div class="broker_details" style="margin-bottom:20px;">
+    <b>Company : </b><%= @group.name %><br>
+    <b>Created By : </b><%= @group.user.name %><br>
+    <b>Created Date : </b><% adate = Date.parse @group.created_date
+    created_date = adate.strftime("%d %b, %Y") %>
+    <%= created_date %>
+    </div>
+</div>
+<% unless @group_lenders.blank? %>
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <% color_class = ''%>
+    <table width="100%" class="list_loans">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Phone</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @group_lenders.each do |lendr| %>
+          <tr class="color_class">
+            <td>
+                 <% unless lendr.lender.company.blank? %>
+                        <%= lendr.lender.company %>
+                    <% else %>
+                         N/A
+                    <% end %>
+            </td>
+            <td>
+                <% unless lendr.lender.phone1.blank? %>
+                        <%= lendr.lender.phone1 %>
+                    <% else %>
+                         N/A
+                    <% end %>
+
+            </td>
+            <td>
+                <%= lendr.lender.email %>
+            </td>
+          </tr>
+        
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+    <%
+    end %>
+
+</div>
+<% end %>
+
+ 

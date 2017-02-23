@@ -1,0 +1,1428 @@
+<style type="text/css">
+	.same_line
+	{
+		float: left;
+    	width: 48%;
+	}
+	.same_lines
+	{
+		float: left;
+    	margin-left: 23px;
+    	width: 48%;
+	}
+	.field
+	{
+		width:100%;
+		float: left;
+	}
+	#ui-datepicker-div
+	{
+		z-index: 99 !important;
+		background: none repeat scroll 0 0 #808080;
+	}
+	table
+	{
+		 border: 1px solid #000000;
+   		 margin-bottom: 0.25rem;
+	}
+	.ui-datepicker-next
+	{
+		margin-left: 8px;
+		color: #000000;
+	}
+	.ui-datepicker-prev
+	{
+		margin-left: 3px;
+		color: #000000;
+	}
+	.ui-datepicker-title
+	{
+		margin-left: 3px;
+	}
+	.actions
+	{
+		margin-top:14px;
+	}
+	h3
+	{
+		text-align: center;
+	}
+	.smallfont
+	{
+		font-size: 12px;
+    	font-weight: bold;
+	}
+</style>
+<script src="https://rawgit.com/digitalBush/jquery.maskedinput/1.4.1/dist/jquery.maskedinput.js"></script>
+<script src="https://rawgit.com/bseth99/sandbox/master/projects/jquery-ui/jquery.inputmask/jquery.inputmask.js"></script>
+<script src="https://rawgit.com/bseth99/sandbox/master/projects/jquery-ui/jquery.inputmask/jquery.inputmask.extensions.js"></script>
+<script src="https://rawgit.com/bseth99/sandbox/master/projects/jquery-ui/jquery.inputmask/jquery.inputmask.custom.extensions.js"></script>
+<script src="https://rawgit.com/bseth99/sandbox/master/projects/jquery-ui/jquery.inputmask/jquery.inputmask.date.extensions.js"></script>
+<script src="https://rawgit.com/bseth99/sandbox/master/projects/jquery-ui/jquery.inputmask/jquery.inputmask.numeric.extensions.js"></script>
+
+<script type="text/javascript">
+	$('document').ready(function() {
+		
+		$('.datefield').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+		
+		/************************** New Changes *******************/
+
+		$('#_LendingCategory').change(function(){
+				var this_val = $(this).val();
+				if(this_val=="Private Real Estate Loan")
+				{
+					$('#_LendingTypes').show();
+					$('#_BusinessFinancingTypes').hide();
+					$('#_EquityandCrowdFunding').hide();
+					$('#_MortageTypes').hide();
+				}
+				else if(this_val=="Business Financing")
+				{
+					$('#_LendingTypes').hide();
+					$('#_BusinessFinancingTypes').show();
+					$('#_EquityandCrowdFunding').hide();
+					$('#_MortageTypes').hide();
+				}
+				else if(this_val=="Equity and Crowdfunding")
+				{
+					$('#_LendingTypes').hide();
+					$('#_BusinessFinancingTypes').hide();
+					$('#_EquityandCrowdFunding').show();
+					$('#_MortageTypes').hide();
+				}
+				else if(this_val=="Residential or Commercial Mortgage")
+				{
+					$('#_LendingTypes').hide();
+					$('#_BusinessFinancingTypes').hide();
+					$('#_EquityandCrowdFunding').hide();
+					$('#_MortageTypes').show();
+				}
+
+		});
+
+		$('.transaction_type').change(function(){
+			var this_val = $(this).val();
+			if(this_val=="Purchase")
+			{
+				$('.purchase').show();
+				$('.refinance').hide();
+			}
+			else if(this_val=="Refinance")
+			{
+				$('.purchase').hide();
+				$('.refinance').show();	
+			}
+			else
+			{
+				$('.purchase').hide();
+				$('.refinance').hide();	
+			}
+
+		});
+
+		$('input[name="contract_radio"]').change(function(){
+			var this_val = $(this).val();
+			if(this_val=="Yes")
+			{
+				$('.contract_yes').show();
+			}
+			else
+			{
+				$('.contract_yes').hide();
+			}
+		});
+
+		$('input[name="free_clear"]').change(function(){
+			var this_val = $(this).val();
+			if(this_val=="Yes")
+			{
+				$('.free_clear').show();
+			}
+			else
+			{
+				$('.free_clear').hide();
+			}
+		}); 
+		$('input[name="isBroker"]').change(function(){
+			var this_val = $(this).val();
+			if(this_val=="Yes")
+			{
+				$('#if_broker').show();
+			}
+			else
+			{
+				$('#if_broker').hide();
+			}
+		});
+
+		$('.add_more').click(function(ev){
+			  ev.preventDefault();
+		 	var div = $('div[id^="funds_add_edit"]:last');
+			var num = parseInt( div.prop("id").match(/\d+/g), 10 ) +1;
+			clon = div.clone('true').prop('id', 'funds_add_edit'+num );
+			clon.find('.payoff_funds').hide();
+			clon.find('.purchase_funds').hide();
+			clon.find('select,input[type="text"]').val('');
+		    clon.find('input[type="checkbox"]').removeAttr('checked');
+			// clon.find('.datepicker').datepicker('destroy').removeAttr('id')
+			clon.find('.datefield').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+			$('.funds_add_edit').append(clon);
+			
+			refreshDatepicker();
+		});
+
+
+
+
+		$('.uses').change(function(){
+		  	this_val = $(this).val();
+		  	mainId = $(this).parents('.fund_div').attr('id');
+
+		  	if(this_val=="Payoff")
+		  	{
+		  		$('#'+mainId+' .payoff_funds').show();
+		  		$('#'+mainId+' .purchase_funds').hide();
+		  	}
+		  	else if(this_val=="Purchase")
+		  	{
+		  		$('#'+mainId+' .purchase_funds').show();
+		  		$('#'+mainId+' .payoff_funds').hide();
+		  	}
+		  	else
+		  	{
+		  		$('#'+mainId+' .purchase_funds').hide();	
+		  		$('#'+mainId+' .payoff_funds').hide();
+		  	}
+		  });
+
+		
+		
+
+		$('#exit_strategy').change(function(){
+			strategy = $(this).val();
+			if(strategy!="Other")
+			{
+				$(".exit_div").html('<input type="hidden" name="_ExitStrategyHowwillyoupaytheloanoff" value="'+strategy+'">');
+			}
+			else
+			{
+				$(".exit_div").html('<textarea id="_ExitStrategyHowwillyoupaytheloanoff" rows="15" name="_ExitStrategyHowwillyoupaytheloanoff"></textarea>')
+			}
+		});
+		
+		$('#more_collateral').click(function(){
+			var div = $('div[id^="collateral"]:last');
+		  	var num = parseInt( div.prop("id").match(/\d+/g), 10 ) +1;
+		  	var clon = div.clone(true).prop('id', 'collateral'+num );
+			
+			clon.find('.is_income').prop('name', 'generate_income'+num);
+			clon.find('select,input[type="text"]').val('');
+		    clon.find('input[type="checkbox"]').removeAttr('checked');
+		    clon.find('.heading').html('Additional Collateral');
+			
+
+		    $('.all_colaterals').append(clon);
+		});
+
+		$('.is_income').click(function(){
+		  		this_val = $(this).val();
+		  		mainId = $(this).parents('.main_collateral').attr('id'); 
+		  		$('#'+mainId+' .generate').val(this_val);
+		  		if(this_val == "Yes")
+		  		{
+		  			$('#'+mainId+' .generate_income').show();
+		  		}
+		  		else if(this_val == "No")
+		  		{
+		  			$('#'+mainId+' .generate_income').hide();
+		  		}
+		  });
+
+		$('.borrower_type').change(function(){
+		  	this_val = $(this).val();
+		  	mainId = $(this).parents('.main_borrower').attr('id');
+		  	// alert(this_val)
+		  	if(this_val=="Individual")
+		  	{
+
+		  		$('#'+mainId+' .personal_info').show();
+		  		$('#'+mainId+' .guarantor_info').show();
+		  		$('#'+mainId+' .business_info').hide();
+		  	}
+		  	else if(this_val=="Company or Trust")
+		  	{
+		  		$('#'+mainId+" .personal_info").show();
+		  		$('#'+mainId+" .guarantor_info").show();
+		  		$('#'+mainId+" .business_info").show();
+		  	}
+		  	else
+		  	{
+		  		$('#'+mainId+" .personal_info").hide();
+		  		$('#'+mainId+" .guarantor_info").hide();
+		  		$('#'+mainId+" .business_info").hide();	
+		  	}
+		  	
+		  });
+
+		$('.is_guarantor').change(function(){
+		  	this_val = $(this).val();
+		  	mainId = $(this).parents('.main_borrower').attr('id');
+		  	var div = $('div[id^="borrower"]:last');
+		  	var num = parseInt( div.prop("id").match(/\d+/g), 10 );
+		  	$('#'+mainId+' .guarantor_field').val(this_val);
+		  	
+		  	if(this_val=="Yes")
+		  	{
+		  		name = $('#'+mainId+' .personal_name').val();
+		  		phone = $('#'+mainId+' .personal_phone').val();
+		  		email = $('#'+mainId+' .personal_email').val();
+
+
+			  	address = $('#'+mainId+' .personal_address').val();
+			  	state = $('#'+mainId+' .personal_state').val();
+			  	postalcode = $('#'+mainId+' .personal_postalcode').val();
+			  	city = $('#'+mainId+' .personal_city').val();
+			  	monthly_income = $('#'+mainId+' .personal_monthly_income').val();
+			  	income_how_long = $('#'+mainId+' .income_how_long').val();
+			  	ssn = $('#'+mainId+' .personal_ssn').val();
+			  	net_worth = $('#'+mainId+' .net_worth').val();
+			  	personal_income_source = $('#'+mainId+' .personal_income_source').val();
+			  	personal_dob = $('#'+mainId+' .personal_dob').val();
+			  	estimated_fico = $('#'+mainId+' .estimated_fico').val();
+			  	ever_borrow_field = $('#'+mainId+' .ever_borrow_field').val();
+                $('#'+mainId+' .guarantor_name').val(name);
+                $('#'+mainId+' .guarantor_phone').val(phone);
+                $('#'+mainId+' .guarantor_email').val(email);
+
+			  	$('#'+mainId+' .guarantor_address').val(address);
+			  	$('#'+mainId+' .guarantor_state').val(state);
+			  	$('#'+mainId+' .guarantor_postalcode').val(postalcode);
+			  	$('#'+mainId+' .guarantor_city').val(city);
+			  	$('#'+mainId+' .guarantor_monthly_income').val(monthly_income);
+			  	$('#'+mainId+' .guarantor_income_how_long').val(income_how_long);
+			  	$('#'+mainId+' .guarantor_ssn').val(ssn);
+			  	$('#'+mainId+' .guarantor_net_worth').val(net_worth);
+			  	$("input[name=guarantor_borrow"+num+"][value='"+this_val+"']").prop("checked",true);
+				$('#'+mainId+' .guarantor_borrow_money').val(this_val);
+				$('#'+mainId+' .guarantor_income_source').val(personal_income_source);
+				$('#'+mainId+' .guarantor_birthday').val(personal_dob);
+				$('#'+mainId+' .guarantor_estimated_ficco').val(estimated_fico);
+
+				$('#'+mainId+' .guarantor_info').hide();
+		  	}
+			else
+			{
+				$('#'+mainId+' .guarantor_info').show();	
+			}
+		  });
+		  
+
+		  $('.ever_borrow').change(function(){
+		  	 this_val = $(this).val();
+		  	 mainId = $(this).parents('.main_borrower').attr('id');
+		  	 $('#'+mainId+' .ever_borrow_field').val(this_val);
+		  });
+
+		  $('.guarantor_ever_borrow').change(function(){
+		  	 this_val = $(this).val();
+		  	 mainId = $(this).parents('.main_borrower').attr('id');
+		  	 $('#'+mainId+' .guarantor_borrow_money').val(this_val);
+		  });
+
+		   $('#more_borrower').click(function(){
+	  			var div = $('div[id^="borrower"]:last');
+	  			var num = parseInt( div.prop("id").match(/\d+/g), 10 ) +1;
+	  			var clon = div.clone(true).prop('id', 'borrower'+num );
+	  			clon.find('.ever_borrow').prop('name', 'borrow_money'+num);
+	  			clon.find('.guarantor_ever_borrow').prop('name', 'guarantor_borrow'+num);
+	  			clon.find('.is_guarantor').prop('name', 'borrower_guarantor'+num);
+				clon.find('.borrower_heading').html('Additional Borrower');
+				clon.find("input :text").val("");
+	  			clon.find('select').removeClass('error');
+
+	  			clon.appendTo('.all_borrowers');
+	  	// 		$('#borrower'+num).find('.datepicker').datepicker("destroy");
+				// $('#borrower'+num).find('.datepicker').removeAttr("id");
+				// $('#borrower'+num).find('.datepicker').datepicker().attr('readonly',"readonly");;
+				$('#borrower'+num).find('.datefield').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+				$('#borrower'+num).find('input:text').val('');
+				$('#borrower'+num+' .personal').hide();
+				$('#borrower'+num+' .ask').hide();
+				$('#borrower'+num+' .guarantor').hide();
+		  });
+
+		refreshDatepicker();	
+		/************************** New Changes *******************/
+
+	
+	});
+
+/*********************** DatePicker ***********************/
+			function refreshDatepicker(){
+					 $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy', changeYear: true, yearRange: '1950:2020'});
+				}
+
+
+			 
+
+/*********************** End DatePicker ***********************/
+
+		
+</script>
+<% 
+ @permission = ""
+ if defined? @num 
+ 	if @infoBroker.plan == "SOLO"
+		if @num == 5 || @num >5
+			@permission = "no"
+		end
+	elsif @infoBroker.plan == "BUSINESS"
+		if @num == 50 || @num >50
+			@permission = "no"
+		end
+	end
+ end
+%>
+
+<div class='row'>
+<% if @permission != "no" %>
+	<div class="small-8 small-centered columns">
+
+		
+		  <form method="post" action="https://<%= @hostname %>/loans/create_application" autocomplete="off">
+		  
+		  <!-------------- Personal Info ---------------->
+		  
+		  <h3> Personal Information </h3>
+		  	<div class="field">
+				<label for="FirstName">Name</label>
+				<br>
+				<input id="FirstName" type="text" name="FirstName" autofocus="autofocus" value="<%= current_user.name %>">
+			</div>
+
+			<div class="field">
+				<label for="Email">Email</label>
+				<br>
+				<input id="Email" type="text" name="Email" autofocus="autofocus" value="<%= current_user.email %>">
+				<input type="hidden" name="current_user_email" value="<%= current_user.email %>">
+			</div>
+
+			<div class="field">
+				<label for="Phone">Phone</label>
+				<br>
+				<input id="Phone" type="text" name="Phone" autofocus="autofocus">
+			</div>
+
+			<input type="hidden" name="added_by" value="<%= current_user.id %>">
+
+		  <!-------------- End Personal Info ---------------->
+
+		  <!-------------- Loan Info ------------------------>
+		  <h3> Loan Information </h3>
+		  	<div class="field">
+				<label for="_LoanName">Loan Category</label>
+				<br>
+				<select id="_LendingCategory" name="_LendingCategory">
+					<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+					<option value="Business Financing">Business Financing</option>
+					<option value="Equity and Crowdfunding">Equity and Crowdfunding</option>
+					<option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+				</select>
+		  		
+		  	</div>
+
+		  	<div class="field">
+				<label for="_LoanName">Choose Type Of Loan</label>
+				<br>
+				<select id="_LendingTypes" name="_LendingTypes" >
+					<option value="Single Family Residence">Single Family Residence</option>
+					<option value="Multifamily">Multifamily</option>
+					<option value="Hospitality">Hospitality</option>
+					<option value="Commercial">Commercial</option>
+					<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+					<option value="Development">Development</option>
+					<option value="Mixed Use">Mixed Use</option>
+					<option value="Retail">Retail</option>
+					<option value="Health Care">Health Care</option>
+					<option value="Industrial">Industrial</option>
+					<option value="Other">Other</option>
+				</select>
+
+				<select id="_BusinessFinancingTypes" name="_BusinessFinancingTypes" style="display:none;">
+					<option value="Equipment/Inventory">Equipment/Inventory</option>
+					<option value="Working Capital">Working Capital</option>
+					<option value="Factoring">Factoring</option>
+					<option value="Cash Advances">Cash Advances</option>
+					<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+					<option value="Supply Chain Financing">Supply Chain Financing</option>
+					<option value="Expansion Capital">Expansion Capital</option>
+					<option value="Equity">Equity</option>
+					<option value="SBA Financing">SBA Financing</option>
+				</select>
+
+				<select id="_EquityandCrowdFunding" name="_EquityandCrowdFunding" style="display:none;">
+					<option value="Project Financing">Project Financing</option>
+					<option value="Acquisition and Development">Acquisition and Development</option>
+					<option value="Start Up">Start Up</option>
+					<option value="Business Partnership">Business Partnership</option>
+				</select>
+
+				<select id="_MortageTypes" name="_MortageTypes" style="display:none;">
+					<option value="Owner Occupied">Owner Occupied</option>
+					<option value="Second Home">Second Home</option>
+					<option value="Investment Property">Investment Property</option>
+					<option value="FHA">FHA</option>
+					<option value="VA">VA</option>
+					<option value="Reverse Mortgage">Reverse Mortgage</option>
+					<option value="Sub Prime">Sub Prime</option>
+					<option value="HUD Financing">HUD Financing</option>
+					<option value="Multifamily">Multifamily</option>
+					<option value="Hospitality">Hospitality</option>
+					<option value="Land Development">Land Development</option>
+					<option value="Mixed Use">Mixed Use</option>
+					<option value="Retail">Retail</option>
+					<option value="Industrial">Industrial</option>
+					<option value="Healthcare">Healthcare</option>
+					<option value="Other">Other</option>
+				</select>
+		  		
+		  	</div>
+		  		<div class="row">
+		  	 		<div class=" small-6 columns">
+						<label for="_LoanName">Loan Name</label>
+						<br>
+						<input id="_LoanName" type="text" name="_LoanName" autofocus="autofocus">
+				  		
+				  	</div>
+
+				  	 <div class=" small-6 columns">
+						<label for="_NetLoanAmountRequested0">Loan Amount</label>
+						<br>
+						<input id="_NetLoanAmountRequested0" type="text" name="_NetLoanAmountRequested0" autofocus="autofocus">
+				  		
+				  	</div>
+		  		</div>
+		  	 
+		  	 
+
+		  	<div class="field">
+				<label for="isBroker">Submitted By Broker</label>
+				<br>
+				<input id="yes" type="radio" name="isBroker" value="Yes">
+				<label>Yes</label>
+				<input id="no" type="radio" name="isBroker" value="No">
+				<label>No</label>
+		  		
+		  	</div>
+
+		  	<div class="field" id="if_broker" style="display:none;">
+				<label for="who_broker">Who the broker is?</label>
+				<br>
+				<input id="who_broker" type="text" name="who_broker" autofocus="autofocus">
+			</div>
+
+		  	<div class="field">
+				<label for="_DesiredTermLength">Terms For Repayment</label>
+				<br>
+				<select id="_DesiredTermLength" name="_DesiredTermLength" rows="1">
+					<option value="3">Less Than 3 Months</option>
+					<option value="6">3 to 6 Months</option>
+					<option value="12">6 to 12 Months</option>
+					<option value="24">12 to 24 Months</option>
+					<option value="25">More than 24 Months</option>
+				</select>
+		  		
+		  	</div>
+
+		  	<div class="field">
+				<label for="transaction_type">Transaction type</label>
+				<br>
+				<select class="transaction_type" name="transaction_type" rows="1">
+					<option value="">Select Transaction Type</option>
+					<option value="Purchase">Purchase</option>
+					<option value="Refinance">Refinance</option>
+				</select>
+		  	</div>
+
+		  	<div class="purchase" style="display:none;">
+		  		<div class="field">
+				<label for="contract_radio"> Is there a signed Contract? </label>
+				<br>
+					<input id="yes" type="radio" name="contract_radio" value="Yes">
+					<label>Yes</label>
+					<input id="no" type="radio" name="contract_radio" value="No">
+					<label>No</label>
+		  		</div>
+
+		  		<div class="row contract_yes" style="display:none;">
+		  			<div class=" small-6 columns">
+						<label for="contract_closing_date">Contract Closing Date </label>
+						<br>
+						<input id="contract_closing_date" type="text" name="contract_closing_date" class="datefield" autofocus="autofocus">
+				  		
+				  	</div>
+
+				  	 <div class=" small-6 columns" >
+						<label for="purchase_price">Purchase Price</label>
+						<br>
+						<input id="purchase_price" type="text" name="purchase_price" autofocus="autofocus">
+				  		
+				  	</div>
+		  		</div>
+
+		  		<div class="row contract_yes" style="display:none;">
+		  			<div class=" small-6 columns">
+						<label for="rehab_amount">Rehab Amount  </label>
+						<br>
+						<input id="rehab_amount" type="text" name="rehab_amount" autofocus="autofocus">
+				  		
+				  	</div>
+
+				  	 <div class=" small-6 columns">
+						<label for="purchase_cash_contribute">Cash to contribute  </label>
+						<br>
+						<input id="purchase_cash_contribute" type="text" name="purchase_cash_contribute" autofocus="autofocus">
+				  		
+				  	</div>
+		  		</div>
+
+		  	</div>
+
+		  	<div class="row refinance" style="display:none;">
+	  			<div class=" small-6 columns">
+					<label for="maturity_date">Maturity date  </label>
+					<br>
+					<input id="maturity_date" type="text" name="maturity_date" autofocus="autofocus" class="datefield">
+			  		
+			  	</div>
+
+			  	 <div class=" small-6 columns" >
+					<label for="refinance_cash_contribute">Cash to contribute  </label>
+					<br>
+					<input id="refinance_cash_contribute" type="text" name="refinance_cash_contribute" autofocus="autofocus">
+			  		
+			  	</div>
+		  	</div>
+
+		  	<div class="field">
+				<label for="free_clear"> Free and clear </label>
+				<br>
+				<input id="free_clear" type="radio" name="free_clear" value="Yes">
+				<label>Yes</label>
+				<input id="free_clear" type="radio" name="free_clear" value="No">
+				<label>No</label>
+		  	</div>
+
+		  	<div class="row free_clear" style="display:none;">
+	  			<div class=" small-6 columns">
+					<label for="original_purchase_price">Original Purchase Price </label>
+					<br>
+					<input id="original_purchase_price" type="text" name="original_purchase_price" autofocus="autofocus">
+			  		
+			  	</div>
+
+			  	 <div class=" small-6 columns" >
+					<label for="original_purchase_date">Original purchase date  </label>
+					<br>
+					<input id="original_purchase_date" type="text" name="original_purchase_date" autofocus="autofocus" class="datefield">
+			  		
+			  	</div>
+		  	</div>
+
+		  	<div class="row free_clear" style="display:none;">
+	  			<div class=" small-6 columns">
+					<label for="vested_by">Vested by </label>
+					<br>
+					<input id="vested_by" type="text" name="vested_by" autofocus="autofocus">
+			  		
+			  	</div>
+
+			  	<div class=" small-6 columns" >
+					<label for="cash_contributed">Cash contributed	 </label>
+					<br>
+					<input id="cash_contributed" type="text" name="cash_contributed" autofocus="autofocus">
+			  	</div>
+		  	</div>
+
+
+
+
+		  	<div class="field">
+				<label for="useFunds">Use Of Funds</label>
+				<br>
+				<div class="row free_clear" style="display:none;">
+					<div class="small-2 columns">
+						<span class="smallfont">Free & Clear </span>
+					</div>
+				</div>
+				<div class="fund_div" id="funds_add_edit1">
+					
+					<div class="large-12 columns">
+						<div class="small-1 columns free_clear" style="display:none;"> <input type="checkbox" name="is_free_related[]" value="1"> </div>
+						<div class="small-4 columns"> 
+							<select name="use[]" class="uses">
+								<option value="">Select</option>
+								<option value="Payoff">Payoff</option>
+								<option value="Improvement">Improvement</option>
+								<option value="Construction">Construction</option>
+								<option value="Operations">Operations</option>
+								<option value="Purchase">Purchase</option>
+								<option value="Other">Other</option>
+							</select>
+						</div>
+						
+						<div class="small-4 columns"><input type="text" name="beneficiary[]" placeholder="Beneficiary">
+						</div>
+
+						<div class="small-3 columns"><input type="text" name="amount[]" placeholder="Amount">
+						</div>
+
+					</div>
+					<div class="large-12 columns payoff_funds" style="display:none">
+						<div class="small-6 columns"><input type="text" name="maturityDate[]" placeholder="Maturity Date" class="datefield mdate">
+						</div>
+						<div class="small-6 columns"><input type="text" name="stats[]" placeholder="Stats">
+						</div>
+					</div>
+					<div class="large-12 columns purchase_funds" style="display:none">
+						<div class="small-6 columns"><input type="text" name="contractDate[]" placeholder="Contract Date" class="datefield cdate">
+						</div>
+						<div class="small-6 columns"><input type="text" name="earnedDeposit[]" placeholder="Earned Deposit">
+						</div>
+					</div>
+				</div>
+				<div class="funds_add_edit">
+				</div>
+				<div class="large-12 columns">
+					<div class="small-7 columns"></div>
+					<div class="small-4 columns"></div>
+					<div class="small-1 columns"><b><a href="javascript:void(0);" class="add_more" style="font-size:24px;">+</a></b></div>
+				</div>
+
+				<div class="field">
+					<label for="free_clear"> Loan Summary </label>
+					<br>
+					<textarea id="_LoanSummaryWhatareyoulookingfor" name="_LoanSummaryWhatareyoulookingfor" rows="15"> </textarea>
+			  	</div>
+
+			  	<div class="field">
+					<label for="free_clear">Exit Strategy</label>
+					<br>
+					<select id="exit_strategy">
+						<option value="">Select</option>
+						<option value="Sale">Sale</option>
+						<option value="Refinance">Refinance</option>
+						<option value="Restructure">Restructure</option>
+						<option value="Other">Other (Please explain)</option>
+					</select>
+			  	</div>
+
+			  	<div class="field exit_divs">
+			  	</div>
+
+
+		  <!-------------- End Loan Info ------------------------>
+		  <!-------------- Collateral Info ------------------------>
+		  	<h3> Collateral </h3>
+		  	
+		  	<div id="collateral1" class="main_collateral">
+		  	<span class="heading" style="text-decoration:underline;"> Primary Collateral </span>
+		  	<br>
+			  	<div class="field">
+					<label for="asset_type"> Asset type  </label>
+					<br>
+					<select class="asset_type" name="collateral[asset_type][]">
+						<option value="">Select Asset Type</option>
+						<option value="Single Family">Single Family</option>
+						<option value="Commercial">Commercial</option>
+						<option value="Retail">Retail </option>
+						<option value="Industrial">Industrial </option>
+						<option value="Multifamily">Multifamily </option>
+						<option value="Hospitality">Hospitality </option>
+						<option value="Condo">Condo </option>
+						<option value="Mixed Use">Mixed Use </option>
+						<option value="Health Care">Health Care </option>
+						<option value="Development">Development </option>
+						<option value="Other">Other </option>
+					</select>
+				</div>
+				
+				<div class="row">
+					<div class=" small-6 columns">
+						<label for="address">Address </label>
+						<br>
+						<input id="address" type="text" name="collateral[address][]" autofocus="autofocus">
+				  		
+				  	</div>
+
+				  	<div class=" small-6 columns" >
+						<label for="city">City </label>
+						<br>
+						<input id="city" type="text" name="collateral[city][]" autofocus="autofocus">
+				  	</div>
+				</div>
+
+				<div class="row">
+					<div class=" small-6 columns">
+						<label for="state">State </label>
+						<br>
+						<select name="collateral[state][]">
+							<option value=""> Please Select State</option>
+							<option value="Alabama">Alabama</option>
+							<option value="Alaska">Alaska</option>
+							<option value="Arizona">Arizona</option>
+							<option value="Arkansas">Arkansas</option>
+							<option value="California">California</option>
+							<option value="Colorado">Colorado</option>
+							<option value="Connecticut">Connecticut</option>
+							<option value="Delaware">Delaware</option>
+							<option value="Florida">Florida</option>
+							<option value="Georgia">Georgia</option>
+							<option value="Hawaii">Hawaii</option>
+							<option value="Idaho">Idaho</option>
+							<option value="Illinois">Illinois</option>
+							<option value="Indiana">Indiana</option>
+							<option value="Iowa">Iowa</option>
+							<option value="Kansas">Kansas</option>
+							<option value="Kentucky">Kentucky</option>
+							<option value="Louisiana">Louisiana</option>
+							<option value="Maine">Maine</option>
+							<option value="Maryland">Maryland</option>
+							<option value="Massachusetts">Massachusetts</option>
+							<option value="Michigan">Michigan</option>
+							<option value="Minnesota">Minnesota</option>
+							<option value="Mississippi">Mississippi</option>
+							<option value="Missouri">Missouri</option>
+							<option value="Montana">Montana</option>
+							<option value="Nebraska">Nebraska</option>
+							<option value="Nevada">Nevada</option>
+							<option value="New Hampshire">New Hampshire</option>
+							<option value="New Jersey">New Jersey</option>
+							<option value="New Mexico">New Mexico</option>
+							<option value="New York">New York</option>
+							<option value="North Carolina">North Carolina</option>
+							<option value="North Dakota">North Dakota</option>
+							<option value="Ohio">Ohio</option>
+							<option value="Oklahoma">Oklahoma</option>
+							<option value="Oregon">Oregon</option>
+							<option value="Pennsylvania">Pennsylvania</option>
+							<option value="Rhode Island">Rhode Island</option>
+							<option value="South Carolina">South Carolina</option>
+							<option value="South Dakota">South Dakota</option>
+							<option value="Tennessee">Tennessee</option>
+							<option value="Texas">Texas</option>
+							<option value="Utah">Utah</option>
+							<option value="Vermont">Vermont</option>
+							<option value="Virginia">Virginia</option>
+							<option value="Washington">Washington</option>
+							<option value="West Virginia">West Virginia</option>
+							<option value="Wisconsin">Wisconsin</option>
+							<option value="Wyoming">Wyoming</option>
+						</select>
+				  		
+				  	</div>
+
+				  	<div class=" small-6 columns" >
+						<label for="zipcode">Zipcode </label>
+						<br>
+						<input id="zipcode" type="text" name="collateral[zipcode][]" autofocus="autofocus">
+				  	</div>
+				</div>
+
+				<div class="row">
+					<div class=" small-6 columns">
+						<label for="address"> Source Of Value </label>
+						<br>
+						<select class="asset_type" name="collateral[source_of_value][]">
+						<option value=""> Select </option>
+						<option value="Appraisal"> Appraisal </option>
+						<option value="BPO/CMA"> 	BPO/CMA </option>
+						<option value="Market Research"> Market Research </option>
+						</select>
+				  		
+				  	</div>
+
+				  	<div class=" small-6 columns">
+						<label for="address"> Collateral Value </label>
+						<br>
+						<input type="text" name="collateral[collateral_value][]">
+				  	</div>
+
+				</div>
+
+				<div class="row">
+					<div class=" small-6 columns">
+						<label for="address">Size   </label>
+						<br>
+						<input type="text" name="collateral[sizes_val][]">
+				  	</div>
+
+				  	<div class=" small-6 columns">
+						<label for="address"> Size Unit  </label>
+						<br>
+						<select class="size" name="collateral[size][]">
+						<option value=""> Select Size </option>
+						<option value="Sq Footage"> Sq Footage </option>
+						<option value="Units"> Units </option>
+						<option value="Acres"> Acres </option>
+						</select>
+				  	</div>
+
+				</div>
+
+
+				<div class="row">
+					<div class="small-12 columns">
+						<label for="property_generate_income[]"> Does the property generate income?   </label>
+							<br>
+							<input class="is_income" type="radio" name="generate_income1" value="Yes">
+							<label>Yes</label>
+							<input  class="is_income" type="radio" name="generate_income1" value="No">
+							<label>No</label>
+
+							<input class="generate" type="hidden" name="collateral[property_generate_income][]" value="Yes">
+					</div>
+				</div>
+
+				<div class="row generate_income" style="display:none;">
+					<div class=" small-4 columns">
+						<label for="address">Annual NOI (YTD)</label>
+						<br>
+						<input type="text" name="collateral[noi_ytd][]">
+					</div>
+					<div class=" small-4 columns">
+						<label for="address">Annual NOI (Last Year)</label>
+						<br>
+						<input type="text" name="collateral[noi_last_year][]">
+					</div>
+					<div class=" small-4 columns">
+						<label for="address">Past Annual NOI ( Two Years Ago) </label>
+						<br>
+						<input type="text" name="collateral[noi_two_years_ago][]">
+					</div>
+				</div>
+
+			</div>
+
+			<div class="all_colaterals">
+
+			</div>
+			<div class="row">
+				<div class="small-12 columns">
+					<input type="button" class="button tiny secondary" id="more_collateral" value="Add More Collateral">
+				</div>
+			</div>
+
+				<!-------------- Collateral End ---------------->
+			<!-------------- Collateral Info ------------------------>
+		  	<h3> Borrower </h3>
+		  	
+		  	<div id="borrower1" class="main_borrower">
+		  		<span class="heading" style="text-decoration:underline;"> Primary Borrower </span>
+		  	<br>
+			  	<div class="field">
+					<label for="borrower_type"> Borrower type  </label>
+					<br>
+					<select class="borrower_type" name="borrower[borrower_type][]">
+						<option value="">Select Borrower Type</option>
+						<option value="Individual">Individual</option>
+						<option value="Company or Trust">Company or Trust </option>
+					</select>
+				</div>
+
+				<div class="personal_info" style="display:none;">
+					<h5> Personal Information </h5>
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Home Name </label>
+							<br>
+							<input type="text" class="personal_name" name="borrower[personal_name][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Home Phone  </label>
+							<br>
+							<input type="text" class="personal_phone" name="borrower[personal_phone][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Home Email </label>
+							<br>
+							<input type="text" class="personal_email" name="borrower[personal_email][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Home Address  </label>
+							<br>
+							<input type="text" class="personal_address"  name="borrower[personal_address][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-12 columns">
+							<label for=""> State </label>
+							<br>
+							<select class="personal_state"  name="borrower[personal_state][]">
+								<option value=""> Please Select State</option>
+								<option value="Alabama">Alabama</option>
+								<option value="Alaska">Alaska</option>
+								<option value="Arizona">Arizona</option>
+								<option value="Arkansas">Arkansas</option>
+								<option value="California">California</option>
+								<option value="Colorado">Colorado</option>
+								<option value="Connecticut">Connecticut</option>
+								<option value="Delaware">Delaware</option>
+								<option value="Florida">Florida</option>
+								<option value="Georgia">Georgia</option>
+								<option value="Hawaii">Hawaii</option>
+								<option value="Idaho">Idaho</option>
+								<option value="Illinois">Illinois</option>
+								<option value="Indiana">Indiana</option>
+								<option value="Iowa">Iowa</option>
+								<option value="Kansas">Kansas</option>
+								<option value="Kentucky">Kentucky</option>
+								<option value="Louisiana">Louisiana</option>
+								<option value="Maine">Maine</option>
+								<option value="Maryland">Maryland</option>
+								<option value="Massachusetts">Massachusetts</option>
+								<option value="Michigan">Michigan</option>
+								<option value="Minnesota">Minnesota</option>
+								<option value="Mississippi">Mississippi</option>
+								<option value="Missouri">Missouri</option>
+								<option value="Montana">Montana</option>
+								<option value="Nebraska">Nebraska</option>
+								<option value="Nevada">Nevada</option>
+								<option value="New Hampshire">New Hampshire</option>
+								<option value="New Jersey">New Jersey</option>
+								<option value="New Mexico">New Mexico</option>
+								<option value="New York">New York</option>
+								<option value="North Carolina">North Carolina</option>
+								<option value="North Dakota">North Dakota</option>
+								<option value="Ohio">Ohio</option>
+								<option value="Oklahoma">Oklahoma</option>
+								<option value="Oregon">Oregon</option>
+								<option value="Pennsylvania">Pennsylvania</option>
+								<option value="Rhode Island">Rhode Island</option>
+								<option value="South Carolina">South Carolina</option>
+								<option value="South Dakota">South Dakota</option>
+								<option value="Tennessee">Tennessee</option>
+								<option value="Texas">Texas</option>
+								<option value="Utah">Utah</option>
+								<option value="Vermont">Vermont</option>
+								<option value="Virginia">Virginia</option>
+								<option value="Washington">Washington</option>
+								<option value="West Virginia">West Virginia</option>
+								<option value="Wisconsin">Wisconsin</option>
+								<option value="Wyoming">Wyoming</option>
+							</select>
+					  	</div>
+
+					  	
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> City </label>
+							<br>
+							<input type="text" class="personal_city" name="borrower[personal_city][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Postalcode  </label>
+							<br>
+							<input type="text" class="personal_postalcode" name="borrower[personal_postalcode][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Estimated FICO score  </label>
+							<br>
+							<input type="text" class="estimated_fico" name="borrower[estimated_fico][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Net Worth   </label>
+							<br>
+							<input type="text" class="net_worth" name="borrower[net_worth][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Have you ever borrowed money for a project like this?   </label>
+							<br>
+							<input class="ever_borrow" type="radio" name="borrow_money1" value="Yes">
+							<label>Yes</label>
+							<input  class="ever_borrow" type="radio" name="borrow_money1" value="No">
+							<label>No</label>
+
+							<input class="ever_borrow_field" type="hidden" name="borrower[ever_borrow_money][]" value="Yes">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Is this borrower also the guarantor?   </label>
+							<br>
+							<input class="is_guarantor" type="radio" name="borrower_guarantor1" value="Yes">
+							<label>Yes</label>
+							<input  class="is_guarantor" type="radio" name="borrower_guarantor1" value="No">
+							<label>No</label>
+
+							<input class="guarantor_field" type="hidden" name="borrower[borrower_guarantor][]" value="Yes">
+					  	</div>
+					</div>
+
+				</div>
+
+				<div class="business_info" style="display:none;">
+					<h5>Business Information</h5> 
+					<span class="borrower_heading" style="text-decoration:underline;"> Primary Borrower </span>
+					<br>
+					<div class="row">
+
+						<div class=" small-6 columns">
+							<label for=""> Business Name </label>
+							<br>
+							<input type="text" name="borrower[business_name][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Business Address  </label>
+							<br>
+							<input type="text" name="borrower[business_address][]">
+					  	</div>
+					</div>
+
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Business State </label>
+							<br>
+							<select name="borrower[business_state][]">
+								<option value=""> Please Select State</option>
+								<option value="Alabama">Alabama</option>
+								<option value="Alaska">Alaska</option>
+								<option value="Arizona">Arizona</option>
+								<option value="Arkansas">Arkansas</option>
+								<option value="California">California</option>
+								<option value="Colorado">Colorado</option>
+								<option value="Connecticut">Connecticut</option>
+								<option value="Delaware">Delaware</option>
+								<option value="Florida">Florida</option>
+								<option value="Georgia">Georgia</option>
+								<option value="Hawaii">Hawaii</option>
+								<option value="Idaho">Idaho</option>
+								<option value="Illinois">Illinois</option>
+								<option value="Indiana">Indiana</option>
+								<option value="Iowa">Iowa</option>
+								<option value="Kansas">Kansas</option>
+								<option value="Kentucky">Kentucky</option>
+								<option value="Louisiana">Louisiana</option>
+								<option value="Maine">Maine</option>
+								<option value="Maryland">Maryland</option>
+								<option value="Massachusetts">Massachusetts</option>
+								<option value="Michigan">Michigan</option>
+								<option value="Minnesota">Minnesota</option>
+								<option value="Mississippi">Mississippi</option>
+								<option value="Missouri">Missouri</option>
+								<option value="Montana">Montana</option>
+								<option value="Nebraska">Nebraska</option>
+								<option value="Nevada">Nevada</option>
+								<option value="New Hampshire">New Hampshire</option>
+								<option value="New Jersey">New Jersey</option>
+								<option value="New Mexico">New Mexico</option>
+								<option value="New York">New York</option>
+								<option value="North Carolina">North Carolina</option>
+								<option value="North Dakota">North Dakota</option>
+								<option value="Ohio">Ohio</option>
+								<option value="Oklahoma">Oklahoma</option>
+								<option value="Oregon">Oregon</option>
+								<option value="Pennsylvania">Pennsylvania</option>
+								<option value="Rhode Island">Rhode Island</option>
+								<option value="South Carolina">South Carolina</option>
+								<option value="South Dakota">South Dakota</option>
+								<option value="Tennessee">Tennessee</option>
+								<option value="Texas">Texas</option>
+								<option value="Utah">Utah</option>
+								<option value="Vermont">Vermont</option>
+								<option value="Virginia">Virginia</option>
+								<option value="Washington">Washington</option>
+								<option value="West Virginia">West Virginia</option>
+								<option value="Wisconsin">Wisconsin</option>
+								<option value="Wyoming">Wyoming</option>
+							</select>
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Business City  </label>
+							<br>
+							<input type="text" name="borrower[business_city][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Business Phone </label>
+							<br>
+							<input type="text" name="borrower[business_phone][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Business Type  </label>
+							<br>
+							<input type="text" name="borrower[business_type][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Years In Business ? </label>
+							<br>
+							<select name="borrower[time_in_business][]" rows="1">
+								<option value="1">1 Year</option>
+								<option value="2">2 Years</option>
+								<option value="3">3 Years</option>
+								<option value="4">4 Years</option>
+								<option value="5">5 Years</option>
+								<option value="6">6 Years</option>
+								<option value="7">7 Years</option>
+								<option value="8">8 Years</option>
+								<option value="9">9 Years</option>
+								<option value="10+">10+ Years</option>
+							</select>
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> State of Incorporation </label>
+							<br>
+							<input type="text" name="borrower[state_of_incorporation][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Business Monthly Income  </label>
+							<br>
+							<input type="text" name="borrower[monthly_noi][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for="">Business Balance Sheet Value</label>
+							<br>
+							<input type="text" name="borrower[business_balance_sheet][]">
+					  	</div>
+					</div>
+				
+
+				</div>
+
+				<div class="guarantor_info" style="display:none">
+					<h5>Guarantor Information</h5> 
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Guarantor Name</label>
+							<br>
+							<input type="text" class="guarantor_name" name="borrower[guarantor_name][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Guarantor Phone </label>
+							<br>
+							<input type="text" class="guarantor_phone" name="borrower[guarantor_phone][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Guarantor Email </label>
+							<br>
+							<input type="text" class="guarantor_email" name="borrower[guarantor_email][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for="">Guarantor Address  </label>
+							<br>
+							<input type="text" class="guarantor_address" name="borrower[guarantor_address][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> 	Guarantor State  </label>
+							<br>
+							<select class="guarantor_state" name="borrower[guarantor_state][]">
+								<option value=""> Please Select State</option>
+								<option value="Alabama">Alabama</option>
+								<option value="Alaska">Alaska</option>
+								<option value="Arizona">Arizona</option>
+								<option value="Arkansas">Arkansas</option>
+								<option value="California">California</option>
+								<option value="Colorado">Colorado</option>
+								<option value="Connecticut">Connecticut</option>
+								<option value="Delaware">Delaware</option>
+								<option value="Florida">Florida</option>
+								<option value="Georgia">Georgia</option>
+								<option value="Hawaii">Hawaii</option>
+								<option value="Idaho">Idaho</option>
+								<option value="Illinois">Illinois</option>
+								<option value="Indiana">Indiana</option>
+								<option value="Iowa">Iowa</option>
+								<option value="Kansas">Kansas</option>
+								<option value="Kentucky">Kentucky</option>
+								<option value="Louisiana">Louisiana</option>
+								<option value="Maine">Maine</option>
+								<option value="Maryland">Maryland</option>
+								<option value="Massachusetts">Massachusetts</option>
+								<option value="Michigan">Michigan</option>
+								<option value="Minnesota">Minnesota</option>
+								<option value="Mississippi">Mississippi</option>
+								<option value="Missouri">Missouri</option>
+								<option value="Montana">Montana</option>
+								<option value="Nebraska">Nebraska</option>
+								<option value="Nevada">Nevada</option>
+								<option value="New Hampshire">New Hampshire</option>
+								<option value="New Jersey">New Jersey</option>
+								<option value="New Mexico">New Mexico</option>
+								<option value="New York">New York</option>
+								<option value="North Carolina">North Carolina</option>
+								<option value="North Dakota">North Dakota</option>
+								<option value="Ohio">Ohio</option>
+								<option value="Oklahoma">Oklahoma</option>
+								<option value="Oregon">Oregon</option>
+								<option value="Pennsylvania">Pennsylvania</option>
+								<option value="Rhode Island">Rhode Island</option>
+								<option value="South Carolina">South Carolina</option>
+								<option value="South Dakota">South Dakota</option>
+								<option value="Tennessee">Tennessee</option>
+								<option value="Texas">Texas</option>
+								<option value="Utah">Utah</option>
+								<option value="Vermont">Vermont</option>
+								<option value="Virginia">Virginia</option>
+								<option value="Washington">Washington</option>
+								<option value="West Virginia">West Virginia</option>
+								<option value="Wisconsin">Wisconsin</option>
+								<option value="Wyoming">Wyoming</option>
+							</select>
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for="">Guarantor City  </label>
+							<br>
+							<input type="text" class="guarantor_city" name="borrower[guarantor_city][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> Guarantor Postalcode  </label>
+							<br>
+							<input class="guarantor_postalcode" type="text" name="borrower[guarantor_postalcode][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for="">Monthly Income   </label>
+							<br>
+							<input type="text" class="guarantor_monthly_income" name="borrower[guarantor_monthly_income][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> 	Income Source  </label>
+							<br>
+							<input class="guarantor_income_source" type="text" name="borrower[guarantor_income_source][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for="">Birthday  </label>
+							<br>
+							<input type="text" class="datefield guarantor_birthday" name="borrower[guarantor_birthday][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> How long have you derived income from this source? </label>
+							<br>
+							<select class="guarantor_income_how_long" name="borrower[guarantor_income_how_long][]">
+								<option value=""> Select Month </option>
+								<option value="1 Months">1 Months</option>
+								<option value="2 Months">2 Months</option>
+								<option value="3 Months">3 Months</option>
+								<option value="4 Months">4 Months</option>
+								<option value="5 Months">5 Months</option>
+								<option value="6 Months">6 Months</option>
+								<option value="7 Months">7 Months</option>
+								<option value="8 Months">8 Months</option>
+								<option value="9 Months">9 Months</option>
+								<option value="10 Months">10 Months</option>
+								<option value="11 Months">11 Months</option>
+								<option value="12 Months">12 Months</option>
+							</select>
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Estimated FICO score   </label>
+							<br>
+							<input type="text" class="guarantor_estimated_ficco" name="borrower[guarantor_estimated_ficco][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-6 columns">
+							<label for=""> SSN  </label>
+							<br>
+							<input class="guarantor_ssn" type="text" name="borrower[guarantor_ssn][]">
+					  	</div>
+
+					  	<div class=" small-6 columns">
+							<label for=""> Have you ever borrowed money for a project like this?  </label>
+							<br>
+							<input class="guarantor_ever_borrow"  type="radio" name="guarantor_borrow1" value="Yes">
+							<label>Yes</label>
+							<input class="guarantor_ever_borrow" type="radio" name="guarantor_borrow1" value="No">
+							<label>No</label>
+
+							<input class="guarantor_borrow_money" type="hidden" name="borrower[guarantor_borrow_money][]">
+					  	</div>
+					</div>
+
+					<div class="row">
+						<div class=" small-12 columns">
+							<label for=""> Net Worth   </label>
+							<br>
+							<input class="guarantor_net_worth" type="text" name="borrower[guarantor_net_worth][]">
+					  	</div>
+
+
+				</div>
+
+		  	</div>
+		  	</div>
+		  	
+		  	<div class="all_borrowers">
+
+			</div>
+
+			<div class="row">
+				<div class="small-12 columns">
+					<input type="button" class="button tiny secondary" id="more_borrower" value="Add More Borrower">
+				</div>
+			</div>
+
+
+		  
+			<span>** By submitting this application, you are representing that the information in this application is accurate, true and current. </span>
+		  <div class="actions">
+		   <input type="submit" value="SUBMIT" class="tiny button success">
+		  </div>
+		  </form>
+	</div>
+<% else %>
+<div class="small-8 small-centered columns">
+	You can only add 5 loans. Please update your plan to business plan.
+</div>
+<% end %>
+</div>

@@ -1,0 +1,33 @@
+ <div class="large-12 columns center_txt">
+    Payment History
+</div>
+<table>
+    
+    <thead>
+      <tr>
+        <th width="200">Amount</th>
+        <th>Billed On</th>
+        <th width="150">Due On</th>
+        <th width="150">Invoice</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <% @account.invoices.find_each do |invoice| %>
+        <tr>
+          
+          <td><% in_dolr = invoice.total_in_cents.to_f/100 %>$<%= in_dolr.to_f %></td>
+          <td><% date = DateTime.parse("#{invoice.created_at}")
+                  formatted_date = date.strftime('%b %d, %Y')
+                  %>
+              <%= formatted_date %>
+          </td>
+          <td><% date = DateTime.parse("#{invoice.closed_at}")
+                  formatted_date = date.strftime('%b %d, %Y')
+                  %>
+              <%= formatted_date %></td>
+          <td> <a href="https://<%= request.host %>/payments/pdf_invoice/<%= invoice.invoice_number%>" target="_blank">Check Invoice </a> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>

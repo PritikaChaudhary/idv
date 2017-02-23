@@ -1,0 +1,102 @@
+<script type="text/javascript">
+
+$('document').ready(function(){
+  $('.update_form').click(function(){
+      // alert("dfsdf")
+      coupon_code = $('input[name="coupon_code"]').val();
+      if(coupon_code != "")
+      {
+        data = "coupon_code="+coupon_code
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/home/check_coupon',
+                 success:function(data){
+                    if(data == "true")
+                    {
+                       $('#coupon_error').hide();
+                       data=$('#payment-form').serialize();
+                       $.ajax({
+                                  data: data,
+                                  type: 'POST',
+                                  url: '/payments/payment_successfull',
+                                  success:function(response){
+                                   $('.change_text').html("You currently have a "+response+" plan account.");
+                                   alert("Your plan has been updated successfuly.");
+                                   location.reload();
+                                 }
+                              });
+                    }
+                    else
+                    {
+                      $('#coupon_error').show();
+                    }
+                }
+            });
+      }
+      else
+      {
+        data=$('#payment-form').serialize();
+         $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/payments/payment_successfull',
+                    success:function(response){
+                     $('.change_text').html("You currently have a "+response+" plan account.");
+                     alert("Your plan has been updated successfuly.");
+                     location.reload();
+                   }
+                });
+      }
+      
+  });
+});
+
+</script>
+  <div class="small-8 small-centered columns">
+     <%= render partial: 'layouts/messages' %>
+		<h5 style="text-align:center;" class="change_text"> You currently have a <%= @infoBroker.plan %> plan account. </h5>
+<% 
+  @hostname = request.host
+  @portnum =  request.port
+  
+%>
+<% if @hostname == "localhost" %>
+  <form action="https://<%=@hostname%>:<%=@portnum%>/payments/payment_successfull" method="POST" id="payment-form">
+<% else %>
+    <form action="https://<%= @hostname%>/payments/payment_successfull" method="POST" id="payment-form">
+    <% end %>
+      <span class="payment-errors"></span>
+      <div class="form-row">
+        <label>
+          <span >Select Plan</span>
+          <select name="plan">
+            <% @all_plans.each do |plan|%>
+              <% pln =  plan.amount.to_i/100 %>
+             <option value="<%= plan.plan_id %>"><%= plan.name %> - $<%= pln %> </option>
+            <% end %>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          <span >Coupon (If any)</span>
+          <input type="text" id="coupon_code"  name="coupon_code" placeholder="Coupon (If any)" > 
+          <label class="error" id="coupon_error" style="display:none;">Invalid coupon code.</label>
+        </label>
+      </div>
+     
+    <input type="hidden" name="email" value="<%= @infoBroker.email %>">
+    <input type="hidden" name="broker_id" value="<%= @infoBroker.id %>">
+    <input type="hidden" name="user_id" value="<%= current_user.id %>">
+    <input type="hidden" name="customer_id" value="<%= current_user.customer_id %>">
+    <% unless current_user.subscription_id.blank? %>
+    <input type="hidden" name="subscription_id" value="<%= current_user.subscription_id %>" >
+    <% else %>
+    <input type="hidden" name="subscription_id"  >
+    <% end %>
+      <input type="button" class="tiny button update_form" value="Submit Payment">
+    </form>
+
+
+</div>

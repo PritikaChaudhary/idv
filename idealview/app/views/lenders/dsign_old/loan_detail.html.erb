@@ -1,0 +1,551 @@
+<% if @access != "false" && @login != "false"%>
+<script>
+$('document').ready(function(){
+<% if @agree == "false" %>
+        $('#myModal').foundation('reveal', 'open',{
+            close_on_background_click:false,
+            close_on_esc:false
+        });
+ <% end %>
+
+ $('#close_popup').click(function(){
+                window.location.replace("http://<%= @hostname %>/");
+            });
+
+<% if defined? @loan.address && @loan.address!= 'None' %>
+    if($('#property-map').html().length==0)
+    {
+
+        var embed = '<iframe'+
+                    ' width="600"'+
+                    ' height="450"'+
+                    ' frameborder="0" style="border:0"'+
+                    ' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loan.address%>&zoom=15">'+
+            '</iframe>';
+    
+    
+        $('#property-map').html(embed);
+    }
+
+<% end %>
+   
+   });
+</script>
+<% end %>
+<script type="text/javascript">
+$('document').ready(function(){
+    $('#countdown').timeTo({
+        timeTo: new Date(new Date('<%= @endt %>')),
+        displayDays: 2,
+        theme: "black",
+        displayCaptions: true,
+        fontSize: 48,
+        captionSize: 14
+    });
+
+
+   /////////////////////////////// For New User////////////////////////
+        <% 
+        if @login!="true" %>
+             $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+         <% end %>
+
+         $('#passwordset').click(function(){
+            pass = $('#password').val();
+            cpass = $('#cpassword').val();
+            if(pass != cpass)
+            {
+               $('#pass_error').show();
+               return false;
+            }
+            alert("Matched");
+            var data = $('#setPassword').serialize(); 
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/set_password',
+                    success:function(data){
+                                            outside(data);
+                                        }
+            });
+         });
+     
+    
+    $("#sign_up").click(function(){
+        $('#myModal2').foundation('reveal', 'close');
+        $('#myModal3').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+
+    $("#log_in").click(function(){
+        $('#myModal3').foundation('reveal', 'close');
+        $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+    //////////////////////////// End For New User /////////////////////
+
+    $('#interested').click(function(){
+        var status = "<%= @auth %>";
+       if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/acept_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    $("#interested").hide();
+                    $("#decline").hide();
+                    alert("Your request has been accepted.");
+               }
+            });
+        }
+    });
+
+     $('#decline').click(function(){
+        var status = "<%= @auth %>";
+        if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/decline_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    alert("Your request has been declined.");
+                    window.location.replace("http://<%= @hostname %>/");
+               }
+            });  
+        }
+    });
+
+    $("#accept_contract").click(function(){
+        var signature = $('#signature').val();
+        if(signature=="")
+        {
+            $("#required").show();
+        }
+        else
+        {
+            var data=$('#agreementForm').serialize();   
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/lenders/accept_agreement',
+                    success:function(response){
+                       $('#myModal').foundation('reveal', 'close');  
+                    }
+                });
+ 
+        }
+
+    });
+
+});
+</script>
+<!--
+    <div class="header">
+        <nav class="navbar main-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">LOGO</a>
+                <div class="pull-right">
+                    <button type="button" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <ul class="">
+                        <li class=""><a href="#home">Login</a></li>
+                    </ul>
+                    -- /.navbar-collapse --
+                </div>
+            </div>
+             /.container-fluid --
+        </nav>
+    </div> -->
+    <style type="text/css">
+        .login
+        {
+            display: none !important; 
+        }
+        #countdown ul
+        {
+            font-size: 39px;
+            line-height: 4;
+        }
+        #countdown 
+        {
+            margin-bottom: 30px;
+        }
+         #countdown figcaption
+        {
+            color: black;
+        }
+        .modalhead
+        {
+            background-color:  #eeeeee;
+            text-align: center;
+            font-weight: bold;
+        }
+        .reveal-modal .close-reveal-modal, dialog .close-reveal-modal
+        {
+            top: 0;
+        }
+    </style>
+    <% if @access == "true" %>
+    <div id="myModal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold;"><%= @agreement.header %></h5>
+      </div>
+        <p><%= @agreement.content %> </p>
+
+      <div class="small-8 small-centered columns">
+        <form method="post" action="http://<%= @hostname %>/lenders/acept_agreement" id="agreementForm">
+          <div class="row">
+          
+                    <div class="small-3 columns">
+                      <label for="right-label" class="right">Signature</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input type="text" id="signature" name="signature">
+                      <label id="required" style="color:red; margin-bottom:10px; display:none;"> Signature is required. </label>
+                    </div>
+
+          </div>
+
+          <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">Date</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="agreement_date" value="<%= @bdate %>">
+                      <input type="hidden" name="agreement_date_time" value="<%= @adate %>">
+                      <input type="hidden" name="agreement_id" value="<%= @agreement.id %>">
+                      <input type="hidden" name="lender_id" value="<%= @info.lender.id %>">
+                    </div>
+
+              
+          </div>
+           <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">IP Address</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="ip_address" value="<%= @ip %>">
+                    </div>
+
+          </div>
+
+          <div class="row">
+                <div class="small-6 small-centered columns">
+                  <input type="button" id="accept_contract"  value="Accept  & Sign Contract" class="tiny button">
+                </div>
+          </div>
+        </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+    <% end %>
+
+    <!-- For new User -->
+  
+        <div id="myModal2" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+                <h5 id="modalTitle" style="font-weight:bold;"> Log In</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                        <%= form_for(:user, :url => session_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                            Email : <%= f.text_field :email %>
+                        </div>
+                        <div class="medium-12 column">
+                            Password: <%= f.password_field :password %>
+                        </div>
+                        <div class="medium-12 column">
+                            <%= f.submit 'Sign in' %> <a href="javascript:void(0);" id="sign_up" style="float:right; text-decoration:underline">Sign Up</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+
+
+          <div id="myModal3" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+                <h5 id="modalTitle" style="font-weight:bold;"> Sign Up</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                       <%= form_for(:user, :url => registration_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                           Email:
+                           <%= f.email_field :email, autofocus: true %>
+                        </div>
+                        <div class="medium-12 column">
+                            Password: 
+                            <% if @validatable %>
+                            <em>(<%= @minimum_password_length %> characters minimum)</em>
+                            <% end %><br />
+                            <%= f.password_field :password, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                            Confirm: 
+                            <%= f.password_field :password_confirmation, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                             <%= f.submit "Sign up" %> <a href="javascript:void(0);" id="log_in" style="float:right; text-decoration:underline">Log In</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+    
+    <!-- End New User -->
+
+    <div class="lp-bg"></div>
+    <div class="content-section">
+        <div class="container">
+            <div class="row text-center"><h1 class="page-title"><%= @loan.name %></h1></div>
+            <div class="row">
+            
+                <div class="medium-4 column">
+                    <div class="l-sidebar">
+                        <div class="gray-box">
+                            <h3>Highlights</h3>
+                            <ul class="hl-list">
+                                <li>
+                                    <span class="hl-l">Loan Amount:</span>
+                                    <span class="hl-r"><%= fd_money(@loan.info['_NetLoanAmountRequested0']) %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Value:</span>
+                                    <span class="hl-r"><%= @loan.info['_EstimatedMarketValue'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Term Length:</span>
+                                    <span class="hl-r"><%= @loan.info['_DesiredTermLength'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Location: </span>
+                                    <span class="hl-r">
+                                    <% unless @loan.info['City3'].blank? %>
+                                        <%= @loan.info['City3']+", "%>
+                                    <% end %>
+                                    <% unless @loan.info['State3'].blank? %>
+                                        <%= @loan.info['State3']%>
+                                    <% end %>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Expected Close:</span>
+                                    <span class="hl-r"><%= @loan.info['_ExpectedCloseDate'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Lending Category:</span>
+                                    <span class="hl-r"><%= @loan.info['_LendingCategory'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Loan Type: </span>
+                                    <span class="hl-r"><%= @loan.info['_LendingTypes'] %></span>
+                                </li>
+                                 <li>
+                                    <span class="hl-l">Transaction Type: </span>
+                                    <span class="hl-r"><%= @loan.info['_TransactionType0'] %></span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                      
+                       <% 
+                        if @login!="true" 
+                            if @info.status != "accept" %>
+                                <a class="round button expand" href="javascript:void(0);" id="interested">IM INTERESTED</a>
+                                <a class="alert round button expand" href="javascript:void(0);" id="decline">I Decline</a>
+                                <% 
+                            end
+                        end %>
+                       
+                        <!--
+                        <a href="#" class="btn btn-im-i">IM Interested</a>
+                        <a href="#" class="btn btn-dec">Decline</a>
+                        -->
+                    </div>
+                </div>
+                <div class="medium-8 column">
+                    <% if @info.status!="accept"%>
+                        <div id="countdown"></div>
+                    <% end %>
+                    <br>
+                    <div class="r-content">
+                        <div class="sbanner-wrap">
+                            <div class="sbanner-inner">
+                                <!-- <img src="/assets/property-image.jpg"> -->
+                    <% if @loan.featured_image %>
+                        <img style="height: 348px; width: 748px;" src="<%=@loan.featured_image['url']%>">
+                    <% end %>
+                            </div>
+                           <% if @access != "false" && @login != "false"%>
+                                <div class="lp-tabs-head row">
+                                    <div id="lp-tab1" class="medium-4 column">
+                                        <span class="icon-r"><img src="/assets/cat-icon-o.png"></span>
+                                        <p class="lp-th-title">Category</p>
+                                        <p><%= @loan.info['_LendingCategory'] %></p>
+                                    </div>
+                                    <div id="lp-tab2" class="medium-4 column">
+                                        <span class="icon-r"><img src="/assets/location-icon-o.png"></span>
+                                        <p class="lp-th-title">Location</p>
+                                        <p>
+                                        <% unless @loan.info['City3'].blank? %>
+                                            <%= @loan.info['City3']+", "%>
+                                        <% end %>
+                                        <% unless @loan.info['State3'].blank? %>
+                                            <%= @loan.info['State3']+", "%>
+                                        <% end %>
+                                        </p>
+                                    </div>
+                                    <div id="lp-tab3" class="medium-4 column">
+                                        <span class="icon-r"><img src="/assets/ltv-icon-o.png"></span>
+                                        <p class="lp-th-title">LTV</p>
+                                        <p>
+                                        <%
+                                         unless @loan.info['_NetLoanAmountRequested0'].blank? 
+                                                unless @loan.info['_EstimatedMarketValue'].blank?
+                                                   if @loan.info['_EstimatedMarketValue'].to_i>0
+                                                    ltv = @loan.info['_NetLoanAmountRequested0'].to_i/@loan.info['_EstimatedMarketValue'].to_i
+                                                    end
+                                                end
+                                            end
+                                         %></p>
+                                         <% unless ltv.blank? %>
+                                            <%= ltv.round(2) %>
+                                         <% end %>
+                                         </p>
+                                    </div>
+                                </div>
+                            <% end %>
+                        
+                        </div>
+                    <% if @access != "false" && @login != "false"%>
+                        <div class="white-content-box">
+                            <div class="wcb-head">Summary</div>
+                            <div class="wcb-content">
+                                
+                                <% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+                                <article>
+                                    <% field_text = @loan.info['_LoanSummaryWhatareyoulookingfor']%>
+                                    <%= send('simple_format', field_text)%>
+                                </article>
+                              <% end %> 
+                               <div id='property-map' class="flex-video"></div>
+
+                               
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+
+                        <div class="white-content-box">
+                            <div class="wcb-head">Use of Funds</div>
+                            <div class="wcb-content">
+                                
+                                <% unless @loan.info['_UseofFundsWhatdoyouneedthecapitalfor'].blank? %>
+                                <article>
+                                    <% field_text = @loan.info['_UseofFundsWhatdoyouneedthecapitalfor']%>
+                                    <%= send('simple_format', field_text)%>
+                                </article>
+
+                                <% end %>
+                                
+                                
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                        <div class="white-content-box">
+                            <div class="wcb-head">Exit Strategy</div>
+                            <div class="wcb-content">
+                                 <% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+                                  <article>
+                                    <% field_text = @loan.info['_ExitStrategyHowwillyoupaytheloanoff']%>
+                                    <%= send('simple_format', field_text)%>
+                                  </article>
+                                 <% end %>
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                        <div class="white-content-box">
+                            <div class="wcb-head">Offering Documents</div>
+                            <div class="wcb-content">
+                                
+                                   
+                                    <% @loan.documents.each do |doc| %>
+                                       <div class="add-files-outer">
+                                            <div class="uploaded-files">
+                                             <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+                                                <a href="<%= url %>"><%= doc.name %>
+                                            </div>
+                                        </div>
+                                    <% end %>
+                                    
+                                   
+                                
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                    <% end %>
+                    <% if @access == "false" && @login == "false" %>
+                        <div class="white-content-box">
+                            <h5>Please login to see the loan details. </h5> 
+                        </div>  
+                    <% end %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    
+
+    $('article').readmore({speed: 500});
+  </script>

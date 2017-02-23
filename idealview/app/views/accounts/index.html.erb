@@ -1,0 +1,335 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("/assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.text-center {
+    margin-right: 216px;
+}
+.existed
+{
+    color: red;
+}
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+$('document').ready(function(){
+     $('#search_form').submit(function() {
+      return false;
+    });
+
+     $('#save_broker').click(function(){
+        var status = "true";
+        bemail = $('.broker_email').val();
+        uname = $('.broker_username').val();        
+
+        bpass = $('.broker_password').val();
+        var pcount = bpass.length;
+        if(pcount<8)
+        {
+            $('.too_short').show();
+            status = "false";
+        }
+
+        if(bemail=="")
+        {
+            $('.email_empty').show();
+            $('.existed').hide();
+            status = "false";
+        }
+
+        if(uname=="")
+        {
+            $('.uname_empty').show();
+            $('.uexisted').hide();
+            status = "false";
+        }
+        
+        this_email = "email="+bemail;
+        $.ajax({
+            data: this_email,
+            type: 'POST',
+            url: '/brokers/check_email',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.existed').show();
+                    $('.email_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+
+        this_uname = "username="+uname;
+        $.ajax({
+            data: this_uname,
+            type: 'POST',
+            url: '/admin/check_uname',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.uexisted').show();
+                    $('.uname_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+        
+        setTimeout(function() {
+           // return false;
+          if(status=="false")
+          {
+
+            return false;
+          }
+          else
+          {
+              $('#brokerForm').submit(); 
+          } 
+      }, 2000);
+
+     });
+
+      $('.brokers_total').change(function(){
+        pg = $(this).val();
+         window.location.replace("<%= @base %>/brokers/?per_page="+pg);
+       });
+
+      $(".select_all_brokers").change(function () {
+        $(".single_broker").prop('checked', $(this).prop("checked"));
+      });
+
+
+      $(".add_broker").click(function(){
+        $('#myModal1').foundation('reveal', 'open');
+    });
+
+});
+
+function delete_brokers()
+{
+    var allVals=[];
+    $('input[name="select_broker"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one broker.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/delete_brokers',
+             success:function(data){
+                $('#broker_records').html(data);
+            }
+            
+        });
+
+}
+
+function search_fun()
+{
+    var data=$('#search_form').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/search',
+            success:function(response){
+                $('#broker_records').html(response);
+            }
+        });
+}
+
+</script>
+
+<!---------------------- Add Brokler Popup ---------------------------------->
+    
+    <div id="myModal1" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead small-3 small-centered columns">
+        <h5 id="modalTitle" style="font-weight:bold;">Add Broker </h5>
+      </div>
+       
+      <div class="small-12 small-centered columns">
+        <form method="post" action="https://<%= @hostname %>/brokers/add_new_broker" id="brokerForm">
+          <div class="row">
+          
+                    <div class="small-12 columns">
+                      <input type="text" name="firstName" placeholder="FirstName">
+                    </div>
+                    <div class="small-12 columns">
+                      <input type="text" name="lastName" placeholder="LastName">
+                    </div> 
+                    <div class="small-12 columns">
+                      <input type="text" name="phone" placeholder="Phone">
+                    </div> 
+                    <div class="small-12 columns" style="margin-bottom:16px;">
+                      <input type="text" name="email" placeholder="Email" class="broker_email" style="margin-bottom:0px;">
+                      <label class="existed" style="color:red; display:none;"> Email already exist. </label>
+                       <label class="email_empty" style="color:red; display:none;"> Please enter email address. </label>
+                    </div>
+                    <div class="small-12 columns" style="margin-bottom:16px;">
+                      <input type="text" name="username" placeholder="Username" class="broker_username" style="margin-bottom:0px;">
+                      <label class="uexisted" style="color:red; display:none;"> Username already exist. </label>
+                       <label class="uname_empty" style="color:red; display:none;"> Please enter username. </label>
+                    </div>
+                    <div class="small-12 columns" style="margin-bottom:16px;">
+                      <input type="password" name="password" placeholder="Password [It should be atleast 8 characters long]" class="broker_password" >
+                         <label class="too_short" style="color:red; display:none;"> Password is too short (minimum is 8 characters). </label>
+                          <label class="pass_empty" style="color:red; display:none;"> Please enter password. </label>
+                    </div>
+                     
+          </div>
+         
+                <div class="small-3 small-centered columns">
+                  <input type="button" id="save_broker"  value="Save" class="tiny button">
+                </div>
+         
+        </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+
+
+<!---------------------- Add Broker Popup ------------------------------------>
+
+
+
+
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_brokers()}">
+
+        
+
+        <select class="brokers_total" style="float:left; margin-left:10px; width:16%">
+          <option value="">Number Of records</option>
+          <option value="10"<% if params[:per_page]=="10"%> selected="selected" <% end %>> 10 </option>
+          <option value="20"<% if params[:per_page]=="20"%> selected="selected" <% end %>> 20 </option>
+          <option value="50" <% if params[:per_page]=="50"%> selected="selected" <% end %>> 50 </option>
+          <option value="100"<% if params[:per_page]=="100"%> selected="selected" <% end %>> 100 </option>
+      </select>
+
+        <h3 class='text-center'>Brokers</h3>
+        <div class="broker_search">
+            <form name="search_form" id="search_form" style="width:250px;">
+                <div class="form_wrap">
+                    <input type="text" name="search" placeholder="Search" onkeyup="search_fun();">
+                    <input type="button" id="search_btn" onclick="search_fun();">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    
+        <input type="checkbox"  name="select_all_broker" class="select_all_brokers" style="float:left">
+        <label> Select All</label>
+   
+        <input type="button" class="tiny button add_broker" value="Add Broker">
+   
+</div>
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+
+    <%= render partial: 'layouts/messages' %>
+    <% color_class = ''%>
+    <% @brokers.each do |broker| 
+         unless broker['delete']==1 %>
+        <div class='row <%=color_class%> bottom-space text-left'>
+            
+            <div class='large-2 columns'>
+            <input type="checkbox" id="check_<%= broker.id %>" name="select_broker" value="<%= broker.id %>" class="single_broker" style="float:left;margin-top:7px;">
+            </div>
+            
+            <div class='large-3 columns'>
+                <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
+                    <% unless broker.name.blank? %>
+                        <%= broker.name %>
+                    <% else %>
+                         "N/A"
+                    <% end %>
+                 </a>
+            </div>
+
+            <div class='large-2 columns'>
+                <%= broker.email %>
+            </div>
+            
+            <div class='large-2 columns'>
+                <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
+            </div>
+        </div>
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+    <%
+    end
+end %>
+    <%= will_paginate @brokers, :params => { :my_excluded_param => nil } %>
+</div>
+
+
+ 

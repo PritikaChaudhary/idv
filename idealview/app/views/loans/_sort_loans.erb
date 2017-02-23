@@ -1,146 +1,327 @@
 <style>
-li { cursor: pointer; cursor: all-scroll; list-style: none; }
+/*li { cursor: pointer; cursor: all-scroll; list-style: none; }
 .large-2 {
     width: 11.667%;
 } 
+table.list_loans td 
+	{
+    padding: 10px;
+    word-break: break-all;
+    line-height: normal;
+	}*/
 </style>
 <script type="text/javascript">
+	$('document').ready(function(){
+        $('.toggle').click(function(){
+	       id = $(this).attr('id');
+	       loan_id = id.replace("toggle_", "");
+	       if($(this).is(':checked'))
+	        {
+	            on_sync(loan_id)
+	        }
+	        else
+	        {
+	           off_sync(loan_id)
+	        }
+
+	      });
+    });
+</script>
+<script type="text/javascript">
+
 $(function(){
-	 $('ul').sortable({
-        axis: 'y',
-        stop: function (event, ui) {
-	        var record = $("#sortable").sortable("toArray");
-	        var data = $(this).sortable('serialize')+ "&moredata=" + record;
-	        $.ajax({
-                    data: data,
+$("#offices").children("tbody").sortable({
+    stop: function (event, ui) {
+        countRows(); // re-number rows after sorting
+    }
+});
+});
+function countRows() {
+    var i = 0;
+    var ids=[];
+    $('#offices td input:hidden').each(function () {
+        //$(this).attr("value", ++i);
+        my_id = $(this).attr('value');
+    	ids.push(my_id); 
+    });
+    var data =  "&moredata=" + ids;
+    $.ajax({
+                data: data,
                 type: 'POST',
                 url: '/loans/changeorder'
             });
-	}
-    });
-});
+
+}
 </script>
-<%= render partial: 'layouts/messages' %>
-<% color_class = ''%>
+	
+	<%= render partial: 'layouts/messages' %>
+	<div class="flash_notice priority_msg" style="display:none;">Loan has been added to priority. </div>
+    <div class="flash_notice remove_priority" style="display:none;">Loan has been removed from priority. </div>
+
+<div class="small-12 columns">
+	<table width="100%" class="list_loans" id="offices">
+		<thead>
+			<tr>
+				<th></th>
+				<th class="table_loan_name">
+					<a href="javascript:void(0);" onclick="sort_order('desc', 'name')">
+                      <i class="fa fa-sort-desc" aria-hidden="true" ></i>
+                    </a>
+                      Loan Name
+                    <a href="javascript:void(0);" onclick="sort_order('asc', 'name')">
+                    	<i class="fa fa-sort-asc" aria-hidden="true"></i>
+                    </a>
+				</th>
+				<th class="index_table_row">
+					<a href="javascript:void(0);" onclick="sort_order('desc', 'progress')">
+                      <i class="fa fa-sort-desc" aria-hidden="true" ></i>
+                    </a>
+                    	Progress Bar
+                    <a href="javascript:void(0);" onclick="sort_order('asc', 'progress')">
+                    	<i class="fa fa-sort-asc" aria-hidden="true"></i>
+                    </a>
+				</th>
+				<th class="index_table_row">
+					<a href="javascript:void(0);" onclick="sort_order('desc', 'amount')">
+                      <i class="fa fa-sort-desc" aria-hidden="true" ></i>
+                    </a>
+					Net Amount
+					<a href="javascript:void(0);" onclick="sort_order('asc', 'amount')">
+                    	<i class="fa fa-sort-asc" aria-hidden="true"></i>
+                    </a>
+				</th>
+				<th class="table_loan_name">
+					<a href="javascript:void(0);" onclick="sort_order('desc', 'location')">
+                      <i class="fa fa-sort-desc" aria-hidden="true" ></i>
+                    </a>
+						Location
+					<a href="javascript:void(0);" onclick="sort_order('asc', 'location')">
+                    	<i class="fa fa-sort-asc" aria-hidden="true"></i>
+                    </a>
+				</th>
+				
+				<% if !current_user.plan.blank?%>
+					<% plan = current_user.plan.downcase %>
+				<% else %>
+					<% plan = "" %>
+				<% end %>
+
+				<% if @adminLogin == true || plan == "enterprise"%>
+					<th> Sync </th>
+				<% end %>
+				<% if @checkBroker==true  && @checkAdmin==false %>
+					<% if !current_user.plan.blank?%>
+						<% plan = current_user.plan.downcase %>
+					<% else %>
+						<% plan = "" %>
+					<% end %>
+					<% if plan == "enterprise" || plan == "business" %>
+						<th></th>
+					<% end %>
+				<% end %>
+				<th> &nbsp; </th>
+			</tr>
+		</thead>
+		<tbody class="ui-sortable">
 <% unless @loans.blank? %>
-	<ul id="sortable">
+	
 	<% @loans.each do |loan_rec|
 	loan=loan_rec.info || Loan.new
 	%>
-	<li id= '<%= loan_rec.id %>'>
-	<% if @checkAdmin==true %>
-	<div class='large-2 columns'>
-	<input type="checkbox" id="check_<%= loan_rec.id %>" name="select_loan" value="<%= loan_rec.id %>" style="float:left;margin-top:7px;">
-	<div id="click_<%= loan_rec.id %>" style="float:left;">
-		<% @url=url_for :controller=>'loan_urls', :action=>'fetch_lenders', :id=>loan_rec.id %>
-		<a href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= loan_rec.id %>', 'lender_loans')">[+]</a>
-	</div>
-	<div id="click_hide_<%= loan_rec.id %>" style="display:none; float:left;" class="click_hide" onclick="order_lenderhide('<%= loan_rec.id %>')">
-		<a href="javascript:void(0);" class="hide_lender_<%= loan_rec.id %>">[-]</a>
-	</div>
-	</div>
-	<% end %>
-	<div class='row <%=color_class%> bottom-space text-left'>
-	<% if loan_rec.name.blank?
-		loan_name = 'No Loan Title'
-	  else
-		loan_name = loan_rec.name
-	  end
+	
+	<tr class="crsr" id="row_<%= loan_rec.id %>">
+	<td width="55" value="<%= loan_rec.id %>" >
+		<input type="hidden" value="<%= loan_rec.id %>">
+			<input type="checkbox" id="check_<%= loan_rec.id %>" name="select_loan" value="<%= loan_rec.id %>"  class="single_loan single_loan_check">
+			<% if @checkAdmin==true %>
+				<div id="click_<%= loan_rec.id %>" class="plus_minus_icon">
+					<% @url=url_for :controller=>'loan_urls', :action=>'fetch_lenders', :id=>loan_rec.id %>
+					<a class="more-option" href="javascript:void(0);"  onclick="callAjax('<%= @url %>','loan_lenders<%= loan_rec.id %>', 'lender_loans')"><i class="fa fa-plus-circle"></i></a>
+				</div>
+				<div id="click_hide_<%= loan_rec.id %>" style="display:none;" class="click_hide plus_minus_icon"  onclick="order_lenderhide('<%= loan_rec.id %>')">
+					<a class="less-option" href="javascript:void(0);" class="hide_lender_<%= loan_rec.id %>"><i class="fa fa-minus-circle"></i></a>
+				</div>
+			<% end %>
+	</td>
+	<td>
+		
+		<% 
+			unless loan_rec.created_date.blank? 
+				create_date = DateTime.parse("#{loan_rec.created_date}").strftime("%d %B, %Y")
+				create_time = DateTime.parse("#{loan_rec.created_date}").strftime("%H:%M:%S")
+			end
 
-	%>
-	<div class='large-3 columns'><h5><a href='<%=url_for :controller=>'loans', :action=>'show',:id=>loan_rec.id%>'><%=loan_name%></a></h5></div>
-	<div class='<% if @checkAdmin==true %> large-2 columns <% else %> large-3 columns <% end %>'>
-		<span>Net Amount:</span><BR>
+				text = "Created By : #{loan_rec.created_by_info} <br> Email : #{loan_rec.created_by_email} <br> Name : #{loan_rec.created_by_name} <br> Phone : #{loan_rec.info['Phone']}  <br> Date : #{create_date}<br> Time : #{create_time}"%>
+			<% if loan_rec.created_by_info == "Admin" %>
+				<!-- <img src="/assets/admin.png" data-tooltip aria-haspopup="true" class="has-tip tip-top" title="<%= text %>" style="width:23px; float:left; margin-top:4px;"> -->
+				<span data-tooltip aria-haspopup="true" title="<%= text %>" class="added_by admin_user has-tip tip-top"> A </span>
+			<% elsif loan_rec.created_by_info == "Broker" %>
+				<!-- <img src="/assets/broker.png" data-tooltip aria-haspopup="true" class="has-tip tip-top" style="width:23px; float:left; margin-top:4px;" title="<%= text %>"> -->
+				<span data-tooltip aria-haspopup="true" title="<%= text %>" class="added_by broker_user has-tip tip-top"> B </span>
+			<% elsif loan_rec.created_by_info == "Funding" %>
+			  	<!-- <img src="/assets/funding.png" data-tooltip aria-haspopup="true" class="has-tip tip-top" style="width:23px; float:left; margin-top:4px;" title="<%= text %>"> -->
+			  	<span data-tooltip aria-haspopup="true" title="<%= text %>" class="added_by funding_user has-tip tip-top"> F </span>
+		  	<% elsif loan_rec.created_by_info == "Embed Form" %>
+			  	<!-- <img src="/assets/funding.png" data-tooltip aria-haspopup="true" class="has-tip tip-top" style="width:23px; float:left; margin-top:4px;" title="<%= text %>"> -->
+			  	<span data-tooltip aria-haspopup="true" title="<%= text %>" class="added_by funding_user has-tip tip-top"> E </span>
+			<% else %>
+				<!-- <img src="/assets/admin.png" data-tooltip aria-haspopup="true" class="has-tip tip-top" style="width:23px; float:left; margin-top:4px;" title="<%= text %>"> -->
+				<span data-tooltip aria-haspopup="true" title="<%= text %>" class="added_by admin_user has-tip tip-top"> A </span>
+			<% end %>
+		
+		<% if loan_rec.name.blank?
+			loan_name = 'No Loan Title'
+		  else
+			loan_name = loan_rec.name
+		  end
+		%>
+
+		<h5 style="float:left; margin-left:6px;"><a href='<%=url_for :controller=>'loans', :action=>'show',:id=>loan_rec.id%>'><%=loan_name%></a></h5><br>
+		<div id="loan_lenders<%= loan_rec.id %>" style="display:none;" class="index_show_lenders">
+
+		</div> 
+	</td>
+
+	<!---------------- Calculate Progress ------------------>
+		<td>
+			<% 
+			   total = 23 
+			   pre_result = (loan_rec.progress.to_f/total.to_f)
+			   result = pre_result * 100
+			   display_result = result.round(0)
+			%>
+
+			<div class="w3-progress-container w3-light-blue">
+			    <div class="w3-progressbar w3-blue" style="width:<%= display_result %>%">
+			      <div class="w3-center w3-text-white"><%= display_result %>%</div>
+			    </div>
+			</div>
+		</td>
+		<!---------------- End Calculate Progress ------------------>
+	
+	<td>
+	
 		<% if loan['_NetLoanAmountRequested0'].blank? %>
 			N/A
 		<% else %>
-			<%=fd_money(loan['_NetLoanAmountRequested0'])%>
+			 <% 
+                unless loan['_NetLoanAmountRequested0'].blank?
+                   loan_amount = loan['_NetLoanAmountRequested0'].to_s 
+                  if loan_amount.include? "$"
+                    loan_amnt = loan_amount.gsub('$', '')
+                  else
+                    loan_amnt = loan_amount
+                  end
+                  loan_amnt = loan_amnt.gsub(',','')
+               %>
+               <%= fd_money(loan_amnt.to_i) %> 
+               <% end %>
 		<% end %>
-	</div>
-	<div class='<% if @checkAdmin==true %> large-2 columns <% else %> large-3 columns <% end %>'>
-		<span>Location :</span>
+	</td>
+	<td>
 		<% if loan['City3'].blank? && loan['State3'].blank? %>
 		   N/A
 		<% else %>
-		  <%=loan['City3']+', '%> <%=loan['State3']%>
+		  <%= loan['City3'] %>
+		  	<% if !loan['City3'].blank? %>
+		  		,
+		  	<% end %>
+		  <%= loan['State3']%>
 		<% end %>
-	</div>
-	<% if @checkBroker==true && @checkAdmin==false%>
-		<div class="large-3 columns">
-		<% unless loan_rec.doc_url.blank?%>
-			<a href="localhost:3000/loans/docs/<%= loan_rec.doc_url %>"> <input type="button"  class="tiny button" value="Upload Docs"></a>
+
+	</td>
+
+	<% if !current_user.plan.blank?%>
+		<% plan = current_user.plan.downcase %>
+	<% else %>
+		<% plan = "" %>
+	<% end %>
+	<% if @adminLogin == true || plan == "enterprise"%>
+		<td style="text-allign:center;">
+				
+					<!-- <img src = "/assets/on_1.png" <% if loan_rec.not_sync == 1 %> style="display:none; cursor:pointer;" <% elsif loan_rec.not_sync == 0  %> style="display:block;  cursor:pointer;" <% else %> style="display:block;  cursor:pointer;" <% end %> onclick = "off_sync('<%= loan_rec.id %>')" alt="on" id="on_sync_<%= loan_rec.id%>">
+
+					<img src = "/assets/off_1.png" <% if loan_rec.not_sync == 1%> style="display:block;  cursor:pointer;" <% else %> style="display:none; cursor:pointer;" <% end %> onclick = "on_sync('<%= loan_rec.id %>')" alt="off" id="off_sync_<%= loan_rec.id%>" width="52"> -->
+
+					<div class="wrapper toggle_sync">
+		              <input type="checkbox" name="toggle" id="toggle_<%= loan_rec.id %>" class="toggle" <% if loan_rec.not_sync != 1 %> checked="checked" <% end %>>
+		              <label for="toggle_<%= loan_rec.id %>"></label>
+		            </div>
+		</td>
+	<% end %>
+
+
+	<% if @checkBroker==true  && @checkAdmin==false %>
+		<% if !current_user.plan.blank?%>
+			<% plan = current_user.plan.downcase %>
 		<% else %>
-			<a href="javascript:void(0);"> <input type="button"  class="tiny button" value="Upload Docs" style="background-color:#999289; border-color:#999289;"></a>
+			<% plan = "" %>
 		<% end %>
-		</div>
+
+		<% if plan == "enterprise" || plan == "business" %>
+		<td>
+				
+		<% unless loan_rec.doc_url.blank?%>
+			<a href="https://<%= @hostname %>/loans/docs/<%= loan_rec.doc_url %>"> <input type="button"  class="tiny button index_updocs" value="Upload Docs"></a>
+		<% else %>
+			<a href="javascript:void(0);"> <input type="button"  class="tiny button index_restrict_up" value="Upload Docs"></a>
+		<% end %>
+				
+		</td>
+		<% end %>
 	<% end %>
 
-	<% @shop_loan_id = 'shop-loan-'+loan['Id'].to_s %>
-	<% if @checkAdmin==true %>
-		<div id='<%=@shop_loan_id%>' class='large-3 columns'>
-
-
-			<% @url=url_for :controller=>'loans', :action=>'send_to_cpc', :id=>loan_rec.id, :only_path=>false%>
-		      <%= button_tag "Send To CPC", onclick:"callAjax('#{@url}','#{@shop_loan_id}');", class: 'tiny button success'%>
-
-		    <% if loan['_LenderEmail'].blank? %>
-					<% @url=url_for :controller=>'api/actions', :action=>'manual_shop_loan', :id=>loan_rec.id, :token=>'54b0c58c7ce9f2a8b551351102ee0938', :only_path=>false%>
-		      <%= button_tag "Shop Loan", onclick:"if(confirm('Are you sure? This will start sending emails!')){callAjax('#{@url}','#{@shop_loan_id}');}", class: 'tiny button'%>
-		    <% end %>
-		      <% @url=url_for :controller=>'loans', :action=>'archive', :id=>loan_rec.id, :only_path=>false%>
-		      <%= button_tag "Archive", onclick:"if(confirm('Are you sure? This will permanently clear the loan from the list!')){callAjax('#{@url}','#{@shop_loan_id}');}", class: 'tiny button alert'%>
+	<td>
+		
+		
+		<div class="index_button_table">
+ 			<input type="button"  class="alert tiny button" value="Remove priority" onclick="remove_priority(<%= loan_rec.id %>)">
 		</div>
+		<% if @adminLogin == true %>
+			<div class="bulk_upload index_button_table">
+	 			<a href="<%= request.base_url %>/loans/bulk_upload/<%= loan_rec.id %>" class="tiny button" style="height:37px; padding:11px; width: 117px;">Upload Documents</a>
+	 		</div>
+ 		<% end %>
+	</td>
+
+	</tr>
+	
+	
 	<% end %>
-	 <br>
-	<div id="loan_lenders<%= loan_rec.id %>">
-
-	</div> 
-
-
-	<div class='hide'>
-		<div class='large-4 columns'>
-			<div class='label secondary'>Transaction Type</div><BR>
-			<% if loan['_TransactionType0'].blank? %>
-				N/A
-			<% else %>
-				<%=loan['_TransactionType0']%>
-			<% end %>
-		</div>
-		<div class='large-4 columns'>
-			<div class='label secondary'>Cash Contribution</div><BR>
-			<% if loan['_CashContribution'].blank? %>
-				N/A
-			<% else %>
-				<%=fd_money(loan['_CashContribution'])%>
-			<% end %>
-		</div>
-		<div class='large-4 columns'>
-			<div class='label secondary'>Desired Term Length</div><BR>
-			<% if loan['_DesiredTermLength'].blank? %>
-				N/A
-			<% else %>
-				<%=Loan.term_lengths.invert[loan['_DesiredTermLength']]%>
-			<% end %>
-		</div>
-		<div class='large-4 columns left'>
-			<div class='label secondary'>Expected Close Date</div><BR>
-			<% if loan['_DesiredTermLength'].blank? %>
-				N/A
-			<% else %>
-				<%=fd_xml_to_date(loan['_ExpectedCloseDate'])%>
-			<% end %>
-		</div>
-	</div>
-
-	</div>
-	</li>
-	<% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-	<% end %>
-	</ul>
-<% else 
-	    if @empty.blank? %>
+<% else %>
+<tr>
+	<td colspan="4">
+	<% if @empty.blank? %>
 			You have not submitted any loans yet. Submit a loan here.
 	<% else %> 
 			<%= @empty %>
 	<%  end %>
+	</td>
+</tr>
 <% end %>
+</tbody>
+	</table>
+<% if @search.blank? %>
+	<div class="pagination">
+		<% if @page.to_i == 1 %>
+	     	<span class="previous_page previous">← Previous</span>
+	    <% else %>
+	    	<% @lnk = @page.to_i-1 %>
+	    	<a href="javascript:void(0);" rel="<%= @lnk %>"  onclick="return paging(<%= @lnk %>);" class="page_num">← Previous</a>
+	    <% end %> 
+	     <% nums = @partitions.to_i
+	     	i=1
+		%>
+	     <% for i in 1..nums %>
+	     	<a href="javascript:void(0);" rel="<%= i %>"  onclick="return paging(<%= i %>);" <% if @page.to_i == i %> class="page_num current_page" <% else %> class="page_num" <% end %>><%= i %></a>
+	     <% end %>
+
+	    <% if @page.to_i == nums.to_i %>
+	     	<span class="previous_page previous"> Next → </span>
+	    <% else %>
+	    	<% @lnk = @page.to_i+1 %>
+	    	<a href="javascript:void(0);" rel="<%= @lnk %>"  onclick="return paging(<%= @lnk %>);" class="page_num"> Next → </a>
+	    <% end %> 
+    </div>
+<% end %>
+</div>

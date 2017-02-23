@@ -1,0 +1,166 @@
+<script type="text/javascript">
+    function sort_order(type, field)
+    {
+        $('.sort_by').val(field);
+        $('.sort_order').val(type);
+        paging('1');
+    }
+    $('document').ready(function(){
+        $(".market_access").change(function(){
+            mkt_id = $(this).prop('id');
+            id = mkt_id.replace('market_access_', '');  
+
+
+            if ($(this).is(':checked')) {
+              data = "broker_id="+id+"&market_access=1";
+            }
+            else
+            {
+              data = "broker_id="+id+"&market_access=0"; 
+            }
+
+             $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/account_management/market_access',
+                 success:function(data){
+                
+                }
+                
+            });
+        });
+
+        $(".approved_marketplace").click(function(){
+            id = $(this).attr('id');
+            data = "loan_id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/approved_marketplace',
+                 success:function(data){
+                    $('#'+id+'approved').html('<a href="javascript:void(0);" class="button success"> Approved </a>');
+                }
+            });
+        }); 
+
+
+    });
+</script>
+<style>
+    .fa-sort-desc
+    {
+        cursor: pointer;
+        float: left;
+        margin-top: -3px;
+    }
+    .fa-sort-asc
+    {
+        cursor: pointer;
+        float: left;
+        margin-left: 3px;
+        margin-top: 3px;
+    }
+</style>
+<% if @flash == "yes" %>
+    <div class="flash_notice">Your changes has been saved successfuly.</div>
+<% end %>
+<div class="small-12 columns">
+	<table width="100%" class="list_loans">
+		<thead>
+			<tr>
+                <th>
+                </th>
+                <th>
+                   <span>Name</span>
+                </th>
+				<th>
+                   <span>Code</span>
+                </th>
+				<th>
+                   <span>Discount</span>
+                </th>
+                <th>
+                    <span> Duration </span>
+                </th>
+                <th>
+                  <span> Created </span>
+                </th>
+				<th>
+                   <span> Redeem By </span>    
+                </th>
+				
+			</tr>
+		</thead>
+		<tbody>
+<% color_class = ''%>
+<% unless @coupons.blank? %>    
+    <% @coupons.each do |coupon| %> 
+    	
+           
+    <tr>
+        <td><input type="checkbox" id="check_<%= coupon.id %>" name="select_coupon" value="<%= coupon.id %>" style="float:left;margin-top:7px; margin-right:5px;" class="single_coupon"></td>
+        <td><%= coupon.name %></td>
+        <td><%= coupon.coupon_code %></td>
+        <td>
+            <% if coupon.discount_type == "percent" %>
+                <%= coupon.discount_percent %>%
+            <% else %>
+                <% dollar_discount = coupon.discount_in_cents.to_f/100 %>
+                $<%= dollar_discount %>
+            <% end %>
+        </td>
+        <td>
+            <% if coupon.duration == "single_use" %>
+                Single Use
+            <% elsif coupon.duration == "forever" %>
+                Forever
+            <% elsif coupon.duration == "temporal" %>
+                <%= coupon.temporal_amount %> <%= coupon.temporal_unit %>
+            <% end %>
+
+        </td>
+        <td><%= coupon.created_date %></td>
+        <td>
+            <% unless coupon.redeem_by_date.blank? %>
+                <% redeem_date = Time.parse(coupon.redeem_by_date) 
+                    redeemdate = redeem_date.strftime("%d %h, %Y")
+                %>
+                <%= redeemdate %>
+            <% else %>
+                -
+            <% end %>
+        </td>  
+
+        
+	</tr>
+         
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+    <%
+    end
+end %>
+    </tbody>
+ </table>
+   
+     <% # will_paginate @brokers, :params => { :my_excluded_param => nil } %>
+
+<div class="pagination">
+    <% if @page.to_i == 1 %>
+        <span class="previous_page previous">← Previous</span>
+    <% else %>
+        <% @lnk = @page.to_i-1 %>
+        <a href="javascript:void(0);" rel="<%= @lnk %>"  onclick="return paging(<%= @lnk %>);" class="page_num">← Previous</a>
+    <% end %> 
+     <% nums = @partitions.to_i
+        i=1
+    %>
+     <% for i in 1..nums %>
+        <a href="javascript:void(0);" rel="<%= i %>"  onclick="return paging(<%= i %>);" <% if @page.to_i == i %> class="page_num current_page" <% else %> class="page_num" <% end %>><%= i %></a>
+     <% end %>
+
+    <% if @page.to_i == nums.to_i %>
+        <span class="previous_page previous"> Next → </span>
+    <% elsif @total > 10%>
+        <% @lnk = @page.to_i+1 %>
+        <a href="javascript:void(0);" rel="<%= @lnk %>"  onclick="return paging(<%= @lnk %>);" class="page_num"> Next →</a>
+    <% end %> 
+</div>

@@ -49,35 +49,119 @@
 	}
 </style>
 <script type="text/javascript">
-	function check_email()
-	{
-	    fetch_email = $("#email").val();
-	    var data = "email=" + fetch_email;
-	    $.ajax({
-	            data: data,
-	            type: 'POST',
-	            url: '/brokers/check_email',
-	             success:function(response){
-	             	if(response=="no")
-	                {
-	                	alert("Email already exist.");
+	// function check_email()
+	// {
+	//     fetch_email = $("#email").val();
+	//     var data = "email=" + fetch_email;
+	//     $.ajax({
+	//             data: data,
+	//             type: 'POST',
+	//             url: '/brokers/check_email',
+	//              success:function(response){
+	//              	if(response=="no")
+	//                 {
+	//                 	alert("Email already exist.");
 	                	
-	                }
-	                else
-	                {
-	                	$( "#brokerForm" ).submit();
-	                }
-	            }
+	//                 }
+	//                 else
+	//                 {
+	//                 	$( "#brokerForm" ).submit();
+	//                 }
+	//             }
 				
-			});
+	// 		});
 				   
-	}
+	// }
+	$('document').ready(function(){
+		 $('#save_broker').click(function(){
+        var status = "true";
+        bemail = $('#email').val();
+        uname = $('#username').val();        
+
+        bpass = $('#password').val();
+        var pcount = bpass.length;
+        if(pcount<8)
+        {
+            $('.too_short').show();
+            status = "false";
+        }
+
+        if(bemail=="")
+        {
+            alert("Please enter email address.");
+            status = "false";
+        }
+
+        if(uname=="")
+        {
+            alert("Please enter username.");
+            status = "false";
+        }
+        
+        this_email = "email="+bemail;
+        $.ajax({
+            data: this_email,
+            type: 'POST',
+            url: '/brokers/check_email',
+             success:function(response){
+                if(response=="no")
+                {
+                  	alert("Email already exists.")
+                  	status = "false";
+                }
+                
+            }
+            
+        });
+
+        this_uname = "username="+uname;
+        $.ajax({
+            data: this_uname,
+            type: 'POST',
+            url: '/admin/check_uname',
+             success:function(response){
+                if(response=="no")
+                {
+                    alert("Username already exists.")
+                    status = "false";
+                }
+                
+            }
+            
+        });
+        
+        setTimeout(function() {
+          if(status=="false")
+          {
+
+            return false;
+          }
+          else
+          {
+              fdata = $('#brokerForm').serialize();
+              $.ajax({
+            data: fdata,
+            type: 'POST',
+            url: '/brokers/add_brokers',
+             success:function(response){
+                if(response=="done")
+                {
+                  window.location.replace("https://<%= @hostname %>/brokers/sub_brokers");
+                }
+                
+            }
+        		});
+          } 
+      }, 4000);
+
+     });
+	});
 </script>
 <div class='row'>
 	<div class="small-8 small-centered columns">
 
 		<h3>Add User</h3>
-		  <form method="post" action="http://<%= @hostname %>/brokers/add_broker" id="brokerForm">
+		  <form action="https://<%= @hostname %>/brokers/add_brokers" id="brokerForm" method="post">
 		  
 		  <div class="field">
 				<label for="name">First Name</label>
@@ -91,18 +175,24 @@
 				<input id="name" type="text" name="lastName" autofocus="autofocus" >
 		  </div>
 
-		   <div class="field">
+		   <!-- <div class="field">
 			<label for="phone1">Phone</label>
 			<br>
 			<input id="phone1" type="text" name="phone1" autofocus="autofocus" >
-		 </div>
+		 </div> -->
+		 
 		 <div class="field">
 			<label for="email">Email</label>
 				<br>
 				<input id="email" type="text" name="email" autofocus="autofocus">
 		</div>
 		<div class="field">
-			 <label for="password">Password</label>
+			<label for="email">Username</label>
+				<br>
+				<input id="username" type="text" name="username" autofocus="autofocus">
+		</div>
+		<div class="field">
+			 <label for="password">Password [It should be atleast 8 characters long]</label>
 				<br>
 				<input id="password" type="password" name="password" autofocus="autofocus">
 		</div>
@@ -118,7 +208,7 @@
 	
 		 
 		<div class="actions">
-		   <input type="button" value="SUBMIT" class="tiny button success" onclick="return check_email()">
+		   <input type="button" value="SUBMIT" class="tiny button success" id="save_broker">
 		  </div>
 		  </form>
 	</div>

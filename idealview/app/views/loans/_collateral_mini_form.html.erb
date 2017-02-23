@@ -1,0 +1,310 @@
+<% if (!field_value.blank? && field_value != 0) || current_user %>
+<%= form_tag({:controller=>'loans', :action=>'collateral_edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type}, :onSubmit => 'return false', :id=>field_name+'-form') do %>
+		  <%= hidden_field_tag 'contact_id', contact_id %>
+		  <%= hidden_field_tag 'field_type', field_type %>
+		  <%= hidden_field_tag 'field_name', field_name %>
+		  <%= hidden_field_tag 'field_label', field_label %>
+		  <%= hidden_field_tag 'field_options', field_options %>
+
+	<%if edit%>
+			<div>
+			
+			<% if field_name != "bio" %>
+						<b><%= field_label %></b>  <br>
+			<% else  %>
+				<b class="detail_title"><%= field_label %></b>  <br>
+			<% end %>
+			
+			<%
+
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options[field_value].blank?
+				   		field_value=options[field_value]
+				   end
+				end
+		    	field_value=options_for_select(options,field_value)
+		    end
+		    
+		    if field_type == 'date_field_tag'
+		    	if !field_value.blank?
+     				field_value = Date.strptime(field_value.to_date.strftime("%d/%m/%Y"), '%d/%m/%Y')
+  				end
+		    end
+		    %>
+	    	<%
+	    	html_options = [rows:1]
+	    	if field_type=='text_area_tag'
+	    		html_options = [rows:15]
+	    	end
+	    		
+	    	%>
+
+	    	<%
+			  extra_callback = '';
+			  %>
+		    <div style='max-width:800px;margin-left:auto;margin-right:auto;'><%= send(field_type, field_name, field_value, html_options[0])  %></div>
+		  </div>
+		  
+
+		  
+			<% @url=url_for :controller=>'loans', :action=>'collateral_edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type%>
+		  <%= button_tag "Save", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form', 'save' );#{extra_callback}", class: 'tiny button'%>
+			<% @url=url_for :controller=>'loans', :action=>'collateral_edit_field',:id=>contact_id, :field=>field_name, :edit=>false, :format_type=>format_type, :cancel=>true%>
+		  <%= button_tag "Cancel", data: { disable_with: "Please wait..." }, onclick:"callAjax('#{@url}','#{field_name}', '#{field_name}-form', 'cancel' );", class: 'tiny button'%>
+		  
+		
+	<%else%>
+		<%
+		    if field_type=='select_tag'
+		    	options = eval(field_options)
+				if options.class == Hash
+					if !options.key(field_value).blank?
+				   		field_value=options.key(field_value)
+				    end
+			        if !options.key(field_value.to_s).blank?
+				   		field_value=options.key(field_value.to_s)
+				    end
+				end
+		    end
+		 %>
+
+		<% @url=url_for :controller=>'loans', :action=>'collateral_edit_field',:id=>contact_id, :field=>field_name, :edit=>true, :format_type=>format_type%>
+		<% #roleCheck = policy(Loan).update
+			#abort("#{roleCheck.inspect}")
+			 %>
+
+		<% if(@brokerLogin==true) 
+		 %>
+				<span style='min-width:20px;min-height:20px'   ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'  >
+		<% else %>
+				<span style='min-width:20px;min-height:20px' <% if policy(Loan).update? %> ondblclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")' <% end %>>
+		<% end %>
+			<% if !field_label.blank? %>
+					
+					<% if field_name != "bio" %>
+						<% @cls = "hl-l"%>
+					<% else  %>
+						<% @cls = "hl-l detail_title"%>
+					<% end %>
+					<% @clsv = "valuex_container" %>
+			<div class="hide_edit_btns">	
+				<span class="edit_pen" style="float:right;" onclick='callAjax("<%=@url%>","<%=field_name%>","<%=field_name+'-form'%>")'>
+					<img src="/assets/edit-icon.png" style="width:15px;">
+				</span>
+
+				<% rplc = "_#{contact_id}"
+				   f_name = field_name.gsub! rplc, ''
+				   @collat = Collateral.find_by_id(contact_id)
+				   
+				   %>
+				   <% unless @collat.hide_fields.blank? %>
+					   
+					   	<span id="showc_<%=field_name%>_<%= contact_id %>" <% if @collat.hide_fields.include? "#{f_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+							<a style="" onclick="show_collateral_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hidec_<%=field_name%>_<%= contact_id %>" <% if @collat.hide_fields.include? "#{f_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+							<a style="" onclick="hide_collateral_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% else %>
+						<span id="showc_<%=field_name%>_<%= contact_id %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+							<a style="" onclick="show_collateral_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+								<i class="fa fa-eye-slash" tabindex="0"></i>
+							</a>
+						</span>
+
+					  	<span id="hidec_<%=field_name%>_<%= contact_id %>"  style="float:right; margin-top:0px; margin-right:2px;">
+							<a style="" onclick="hide_collateral_field('<%= contact_id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+								<i class="fa fa-eye" tabindex="0"></i>
+							</a>
+						</span>
+					<% end %>
+			</div>
+				<span class='<%= @cls %>'><%= field_label.upcase%> : </span>
+				
+
+				
+					
+				
+					
+				
+			<% end %>
+			<%
+				if field_value == 'Both'
+					field_text = 'Purchase & Refinance'
+				else
+					field_text = field_value
+				end
+				
+				if field_value.blank?
+					if field_label.blank?
+						field_text = ''
+					else
+						field_text = ''
+					end	
+				end
+			%>
+			<% if @cls!="hl-l" %>
+			<span class="<%= @clsv %>">
+				<% if field_value.blank? %>
+					 	<%= field_text %>
+				<% else %>
+					<% if format_type=="fd_money" 
+						 if field_text.include? "$"
+						 	field_text = field_text.gsub('$', '')
+						 end
+					 end %>
+					<div class="field_value" >
+						<%= send(format_type, field_text) %>
+					</div>
+				<% end %>
+			</span>
+			<% else %>
+				<br>
+				<% if field_value.blank? %>
+					 	<%= field_text %>
+				<% else 
+					# if format_type=="fd_date"
+					# 	field_value=""
+					# else 
+					%>	
+					<% if format_type=="fd_money" 
+						 if field_text.include? "$"
+						 	field_text = field_text.gsub('$', '')
+						 end
+					 end %>
+				<div class="field_value" >
+					<%= send(format_type, field_text) %>
+				</div>
+				<%
+			# end
+				 end %>
+			<% end %>
+		</span>
+		<%= hidden_field_tag field_name, field_value %>
+	<%end%>
+<% end %>
+<% end %>
+<script type="text/javascript">
+
+$('select').change(function(){
+	colId = $(this).parents('.main_collateral').attr('id');
+	name = $(this).attr('name');
+	if(name.indexOf("transaction_type") >= 0)
+	{
+		this_val = $(this).val();
+		if(this_val=="Purchase")
+		{
+			$('#'+colId+' .purchase').show();
+			$('#'+colId+' .refinance').hide();	
+			$('#'+colId+' .free_clear').hide();	
+		}
+		else if(this_val=="Refinance")
+		{
+			$('#'+colId+' .purchase').hide();
+			$('#'+colId+' .refinance').show();	
+			$('#'+colId+' .free_clear').hide();	
+		}
+		else if(this_val=="Free and clear")
+		{
+			$('#'+colId+' .purchase').hide();
+			$('#'+colId+' .refinance').hide();	
+			$('#'+colId+' .free_clear').show();	
+		}
+		else
+		{
+			$('#'+colId+' .purchase').hide();
+			$('#'+colId+' .refinance').hide();	
+			$('#'+colId+' .free_clear').hide();	
+		}
+		
+
+
+	}
+	if(name.indexOf("source_of_value") >= 0)
+	{
+		
+		this_val = $(this).val();
+		if(this_val=="BPO/CMA")
+		{
+			$('#'+colId+' .bpo_cma').show();
+			$('#'+colId+' .appraisal').hide();
+		}
+		else if(this_val=="Appraisal")
+		{
+			$('#'+colId+' .bpo_cma').hide();
+			$('#'+colId+' .appraisal').show();
+		}
+		else
+		{
+			$('#'+colId+' .bpo_cma').hide();
+			$('#'+colId+' .appraisal').hide();
+		}
+	}
+	structure = 0; 
+	if(name.indexOf("structural_size") >= 0)
+	{
+		this_val = $(this).val();
+		if(this_val=="Sq Footage")
+		{
+			$('#'+colId+' .footage_ssize').show();
+			$('#'+colId+' .units_ssize').hide();
+			$('#'+colId+' .structure_size').removeClass('medium-4');
+            $('#'+colId+' .structure_size').addClass('medium-6');
+		}
+		else if(this_val=="Units")
+		{
+			$('#'+colId+' .footage_ssize').hide();
+			$('#'+colId+' .units_ssize').show();
+			$('#'+colId+' .structure_size').removeClass('medium-6');
+            $('#'+colId+' .structure_size').addClass('medium-4');
+		}
+		else
+		{
+			$('#'+colId+' .footage_ssize').hide();
+			$('#'+colId+' .units_ssize').hide();
+			$('#'+colId+' .structure_size').removeClass('medium-4');
+            $('#'+colId+' .structure_size').addClass('medium-6');
+		}
+		structure = 1; 
+	}
+
+	if(name.indexOf("size") >= 0 && structure!=1)
+	{
+		this_val = $(this).val();
+		if(this_val=="Sq Footage")
+		{
+			$('#'+colId+' .footage_size').show();
+			$('#'+colId+' .acres_size').hide();
+			$('#'+colId+' .units_size').hide();
+		}
+		else if(this_val=="Acres")
+		{
+			$('#'+colId+' .footage_size').hide();
+			$('#'+colId+' .acres_size').show();
+			$('#'+colId+' .units_size').hide();
+		}
+		else if(this_val=="Units")
+		{
+			$('#'+colId+' .footage_size').hide();
+			$('#'+colId+' .acres_size').hide();
+			$('#'+colId+' .units_size').show();
+		}
+		else
+		{
+			$('#'+colId+' .footage_size').hide();
+			$('#'+colId+' .acres_size').hide();
+			$('#'+colId+' .units_size').hide();
+		}
+	}
+
+
+});
+
+</script>

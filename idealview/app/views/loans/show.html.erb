@@ -1,4 +1,733 @@
+<% 
+  if @adminLogin == true
+    @brokerLogin = false
+  end
+%>
+<style type="text/css">
+  .detail_div
+  {
+    margin-bottom: 25px;
+    display: none;
+  }
+
+  .info
+  {
+    width : 40%;
+    float: left;
+    font-size: 12px;
+  }
+
+  .info_equal
+  {
+    width : 6%;
+    float: left;
+    font-size: 12px;
+  }         
+
+
+  .info_detail
+  {
+    width : 54%;
+    float: left;
+    font-size: 12px;
+  }
+  .full_info
+  {
+    width: 100% !important;
+    float:left;
+  }
+  .bordr_detail_div
+  {
+    /*border: 1px solid;*/
+  }
+  .sub_input
+  {
+    height:26px !important; 
+    padding:0px !important; 
+    width:134px !important;
+    padding-left: 5px !important;
+  }
+  .ui-datepicker-header
+  {
+    background-color: #fff;
+  }
+  .ui-datepicker-prev
+  {
+    background:#eeeeee;
+    margin-left: 2px;
+  }
+  .ui-datepicker-next
+  {
+    background:#eeeeee;
+    margin-left:2px;
+  }
+  .side_fields
+  {
+    padding-left: 0px !important;
+  }
+  .crsr
+  {
+      cursor: all-scroll;
+  }
+  .analysis_form input
+  {
+    margin: 0px !important;
+  }
+  .analysis_form select
+  {
+    margin: 0px !important;
+  }
+  .detail_div
+  {
+    margin-top: 10px;
+  }
+  .full_info
+  {
+    margin: 10px;
+  }
+  .analysis_div
+  {
+    margin-bottom: 10px !important;
+  }
+  .analysis_cover
+  {
+    border: 1px solid;
+  }
+  .land_size
+  {
+    display: none;
+  }
+  .pac-container
+  {
+    width:300px !important;
+  }
+  input[type="file"] {
+    height: 35px;
+    width: 100%;
+}
+  .fund_edit_pen
+  {
+    cursor: pointer; 
+  }
+  
+  .add_collateral_fund
+  {
+    float:left;
+    margin-left:10px;
+  }
+
+  .trans-info-item {
+    height:107px;
+  }
+
+  .environment_phase
+  {
+    float:left;
+    margin-top:10px;
+    margin-left:10px;
+  }
+  .hide_this
+  {
+    display:none;
+  }
+
+  <% unless @new_custom_fields.blank? %>
+    .inner-nav li a {
+      border-bottom: 2px solid #ffffff;
+      color: #343434;
+      display: inline-block;
+      padding: 6px;
+      text-transform: uppercase;
+    }
+
+    ul, ol, dl {
+    font-family: inherit;
+    font-size: 15px;
+    }
+
+
+  <% end %>
+
+  /*input[type="date"]
+  {
+    padding: 0px;
+  }
+  .highlights-table td:nth-child(1)
+  {
+    width:30%;
+    word-wrap:break-word;
+  }
+  .highlights-table td:nth-child(3)
+  {
+    width:12%;
+  }*/
+</style>
+ 
+<% #abort("#{@bucket_size}be rtertert")
+# if defined? @num
+#   @form_show = ""
+#   @user_plan = ""
+#   if(@brokerLogin==true ) 
+#     if defined?@infoBroker.plan 
+#       if @infoBroker.plan == "SOLO"
+#         @user_plan = "SOLO"
+#         if (@num == 1 || @num>1)
+#           @form_show = "no" 
+#         end
+#       end
+#     end
+#    end 
+# end
+%>
+
+
+ 
+<script src="https://rawgit.com/MattKetmo/darkroomjs/master/build/darkroom.js"></script>
+
+  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script> 
+  
+
+
+
+<script type="text/javascript">
+ 
+
+    ///////////////////// Borrower Sorting ///////////////////////////
+  // $(function(){
+  // $("#all_new_borrowers").sortable({
+  //     opacity: 0.6, 
+  //     cursor: 'move',
+  //     connectWith: '#all_new_borrowers',
+  //     stop: function (event, ui) {
+  //         bcountRows(); // re-number rows after sorting
+  //     }
+  // });
+  // });
+  // function bcountRows() 
+  // {
+  //     var i = 0;
+  //     var ids=[];
+  //     $('#all_new_borrowers .borrower_main').each(function () {
+  //         //$(this).attr("value", ++i);
+  //         my_id = $(this).attr('id');
+  //       ids.push(my_id); 
+  //     });
+  //     // alert(ids);
+  //     var data =  "&moredata=" + ids +"&loan_id=<%= @loan.id%>";
+  //     $.ajax({
+  //                 data: data,
+  //                 type: 'POST',
+  //                 url: '/loans/borrower_changeorder'
+  //             });
+
+  // }
+
+  function borrower_sort_up()
+  {
+    $("#loading_img").show();
+    data = "sort_type=up&loan_id=<%= @loan.id %>"
+
+    
+    $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/sort_borrower',
+                success:function(response){
+                  $('#all_new_borrowers').html(response); 
+                  $("#loading_img").hide();
+                }
+            });
+
+  }
+
+  function borrower_sort_down()
+  {
+    $("#loading_img").show();
+    data = "sort_type=down&loan_id=<%= @loan.id %>"
+    
+    $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/sort_borrower',
+                success:function(response){
+                  $('#all_new_borrowers').html(response); 
+                  $("#loading_img").hide();
+                }
+            });
+
+  }
+
+  function collateral_sort_up()
+  {
+    $("#loading_img").show();
+    data = "sort_type=up&loan_id=<%= @loan.id %>"
+    
+    $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/sort_collateral',
+                success:function(response){
+                  $('#all_new_collaterals').html(response); 
+                  $("#loading_img").hide();
+                }
+            });
+
+  }
+
+  function collateral_sort_down()
+  {
+    $("#loading_img").show();
+    data = "sort_type=down&loan_id=<%= @loan.id %>"
+    
+    $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/sort_collateral',
+                success:function(response){
+                  $('#all_new_collaterals').html(response); 
+                  $("#loading_img").hide();
+                }
+            });
+
+  }
+
+  ///////////////////// Borrower Sorting ///////////////////////////
+
+  ///////////////////// Collateral Sorting ///////////////////////////
+  // $(function(){
+  //   $("#all_new_collaterals").sortable({
+  //       stop: function (event, ui) {
+  //           countRows(); // re-number rows after sorting
+  //       }
+  //   });
+  // });
+  // function countRows() 
+  // {
+  //     var i = 0;
+  //     var ids=[];
+  //     $('#all_new_collaterals .main_collateral').each(function () {
+  //         //$(this).attr("value", ++i);
+  //         my_id = $(this).attr('id');
+  //       ids.push(my_id); 
+  //     });
+  //     // alert(ids);
+  //     var data =  "&moredata=" + ids +"&loan_id=<%= @loan.id%>";
+  //     $.ajax({
+  //                 data: data,
+  //                 type: 'POST',
+  //                 url: '/loans/collateral_changeorder'
+  //             });
+
+  // }
+  ///////////////////// Collateral Sorting ///////////////////////////
+
+
+
+  //////////////////////// Generate Credit Report /////////////////////////////
+
+    function create_creditReport(id)
+    {
+      borrower_id = id
+      var data = "&borrower="+borrower_id
+      $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/create_report_form',
+                  success:function(response){
+                    $('#credit_form').html(response); 
+                    $('#credit_modal').foundation('reveal', 'open');
+                  }
+              });
+    }
+
+    function check_report(id)
+    {
+      borrower_id = id
+      var data = "&borrower="+borrower_id
+      $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/check_report',
+                  success:function(response){
+                    $('#credit_report').html(response); 
+                    $('#credit_report_modal').foundation('reveal', 'open');
+                  }
+              });
+    }
+
+    function after_credit_report()
+    {
+      var data = "&loan_id=<%= @loan.id%>"
+      $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/report_borrowers',
+                  success:function(response){
+                   $('#credit_modal').foundation('reveal', 'close');
+                   $('#all_new_borrowers').html(response);
+                  }
+              });
+    }
+
+
+
+  //////////////////////// End Generate Credit Report /////////////////////////
+
+  function appraisal_tabs(id)
+  {
+    $('.appraisal_content').hide();
+    $('.tab-title').removeClass('active');
+    $('.tab'+id).addClass('active');
+    $('#'+id).show();
+  }
+
+  function appraisal_form_submit()
+  {
+    data = $('.appraisal_form').serialize();
+    $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/get_appraisal',
+                  success:function(response){
+                   
+                 }
+              });
+  }
+
+  
+</script>
+
+  <script type="text/javascript">
+  $('document').ready(function(){
+      
+      initialize();
+      
+      $('#send_fpdf').click(function(){
+          $('#loading_img').show();
+          content = $('.loanpdf_content').html();
+          remail = $('#send_pdff_email').val();
+          // data = "content="+content+"&loan_id=<%= @loan.id%>"
+           $.ajax({
+                      data: {
+                          content: content,
+                          loan: "<%= @loan.id %>",
+                          email: remail
+                        },
+                        type: 'POST',
+                        url: '/loans/loan_generate_pdf',
+                        success:function(response){
+                          // alert(response)
+                          // location.href = '<%= request.base_url %>/loans/show_pdf/'+response
+                          $('#loading_img').hide();
+                          $('#sendPdf').foundation('reveal', 'close');
+                          } 
+
+
+                  });
+        });
+
+      $('#download_direct_pdf').click(function(){
+          $('#loading_img').show();
+          content = $('.loanpdf_content').html();
+          remail = $('#send_pdff_email').val();
+          // data = "content="+content+"&loan_id=<%= @loan.id%>"
+           $.ajax({
+                      data: {
+                          content: content,
+                          loan: "<%= @loan.id %>",
+                        },
+                        type: 'POST',
+                        url: '/loans/loan_generate_pdf',
+                        success:function(response){
+                          // alert(response)
+                          location.href = '<%= request.base_url %>/loans/show_pdf/'+response
+                          $('#loading_img').hide();
+                          $('#sendPdf').foundation('reveal', 'close');
+                          } 
+
+
+                  });
+        });
+
+
+      $('#send_pdf_email').click(function(){
+        $('#sendPdf').foundation('reveal', 'open');
+      });
+     
+      $('.content-white-box').css({"float":"unset"});
+      $('.content-white-box').css({"display":"inline-block"});
+  
+
+      $('#analysis_box').hide();
+      $('#profitability_box').hide();
+
+      $('.submit_mkt').click(function(){
+        mkt_id = $('#market_id').val();
+        // alert(mkt_data);
+      });
+
+      $('input[name="mdate"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="personal_dob"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="guarantor_birthday"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="personal_phone"]').mask("(999)999-9999");
+      $('input[name="business_phone"]').mask("(999)999-9999");
+      $('input[name="guarantor_phone"]').mask("(999)999-9999");
+      $('input[name="Phone"]').mask("(999)999-9999");
+      
+      // $('input[name="maturity_date"]').mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+
+      $('#send_email').click(function(){
+
+          var data = "&loan_id=<%= @loan.id %>";
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/send_email',
+                    success:function(response){
+                     alert(response);
+                   }
+                });
+
+      });
+
+
+      $('.edit_me').click(function(){
+          var  str = $(this).attr('id');
+          var imgId = str.replace('edit_picture_','');
+          $.ajax({
+            data: "imgId="+imgId,
+            type: 'POST',
+            url: '/loans/edit_picture',
+            success:function(response){
+              $('#edit_pictures_popup').html(response);
+              $('#myModal4').foundation('reveal', 'open');
+               var dkrm = new Darkroom('#target_pic', {
+                // Size options
+                minWidth: 100,
+                minHeight: 100,
+                maxWidth: 600,
+                maxHeight: 500,
+                ratio: 4/3,
+                backgroundColor: '#000',
+
+                // Plugins options
+                plugins: {
+                  //save: false,
+                  crop: {
+                    quickCropKey: 67, //key "c"
+                    //minHeight: 50,
+                    //minWidth: 50,
+                    //ratio: 4/3
+                  }
+                },
+
+                // Post initialize script
+                initialize: function() {
+                  var cropPlugin = this.plugins['crop'];
+                  // cropPlugin.selectZone(170, 25, 300, 300);
+                  cropPlugin.requireFocus();
+                }
+              });
+
+
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                  ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+                  ga('send', 'pageview');
+            }
+           }); 
+      });
+      
+      /********************* Send To Exit Loan ****************************/
+        $('#send_to_exit').click(function(){
+          $('#marketPlace').foundation('reveal', 'open');
+        });
+
+
+        $('input:radio[name=loan_type]').change(function(){
+            
+            type_val = $(this).val();
+            var data = "&loans=<%= @loan.id %>&type="+type_val;
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/loan_market_place',
+                     success:function(data){
+                       $('#market_id').val(data);
+                       $('#editmLoanInfo').foundation('reveal', 'open');
+                      } 
+                    
+                });
+        });
+
+      /********************* Send To Exit End *****************************/
+  });
+
+  // function sub_val(field)
+  // {
+  //   new_field = field.replace("_sub","");
+  //   field_val = $('#'+field).val();
+  //   $('#'+new_field).val(field_val);
+  // }
+
+  function show_analysis()
+  {
+    $('#analysis_box').show();
+    $('#profitability_box').show();
+    setTimeout(function() {
+      $('.tii-controls a').attr('tabindex', '-1');
+      $('.tii-controls img').attr('tabindex', '-1');
+      $('.cwb-controls img').attr('tabindex', '-1');
+      $('.cwb-controls a').attr('tabindex', '-1');
+      $('a').attr('tabindex', '-1');
+      $('img').attr('tabindex', '-1');
+      $('strong').attr('tabindex', '-1');
+      $('.trans-info-item').attr('tabindex', '-1');
+      $('.trans-info-last').attr('tabindex', '-1');
+    }, 3000);
+  }
+
+  
+
+  function hide_analysis()
+  {
+    $('#analysis_box').hide();
+    $('#profitability_box').hide();
+    setTimeout(function() {
+      $('.tii-controls a').attr('tabindex', '-1');
+      $('.tii-controls img').attr('tabindex', '-1');
+      $('.cwb-controls img').attr('tabindex', '-1');
+      $('.cwb-controls a').attr('tabindex', '-1');
+      $('a').attr('tabindex', '-1');
+      $('img').attr('tabindex', '-1');
+      $('strong').attr('tabindex', '-1');
+      $('.trans-info-item').attr('tabindex', '-1');
+      $('.trans-info-last').attr('tabindex', '-1');
+    }, 3000);
+  }
+
+  function environmental_report(id)
+  {
+    $('#modalEnvironment').foundation('reveal', 'open');
+    $('#environmental_proceed').attr('href', '<%= request.base_url %>/payments/generate_report/environmental/'+id);
+
+  }
+
+  function phase_report(id)
+  {
+   $('#modalPhase').foundation('reveal', 'open');
+    $('#phase_proceed').attr('href', '<%= request.base_url %>/payments/generate_report/phase1/'+id);
+  }
+</script>
 <script>
+function callFun(customUrl, divId, formId, plan){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+   $('#loan_lenders').html('loading...');
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+
+      $('#'+divId).html(data);
+      
+      if(plan == "SOLO")
+      {
+        $('#loan-url-form').hide();
+      }
+      if(plan=="generate_doc_url")
+      {
+        $('.doc_page').show();
+      }
+      if(formId=="lender_loans")
+      {
+        var a_id=divId.replace('loan_lenders','');
+        $('#click_'+a_id).hide();
+        $('#click_hide_'+a_id).show();
+        $("#loan_lenders"+a_id).show();
+      }
+
+        },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+    
+}
+
+function callAjax(customUrl, divId, formId, buttontype){
+  // alert(divId);
+  if(typeof(formId)==='undefined') data = '';
+  else data = $('#'+formId).serialize();
+  if(typeof(divId)===undefined) divId ='';
+  $.ajax({
+    type: 'POST',
+    url: customUrl,
+    data:data,
+    success:function(data){
+      // $("#mdate").mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
+      
+      // *************** Borrower *****************//
+     
+      $('#'+divId).html(data);
+      
+     },
+    error:function(data){
+      alert('Something went wrong.');
+      
+      },
+    dataType: 'html',
+
+
+  });
+
+
+    
+}
+
+function fetch_property_info(id)
+{
+  data = "collateral_id="+id;
+  $.ajax({
+    type: 'POST',
+    url: '/loans/fetch_property_info',
+    data:data,
+      success:function(data){
+       if(data['status']=="OK")
+       {
+        $.each(data, function(key, val){
+          if(key!="chart")
+          {
+            $('#property_'+key).html(val);  
+          }
+          else
+          {
+            $('#property_chart').attr('src', val);
+          }
+          $('#myModal7').foundation('reveal', 'open');
+        }); 
+       }
+       else
+       {
+        alert(data['status']);
+       }
+       
+      }
+    });
+
+}
+
 function handleMainImage(files) {
   for (var i = 0; i < files.length; i++) {
     var file = files[i];
@@ -7,7 +736,7 @@ function handleMainImage(files) {
     if (!file.type.match(imageType)) {
       continue;
     }
-    
+    // $("#main_image_preview").show();
     var img = document.createElement("img");
     img.classList.add("obj");
     img.file = file;
@@ -24,177 +753,959 @@ function handleMainImage(files) {
 
 function hide_file(id)
 {
-	if(confirm('Are you sure? You want to hide this file')){
-		var data = "&id=" + id;
-		$.ajax({
-	            data: data,
-	            type: 'POST',
-	            url: '/loans/hide_file',
-	            success:function(response){
-	            	$('#showfor_'+id).show();
-	            	$('#hidefor_'+id).hide();
-	           }
-	        });
-	}
+  var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_file',
+              success:function(response){
+                $('#showfor_'+id).show();
+                $('#hidefor_'+id).hide();
+             }
+          });
+  
 }
 
 function hide_doc(id)
 {
-	if(confirm('Are you sure? You want to hide this file')){
-		var data = "&id=" + id;
-		$.ajax({
-	            data: data,
-	            type: 'POST',
-	            url: '/loans/hide_doc',
-	            success:function(response){
-	            	$('#showfile_'+id).show();
-	            	$('#hidefile_'+id).hide();
-	           }
-	        });
-	}
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_doc',
+              success:function(response){
+                $('#showfile_'+id).show();
+                $('#hidefile_'+id).hide();
+             }
+          });
+  
+}
+
+
+function hide_borrower(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_borrower',
+              success:function(response){
+                $('#showborrower_'+id).show();
+                $('#hideborrower_'+id).hide();
+             }
+          });
+ 
+}
+
+
+
+function show_borrower(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_borrower',
+              success:function(response){
+                $('#showborrower_'+id).hide();
+                $('#hideborrower_'+id).show();
+             }
+          });
+  
+}
+
+function hide_borrower_field(id, field)
+{
+
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_borrower_field',
+              success:function(response){
+                $('#show_'+field+'_'+id).show();
+                $('#hide_'+field+'_'+id).hide();
+             }
+          });
+  
+}
+
+function show_borrower_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_borrower_field',
+              success:function(response){
+                $('#show_'+field+'_'+id).hide();
+                $('#hide_'+field+'_'+id).show();
+             }
+          });
+}
+
+function delete_borrower(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/delete_borrower',
+              success:function(response){
+                $('#borrow_'+id).hide();
+             }
+          });
+ 
+}
+
+function delete_collateral(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/delete_collateral',
+              success:function(response){
+                $('#collateral_'+id).hide();
+             }
+          });
+ 
+}
+
+function hide_collateral_field(id, field)
+{
+  
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_collateral_field',
+              success:function(response){
+                $('#showc_'+field+'_'+id).show();
+                $('#hidec_'+field+'_'+id).hide();
+             }
+          });
+  
+}
+
+function show_collateral_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_collateral_field',
+              success:function(response){
+                $('#showc_'+field+'_'+id).hide();
+                $('#hidec_'+field+'_'+id).show();
+             }
+          });
+}
+
+
+function hide_loan_field(id, field)
+{
+  
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_loan_field',
+              success:function(response){
+                $('#show_loan_'+field).show();
+                $('#hide_loan_'+field).hide();
+             }
+          });
+  
+}
+
+function show_loan_field(id, field)
+{
+    var data = "&id=" + id+"&field="+field;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_loan_field',
+              success:function(response){
+                $('#show_loan_'+field).hide();
+                $('#hide_loan_'+field).show();
+             }
+          });
+}
+
+function hide_collateral(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/hide_collateral',
+              success:function(response){
+                $('#showcollat_'+id).show();
+                $('#hidecollat_'+id).hide();
+             }
+          });
+  
+}
+
+function show_collateral(id)
+{
+  
+    var data = "&id=" + id;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/show_collateral',
+              success:function(response){
+                $('#showcollat_'+id).hide();
+                $('#hidecollat_'+id).show();
+             }
+          });
+  
+}
+
+function edit_picture(id)
+{
+  var imgId = id;
+  $.ajax({
+    data: "imgId="+imgId+"&loan_id=<%= @loan.id%>",
+    type: 'POST',
+    url: '/loans/edit_picture',
+    success:function(response){
+      $('#edit_pictures_popup').html(response);
+      $('#myModal4').foundation('reveal', 'open');
+       var dkrm = new Darkroom('#target_pic', {
+        // Size options
+        minWidth: 100,
+        minHeight: 100,
+        maxWidth: 600,
+        maxHeight: 500,
+        ratio: 4/3,
+        backgroundColor: '#000',
+
+        // Plugins options
+        plugins: {
+          //save: false,
+          crop: {
+            quickCropKey: 67, //key "c"
+            //minHeight: 50,
+            //minWidth: 50,
+            //ratio: 4/3
+          }
+        },
+
+        // Post initialize script
+        initialize: function() {
+          var cropPlugin = this.plugins['crop'];
+          // cropPlugin.selectZone(170, 25, 300, 300);
+          cropPlugin.requireFocus();
+        }
+      });
+
+
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+          ga('send', 'pageview');
+    }
+   }); 
 }
 
 function show_file(id)
 {
-	var data = "&id=" + id;
-	$.ajax({
+  var data = "&id=" + id;
+  $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/show_file',
             success:function(response){
-            	$('#hidefor_'+id).show();
-	            $('#showfor_'+id).hide();
-        	}
+              $('#hidefor_'+id).show();
+              $('#showfor_'+id).hide();
+          }
         });
 }
 
 function show_doc(id)
 {
-	var data = "&id=" + id;
-	$.ajax({
+  var data = "&id=" + id;
+  $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/show_doc',
             success:function(response){
-            	$('#hidefile_'+id).show();
-	            $('#showfile_'+id).hide();
-        	}
+              $('#hidefile_'+id).show();
+              $('#showfile_'+id).hide();
+          }
         });
 }
 
 function del_file(id)
 {
-	var data = "&id=" + id;
-	$.ajax({
-            data: data,
-            type: 'POST',
-            url: '/loans/del_file',
-            success:function(response){
-           		$('#del_'+id).hide();
-        	}
+  var data = "&id=" + id;
+  $.ajax({
+          data: data,
+          type: 'POST',
+          url: '/loans/del_file',
+          success:function(response){
+            $('#del_'+id).hide();
+            $('#modaldelfile').foundation('reveal', 'close');
+          }
         });
 }
 
 function del_doc(id)
 {
-	var data = "&id=" + id;
-	$.ajax({
+  var data = "&id=" + id;
+  $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/del_doc',
             success:function(response){
-           		$('#del_file'+id).hide();
-        	}
+              $('#del_file'+id).hide();
+              $('#modaldelfile').foundation('reveal', 'close');
+          }
         });
 }
 
 function del_folder(id)
 {
-	var data = "&id=" + id;
-	$.ajax({
+  var data = "&id=" + id;
+  $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/del_folder',
             success:function(response){
-           		$('#folder_'+id).hide();
-        	}
+              $('#foldr_'+id).hide();
+              $('#folder_'+id).hide();
+          }
         });
 }
 
+function fund_fields()
+{
+  use = $('.uses_related').val();
+  if(use=="Payoff")
+  {
+    $('.payOff_fund').show();
+    $('.purchase_fund').hide();
+  }
+  else if(use=="Purchase")
+  {
+    $('.purchase_fund').show();
+    $('.payOff_fund').hide();
+  }
+  else
+  {
+    $('.payOff_fund').hide();
+    $('.purchase_fund').hide();
+  }
+}
+
+/*********************** Location Functions *************************/
+function edit_personal_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #personal_loc_"+id).show();
+  $("#"+divId+" .display_personal_loc").hide();
+}
+
+function save_personal(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="personal_address_'+id+'"]').val();
+  city = $('input[name="personal_city_'+id+'"]').val();
+  state = $('input[name="personal_state_'+id+'"]').val();
+  postalcode = $('input[name="personal_postalcode_'+id+'"]').val();
+  
+  data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_personal_address',
+             success:function(response){
+              $("#"+divId+" .display_personal_loc").html(response);
+              $("#"+divId+" .display_personal_loc").show();
+              $("#"+divId+" #personal_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_personal(id)
+{
+  divId = "borrow_"+id;
+  $("#"+divId+" #personal_loc_"+id).hide();
+  $("#"+divId+" .display_personal_loc").show();
+}
+
+function edit_business_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #business_loc_"+id).show();
+  $("#"+divId+" .display_business_loc").hide();
+}
+
+function save_business(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="business_address_'+id+'"]').val();
+  city = $('input[name="business_city_'+id+'"]').val();
+  state = $('input[name="business_state_'+id+'"]').val();
+  postalcode = $('input[name="business_postalcode_'+id+'"]').val();
+  
+  data = "&business_address="+address+"&business_city="+city+"&business_state="+state+"&business_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_business_address',
+             success:function(response){
+              $("#"+divId+" .display_business_loc").html(response);
+              $("#"+divId+" .display_business_loc").show();
+              $("#"+divId+" #business_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_business(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #business_loc_"+id).hide();
+  $("#"+divId+" .display_business_loc").show();
+}
+
+function edit_guarantor_address(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #guarantor_loc_"+id).show();
+  $("#"+divId+" .display_guarantor_loc").hide();
+}
+
+function save_guarantor(id)
+{
+  divId = "borrow_"+id;
+  address = $('input[name="guarantor_address_'+id+'"]').val();
+  city = $('input[name="guarantor_city_'+id+'"]').val();
+  state = $('input[name="guarantor_state_'+id+'"]').val();
+  postalcode = $('input[name="guarantor_postalcode_'+id+'"]').val();
+  
+  data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_guarantor_address',
+             success:function(response){
+              $("#"+divId+" .display_guarantor_loc").html(response);
+              $("#"+divId+" .display_guarantor_loc").show();
+              $("#"+divId+" #guarantor_loc_"+id).hide();
+          }
+        }) ;
+
+}
+
+function cancel_guarantor(id)
+{
+
+  divId = "borrow_"+id;
+  $("#"+divId+" #guarantor_loc_"+id).hide();
+  $("#"+divId+" .display_guarantor_loc").show();
+}
+
+function edit_address(id)
+{
+
+  divId = "collateral_"+id;
+  $("#"+divId+" #collateral_loc_"+id).show();
+  $("#"+divId+" .display_collateral_loc").hide();
+}
+
+function save_address(id)
+{
+  divId = "collateral_"+id;
+  address = $('input[name="address_'+id+'"]').val();
+  city = $('input[name="city_'+id+'"]').val();
+  state = $('input[name="state_'+id+'"]').val();
+  postalcode = $('input[name="postalcode_'+id+'"]').val();
+  
+  data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id;
+
+  $.ajax({
+      data: data,
+      type: 'POST',
+            url: '/loans/save_collateral_address',
+             success:function(response){
+              $("#"+divId+" .display_collateral_loc").html(response);
+              $("#"+divId+" .display_collateral_loc").show();
+              $("#"+divId+" #collateral_loc_"+id).hide();
+
+              new_data = "&collateral_id="+id;
+              $.ajax({
+                data: new_data,
+                type: 'POST',
+                      url: '/loans/fetch_location_map',
+                       success:function(response){
+                        $("#"+divId+" .map_inner").html(response);
+                        $("#"+divId+" .map_outer").show();
+                    }
+                  }) ;
+          }
+        }) ;
+
+}
+
+function cancel_address(id)
+{
+  divId = "collateral_"+id;
+  $("#"+divId+" #collateral_loc_"+id).hide();
+  $("#"+divId+" .display_collateral_loc").show();
+}
+
+function save_value(field_name, type)
+{
+    var field_value = $('input[name="'+field_name+'"]').val();
+    var data = "&loan_id=<%= @loan.id %>"+"&"+field_name+"="+field_value+"&ftype="+type;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_data',
+              success:function(response){
+                $('input[name="'+field_name+'"]').val(response);
+                 $('input[name*="'+field_name+'_sub"]').val(response);
+             }
+          });
+}
+
+function save_market_value(field_name, type)
+{
+    var mkt_loan_id = $('#market_id').val();
+    var field_value = $('#mloan'+field_name).val();
+    var data = "&loan_id="+mkt_loan_id+"&"+field_name+"="+field_value+"&ftype="+type;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_mkt_loan',
+              success:function(response){
+                $('#mloan'+field_name).val(response);
+              }
+          });
+}
+
+function save_sub_value(field_name, type, num)
+{
+    if(num!=1)
+    {
+      var field_value = $('input[name="'+field_name+'_sub'+num+'"]').val();
+    }
+    else
+    {
+      var field_value = $('input[name="'+field_name+'_sub'+'"]').val();
+    }
+    // alert(field_value);
+    
+    var data = "&loan_id=<%= @loan.id %>"+"&"+field_name+"="+field_value+"&ftype="+type;
+    $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_data',
+              success:function(response){
+                // alert(response)
+                // $('input[name="'+field_name+'"]').val(response);
+                // if(num!="")
+                // {
+                //   $('input[name="'+field_name+'_sub'+num+'"]').val(response);
+                // }
+                // else
+                // {
+                //   $('input[name="'+field_name+'_sub"]').val(response); 
+                // }
+                $( "input[name*='"+field_name+"']" ).val(response);
+                $( "input[name*='"+field_name+"_sub']" ).val(response);
+                
+                // alert(field_name+" "+response);
+             }
+          });
+  
+}
+
+
+/*********************** End Location Functions *************************/
 
 $('document').ready(function(){
-	$( ".lender_status" ).change(function() {
-		var status=$(this).val();
-		var id=$(this).attr('id');
-		var lender_id=id.replace('lender','');
-		var data = "&status=" +status
-		$.ajax({
-			data: data,
-			type: 'POST',
+  $( ".lender_status" ).change(function() {
+    var status=$(this).val();
+    var id=$(this).attr('id');
+    var lender_id=id.replace('lender','');
+    var data = "&status=" +status
+    $.ajax({
+      data: data,
+      type: 'POST',
             url: '/loan_urls/'+lender_id+'/save_status',
              success:function(response){
-           		$('#del_'+id).hide();
-        	}
+              $('#del_'+id).hide();
+          }
         }) ;
-	});
+  });
 
-	$("#add_custom_folder").click(function(){
-		$(".add_new_folder").slideToggle();		
-	});
+  $('#add_new_borrower').click(function(){
+    $("#loading_img").show();
+    loan_id = "<%=@loan.id%>"
+    $.ajax({
+            data: "loan_id="+loan_id,
+            type: 'POST',
+            url: '/loans/add_new_borrower',
+            success:function(response){
+              $('#all_new_borrowers').html(response);
+              bId = $('.borrower_main:last').attr('id');
+              $('html,body').animate({
+                scrollTop: $('.borrower_space:last').offset().top},
+              'slow');
+              $("#loading_img").hide();
+              initialize();
+            }
+        }); 
+  });
 
-	$("#cancel_add_folder").click(function(){
-		$(".add_new_folder").hide();
-		$(".folder_name").val("")
-	});
+  $('#add_new_collateral').click(function(){
+    $("#loading_img").show();
+    loan_id = "<%=@loan.id%>"
+    $.ajax({
+            data: "loan_id="+loan_id,
+            type: 'POST',
+            url: '/loans/add_new_collateral',
+            success:function(response){
+              $('#all_new_collaterals').html(response);
+              bId = $('.main_collateral:last').attr('id');
+              $('html,body').animate({
+                scrollTop: $('.collateral_space:last').offset().top},
+              'slow');
+              $("#loading_img").hide();
+               initialize();
+              $('.payoff_edit').click(function(){
+                  colId = $(this).parents('.main_collateral').attr('id');
+                  $('#'+colId+' .payoff_add_edit').show();
+                  $('#'+colId+' .payoff_info').hide();
+                });
+              $('.cancel_payoff').click(function(){
+                colId = $(this).parents('.main_collateral').attr('id');
+                $('#'+colId+' .payoff_add_edit').hide();
+                $('#'+colId+' .payoff_info').show();
+              });
+               $('.save_payoff').click(function(){
+                  colId = $(this).parents('.main_collateral').attr('id');
+                  var data=$('#'+colId+' .payOffForm').serialize();
+                  $.ajax({
+                          data: data,
+                          type: 'POST',
+                          url: '/loans/add_payoff',
+                          success:function(response){
+                            $('#'+colId+' .payoff_info').html(response);
+                           
+                            $('#'+colId+' .payoff_add_edit').hide();
+                            $('#'+colId+' .payoff_info').show();     
+                          }
+                      });
+                });
+                $('.add_more_payoff').click(function(){
+                  $(".collateral_append_here").append("<div class='large-12 columns'><div class='small-8 columns'><input type='text' name='amount[]' placeholder='Amount'></div><div class='small-4 columns'><input type='text' name='recipient[]' placeholder='Recipient'><input type='hidden' name='id[]' value=''></div>");
+                  });
 
-	$("#add_folder").click(function(){
-		var data=$('#add_folder_form').serialize();
-		$.ajax({
+            }
+        });
+
+  });
+
+  $("#add_custom_folder").click(function(){
+    $(".add_new_folder").slideToggle();   
+  });
+
+  $("#cancel_add_folder").click(function(){
+    $(".add_new_folder").hide();
+    $(".folder_name").val("")
+  });
+
+  $("#add_folder").click(function(){
+    var data=$('#add_folder_form').serialize();
+    $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/add_folder',
             success:function(response){
-            	$(".add_new_folder").hide();
-            	$(".folder_name").val("")
-            	$(".custom_folders").html(response);
-           	}
+              var datax = "id=<%= @loan.id %>";
+              $.ajax({
+                        data: datax,
+                        type: 'POST',
+                        url: '/loans/loan_documents',
+                        beforeSend: function(jqXHR, settings) {
+                            jqXHR.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+                        },
+                        success:function(response){
+                            $('#documents').html(response);
+                        }
+                      });
+            }
         });
-	});
-	
+  });
+
+  $('#accept').click(function(){
+        
+    
+      $('#confirmation').foundation('reveal', 'open');
+        // $('#myModal').foundation('reveal', 'close'); 
+    });
+
+      <%
+        @server_host = request.host
+      %>
+
+     $('#confirm_shop').click(function(){
+        var allVals = [];
+        sorting_type = $('#sorting').val();
+        group_type = $('#shopping_outcome').val();
+        var data = "&id=<%= @loan['_id'] %>"+"&group_type="+group_type;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/single_shop_loan',
+                success:function(response){
+                   // $('#confirmation').foundation('reveal', 'close');  
+                    <% if @adminLogin== true%> 
+                      <% if @server_host.include? "idealview" %>
+                        window.location.href = "https://dash.idealview.us/loans/shop_loans/listing"; 
+                      <% else %>
+                        window.location.href = "https://dash.idvstage.us/loans/shop_loans/listing";
+                      <% end %>
+                    <% else %>
+                         $('#myShop').foundation('reveal', 'open');
+                    <% end %>
+                   //alert("Your shop loan request has been sent to admin.");
+                }
+            });
+    });
+
+    $('#cancel_shop').click(function(){
+        $('#confirmation').foundation('reveal', 'close');
+    });
+
+    
+    $('#cancel_accept').click(function(){
+      $('#myModal').foundation('reveal', 'close');
+    });
+
+
+
+    $('.add_more_payoff').click(function(){
+    $(".append_here").append("<div class='large-12 columns'><div class='small-8 columns'><input type='text' name='amount[]' placeholder='Amount'></div><div class='small-4 columns'><input type='text' name='recipient[]' placeholder='Recipient'><input type='hidden' name='id[]' value=''></div>");
+  });
+
+  // $('.add_more').click(function(){
+    
+ //     var data="&loan_id=<%= @loan['_id'] %>";
+  //  $.ajax({
+ //            data: data,
+ //            type: 'POST',
+ //            url: '/loans/all_funds',
+ //            success:function(response){
+ //             $( ".append_here" ).html(response);
+ //           $( ".append_here" ).append( "<div class='large-12 columns'><div class='small-8 columns'> <input type='text' name='use[]' placeholder='Description'></div><div class='small-4 columns'><input type='text' name='amount[]' placeholder='Amount'></div></div>" );      
+ //             }
+
+  //    }); 
+  // });
+
+  // $('#save_funds').click(function(){
+  //  var data=$('#fundsForm').serialize();
+  //  $.ajax({
+ //            data: data,
+ //            type: 'POST',
+ //            url: '/loans/add_loan_funds',
+ //            success:function(response){
+ //             $('#fund_info').html(response);
+ //           $('#fund_add_edit').hide();
+  //      $('#fund_info').show();     
+ //             }
+ //        });
+  // });
+
+
+
+
+
+  $('.save_payoff').click(function(){
+    var data=$('.payOffForm').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/add_payoff',
+            success:function(response){
+              $('.payoff_info').html(response);
+              $('.payoff_add_edit').hide();
+              $('.payoff_info').show();     
+            }
+        });
+  });
+
+  $('.fund_edit').click(function(){
+    
+
+    var data = "&loan_id=<%= @loan.id %>"
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/edit_all_funds',
+                 success:function(response){
+                  $('#fund_add_edit').html(response);
+                  $('#fund_add_edit').show();
+                  $('#fund_info').hide();
+                }
+            }) ;
+  });
+
+  $('#cancel_funds').click(function(){
+    $('#fund_add_edit').hide();
+    $('#fund_info').show();
+  });
+
+  $('.payoff_edit').click(function(){
+    $('.payoff_add_edit').show();
+    $('.payoff_info').hide();
+  });
+
+ 
+  $('.cancel_payoff').click(function(){
+    $('.payoff_add_edit').hide();
+    $('.payoff_info').show();
+  });
+
+  $('.share_page').click(function(){
+    $('#myModal3').foundation('reveal', 'open');
+  });
+
+  $('.show_doc_div').click(function(){
+    $('.doc_page').slideToggle();
+  });
+  
+
+  $('#request_docs_modal').click(function(){
+    $('#forBoth').foundation('reveal', 'open');
+  });
+
+
+  $('#restrict_form_popup').click(function(){
+    $('#onlyEnterprise').foundation('reveal', 'open');
+  });
+
+  $('#close_my_shop').click(function(){
+    $('#myShop').foundation('reveal', 'close');
+  });
+
+  $('#send_to_pdf').click(function(){
+
+  });
+
 });
 
 function copyToClipboard(text) {
   window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
 }
 
+
+
 function loan_location()
 {
-	$('#l_location').show();
-	$('.loc').hide();
+  $('#l_location').show();
+  $('.loc').hide();
 }
+
+function loans_location()
+{
+  $('#loc_location').show();
+  $('.loctn').hide();
+  $('.loctn_name').hide();
+  $('.loc_edit_pen').hide();
+}
+
 
 function location_edit()
 {
-	var data=$('#loc_form').serialize();
-	$.ajax({
+  var data=$('#loc_form').serialize();
+  $.ajax({
             data: data,
             type: 'POST',
             url: '/loans/save_loc',
             success:function(response){
-            	var city=$('#loc_city').val();
-            	var state=$('#loc_state').val();
-            	$('.loc').html(city+', '+state);
-            	$('.loc').show();
-            	$('#l_location').hide();
-           	}
+              var address=$('#loc_address').val();
+              var city=$('#loc_city').val();
+              var state=$('#loc_state').val();
+              $('#loan_location').html(city+', '+state);
+              $('#highlight_address').html(address);
+              $('#highlight_city').html(city);
+              $('#highlight_state').html(state);
+              $('.loctn').html(city+', '+state);
+              $('.loc').show();
+              $('#l_location').hide();
+              $('#place_featured_image').html(response);
+
+            }
+        });
+}
+
+function locations_edit()
+{
+
+  var data=$('#loctn_form').serialize();
+  $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/save_loc',
+            success:function(response){
+              // var city=$('#loctn_city').val();
+              // var state=$('#loctn_state').val();
+              var loan_name=$('#loctn_name').val();
+              // // alert(loan_name);
+              // $('#loan_location').html(city+', '+state);
+              // $('.loctn_loc').html(city+', '+state);
+              // $('#highlight_address').html(city+', '+state)
+              $('.loctn_name').html(loan_name);
+              $('.loc').show();
+              $('.loctn').show();
+              $('#loc_location').hide();
+              $('#l_location').hide();
+              $('.loc_edit_pen').show();
+              $('.loctn_name').show();
+            }
         });
 }
 
 function cancel_loc()
 {
-	$('#l_location').hide();
-	$('.loc').show();
+  $('#l_location').hide();
+  $('.loc').show();
 }
+
+function cancel_locatn()
+{
+  $('#loc_location').hide();
+  $('.loctn').show();
+  $('.loctn_name').show();
+  $('.loc_edit_pen').show();
+}
+
+
 function lender_change(sts, id)
     {
             var status=sts.value;
@@ -210,119 +1721,3418 @@ function lender_change(sts, id)
             }) ;
     }
 
+function shop_loan()
+{
+    
+        $('#myModal').foundation('reveal', 'open');    
+}
+
+function add_notes(id)
+{
+  
+      var data = "&for_id=" +id+ "&loan_id=<%= @loan.id %>"
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/add_notes',
+      success:function(response){
+        $('#note_content').html(response);
+        $('#myModal2').foundation('reveal', 'open');
+      }
+    }) ;
+}
+
+function add_related_funds(id)
+{
+    var data = "&collateral_id=" +id+ "&loan_id=<%= @loan.id %>"
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/add_related_fund',
+      success:function(response)
+      {
+        $('.col_related_funds').html(response);
+        $('#myModal5').foundation('reveal', 'open');
+      }
+    });
+  
+}
+
+function after_add_funds(resp, id)
+{
+    $('#collateral_'+id+' .related_collats').html(resp);
+    var data = "&loan_id=<%= @loan.id %>"
+    $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/after_related_funds',
+      success:function(response)
+      {
+        $('.table-use-fund').html(response);
+        $('#myModal5').foundation('reveal', 'close');
+      }
+    });
+}
+
+function remove_related_fund(col_id, fund_id)
+{
+  var data = "&collateral_id="+col_id+"&fund_id="+fund_id;
+  $.ajax({
+      data: data,
+      type: 'POST',
+      url: '/loans/remove_related_funds',
+      success:function(response)
+      {
+        $('#collateral_'+col_id+' .related_collats').html(response);
+      }
+    }); 
+}
+
+
+    
 </script>
 
-<div class='loan_head'>
-<div class="row">
-<h1 class='text-left loan-heading'>
-		<%temp_name = '_LoanName'%>
-		<span id='<%=temp_name%>'>
-			<%= render partial: 'mini_form', locals:
-				{
-					edit: false,
-					contact_id:@loan['_id'],
-					format_type:'fd_text',
-					field_type: 'text_field_tag', 
-					field_label: '', 
-					field_name:temp_name,
-					field_value:@loan.info[temp_name],
-					field_options:'',
-				} %>
-		</span>
+<!-------------------------- Location Google API ------------------------------>
+  
+  <script type="text/javascript">
+  var autocomplete = {};
+    var autocompletesWraps = <%= raw @brwrId.to_json %>;
 
-</h1>
-</div> <!-- row -->
-</div> <!-- loan_main -->
-<% #abort("#{@loan.inspect}")%>
+   autocompletesWraps.forEach(function(this_form) {
+       // alert(this_form)
+       window[this_form+'_form']  = { street_number: 'short_name', route: 'long_name', locality: 'long_name', administrative_area_level_1: 'long_name', country: 'long_name', postal_code: 'short_name' };
+        ++this.count;
+      }, this);
+
+    function initialize() {
+      $.each(autocompletesWraps, function(index, name) {
+      
+        if($('#'+name).length == 0) {
+          return;
+        }
+
+       
+        autocomplete[name] = new google.maps.places.Autocomplete($('#'+name+' .autocomplete')[0], { types: ['geocode'] });
+          
+        google.maps.event.addListener(autocomplete[name], 'place_changed', function() {
+          
+          var place = autocomplete[name].getPlace();
+          var form = eval(name+'_form');
+          // var form = eval(name);
+
+          for (var component in form) {
+            $('#'+name+' .'+component).val('');
+            $('#'+name+' .'+component).attr('disabled', false);
+          }
+          
+          highlight_address = "";
+          col_address = "";
+          prsnl_address = "";
+          grntr_address = "";
+          for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (typeof form[addressType] !== 'undefined') {
+              var val = place.address_components[i][form[addressType]];
+              $('#'+name+' .'+addressType).val(val);
+              // alert(name+" "+addressType+" - "+val);
+              if(name.indexOf("loan_highlight") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  highlight_address = highlight_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  highlight_address = highlight_address.concat(val);            
+                }
+                $('#loc_address').val(highlight_address);
+              
+              }
+
+              if(name.indexOf("collateral_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  col_address = col_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  col_address = col_address.concat(val);            
+                }
+                id_col = name.replace("collateral_loc_","")
+                $('#'+name+' #address_'+id_col).val(col_address);
+              
+              }
+
+              if(name.indexOf("personal_loc") >= 0)
+              {
+                
+                if(addressType=="street_number")
+                {
+                  prsnl_address = prsnl_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  prsnl_address = prsnl_address.concat(val);            
+                }
+                id_bor = name.replace("personal_loc_","")
+                $('#'+name+' #personal_address_'+id_bor).val(prsnl_address);
+              
+              }
+
+              if(name.indexOf("guarantor_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  grntr_address = grntr_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  grntr_address = grntr_address.concat(val);            
+                }
+                id_bor = name.replace("guarantor_loc_","")
+                $('#'+name+' #guarantor_address_'+id_bor).val(grntr_address);
+              
+              }
+              
+            }
+
+
+          }
+
+          if (name.indexOf("collateral_loc") >= 0)
+          {
+            setTimeout(function(){
+                  
+              id_col = name.replace("collateral_loc_","")
+              address = $('#'+name+' #address_'+id_col).val();
+              city = $('#'+name+' #city_'+id_col).val();
+              state = $('#'+name+' #state_'+id_col).val();
+              postalcode = $('#'+name+' #postalcode_'+id_col).val();
+
+              data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id_col;
+
+              $.ajax({
+                  data: data,
+                  type: 'POST',
+                        url: '/loans/save_collateral_address',
+                         success:function(response){
+                         
+
+                          new_data = "&collateral_id="+id_col;
+                          $.ajax({
+                            data: new_data,
+                            type: 'POST',
+                                  url: '/loans/fetch_location_map',
+                                   success:function(response){
+                                    $("#collateral_"+id_col+" .map_container").html(response);
+                                }
+                              }) ;
+
+                          address_val = $('#loc_address').val();
+                          
+                          if(address_val=="")
+                          {
+                            $('#loc_address').val(address);
+                            $('#loc_state').val(state);
+                            $('#loc_city').val(city);
+                            
+                            datas = "id=<%= @loan.id %>";
+                            $.ajax({
+                              data: datas,
+                              type: 'POST',
+                              url: '/loans/view_loc_map',
+                              success:function(response){
+                                $('#place_featured_image').html(response);
+                              }
+                            });
+
+                          }
+                      }
+              });
+            }, 3000);
+          }
+
+
+          if (name.indexOf("loan_highlight") >= 0)
+          {
+            
+            setTimeout(function(){
+            
+              city_val = $('#loc_city').val();
+              state_val = $('#loc_state').val();
+              address_val = $('#loc_address').val();
+              data = "id=<%= @loan.id %>"+"&City3="+city_val+"&State3="+state_val+"&Address3="+address_val;
+              $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loc',
+                  success:function(response){
+                    $('.loctn_loc').html(city_val+', '+state_val);
+                    $('#place_featured_image').html(response);
+                  }
+               });
+           
+              }, 3000);
+            }
+
+            if (name.indexOf("personal_loc") >= 0)
+            {
+              
+              setTimeout(function(){
+              
+              id_prsnl = name.replace("personal_loc_","")
+              address = $('#'+name+' #personal_address_'+id_prsnl).val();
+              city = $('#'+name+' #personal_city_'+id_prsnl).val();
+              state = $('#'+name+' #personal_state_'+id_prsnl).val();
+              postalcode = $('#'+name+' #personal_postalcode_'+id_prsnl).val();
+
+             data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id_prsnl;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_personal_address',
+                             success:function(response){
+                              
+                          }
+                        }) ;
+
+                }, 3000);
+              }
+
+              if (name.indexOf("guarantor_loc") >= 0)
+              {
+                
+                setTimeout(function(){
+                
+                id_grntr = name.replace("guarantor_loc_","")
+                address = $('#'+name+' #guarantor_address_'+id_prsnl).val();
+                city = $('#'+name+' #guarantor_city_'+id_prsnl).val();
+                state = $('#'+name+' #guarantor_state_'+id_prsnl).val();
+                postalcode = $('#'+name+' #guarantor_postalcode_'+id_prsnl).val();
+
+                data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id_grntr;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_guarantor_address',
+                             success:function(response){}
+                        });
+
+                }, 3000);
+              }
+
+
+          
+                        
+                  // data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+                  // $.ajax({
+                  //     data: data,
+                  //     type: 'POST',
+                  //           url: '/loans/save_guarantor_address',
+                  //            success:function(response){}
+                  //       }) ;
+
+                
+          
+        });
+
+
+      });
+    }
+</script>
+  
+
+<!-------------------------- End Location Google API ------------------------------>
+
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+<!------------------------------ Restrictions Popups ------------------------>
+   <div id="onlyEnterprise" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg">Upgrade to the Enterprise plan to use this feature.</p>
+       <% unless @infoBroker.blank? %>
+            <% if @infoBroker.plan == "free" %>
+              <a href="https://<%= @hostname %>/payments/subscribe_plan" class="tiny button" style="float:right;  margin-top:10px;" target="_blank"> Upgrade Now </a>
+            <% else %>
+                <a href="https://<%= @hostname %>/payments/billing?u=t" class="tiny button" style="float:right; margin-top:10px;" target="_blank"> Upgrade Now </a>
+            <% end %>
+       <% end %>
+       
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="forBoth" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+       <p class="modal_msg">Upgrade to Business or Enterprise plan to use this feature.</p>
+       <% unless @infoBroker.blank? %>
+            <% if @infoBroker.plan == "free" %>
+              <a href="https://<%= @hostname %>/payments/subscribe_plan" class="tiny button" style="float:right;  margin-top:10px;" target="_blank"> Upgrade Now </a>
+            <% else %>
+                <a href="https://<%= @hostname %>/payments/billing?u=t" class="tiny button" style="float:right; margin-top:10px;" target="_blank"> Upgrade Now </a>
+            <% end %>
+       <% end %>
+       
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+
+    <div id="myShop" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="medium-12 column modal_msg_outer">
+        <p style="color:#008000">Your shop loan request has been sent to admin. </p>
+        <a href="javascript:void(0);" class="tiny button" style="float:right; margin-top:10px;" id="close_my_shop"> OK </a>
+      </div>
+      
+      <a class="close-reveal-modal close_modal" aria-label="Close">&#215;</a>
+    </div>
+
+<!------------------------------ Restriction Popups -------------------------->
+
+<!---------------------------------- Marketplace ---------------------------->
+<div id="marketPlace" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> 
+      <u>What type of loan is this?</u> 
+    </h5>
+  </div>
+  <input type="hidden" id="collateral_valluation">
+  <div class="large-12 small-centerd columns">
+    <div class="row">
+      <div class="small-1 small columns">
+        <input type="radio" name="loan_type" value="Note Sale">
+      </div>
+      <div class="small-11 small columns">
+          Note Sell
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-1 small columns">
+        <input type="radio" name="loan_type" value="Refinance">
+      </div>
+      <div class="small-11 small columns">
+          Loan Offer
+      </div>
+    </div>
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<div id="editmLoanInfo" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">  
+<form method="post" id="send_exit_loan">
+  <div class="content-white-box">
+    <div class="cwb-header">
+      Edit Information
+    </div>
+    <div class="cwb-content">
+      <input type="hidden" id="market_id" name="market_id">
+      
+       
+            
+      <div class="large-12 column">
+          <input type="text" name="_NetLoanAmountRequested0" placeholder = "Loan Amount" id="mloan_NetLoanAmountRequested0" value="<%= @loan.info['_NetLoanAmountRequested0']%>" onchange="return save_market_value('_NetLoanAmountRequested0', 'money')">
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="Address3" placeholder="Address" id="mloanAddress3" value="<%= @loan.info['Address3']%>" onchange="return save_market_value('Address3', 'text')">
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="City3" placeholder="City" id="mloanCity3"  value="<%= @loan.info['City']%>" onchange="return save_market_value('City3', 'text')">
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="State3" placeholder="State" id="mloanState3" value="<%= @loan.info['State3']%>" onchange="return save_market_value('State3', 'text')">
+      </div>
+
+      <div class="large-12 column">
+          <textarea name="_LoanSummaryWhatareyoulookingfor" placeholder="Summary"  onchange="return save_market_value('_LoanSummaryWhatareyoulookingfor', 'text')" id="mloan_LoanSummaryWhatareyoulookingfor"><%= @loan.info['_LoanSummaryWhatareyoulookingfor'] %></textarea>
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="interest_rate" placeholder="Interest Rate" id="mloan_interest_rate" value="<%= @loan.info['interest_rate']%>" onchange="return save_market_value('interest_rate', 'text')" id="mloaninterest_rate">        
+      </div>
+      <% unless @loan.created_date.blank? %>
+        <% create_date = DateTime.parse("#{@loan.created_date}").strftime("%m/%d/%Y") %>
+      <% else %>
+        <% create_date = "" %>
+      <% end %>
+      <div class="large-12 column">
+          <input type="text" name="origination_date" placeholder="Origination Date" value="<%= create_date %>"  onchange="return save_market_value('origination_date', 'text')" id="mloanorigination_date">        
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="_ExpectedCloseDate" placeholder="Maturity Date" value="<%= @loan.info['_ExpectedCloseDate'] %>"  onchange="return save_market_value('_ExpectedCloseDate', 'text')"  id="mloan_ExpectedCloseDate">        
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="unearned_fees" placeholder="Unearned Fees" id="mloanunearned_fees" onchange="return save_market_value('unearned_fees', 'money')">        
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="borrower_name" placeholder="Borrower's Name" id="mloanborrower_name" onchange="return save_market_value('borrower_name', 'text')">        
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="guarantor_name" placeholder="Guarantor Name"  id="mloanguarantor_name" onchange="return save_market_value('guarantor_name', 'text')">        
+      </div> 
+
+        
+      
+    </div>
+  </div>
+
+  <div class="content-white-box">
+    <div class="cwb-header">
+     Your contact info (Not visible by lenders)
+    </div>
+    <div class="cwb-content">
+      <div class="large-12 column">
+          <input type="text" name="FirstName" placeholder="Name" value="<%= @loan.info['FirstName']%>" id="mloanFirstName"  onchange="return save_market_value('FirstName', 'text')">
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="Phone" placeholder="Phone" value="<%= @loan.info['Phone']%>" onchange="return save_market_value('Phone', 'text')" id="mloanPhone">
+      </div>
+
+      <div class="large-12 column">
+          <input type="text" name="Email" placeholder="Email" id="mloanEmail" value="<%= @loan.info['Email']%>" onchange="return save_market_value('Email', 'text')">
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="large-12 column">
+  <input type="button" value="Preview" class="button submit_mkt" id="preview_mktplace">
+  <input type="button" value="Send to Approval" class="button success submit_mkt" id="send_to_approval">
+</div>  
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+
+<!------------------------ End MarketPalce -------------------------------->
+
+<!-------------------------- Environmental Report -------------------------->
+  <div id="modalEnvironment" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    
+    <div class="modalhead">
+      <h5 id="modalTitle" style="font-weight:bold;">Environmental report costs $375.</h5>
+    </div>
+    
+    <a href="javascript:void(0);" class="tiny button" id="environmental_proceed"> Proceed </a>
+    <a href="javascript:void(0);" class="alert tiny button" id="environmental_cancel"> Cancel </a>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+<!-------------------------- End Environmental Report ---------------------->
+
+<!-------------------------- Phase1 Report -------------------------->
+  <div id="modalPhase" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    
+    <div class="modalhead">
+      <h5 id="modalTitle" style="font-weight:bold;">Phase1 costs $1900.</h5>
+    </div>
+    
+    <a href="javascript:void(0);" class="tiny button" id="phase_proceed"> Proceed </a>
+    <a href="javascript:void(0);" class="alert tiny button"  id="phase_cancel"> Cancel </a>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+<!-------------------------- End Phase1 Report ---------------------->
+
+
+<div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    <h5 id="modalTitle" style="font-weight:bold;"> <%= @terms.header %> </h5>
+  </div>
+  <h6 style="text-align : center; font-weight:bold;"><%= @terms.second_header %> </h6>
+  <p><%= @terms.content %> </p>
+  <input type="button" class="tiny button" value="I Agree To Terms" id="accept">
+  <input type="button" class="alert tiny button" value="Cancel" id="cancel_accept">
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<div id="marketSucess" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    <h5 id="modalTitle" style="font-weight:bold;"> Your request has been send sucessfuly. </h5>
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<div id="confirmation" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead">
+    <h5 id="modalTitle" style="font-weight:bold;"> Select Shopping Outcome </h5>
+  </div>
+  <p>
+      <select id="shopping_outcome">
+        <option value="standard_shop">Standard Shop</option>
+        <% unless @groups.blank? %>
+            <% @groups.each do |group| %>
+                <option value="<%= group.id %>"><%= group.name %></option>
+            <% end %>
+        <% end %>
+      </select>
+  </p>
+  <input type="button" class="tiny button" value="Confirm" id="confirm_shop">
+  <input type="button" class="alert tiny button" value="Cancel" id="cancel_shop">
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+
+<div id="myModal2" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead" id="note_content">
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<!----------------------- Share Page Lender -------------------------->
+<div id="myModal3" class="reveal-modal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="row" id="show-urlxs">
+        <%= render partial: 'loan_url_forms' %>
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+<!----------------------- End Share Page Lender -------------------------->
+
+<!----------------------- Collateral Funds Popup -------------------------->
+
+  <div id="myModal5" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <h5 id="modalTitle" style="font-weight:bold; allign-text">Add Fund</h5>
+    </div>
+    <div class="col_related_funds">
+
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  <div id="sendPdf" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead index_pop_heading" id="note_content">
+      Email to send loan summary
+    </div>
+     <div class="row">
+          <form method="post" >
+              <div class="large-12 column">
+              <input type="email" id="send_pdff_email" name="send_pdff_email" placeholder = "Email">
+              </div>
+               <div class="large-12 column">
+              <input type="button" id="send_fpdf" value="Submit" class="tiny button">
+              <a href="javascript:void(0)" class="tiny button" style="float:right;" id="download_direct_pdf"><i class="fa fa-download" aria-hidden="true"></i>
+ Download PDF</a>
+              </div>
+          </form>
+      </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  <div id="myModal6" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <div class="row">
+      <div class="flash_notice" id="form_link_flash" style="display:none; margin-top:14px;">Email has been sent.</div>
+        <label for="Email">Enter Email</label>
+        <input id="form_email" type="text"  autofocus="autofocus" name="form_email">
+        <label for="Subject">Subject</label>
+        <input id="form_subject" type="text" value="<%= @edit_email_link.subject %>"  autofocus="autofocus" name="form_subject">
+        <label for="Subject">Email Body</label>
+        <%
+          @content = @edit_email_link.content
+          @link = "https://#{@hostname}/loans/edit_loan/#{@loan.id}"
+          rplc = {"edit_link" => @link}
+          changed = @content.gsub(/\w+/) { |m| rplc.fetch(m,m)}
+        %>
+        <textarea id="form_body" name="form_body" style="width: 465px; height: 133px;"><%= changed.html_safe %></textarea>
+      </div>
+      <div class="row">
+        <input class="tiny button" type="submit" value="SEND LINK" id="send_form_link">
+      </div>
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+<!----------------------- Collateral Funds Popup -------------------------->
+
+<!---------------------- Propery Info ------------------------------>
+    
+  <div id="myModal7" class="reveal-modal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div class="modalhead">
+      <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> <u>Property Information</u> </h5>
+    </div>
+    
+    <div class="row">
+        
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Address : </b> </div>
+        <div class="columns small-7" id="property_address"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Estimated Market Value(in $) : </b> </div>
+        <div class="columns small-7" id="property_price"> </div>
+     </div> 
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b><span id ="property_change_duration"></span>-day change (in $) : </b> </div>
+        <div class="columns small-7" id="property_change"> </div>
+     </div> 
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Valuation range (high) (in $) : </b> </div>
+        <div class="columns small-7" id="property_high"> </div>
+     </div> 
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Valuation range (low) (in $) : </b> </div>
+        <div class="columns small-7" id="property_low"> </div>
+     </div> 
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Percentile Value : </b> </div>
+        <div class="columns small-7" id="property_percentile"> </div>
+     </div> 
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Type Of Home: </b> </div>
+        <div class="columns small-7" id="property_home_type"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Tax assessment year: </b> </div>
+        <div class="columns small-7" id="property_tax_assessment_year"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Tax assessment: </b> </div>
+        <div class="columns small-7" id="property_tax_assessment"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Year in which property was constructed: </b> </div>
+        <div class="columns small-7" id="property_year_built"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Size of the lot in sq. ft: </b> </div>
+        <div class="columns small-7" id="property_lot_size_sq_ft"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Size of the finished property in sq. ft: </b> </div>
+        <div class="columns small-7" id="property_finished_sq_ft"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b> Number of bathrooms: </b> </div>
+        <div class="columns small-7" id="property_bathrooms"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b> Number of bedroom: </b> </div>
+        <div class="columns small-7" id="property_bedrooms"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Date of last sale: </b> </div>
+        <div class="columns small-7" id="property_last_sold_date"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-5"> <b>Price of the last sale (in $): </b> </div>
+        <div class="columns small-7" id="property_last_sold_price"> </div>
+     </div>
+
+     <div class="columns large-12">
+        <div class="columns small-12"> <b>Historical Estimate Property Value Chart : </b> </div>
+        <div class="columns small-12" >
+          <img src="" id="property_chart" style="padding-left:100px; padding-top:15px">
+        </div>
+     </div>
+
+    </div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+<!---------------------- End Propery Info ------------------------------> 
+
+<!---------------------- Get Appraisal ---------------------------------->
+  <div id="myModal8" class="reveal-modal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> 
+          <u>Get Appraisal</u> 
+        </h5>
+      </div>
+      <div class="appraisal_info_form">
+
+      </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+<!---------------------- End Get Appraisal ---------------------------------->
+
+
+<% 
+# if defined? @num
+#   @form_show = ""
+#   @user_plan = ""
+#   if(@brokerLogin==true ) 
+#     if defined?@infoBroker.plan 
+#       if @infoBroker.plan == "SOLO"
+#         @user_plan = "SOLO"
+#         if (@num == 1 || @num>1)  
+#           @form_show = "no" 
+#         end
+#       end
+#     end
+#    end 
+# end%>
+<!---------------------- Header ---------------------------------->
+<div class="alert-bar" style="display:none;">
+    <div class="row">
+        <div class="text-center">
+            <div class="alear-message">
+              <strong>Alert:</strong>
+              <% if @numOfLenders!= 0 %>
+               <span id="lenders_info">You have <%= @numOfLenders %> compatible lender(s)</span>
+              <% else %>
+               <span id="lenders_info">Shop your loan now.</span>
+              <% end %>
+            </div>
+            <a href="javascript:void(0);" onclick="shop_loan()">Get Funding</a>
+            <!-- <a href="#" class="btn-shop-later">Shop Later</a> -->
+        </div>
+    </div>
+</div>
+<section class="title-bar">
+    
+    <div class="row loctn">
+        <img src="/assets/edit-icon.png" class="edit-icon loc_edit_pen" style="position: absolute; margin-left: -30px; margin-top: 10px;" onclick="loans_location()">
+        <h1 id='_LoanName' class="llname loctn_name"><%= @loan.info['_LoanName'] %></h1>
+        <h3 class="sub-heading loctn_loc">
+          <%=@loan.info['City3']%>
+          <% if !@loan.info['City3'].blank? && !@loan.info['State3'].blank?%>
+            ,
+          <% end %> 
+          <%=@loan.info['State3']%>
+        </h3>
+        
+    </div>
+
+
+   <% if @adminLogin==true %>
+          <div class="row send_pdf">
+            <!-- <input type="button" value="Send Full PDF" class="button send_fpdf" id="send_to_pdf"> -->
+            <a href="javascript:void(0);" class="button" id="send_pdf_email">Send Full PDF</a>
+          </div>
+    <% end %> 
+
+    <% if @adminLogin==true %>
+      <div class="exit_loan row">
+        <input type="button" value="Send To Market Loans" class="button" id="send_to_exit">
+      </div>
+    <% end %>
+
+    <% unless @infoBroker.blank? %>
+      <% if @infoBroker.plan == "enterprise" %>
+          <div class="exit_loan">
+            <input type="button" value="Send To Market Loans" class="button" id="send_to_exit">
+          </div>
+      <% end %>
+    <% end %>
+
+
+    <div id="loc_location"  style="display:none;">
+          <form name="loctn_form" id="loctn_form" >
+            <div>
+                <b>Loan Name</b>
+                <br>
+                <div style="max-width:800px;margin-left:auto;margin-right:auto;">
+                  <input id="loctn_name" type="text" value="<%=@loan.info['_LoanName']%>" rows="1" name="_LoanName" >
+                </div>
+            </div>
+             
+            
+            <input type="hidden" name="id" value="<%=@loan['_id']%>">
+             
+            <button class="tiny button" type="button" onclick="locations_edit()">Save</button>
+            <button class="tiny button" type="button" onclick="cancel_locatn()" name="button" data-disable-with="Please wait...">Cancel</button>
+
+          </form>
+    </div>
+</section><!-- banner-section -->
+
+
+<!---------------------- Header End ------------------------------>
+
+
+<% if(@brokerLogin==true && @adminLogin!=true) %>
+  <div id='show-urls' style='padding-left:50px;padding-right:50px;'>
+  <%= render partial: 'loan_url_form'%>
+  </div>
+<% end %>
 <% if policy(@loan).update? %>
 <div id='show-urls' style='padding-left:50px;padding-right:50px;'>
-	<%= render partial: 'loan_url_form'%>
+  <%= render partial: 'loan_url_form'%>
 </div>
 
 <% end %>
 
+<section class="content-section">
+  <div class="container">
+    <div class="row">
+      <div class="columns small-12">
+        <ul class="inner-nav tabs" data-tab>
+            <li class="active"><a href="#overview" onclick="return hide_analysis();">Overview</a></li>
+            <li><a href="#borrowers" onclick="return hide_analysis();">Borrowers</a></li>
+            <li><a href="#collaterals" onclick="return hide_analysis();">Collateral</a></li>
+            <li><a href="#exit_strategy" onclick="return hide_analysis();">Exit Strategy</a></li>
+            <li><a href="#pictures" onclick="return hide_analysis();">Pictures</a></li>
+            <li><a href="#documents" onclick="return hide_analysis();">Documents</a></li>
+            <li><a href="#contact" onclick="return hide_analysis();">Contact</a></li>
+            <% 
+            if @adminLogin == true  %>
+              <li><a href="#analysis_information" onclick="return show_analysis();">Analysis</a></li>
+            <% else %>
+              <% if current_user.plan.downcase == "enterprise"%>
+                <li><a href="#analysis_information" onclick="return show_analysis();">Analysis</a></li>
+              <% else %>
+                <% if current_user.analysis_tab == 1 %>
+                <li><a href="#analysis_information" onclick="return show_analysis();">Analysis</a></li>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% unless  @new_custom_fields.blank? %>
+                <li><a href="#custom_fields"  onclick="return show_analysis();"><% if @new_custom_tab.display_name.blank? %> Custom Field <% else %> <%= @new_custom_tab.display_name %>  <% end %></a></li>
+            <% end %>
+        </ul>
+      </div>
+      <div class="columns medium-8 show_main_div">
+        <div class="tabs-content" style="margin-top:35px;">
+          <div class="content active" id="overview">
+            <div id="place_featured_image">
+              <%= render partial: 'featured_image' %>
+            </div>
+            <%= render partial: 'overview' %>
+          </div><!---- overview -------->
+          <div class="content" id="borrowers">
+            <%= render partial: 'borrower' %>
+          </div>
+          <div class="content" id="collaterals">
+            <%= render partial: 'collateral'%>
+          </div>
+          <div class="content" id="exit_strategy">
+            <%=render partial: 'exitstrategy'%>
+          </div>
+          <div class="content" id="pictures">
+            <div class="content-white-box">
+              <div class="all_loan_contents" id='pictures-container' >
+                <%=render partial: 'thumbnails', locals:{images: @images, loan_id:@loan._id}%>
+              </div>
+            </div>
+          </div>
+          <div class="content" id="documents">
+            <div class="content-white-box">
+              <div class="all_loan_contents">
+                <%=render partial: 'documents'%>
+              </div>
+            </div>
+          </div>
+          <div class="content" id="contact">
+            <%= render partial: 'contact_information' %>    
+          </div>
+          <% if @adminLogin == true || current_user.analysis_tab == 1%>
+            <div class="content" id="analysis_information">
+              
+            </div>
+          <% end %>
+          <% 
+            if @adminLogin == true  %>
+                <div class="content" id="analysis_information">
+                  <%=render partial: 'analysis'%>
+                </div>
+            <% else %>
+              <% if current_user.plan.downcase == "enterprise"%>
+                 <div class="content" id="analysis_information">
+                    <%=render partial: 'analysis'%>
+                  </div>
+              <% else %>
+                <% if current_user.analysis_tab == 1 %>
+                    <div class="content" id="analysis_information">
+                      <%=render partial: 'analysis'%>
+                    </div>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% unless  @new_custom_fields.blank? %>
+                <div class="content" id="custom_fields">
+                  <%= render partial: 'custom_fields' %>    
+                </div>
+            <% end %>
+        </div><!--- Tabs Content ------>
+      </div>
+      <div class="columns medium-4 sidebar show_sidebar">
+        <div class="sidebar-item">
+          <div class="sidebar-item-header">Publish</div>
+            <%= render partial: 'publish' %>
+        </div>
+        <div class="sidebar-item" >
+          <%=render partial: 'highlights'%>
+        </div>
+        <div class="sidebar-item" id="analysis_box">
+          <%=render partial: 'highlight_transaction_detail'%>
+        </div>
+        <div class="sidebar-item" id="profitability_box">
+          <%=render partial: 'highlight_profitability'%>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<!--------------------------- New Design -------------------------->
+<script type="text/javascript">
+    $('document').ready(function(){
+      // tab_link.attr({"aria-selected": "true", tabindex: 0});
+      $('#environmental_cancel').click(function(){
+        $('#modalEnvironment').foundation('reveal', 'close');
+      });
+      $('#phase_cancel').click(function(){
+        $('#modalPhase').foundation('reveal', 'close');
+      });
+
+      $('#preview_mktplace').click(function(){
+        market_id = $('#market_id').val();
+        url = "<%= request.base_url %>/loans/market_loan_detail/"+market_id;
+        window.open(url, '_blank');
+      });
+
+      $('#send_to_approval').click(function(){
+        loan_id = $("#market_id").val();
+        var data = "&loan_id="+loan_id;
+        $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/send_to_approval',
+                    success:function(response){
+                      $("#marketSucess").foundation('reveal', 'open');
+                    }
+                });
+      });
+
+      $('input[name="maturity_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="original_purchase_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="contract_closing_date"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('input[name="_ExpectedCloseDate"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('.maturityDates').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+      $('.contractDates').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+
+      $('.loan_summary').change(function(){
+        this_val = $(this).val();
+        this_val = this_val.replace(/[";&"]+/g, '');
+        this_val = encodeURI(this_val);
+        field_name = "_LoanSummaryWhatareyoulookingfor";
+        data = "&field="+field_name+"&value="+this_val+"&loan_id=<%= @loan.id %>";
+        $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/loans/save_loan_field',
+              success:function(response){
+              }
+          });
+
+      });
+
+      $('.loan_info_fields').change(function(){
 
 
-<div class='row' id="loan_tabs">
+        this_val = $(this).val();
+        field_name = $(this).attr('name');
+        
+        
+        /*************** Transaction Type *******************/
+          if(field_name=="transaction_type")
+          {
+            if(this_val=="Purchase")
+            {
+              $('.purchase').show();
+              $('.refinance').hide();
+            }
+            else if(this_val=="Refinance")
+            {
+              $('.refinance').show();
+              $('.purchase').hide(); 
+            }
+            else
+            {
+              $('.refinance').hide();
+              $('.purchase').hide(); 
+
+            }
+
+
+          }
+        /*************** Transaction Type *******************/
+
+        /*************** Is Broker **************************/
+          
+          if(field_name=="isBroker")
+          {
+            if(this_val=="Yes")
+            {
+              $('.yes_broker').show();
+              $('.ask_broker').addClass('border-right');
+            }
+            else
+            {
+              $('.yes_broker').hide();
+              $('.ask_broker').removeClass('border-right'); 
+            }
+          }
+        /*************** Is Broker End **********************/
+
+        /*************** Free Clear **************************/
+          
+          if(field_name=="free_clear")
+          {
+            if(this_val=="Yes")
+            {
+              $('.free_clear').show();
+            }
+            else
+            {
+              $('.free_clear').hide(); 
+            }
+          }
+        /*************** Free Clear End **********************/
+        
+        /*************** Loan Categorys **********************/
+          if(field_name=="_LendingCategory")
+          {
+            if(this_val == "Private Real Estate Loan")
+            {
+              $('#_LendingTypes').show();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Business Financing")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').show();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Equity and Crowdfunding")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').show();
+              $('#_MortageTypes').hide();
+            }
+            else if(this_val == "Residential or Commercial Mortgage")
+            {
+              $('#_LendingTypes').hide();
+              $('#_BusinessFinancingTypes').hide();
+              $('#_EquityandCrowdFunding').hide();
+              $('#_MortageTypes').show();
+            }
+          } 
+
+        /*************** Loan Categorys End ***************************/
+
+        /***************** Highlight Address Save **********************/
+          setTimeout(function(){
+          if(field_name=="Address3" || field_name=="City3" || field_name=="State3")
+          {
+            city_val = $('#loc_city').val();
+            state_val = $('#loc_state').val();
+            address_val = $('#loc_address').val();
+            data = "&"+field_name+"="+this_val+"&id=<%= @loan.id %>"+"&City3="+city_val+"&State3="+state_val+"&Address3="+address_val;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/save_loc',
+                success:function(response){
+                  $('.loctn_loc').html(city_val+', '+state_val);
+                  $('#place_featured_image').html(response);
+                }
+            });
+          }
+          }, 3000);
+
+        /***************** Highlight Address Save **********************/
+
+        /******************** Land Size **********************/
+          if(field_name=="size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.sq_footage').show();
+              $('.acres').hide();
+            }
+            else if(this_val=="Acres")
+            {
+              $('.acres').show();
+              $('.sq_footage').hide();
+            }
+          }
+
+        /******************** End Land Size **********************/
+          if(field_name=="_NetLoanAmountRequested0" || field_name == "_EstimatedMarketValue")
+          {
+            data = "&field="+field_name+"&value="+this_val+"&loan_id=<%= @loan.id %>";
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_money',
+                  success:function(response){
+                    $('input[name="'+field_name+'"]').val(response);
+                  }
+            });
+          }
+          else
+          {
+            if(field_name=="_ExitStrategyHowwillyoupaytheloanoff")
+            {
+
+              this_val = this_val.replace(/[";&"]+/g, '');
+              this_val = encodeURI(this_val); 
+            }
+            data = "&field="+field_name+"&value="+this_val+"&loan_id=<%= @loan.id %>";
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loan_field',
+                  success:function(response){
+                  }
+            });
+          }
+          
+        /********************** Fetch Lenders **********************/
+
+          if(field_name=="_NetLoanAmountRequested0" || field_name=="_LendingCategory" || field_name=="Address3"  || field_name=="State3")
+          {
+            data = "&loan_id=<%= @loan.id %>";
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/fetch_lenders',
+                  success:function(response){
+                    $('#lenders_info').html(response)
+                  }
+              });
+          }
+
+        /********************** Fetch Lenders End **********************/
+
+        /********************** Expected Closed Date ******************/
+        if(field_name=="_ExpectedCloseDate")
+          {
+            $('#_ExpectedCloseDate').val(this_val);
+
+          }
+        /********************** End Expected Closed Date ******************/
+      });
+
+      /************************** Save Collateral Data ********************************/
+      
+
+        $('.collateral_info_fields').change(function(){
+
+            this_val = $(this).val();
+            field_name = $(this).attr('name');
+            this_id = $(this).attr('id');
+            id = this_id.replace(field_name+"_", "");
+        /**************** Location Function ******************/
+          // if(field_name=="address")
+          // {
+          //   // alert("hey...")
+
+          //   setTimeout(function(){
+          //   address = this_val;
+          //   city = $('#city_'+id).val();
+          //   state = $('#state_'+id).val();
+          //   postalcode = $('#postalcode_'+id).val();
+            
+          //   data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id;
+
+          //   $.ajax({
+          //       data: data,
+          //       type: 'POST',
+          //             url: '/loans/save_collateral_address',
+          //              success:function(response){
+                       
+
+          //               new_data = "&collateral_id="+id;
+          //               $.ajax({
+          //                 data: new_data,
+          //                 type: 'POST',
+          //                       url: '/loans/fetch_location_map',
+          //                        success:function(response){
+          //                         $("#collateral_"+id+" .map_container").html(response);
+          //                     }
+          //                   }) ;
+          //           }
+          //         }) ;
+          //   }, 3000);
+
+          // }
+          
+        /**************** Location Function ******************/
+        /******************** Land Size **********************/
+          if(field_name=="size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.sq_footage').show();
+              $('.acres').hide();
+            }
+            else if(this_val=="Acres")
+            {
+              $('.acres').show();
+              $('.sq_footage').hide();
+            }
+          }
+
+        /******************** End Land Size **********************/
+
+        /******************** Structural Size ********************/
+          if(field_name=="structural_size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.ask_structural_size').removeClass('medium-12 ');
+              $('.ask_structural_size').addClass('medium-6  border-right');
+              $('.structure_sq_footage').show();
+              $('.structure_units').hide();
+            }
+            else if(this_val=="Units")
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').show();
+            }
+            else
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').hide(); 
+            }
+          }
 
 
 
-	<div class="large-9  columns">
-		<dl class="tabs" data-tab>
-		  <dd class="active"><a href="#overview">Overview</a></dd>
-		  <dd><a href="#borrower">Borrower</a></dd>
-		  <dd><a href="#collateral" onclick='get_property_map();'>Collateral</a></dd>
-		   <dd><a href="#exit-strategy">Exit Strategy</a></dd>
-		  <dd><a href="#pictures">Pictures</a></dd>
-		  <dd><a href="#documents" style="margin-right:0;">Documents</a></dd>
-		</dl>
-		<div class="tabs-content">
-		  <div class="content active" id="overview">
-			
-				<%= render partial: 'overview' %>
-		     
-		  </div>
-		  <div class="content" id="borrower">
-		  	
-				<%= render partial: 'borrower' %>
-		
-		  </div>
-		  
-		  <div class="content" id="collateral">
-		   	
-		    	<%=render partial: 'collateral'%>
-	
-		    
-		  </div>
-		  
-		  
-		  
-		  
-		  <div class="content" id="pictures">
-		  	
-		    <ul id='pictures-container' class="clearing-thumbs" data-clearing>
-		    	<%=render partial: 'thumbnails', locals:{images: @images, loan_id:@loan._id}%>
-		    </ul>
-			<div style='margin-top:30px;width:100%'>
-				<%= render partial: 'file_upload', locals:{contact_id:@loan._id, form_id:'image_upload', controller:'loans', action:'upload_image', multiple:'true', type:'full', button_label:'Add Pictures'}
-				%>
-			</div>	
-		    
-		  </div>
-		  
+        /******************** End Structural Size ********************/
+        
+          if(field_name=="estimated_value" || field_name=="amount_owed" || field_name=="gross_monthly_income" || field_name == "noi_ytd" || field_name == "noi_two_years_ago" )
+          {
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_money',
+                  success:function(response){
+                    $("#"+field_name+"_"+id).val(response);
+                    if(field_name=="estimated_value")
+                    {
+                      ldata = "&loan_id=<%= @loan.id %>"
+                       $.ajax({
+                            data: ldata,
+                            type: 'POST',
+                            url: '/loans/estimated_market_value',
+                            success:function(response){
+                             $('#_EstimatedMarketValue').val(response);
+                            }
+                        });
+                    }
+                  }
+              });
+          } 
+          else
+          {
 
-		  <div class="content" id="exit-strategy">
-		    <%=render partial: 'exitstrategy'%>
-		  </div>
-		  
-		  
-		  <div class="content" id="documents">
-
-		    	<%=render partial: 'documents'%>
-
-		  </div>
-		</div>
-		
-		
-		
-
-		
-		
-		
-	</div>
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_field',
+                  success:function(response){
+                  }
+              });
+          } 
 
 
-	<div class='large-3 columns' id="highlight_box">
-		<h3 class='text-center'>
-			Highlights
-		</h3>
-		<div class='medium-only-text-center small-only-text-center highlight_desc'>
-		    	<%=render partial: 'highlights'%>
-		  </div>
-	
-	</div>
+
+          
+
+          
+
+          /********************** Collateral Analysis ********************************/
+            setTimeout(function(){
+            if(field_name=="acres")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
 
 
-	
-	
+
+            if(field_name=="sq_footage")
+            {
+              
+              
+                var data = "&loan_id=<%= @loan.id %>&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="gross_monthly_income")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=gross_monthly_income";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="noi_ytd")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="structural_size")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="units")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="structural_sq_footage")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=structural_sq_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="sf_per_unit")
+            {
+              
+                
+                var datas = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: datas,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+          },3000);
+            // alert("df");
+        /********************** End Collateral Analysis ***************************/
+
+        });
+
+      /************************** End Save Collateral Data ********************************/
+
+      /************************** Save Borrower Data ***************************************/
+         $('.borrower_edit_field').change(function(){
+            this_val = $(this).val();
+            field_name = $(this).attr('name');
+            this_id = $(this).attr('id');
+            id = this_id.replace(field_name+"_", "");
+            borId = "borrow_"+id;
+
+            /**************** Location Function ******************/
+              if(field_name=="personal_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  address = $('#personal_address_'+id).val();
+                  city = $('#personal_city_'+id).val();
+                  state = $('#personal_state_'+id).val();
+                  postalcode = $('#personal_postalcode_'+id).val();
+                  
+                  data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_personal_address',
+                             success:function(response){
+                              
+                          }
+                        }) ;
+
+                }, 3000);
+
+              }
+
+              if(field_name=="business_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  // divId = "borrow_"+id;
+                  address = $('#business_address_'+id).val();
+                  city = $('#business_city_'+id).val();
+                  state = $('#business_state_'+id).val();
+                  postalcode = $('#business_postalcode_'+id).val();
+                  
+                  data = "&business_address="+address+"&business_city="+city+"&business_state="+state+"&business_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_business_address',
+                             success:function(response){
+                             
+                          }
+                        }) ;
+
+                }, 3000);
+
+              }
+
+              if(field_name=="guarantor_address")
+              {
+                // alert("hey...")
+
+                setTimeout(function(){
+                  // divId = "borrow_"+id;
+                  address = $('#guarantor_address_'+id).val();
+                  city = $('#guarantor_city_'+id).val();
+                  state = $('#guarantor_state_'+id).val();
+                  postalcode = $('#guarantor_postalcode_'+id).val();
+                  
+                  data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_guarantor_address',
+                             success:function(response){}
+                        }) ;
+
+                }, 3000);
+
+              }
+
+             
+          
+        /**************** Location Function ******************/
+            /******************* Borrower Type *********************/
+            if(field_name=="borrower_type")
+            {
+              if(this_val=="Individual")
+              {
+                $('#'+borId+' .business_info').hide();
+                $('#'+borId+' .business_financials').hide();
+                $('#'+borId+' .guarantor_info').css({"display":"inline-block"});
+                $('#'+borId+' .individual_div').css({"display":"inline-block"});
+                $('#'+borId+' .for_both').removeClass('medium-12');
+                $('#'+borId+' .for_border').addClass('border-right');
+                $('#'+borId+' .for_both').addClass('medium-6');
+                $('#'+borId+' .personal_info').css({"display":"inline-block"});
+                $('#'+borId+' .borrower_bio').insertAfter('#'+borId+' .business_info');
+                $('#'+borId+' .borrower_bio').css({"display":"inline-block"});
+                $('#'+borId+' .hide_individual_div').hide();
+              }
+              else if(this_val=="Company or Trust")
+              {
+                $('#'+borId+' .business_info').css({"display":"inline-block"});
+                $('#'+borId+' .business_financials').css({"display":"inline-block"});
+                $('#'+borId+' .guarantor_info').css({"display":"inline-block"});
+                $('#'+borId+' .individual_div').hide();
+                $('#'+borId+' .for_both').removeClass('border-right');
+                $('#'+borId+' .for_both').removeClass('medium-6');
+                $('#'+borId+' .for_both').addClass('medium-12');
+                $('#'+borId+' .business_info').insertAfter('#'+borId+' .one_div');
+                $('#'+borId+' .personal_info').hide();
+                $('#'+borId+' .borrower_bio').hide();
+                $('#'+borId+' .hide_individual_div').css({"display":"inline-block"});
+              }
+            }
+            /******************* Borrower Type *********************/
+
+            /******************* Guarantor Functionality ****************/
+
+            if(field_name=="borrower_guarantor")
+            {
+              if(this_val=="Yes")
+              {
+                $('#'+borId+' .guarantor_info').hide();
+              }
+              else
+              {
+                $('#'+borId+' .guarantor_info').css({"display":"inline-block"});
+              }
+            }
+
+            /******************* End Guarantor Functionality ****************/
+            
+            if(field_name == "personal_monthly_income" || field_name == "net_worth" || field_name == "personal_gross" || field_name == "personal_cashContribution" || field_name == "cash_on_hand" || field_name == "available_credit" || field_name == "monthly_noi" || field_name == "annual_noi" || field_name == "account_recievable" || field_name == "account_payable" || field_name=="guarantor_net_worth" || field_name=="guarantor_monthly_income")
+            {
+              data = "&field="+field_name+"&value="+this_val+"&borrower_id="+id;
+              // alert(data);
+              $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/save_borrower_money',
+                    success:function(response){
+                      $("#"+field_name+"_"+id).val(response);
+                    }
+                });
+            }
+            else
+            {
+
+              if(field_name=="bio")
+              {
+                  this_val = this_val.replace(/[";&"]+/g, '');
+                  this_val = encodeURI(this_val);            
+              }
+              data = "&field="+field_name+"&value="+this_val+"&borrower_id="+id;
+                // alert(data);
+
+
+                $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/save_borrower_field',
+                      success:function(response){
+                      }
+                  });
+            }
+           
+
+
+         });
+        
+
+      /************************** End Save Borrower Data ***********************************/
+
+
+    
+
+
+      $('#save_use_funds').click(function(){
+        form_data = $('#all_funds_form').serialize();
+        // alert(form_data);
+        data = form_data+"&loan_id=<%= @loan.id%>";
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/add_loan_funds',
+                success:function(response){
+                  alert("Use of funds saved successfuly.");
+                }
+            });
+      });
+
+      /**************** Expand the textbox width *********************/
+      // $('#loc_address').focus(function()
+      // {
+          /*to make this flexible, I'm storing the current width in an attribute*/
+      //     $(this).attr('data-default', $(this).width());
+      //     $(this).animate({ width: 250 }, 'slow');
+      // }).blur(function()
+      // {
+          /* lookup the original width */
+      //     var w = "107px";
+      //     $(this).animate({ width: w }, 'slow');
+      // });
+      /**************** Expand the textbox width *********************/
+
+    
+
+      $('.tii-controls a').attr('tabindex', '-1');
+      $('.tii-controls img').attr('tabindex', '-1');
+      $('.cwb-controls img').attr('tabindex', '-1');
+      $('.cwb-controls a').attr('tabindex', '-1');
+      $('a').attr('tabindex', '-1');
+      $('img').attr('tabindex', '-1');
+      $('strong').attr('tabindex', '-1');
+      $('.trans-info-item').attr('tabindex', '-1');
+      $('.trans-info-last').attr('tabindex', '-1');
+
+
+      $('input, textarea, select, div').focus(function(){
+        $('.tii-controls a').attr('tabindex', '-1');
+        $('.tii-controls img').attr('tabindex', '-1');
+        $('.cwb-controls img').attr('tabindex', '-1');
+        $('.cwb-controls a').attr('tabindex', '-1');
+        $('a').attr('tabindex', '-1');
+        $('img').attr('tabindex', '-1');
+        $('strong').attr('tabindex', '-1');
+        $('.trans-info-item').attr('tabindex', '-1');
+        $('.trans-info-last').attr('tabindex', '-1');
+        $('label').attr('tabindex', '-1');
+       });
+
+
+
+      $('li a').click(function(){
+        $('.tii-controls a').attr('tabindex', '-1');
+        $('.tii-controls img').attr('tabindex', '-1');
+        $('.cwb-controls img').attr('tabindex', '-1');
+        $('.cwb-controls a').attr('tabindex', '-1');
+        $('a').attr('tabindex', '-1');
+        $('img').attr('tabindex', '-1');
+        $('strong').attr('tabindex', '-1');
+        $('.trans-info-item').attr('tabindex', '-1');
+        $('.trans-info-last').attr('tabindex', '-1');
+        $('label').attr('tabindex', '-1');
+       });
+
+      $('#send_form_link').click(function(){
+        var emails = $('#form_email').val();
+        var subject = $('#form_subject').val();
+        var msg = $('#form_body').val();
+        if(emails=="")
+        {
+          alert("Please enter email address");
+        }
+        else
+        {
+          var loan_id = "<%= @loan.id %>"
+          data = "loan_id=<%= @loan.id%>&emails="+emails+"&subject="+subject+"&msg="+msg;
+          $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/send_form_link',
+                  success:function(response){
+                    // $('#myModal6').foundation('reveal', 'close');
+                    $('#form_link_flash').show();
+                    setTimeout(function(){
+                      $('#myModal6').foundation('reveal', 'close');
+                    }, 2000);
+                  }
+              });
+        }
+      });  
+      <% if @alert_msg == 'true' %> 
+        $('#main_image').click(function(){
+         var r=confirm("You have less then 10gb of memmory left. Press cancel to cancel uploading or Ok to proceed.");
+          if (r == false) {
+           return false;
+          }
+        });
+      <% end %>
+
+      $('.funds_field').change(function(){
+        save_use_funds()
+      });
+
+      // $('.change_col_funds').change(function(){
+      //   id = $(this).attr('id');
+      //   col_id = id.replace("collateral_funds_", ""); 
+      //   val = $('#'+id).val();
+      //   data = "related_funds="+val+"&collateral_id="+col_id;
+      //    $.ajax({
+      //           data: data,
+      //           type: 'POST',
+      //           url: '/loans/add_collateral_funds',
+      //           success:function(response){
+      //           }
+      //       });
+      // });
+
+      
+
+      $('.change_col_funds').click(function(){
+              id = $(this).attr('id');
+              col_id = id.replace("relate_fund_btn_", ""); 
+              select_id = "collateral_funds_"+col_id
+              val = $('#'+select_id).val();
+              data = "related_funds="+val+"&collateral_id="+col_id;
+               $.ajax({
+                      data: data,
+                      type: 'POST',
+                      url: '/loans/add_collateral_funds',
+                      success:function(response){
+                        $('#collateral_'+col_id+' .loan_all_funds').hide();
+                        $('#collateral_'+col_id+' .related_collats').html(response);
+                        $('#collateral_'+col_id+' .related_collats').show();
+                        $('#collateral_'+col_id+' .add_collateral_fund').show();
+                      }
+                  });
+      });
+      $('input:radio[name=valuation_type]').change(function(){
+        val = $(this).val();
+        col_id = $('#collateral_valluation').val();
+        window.open("<%= request.base_url %>/loans/collateral_appraisal/"+val+"/"+col_id+"/<%= @loan.id %>");
+        $('#myModal9').foundation('reveal', 'close');
+      });
+
+        /**************** Remove Fund **********************************/
+
+      // $('.remove_funds').click(function(){
+      //   rmvId = $(this).closest('.fund_row').attr('id');
+      //   $('#'+rmvId).remove();
+      //   save_use_funds();
+        
+      // });
+
+
+      /**************** Remove Fund End*******************************/
+
+    });
+    
+
+    function send_form_link()
+    {
+      $('#myModal6').foundation('reveal', 'open');
+      $('#form_link_flash').hide();
+    }
+
+    function save_use_funds()
+    {
+     
+        // alert(form_data);
+         form_data = $('#all_funds_form').serialize();
+        data = form_data+"&loan_id=<%= @loan.id%>";
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/add_loan_funds',
+                success:function(response){
+
+                }
+            });
+    }
+    function fund_edit_pen(col_id){
+        // id = $(this).attr('id')
+        // col_id = id.replace("relate_fund_edit_", "");
+        data = "loan_id=<%= @loan.id %>&collateral_id="+col_id
+        $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/all_loan_funds',
+            success:function(response){
+              $('#collateral_'+col_id+' .loan_all_funds').html(response);
+              $('#collateral_'+col_id+' .loan_all_funds').show();
+              $('#collateral_'+col_id+' .related_collats').hide();
+              $('#collateral_'+col_id+' .add_collateral_fund').hide();
+            }
+          });
+        }
+
+    function get_valuation(collateral_id)
+    {
+      $('#myModal9').foundation('reveal', 'open');
+      $('#collateral_valluation').val(collateral_id);
+    }
+</script>
+<!--------------------------- End New Design -------------------------->
+
+ <!---------------------- Appraisal Payment ---------------------------------->
+ 
+  <div id="myModal9" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> 
+          <u>What type of Valuation do you need?</u> 
+        </h5>
+      </div>
+      <input type="hidden" id="collateral_valluation">
+      <div class="large-12 small-centerd columns">
+        <div class="row">
+          <div class="small-1 small columns">
+            <input type="radio" name="valuation_type" value="commercial">
+          </div>
+          <div class="small-11 small columns">
+              Commercial Summary Narrative - $350
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-1 small columns">
+            <input type="radio" name="valuation_type" value="brokerprice">
+          </div>
+          <div class="small-11 small columns">
+              Broker Price Opinion - $300
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-1 small columns">
+            <input type="radio" name="valuation_type" value="avm">
+          </div>
+          <div class="small-11 small columns">
+              Restricted Use AVM - $400
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-1 small columns">
+            <input type="radio" name="valuation_type" value="appraisal">
+          </div>
+          <div class="small-11 small columns">
+              Appraisal - $500
+          </div>
+        </div>
+      </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  
+
+  
+<!---------------------- End Appraisal Payment ---------------------------------->
+
+<!---------------------- Credit form report ---------------------------------->
+ 
+  <div id="credit_modal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> 
+          <u>Order Credit Report</u> 
+        </h5>
+      </div>
+
+      <div id="credit_form">
+
+      </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  
+
+  
+<!---------------------- End Appraisal Payment ---------------------------------->
+
+<!---------------------- Credit form report ---------------------------------->
+ 
+  <div id="credit_report_modal" class="reveal-modal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold; text-align:center; "> 
+          <u>Credit Report</u> 
+        </h5>
+      </div>
+
+      <div id="credit_report">
+
+      </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  </div>
+
+  
+
+  
+<!---------------------- End Appraisal Payment ---------------------------------->
+
+<!---------------------- PDF Content ---------------------------------------------->
+  
+<div class="loanpdf_content" style="display:none;">
+  <style type="text/css">
+  tr, td, th, tbody, thead, tfoot {
+        page-break-inside: avoid !important;
+    }
+
+  </style>
+    <div style="border-bottom:4px solid; width:100%;">
+      <img class="idealview_main_logo" alt="Idealview logo" src="https://kellenjones.idealview.us/assets/idealview-logo-00f5073c5caccaeaf3e9a5a7089f1a79.png" style=" height: 45px; width:auto;">
+
+      <% now_date = Time.now.strftime("%d %B, %Y")%>
+      <b style="float:right; margin-top:14px;"><%=  now_date %></b>
+    </div>
+    <div style="width:100%; text-align:center">
+        <h1>Summary of <%= @loan.name %></h1>
+        <% if @loan.featured_image %>
+                   <img style="margin-top:10px;" src="<%= @loan.featured_image['url']%>" width="600">    
+            <% else  %>
+              <% @address ="#{@loan.info['Address3']}, #{@loan.info['City3']}, #{@loan.info['State3']}" %>
+              <% if @address%>
+                  <div class="item">
+                      <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= @address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-top:10px;" width="600"> 
+                  </div>
+              <% end %>
+            <% end %>
+    </div>
+    <style>
+      .loanpdf_content table{
+          border: 1px solid;
+      }
+      .loanpdf_content th{
+          border: 1px solid;
+      }
+      .loanpdf_content td {
+          border: 1px solid;
+      }
+    </style>
+
+    <div>
+      <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+        Highlights
+      </div>
+      <table style="margin:auto; margin-top:10px; border: 1px solid; width:90%"> 
+        <% if !@loan.info['_NetLoanAmountRequested0'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%"><b>Net Loan Amount Requested:</b></td>
+            <td style="border:1px solid;"><%= @loan.info['_NetLoanAmountRequested0'] %></td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_EstimatedMarketValue'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Estimated Market Value:</b></td>
+            <td style="border:1px solid;"><%= @loan.info['_EstimatedMarketValue'] %></td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_DesiredTermLength'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Desired Term Length:</b></td>
+            <td style="border:1px solid;">
+              <% if @loan.info['_DesiredTermLength'] == "3" %>
+                Less Than 3 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "6" %>
+                3 to 6 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "12" %>
+                6 to 12 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "24" %>
+                12 to 24 Months
+              <% elsif @loan.info['_DesiredTermLength'] == "25" %>
+                More than 24 Months
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['Address3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Address:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['Address3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['City3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>City:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['City3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['State3'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>State:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['State3']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_ExpectedCloseDate'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Expected Close Date:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['_ExpectedCloseDate']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['_LendingCategory'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Lending Category:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['_LendingCategory']  %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if !@loan.info['lending_type'].blank?%>
+          <tr>
+            <td style="border:1px solid; width:30%;"><b>Asset Type:</b></td>
+            <td style="border:1px solid;">
+              <%= @loan.info['lending_type']  %>
+            </td>
+          </tr>
+        <% end %>
+
+      </table>
+    </div>
+    
+    <% if !@loan.info['_LoanSummaryWhatareyoulookingfor'].blank?%>
+      <div style="width:100%; margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Summary
+        </div>
+        <%= @loan.info['_LoanSummaryWhatareyoulookingfor'] %>
+      </div>
+    <% end %>
+
+      <% if !@loan.info['transaction_type'].blank?%>
+      <div>
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid; margin-top:15px;">
+          Transaction Information
+        </div>
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+            <% if !@loan.info['transaction_type'].blank?  %>
+              <% if !@loan.info['transaction_type'].blank?%>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Transaction Type:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['transaction_type'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['transaction_type']=="Purchase" %>
+                <% if !@loan.info['contract_closing_date'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Contract Closing Date:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['contract_closing_date'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['purchase_price'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Purchase Price:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['purchase_price'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['rehab_amount'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Rehab Amount:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['rehab_amount'] %></td>
+                  </tr>
+                <% end %>
+                <% if !@loan.info['purchase_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['purchase_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+
+              <% if !@loan.info['transaction_type']=="Refinance" %>
+                <% if !@loan.info['maturity_date'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Maturity Date:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['maturity_date'] %></td>
+                  </tr>
+                <% end %>
+
+                <% if !@loan.info['refinance_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['refinance_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+
+                <% if !@loan.info['refinance_cash_contribute'].blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Cash To Contribute:</b></td>
+                    <td style="border:1px solid;"><%= @loan.info['refinance_cash_contribute'] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %> 
+            <% if !@loan.info['isBroker'].blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Submitted By Broker:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['isBroker'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['isBroker'].blank? %>
+              <% if !@loan.info['who_broker'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Who is the broker:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['who_broker'] %></td>
+                </tr>
+              <% end %>
+            <% end %>
+            <% if !@loan.info['free_clear'].blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Free and clear:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['free_clear'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['free_clear'].blank? %>
+              <% if !@loan.info['original_purchase_price'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Original Purchase Price:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['original_purchase_price'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['original_purchase_date'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Original Purchase Date:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['original_purchase_date'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['vested_by'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Vested by:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['vested_by'] %></td>
+                </tr>
+              <% end %>
+
+              <% if !@loan.info['cash_contributed'].blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Cash contributed:</b></td>
+                  <td style="border:1px solid;"><%= @loan.info['cash_contributed'] %></td>
+                </tr>
+              <% end %>
+
+            <% end %>
+            
+          
+
+        </table>
+        
+      </div>
+      <% end %>
+      
+      <% if !@loan.borrower.blank? %>
+        <div style=" margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Borrowers
+        </div>
+        
+        <% i =1 %>
+          <% @loan.borrower.each do |borrower| %>
+            <div style="text-align:center; width:100%; font-weight:bold; text-decoration:underline;">
+              Borrower Profile <%= i %>
+            </div>
+            <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+              <tr>
+                <th colspan="2" style="text-align:center;"> Borrower Information </th>
+              </tr>
+              <% if !borrower.borrower_type.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Type:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.borrower_type %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_name.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Name:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_name %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_phone.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Phone:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_phone %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_email.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Email:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_email %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_monthly_income.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Monthly Income:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_monthly_income %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_address.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Address:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_address %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_city.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>City:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_city %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_state.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>State:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_state %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_postalcode.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Postal Code:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_postalcode %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_income_source.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Income Source:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_income_source %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.income_how_long.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;">
+                  <b>  How long has income been derived from this source?:</b>
+                </td>
+                <td style="border:1px solid;">
+                  <%= borrower.income_how_long %>
+                </td>
+              </tr>
+              <% end %>
+              <% if !borrower.personal_dob.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Birthday:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_dob %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.ever_borrow_money.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b> Have you ever borrowed private money?:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.ever_borrow_money %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.net_worth.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Net Worth:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.net_worth %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.estimated_fico.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Estimated FICO score:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.estimated_fico %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.personal_cashContribution.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Cash Contribution:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.personal_cashContribution %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if !borrower.borrower_guarantor.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;">
+                    <b>Borrower Also The Guarantor:</b>
+                  </td>
+                  <td style="border:1px solid;">
+                    <%= borrower.borrower_guarantor %>
+                  </td>
+                </tr>
+              <% end %>
+
+            </table>
+
+            <% if borrower.borrower_type == "Company or Trust" %>
+              <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+                <tr>
+                  <th colspan="2" style="text-align:center;"> Business Information </th>
+                </tr>
+
+                <% if !borrower.business_name.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Name:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_name %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.business_phone.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Phone:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_phone %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.business_phone.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Time In Business:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.time_in_business %>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if !borrower.revenue_time_period.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business years of Revenue:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.revenue_time_period %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_ein.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business EIN:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_ein %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_type.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Type:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_type %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.state_of_incorporation.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business state of Incorporation:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.state_of_incorporation %>
+                    </td>
+                  </tr>
+                <% end %>
+
+                <% if !borrower.business_balance_sheet.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;">
+                      <b>Business Balance Sheet Value:</b>
+                    </td>
+                    <td style="border:1px solid;">
+                      <%= borrower.business_balance_sheet %>
+                    </td>
+                  </tr>
+                <% end %>
+
+              </table>
+            <% end %>
+
+            <% if borrower.borrower_type == "Individual" %>
+              <% if !borrower.bio.blank? %>
+                <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%;"> 
+                  <tr>
+                    <th style="text-align:center;"> Borrower Bio </th>
+                  </tr>
+                  <tr>
+                    <td style="border:1px solid;">
+                      <%= borrower.bio %>
+                    </td>
+                  </tr>
+                </table>
+              <% end %>
+            <% end %>
+
+            <% if borrower.borrower_guarantor == "No" %>
+              <table style="margin:auto; margin-top:10px; width:90%; border: 1px solid;"> 
+                  <tr>
+                    <th colspan="2" style="text-align:center;"> Guarantor Information  </th>
+                  </tr>
+                  <% if !borrower.guarantor_name.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Name:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_name %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_phone.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Phone:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_phone %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_email.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Email:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_email %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_monthly_income.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Monthly Income:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_monthly_income %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_income_source.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Income Source:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_income_source %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_income_how_long.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>How long has income been derived from this source?(Months):</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_income_how_long %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_address.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Address:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_address %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_city.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor City:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_city %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_state.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor State:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_state %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_postalcode.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Postalcode:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_postalcode %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_estimated_ficco.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Estimated FICO:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_estimated_ficco %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_net_worth.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Guarantor Net Worth:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_net_worth %></td>
+                    </tr>
+                  <% end %>
+
+                  <% if !borrower.guarantor_borrow_money.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Have you ever borrowed private money?:</b></td>
+                      <td style="border:1px solid;"><%= borrower.guarantor_borrow_money %></td>
+                    </tr>
+                  <% end %>
+
+                </table>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if !@loan.collateral.blank? %>
+      <div>
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;  margin-top:15px;">
+          Collaterals
+        </div>
+        <% c = 1 %>
+        <% @loan.collateral.each do |collateral| %>
+          <div style="text-align:center; width:100%; font-weight:bold; text-decoration:underline;">
+            Collateral Profile <%= c %>
+          </div>
+          <table style="margin:auto; margin-top:10px; border: 1px solid;  width:90%;"> 
+            <tr>
+              <th colspan="2" style="text-align:center;"> Collateral Information </th>
+            </tr>
+            <% if !collateral.address.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Address: </b></td>
+                <td style="border:1px solid;"><%= collateral.address %></td>
+              </tr>
+            <% end %>
+            <% if !collateral.city.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>City: </b></td>
+                <td style="border:1px solid;"><%= collateral.city %></td>
+              </tr>
+            <% end %>
+            <% if !collateral.state.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>State: </b></td>
+                <td style="border:1px solid;"><%= collateral.state %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.postalcode.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Postalcode: </b></td>
+                <td style="border:1px solid;"><%= collateral.postalcode %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.estimated_value.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Estimated Property Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.estimated_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.source_of_value.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.source_of_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.mortgage_status %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Source Of Value: </b></td>
+                <td style="border:1px solid;"><%= collateral.source_of_value %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.mortgage_status.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Mortgage Status: </b></td>
+                <td style="border:1px solid;"><%= collateral.mortgage_status %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.amount_owed.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Amount Owed:</b></td>
+                <td style="border:1px solid;"><%= collateral.amount_owed %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.asset_type.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Asset Type:</b></td>
+                <td style="border:1px solid;"><%= collateral.asset_type %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Land Size:</b></td>
+                <td style="border:1px solid;"><%= collateral.size %></td>
+              </tr>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <% if !collateral.size == "Sq Footage" %>
+                <% if !collateral.sq_footage.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Land Sq Footage:</b></td>
+                    <td style="border:1px solid;"><%= collateral.sq_footage %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% if !collateral.size.blank? %>
+              <% if !collateral.size == "Acres" %>
+                <% if !collateral.acres.blank? %>
+                  <tr>
+                    <td style="border:1px solid; width:30%;"><b>Land Sq Footage:</b></td>
+                    <td style="border:1px solid;"><%= collateral.acres %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% end %>
+
+              <% if !collateral.structural_size.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Structural Size:</b></td>
+                  <td style="border:1px solid;"><%= collateral.structural_size %></td>
+                </tr>
+              
+                <% if collateral.structural_size == "Sq Footage" %>
+                  <% if !collateral.structural_sq_footage.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>Sq Footage: </b></td>
+                      <td style="border:1px solid;"><%= collateral.structural_sq_footage %></td>
+                    </tr>
+                  <% end %>
+                <% end %>
+
+                <% if collateral.structural_size == "Units" %>
+                  <% if !collateral.units.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>How Many Units?:</b></td>
+                      <td style="border:1px solid;"><%= collateral.units %></td>
+                    </tr>
+                  <% end %>
+                  <% if !collateral.sf_per_unit.blank? %>
+                    <tr>
+                      <td style="border:1px solid; width:30%;"><b>SF per Unit:</b></td>
+                      <td style="border:1px solid;"><%= collateral.sf_per_unit %></td>
+                    </tr>
+                  <% end %>
+
+                <% end %>
+              <% end %>
+
+              <% if !collateral.noi_ytd.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI (YTD):</b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_ytd %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_last_year.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI (Last Year):</b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_last_year %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_two_years_ago.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>NOI ( Two Years Ago): </b></td>
+                  <td style="border:1px solid;"><%= collateral.noi_two_years_ago %></td>
+                </tr>
+              <% end %>
+
+              <% if !collateral.noi_two_years_ago.blank? %>
+                <tr>
+                  <td style="border:1px solid; width:30%;"><b>Collateral Value: </b></td>
+                  <td style="border:1px solid;"><%= collateral.collateral_value %></td>
+                </tr>
+              <% end %>
+          </table>
+
+          <% unless collateral.related_funds.blank? %>
+            <% @relates = collateral.related_funds.split(",")
+                # abort("#{@relates.inspect}")
+                i=1
+              %>
+            <table  style="margin:auto; margin-top:10px; width:90%; border: 1px solid;">
+              <tr>  
+                <th colspan="3"> Collateral related funds: </th>
+              </tr>
+              <tr> 
+                <th style="border:1px solid;">Use</th>
+                <th style="border:1px solid;">Beneficiary</th>
+                <th style="border:1px solid;">Amount</th>
+              </tr>
+              <% @relates.each do |relate| %>
+                <% fnd = UseOfFund.find_by_id("#{relate}") 
+
+                %> 
+                <% unless fnd.blank? %>
+                  <tr id="<%= i %>_fund" class="fund_row">
+                      <td style="border:1px solid;"><%= fnd.use %></td> 
+                      <td style="border:1px solid;"><%= fnd.beneficiary %></td> 
+                      <td style="border:1px solid;"><%= fnd.amount %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </table>
+          <% end %>
+
+
+        <% end %>
+      </div>
+      <% end %>
+
+      <% if !@loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank?%>
+        <div style="width:100%;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Exit Strategy
+          </div>
+          <%= @loan.info['_ExitStrategyHowwillyoupaytheloanoff'] %>
+        </div>
+      <% end %>
+
+      <% if !@loan.images.blank? %>
+        <div style="width:100%; float:left;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Images
+          </div>
+          <div style="margin-left:94px;">
+           <% if @loan.images.count >8 %>
+              <% @imges = @loan.images[0..7]%>
+            <% else %>
+              <% @imges = @loan.images %>
+            <% end %>
+            <% @imges.each do |img|%> 
+              
+                <img src="  <%= img['url']%>" style="width:21%; float:left; margin-left:10px; height:151px; margin-top:10px;">
+            <% end %>
+            <%  if @loan.images.count >8 %>
+                
+                <a href="<%= request.base_url%>/loans/more_images/<%= @loan.id %>" style="float:left; width:260"> Click here to view more images </a>
+            <% end %>
+           </div>
+        </div>
+      <% end %>
+      <% if !@loan.info['FirstName'].blank? || !@loan.info['Email'].blank? || !@loan.info['Phone'].blank?%>
+        <div style="width:100%; float:left;  margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Contact Information
+          </div>
+          <table style="margin: 10px auto auto; width:90%; border: 1px solid;">
+            <% if !@loan.info['FirstName'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>First Name:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['FirstName'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['Email'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>Email:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['Email'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['Phone'].blank? %>
+              <tr>  
+                <td style="border:1px solid; width:30%;"><b>Phone:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['Phone'] %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+
+      <div style=" margin-top:15px;">
+        <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+          Analysis
+        </div>
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+            Key Metrics
+            </th>
+          </tr>
+           <% if !@loan.info['gross_loan_amount'].blank?%>
+           <tr>
+              <td style="border:1px solid; width:30%;"><b>Gross Loan Amount: </b></td>
+              <td style="border:1px solid;"><%= fd_money(@loan.info['gross_loan_amount']) %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['land_square_footage'].blank?%>
+            
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Land Square Footage:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['land_square_footage'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['structural_square_footage'].blank?%>
+             
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Structural Square Footage:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['structural_square_footage'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_is_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Is Value: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_is_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> As-Improved Value:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['borrower_stated_improved_value'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Borrower Stated As-Is Value:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_stated_improved_value'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['borrower_as_improved_ltv'].blank?%>
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Borrower Stated As-Improved Value: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['value_source'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Value Source: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['value_source'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['value_date'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Value Date: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['value_date'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['completed_square_footage'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Completed Square Footage: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['completed_square_footage'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['improved_sale_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improved/For Sale SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improved_sale_sf'] %></td>
+            </tr>
+           <% end %>
+
+           <% if !@loan.info['unimproved_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Unimproved SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['unimproved_sf'] %></td>
+            </tr>
+           <% end %><% if !@loan.info['begining_structural_sf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Beginning $/Structural SF: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['begining_structural_sf'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['begining_price_perunit'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Beginning Price Per Unit: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['begining_price_perunitbegining_price_perunit'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['improve_value_perunit'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improve Value Per Unit:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improve_value_perunit'] %></td>
+            </tr>
+           <% end %>
+
+           <% if !@loan.info['improve_value_persf'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Improved Value Per SF:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['improve_value_persf'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['acash_to_contribute'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Cash to Contribute:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['acash_to_contribute'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['down_payment_percentage'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Down Payment Percentage:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['down_payment_percentage'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['apurchase_price'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Purchase Price: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['apurchase_price'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['as_is_ltv'].blank?%>
+             
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is LTV:   </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_ltv'] %></td>
+              </tr>
+         <% end %>
+           <% if !@loan.info['as_is_ltv_net_disbursment'].blank?%>
+
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Is LTV on Net Disbursment:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_is_ltv_net_disbursment'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['borrower_as_is_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>  Borrower As-Is LTV: </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_is_ltv'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['borrower_as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b> Borrower As-Improved LTV:   </b></td>
+              <td style="border:1px solid;"><%= @loan.info['borrower_as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_as_is_gross_income'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual As-Is Gross Income:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_as_is_gross_income'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_as_is_noi'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual As-Is NOI:</b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_as_is_noi'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_gross_income_cc'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual Gross Income (100% Occ.):  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_gross_income_cc'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>Annual Stabilized NOI (100% Occ.):  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['as_improved_ltv'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['as_improved_ltv'] %></td>
+            </tr>
+           <% end %>
+            <% if !@loan.info['annual_stablized_noi'].blank?%>
+            <tr>
+              <td style="border:1px solid; width:30%;"><b>As-Improved LTV:  </b></td>
+              <td style="border:1px solid;"><%= @loan.info['annual_stablized_noi'] %></td>
+            </tr>
+           <% end %>
+        </table>
+
+        <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+            Transaction Detail
+            </th>
+          </tr>
+          <% if !@loan.info['purchas_refi_amount'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Purchasor Refi Amount: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['purchas_refi_amount'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['improvement_construction'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Improvement/Construction: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['improvement_construction'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['additional_uses'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Additional Uses: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['additional_uses'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['interest_reserve'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Interest Reserves:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['interest_reserve'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['other_reserves'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Reserves: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_reserves'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['other_loan_costs'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Loan Costs: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_loan_costs'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['lender_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Lender Fees: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['lender_fees'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['broker_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Broker Fees: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['broker_fees'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['est_title_escrow'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Est. Title & Escrow: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['est_title_escrow'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['est_title_escrow'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Est. Title & Escrow: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['est_title_escrow'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['legal_fees'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Legal Fees (Transactional): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['legal_fees'] %></td>
+              </tr>
+           <% end %> 
+           <% if !@loan.info['gross_pre_down_payment'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Gross (Pre Down-Payment):</b></td>
+                <td style="border:1px solid;"><%= @loan.info['gross_pre_down_payment'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['net_proceeds'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Net Proceeds (After Down): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['net_proceeds'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['term_in_months'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> Term In Months: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['term_in_months'] %></td>
+              </tr>
+           <% end %>
+            <% if !@loan.info['monthly_payment_amnt'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Monthly Payment Amt.: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['monthly_payment_amnt'] %></td>
+              </tr>
+           <% end %>
+        </table>
+
+         <table style="margin:auto; margin-top:10px; width:50%; border: 1px solid;  width:90%"> 
+          <tr>  
+            <th colspan="2" style="text-align:center;"> 
+              Profitability
+            </th>
+          </tr>
+          <% if !@loan.info['interest_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Interest Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['interest_income'] %></td>
+              </tr>
+            <% end %>
+            <% if !@loan.info['other_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Other Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['other_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['fee_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Fee Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['fee_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['total_regular_income'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Total Regular Income: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['total_regular_income'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['half_term_roi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Half Term ROI: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['half_term_roi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['half_term_roi_annualized'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Half Term ROI (Annualized): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['half_term_roi_annualized'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['full_term_roi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Full Term ROI:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['full_term_roi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_income_subject'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is Income (Subject): </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_income_subject'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['secondary_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Secondary NOI:</b></td>
+                <td style="border:1px solid;"><%= @loan.info['secondary_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['total_as_is_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Total As-Is NOI:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['total_as_is_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['projected_stabilized_noi'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>Projected Stabilized NOI: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['projected_stabilized_noi'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_dscr'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>As-Is DSCR:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_dscr'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_dscr'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b>As-Improved DSCR: </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_improved_dscr'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_is_cap_rate'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Is Cap Rate:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_is_cap_rate'] %></td>
+              </tr>
+           <% end %>
+           <% if !@loan.info['as_improved_cap_rate'].blank?%>
+              <tr>
+                <td style="border:1px solid; width:30%;"><b> As-Improved Cap Rate:  </b></td>
+                <td style="border:1px solid;"><%= @loan.info['as_improved_cap_rate'] %></td>
+              </tr>
+           <% end %>
+
+
+        </table>
+      </div>
+
+       <div style="margin-top:15px;">
+          <div style="font-size:19px; font-weight:bold; border-bottom:2px solid;">
+            Documents
+          </div>
+          <% @documents = Document.all(:loan_id => @loan.id)
+          @folders = CustomFolder.where(:loan_id => @loan.id.to_i).fields(:folder_name).all 
+          # abort("#{@folders.inspect}")
+          doc_cat = Array.new
+          unless @documents.blank?
+            @documents.each do |documnt|
+              if !doc_cat.include? "#{documnt.category}"
+                doc_cat << "#{documnt.category}"
+              end
+            end
+          end
+
+          unless @folders.blank?
+            @folders.each do |folder|
+              if !doc_cat.include? "#{folder.folder_name}"
+                doc_cat << "#{folder.folder_name}"
+              end
+            end
+          end
+
+          @fol_files = FolderFile.all(:loan_id => @loan.id)
+          # abort("#{doc_cat.inspect}")
+          %>
+
+          <% unless doc_cat.blank?%>
+            <% doc_cat.each do |cat|%>
+              <table style="margin:auto; margin-top:10px; border: 1px solid;  width:90%"> 
+                <tr>  
+                  <th colspan="2" style="text-align:center;"> 
+                    <%= cat %>
+                  </th>
+                </tr>
+                 <% d=1%>
+                 <% if !@documents.blank?%>
+                   
+                   <% @documents.each do |document|%>
+                     <% if document.category == "#{cat}"%>
+                     <tr>
+                        <td style="border:1px solid; width:10%;"><%= d %></td>
+                        <td style="border:1px solid;"><a href="<%= document.url %>"><%= document.url %></a> </td>
+                      </tr>
+                      <% d=d+1%>
+                      <% end %>
+                    
+                    <% end %>
+                 <% end %>
+                 <% f=1%>
+                 <% if !@fol_files.blank? %>
+                    
+                   <% @fol_files.each do |file|
+                       if file.folder_name == "#{cat}"%>
+                        <tr>
+                          <td style="border:1px solid; width:10%;"><%= f %></td>
+                          <td style="border:1px solid;"><a href="<%= file.url %>"><%= file.url %></a></td>
+                        </tr>
+                        <% f=f+1%>
+                      <% end %>
+                      
+                    <% end %>
+                 <% end %>
+               </table>
+             <% end %>
+           <% end %>
+       </div>
+
 </div>
+
+<!----------------------- End PDF Content ------------------------------------------>

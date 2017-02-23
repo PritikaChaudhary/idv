@@ -1,0 +1,175 @@
+<script type="text/javascript">
+$('document').ready(function(){
+	$('#unlimited_lenders').click(function(){
+		if($(this).prop('checked'))
+	    {
+	    	$('#max_lenders').hide();
+	    }
+	    else
+	    {	
+	    	$('#max_lenders').show();
+	    }
+	});
+
+	$('#unlimited_upload').click(function(){
+		if($(this).prop('checked'))
+	    {
+	    	$('#max_storage_int').hide();
+	    	$('#max_storage_unit').hide();
+	    }
+	    else
+	    {	
+	    	$('#max_storage_int').show();
+	    	$('#max_storage_unit').show();
+	    }
+	});
+});
+</script>
+<style type="text/css">
+	.big_field
+	{
+		width: 75% !important; 
+		float: left
+	}
+
+	.small_field
+	{
+		width: 23%; 
+		float: left;
+		margin-left:10px;
+	}
+
+	.form_content input[type="checkbox"]
+	{
+		margin-bottom: 0px !important;
+	}
+
+	@media all and (max-width: 795px) and (min-width: 534px){
+	    .big_field
+	    {
+	      width:72% !important; 
+	      margin-left:10px;
+	    }
+  	}
+
+  	@media all and (max-width: 533px){
+	    .big_field
+	    {
+	      width:72% !important; 
+	      margin-left:10px;
+	    }
+
+	    .form_content
+	    {
+	    	width:100% !important;
+	    }
+  	}
+</style>
+<div class='row'>
+	<div class="small-8 small-centered columns form_content">
+
+		<h3 style="text-align:center">Account Information</h3>
+		  <form method="post" action="https://<%= @hostname %>/account_management/save_records" id="lenderForm">
+		  <div class="field">
+			<label for="Name">Name</label>
+			<br>
+			<input type="text" id="name" name="name" autofocus="autofocus" value="<%= @uInfo.name %>">
+		  </div>
+
+		  <div class="field">
+			<label for="JobTitle">Email</label>
+			<br>
+			<input id="email" type="text" readonly="readonly" name="email" autofocus="autofocus" value="<%= @uInfo.email %>">
+		  </div>
+
+		  
+		 <div class="field">
+			<label for="Password">Password</label>
+			<br>
+			<input id="password" type="password" name="password" autofocus="autofocus">
+		 </div>
+
+		  <div class="field">
+			<label for="Users">Number of Users</label>
+			<br>
+			<input type="text" name="max_users" autofocus="autofocus" value="<%= @uInfo.max_users %>">
+		 </div>
+
+		 <div class="field">
+			<label for="Lenders">Shares/Lenders</label> <input type="checkbox" value="No Limit" name="unlimited_lenders" id="unlimited_lenders" <% if @uInfo.max_lenders == "No Limit" %> checked="checked" <% end %>> <label> No Limit </label>
+			<br>
+			
+			<input id="max_lenders" type="number" name="max_lenders" autofocus="autofocus" value="<%= @uInfo.max_lenders %>" <% if @uInfo.max_lenders == "No Limit" %> style="display:none;" <% end %>>
+
+		 </div>
+
+		 <div class="field">
+			<label for="max_storage">File Storage</label>
+			<br>
+			<% 
+				if !@uInfo.max_storage.blank?
+					munit = @uInfo.max_storage.gsub(/\d+/,'')
+					mint = @uInfo.max_storage.scan(/\d/).join('')
+				else
+					munit = ""
+					mint = ""
+				end
+			%>
+			<input id="max_int" type="number" name="max_int" autofocus="autofocus" class="big_field" value="<%= mint %>">
+			<select name="max_unit" class="small_field"  id="max_unit">
+				<option value="MB" <% if munit == "MB" %> selected="selected" <% end %>> MB </option>
+				<option value="GB" <% if munit == "GB" %> selected="selected" <% end %>> GB </option>
+			</select>
+		 </div>
+
+		 <div class="field">
+			<label for="max_storage">Upload Max</label><input type="checkbox" value="No File Cap" name="unlimited_upload" id="unlimited_upload" <% if @uInfo.max_upload == "No File Cap" %> checked="checked" <% end %>> <label> No File Cap </label>
+			<br>
+			<% 
+			# abort("#{@uInfo.max_upload}")
+				if !@uInfo.max_upload.blank?
+					upload_unit = @uInfo.max_upload.gsub(/\d+/,'')
+					upload_int = @uInfo.max_upload.scan(/\d/).join('')
+				else
+					upload_unit = ""
+					upload_int = ""
+				end
+			%>
+
+			<input id="max_storage_int" type="number" name="max_storage_int" autofocus="autofocus" <% if @uInfo.max_upload == "No File Cap" %> style="display:none;" <% else %> <% end %> value="<%= upload_int %>" class="big_field">
+			<select name="max_storage_unit" <% if @uInfo.max_upload == "No File Cap" %> style="display:none;" <% else %>  <% end %>  id="max_storage_unit" class="small_field">
+				<option value="MB" <% if upload_unit == "MB" %> selected="selected" <% end %>> MB </option>
+				<!-- <option value="GB"  selected="selected" > GB </option> -->
+			</select>
+		 </div>
+
+		 <div class="field">
+			<label for="max_storage">Permissions</label>
+			<br>
+			<div class="row">
+				<div class="small-6 columns">
+				 
+					<label><input type="checkbox" name="pipelines" value="1" <% if @uInfo.pipelines == 1%> checked="checked"  <%  end %>> Pipelines</label>
+				</div>
+				<div class="small-6 columns">
+					<label><input type="checkbox" name="req_docs" value="1"  <% if @uInfo.req_docs == 1%> checked="checked"  <% end %>> Request Docs from Borrower</label>
+				</div>
+				<div class="small-6 columns">
+					<label><input type="checkbox" name="loan_application_links" value="1" <% if @uInfo.loan_application_links == 1%> checked="checked" <% end %>>Send Loan Application Links</label>
+				</div>
+				<div class="small-6 columns">
+					<label><input type="checkbox" name="forward_email" value="1" <% if @uInfo.forward_email == 1%> checked="checked" <% end %>> Forward Email into IDV(Beta)</label>
+				</div>
+				<div class="small-6 columns">
+					<label><input type="checkbox" name="market_access" value="1" <% if @uInfo.market_access == 1%> checked="checked" <% end %>>Market Place Access</label>
+				</div>
+			</div>
+		 </div>
+
+		  	
+		  <div class="actions">
+		   <input type="submit" value="Submit" class="tiny button success" id="submit_lender">
+		  </div>
+		  </form>
+	</div>
+</div>

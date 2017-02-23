@@ -1,0 +1,68 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+			$('#save_note').click(function(){
+				var data=$('#addNote').serialize();
+				$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/add_lender_note',
+		            success:function(response){
+		            	$('#note_contents').val('');
+		            	$('#all_notes').html(response);
+		           	}
+		        });
+			
+			});
+		});
+</script>
+<div class="row">
+	<div class="small-12 small-centered columns">
+	<% if @success == "yes" %>
+		<div class="flash_notice">Note added successfully.</div>
+	<% end %>
+		<form method="post" id="addNote">
+			<h3 class="heading_signup"> Add Notes </h3>
+				<form id="addNote">
+					<div class="row">
+						<div class="medium-12 column">
+							<div class="medium-4 column"> Date: </div>
+							<% add_date = Time.now.strftime("%d %b, %Y") %>
+		                      
+							<div class="medium-8 column"> <input type="text" readonly="readonly" value="<%= add_date %>" > </div>
+						</div>
+					</div>
+					<div class="row"  style="margin-top:10px;">
+						<div class="medium-12 column">
+							<textarea name="note" style="width: 664px; height: 253px;" id="note_contents"> </textarea>
+							<input type="hidden" name="lender_id" value="<%= @lender_id %>">
+							<input type="hidden" name="loan_id" value="<%= @loan_id %>">
+						</div>
+					</div>
+					
+					<div class="row">
+					<div class="medium-12 column">
+						<input type="button" id="save_note" value="SAVE" class="tiny button" style="margin-top:10px;">
+					</div>
+					</div>
+				</form>
+		</form>
+	</div>
+	<div class="row">
+			<div class="large-4 columns"><b>Added By</b></div>
+		    <div class="large-4 columns"><b>Note</b></div>
+		    <div class="large-4 columns"><b>Date</b></div>
+		</div>
+		<div  id="all_notes">
+			<% @notes.each do |nt| %>
+				<div class="row">
+					<div class="large-4 columns"><%= nt.user.name %></div>
+				    <div class="large-4 columns"><%= nt.content %></div>
+				    <div class="large-4 columns">
+				    <% adate = Date.parse nt.date_added
+	                      add_date = adate.strftime("%d %b, %Y") %>
+	                      <%= add_date %></div>
+		    	</div>
+		    <% end %>
+		</div>
+	
+</div>

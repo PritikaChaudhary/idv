@@ -1,0 +1,134 @@
+<style type="text/css">
+	.same_line
+	{
+		float: left;
+    	width: 48%;
+	}
+	.same_lines
+	{
+		float: left;
+    	margin-left: 23px;
+    	width: 48%;
+	}
+	.field
+	{
+		width:100%;
+		float: left;
+	}
+	#ui-datepicker-div
+	{
+		z-index: 99 !important;
+		background: none repeat scroll 0 0 #808080;
+	}
+	table
+	{
+		 border: 1px solid #000000;
+   		 margin-bottom: 0.25rem;
+	}
+	.ui-datepicker-next
+	{
+		margin-left: 8px;
+		color: #000000;
+	}
+	.ui-datepicker-prev
+	{
+		margin-left: 3px;
+		color: #000000;
+	}
+	.ui-datepicker-title
+	{
+		margin-left: 3px;
+	}
+	.actions
+	{
+		margin-top:14px;
+	}
+	h3
+	{
+		text-align: center;
+	}
+</style>
+<script type="text/javascript">
+	function check_email()
+	{
+	    fetch_email = $("#email").val();
+	    var data = "email=" + fetch_email;
+	    $.ajax({
+	            data: data,
+	            type: 'POST',
+	            url: '/brokers/check_email',
+	             success:function(response){
+	             	if(response=="no")
+	                {
+	                	alert("Email already exist.");
+	                	
+	                }
+	                else
+	                {
+	                	$( "#brokerForm" ).submit();
+	                }
+	            }
+				
+			});
+				   
+	}
+</script>
+
+<div class='row'>
+<% 
+#abort("#{@add_sub}")
+if @add_sub == "yes" %>
+	<div class="small-8 small-centered columns">
+
+		<h3>Add User</h3>
+		  <form method="post" action="http://<%= @hostname %>/brokers/add_broker" id="brokerForm">
+		  
+		  <div class="field">
+				<label for="name">First Name</label>
+				<br>
+				<input id="name" type="text" name="firstName" autofocus="autofocus" >
+		  </div>
+
+		  <div class="field">
+				<label for="name">Last Name</label>
+				<br>
+				<input id="name" type="text" name="lastName" autofocus="autofocus" >
+		  </div>
+
+		   <div class="field">
+			<label for="phone1">Phone</label>
+			<br>
+			<input id="phone1" type="text" name="phone1" autofocus="autofocus" >
+		 </div>
+		 <div class="field">
+			<label for="email">Email</label>
+				<br>
+				<input id="email" type="text" name="email" autofocus="autofocus">
+		</div>
+		<div class="field">
+			 <label for="password">Password</label>
+				<br>
+				<input id="password" type="password" name="password" autofocus="autofocus">
+		</div>
+		<div class="field">
+			<label for="permissions">Permission</label>
+			<br>
+			<input type="checkbox" value="add_users" name="permissions[]"><label>Ability to add more users</label>
+			<input type="checkbox" value="change_passwords" name="permissions[]"><label>Ability to change passwords</label>
+		</div>
+
+		<input type="hidden" name="user_id" value="<%= @user_id %>">
+		<input type="hidden" name="user_email" value="<%= @user_email %>">
+	
+		 
+		<div class="actions">
+		   <input type="button" value="SUBMIT" class="tiny button success" onclick="return check_email()">
+		  </div>
+		  </form>
+	</div>
+<% else %>
+	<div class="small-8 small-centered columns">
+	 	You cannot add more than 5 sub brokers.
+	</div>
+<% end %>
+</div>

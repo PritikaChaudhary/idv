@@ -1,0 +1,28 @@
+<% if @borrowers.blank? %>
+	<div class="large-12 columns">
+		No Borrower Found.
+	</div>
+<% else %>
+    <div class="large-12 columns">
+		<table style="width:100%">
+		    <% @borrowers.each do |borrower| 
+
+		    	%>
+				<% 	if borrower.personal_name.blank? 
+				 		@name = "No Name" 
+				 	else 
+				 		@name = borrower.personal_name
+				  	end %>
+					<tr>
+
+						<td>
+							<a href="javascript:void(0);" rel="<%= borrower.id %>" onclick = "edit_borrower('<%= borrower.id %>')">
+								<%= @name %>
+							</a>
+						</td>
+					</tr>
+					
+			<% end %>
+		</table>
+	</div>
+<% end %>

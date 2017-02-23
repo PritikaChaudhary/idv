@@ -1,0 +1,365 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+
+		$('input[name="_ExpectedCloseDate"]').inputmask('mm/dd/yyyy',{placeholder:"MM/DD/YYYY"});
+
+	
+
+		$('.highlights').click(function(){
+			// $('.highlight_div').slideToggle();
+		});
+
+		$('.overview').click(function(){
+			// $('.overview_div').slideToggle();
+		});
+
+		$('.borrowers').click(function(){
+			$('.borrower_div').slideToggle();
+		});
+
+		$('.collaterals').click(function(){
+			$('.collateral_div').slideToggle();
+		});
+
+		$('.exit_strategy').click(function(){
+			// $('.exit_strategy_div').slideToggle();
+		});
+
+		
+
+		$('.loan_fields').change(function(){
+
+			 	selection = $(this).val();
+			  	nameinput =  $(this).attr('name');
+			 //  	$('#'+input_id).val(selection);
+				
+				// var nameinput = $('#'+input_id).attr('name');
+				var loan_id = $('.loan_id').val();
+				
+				var data = "&id="+loan_id+"&"+nameinput+"="+selection;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/new_loan',
+	                success:function(data){
+                 		$('.loan_id').val(data);
+                 		if(nameinput=="_LoanName")
+                 		{
+                 			$('.loan_name').html("<span>"+selection+"</span>");
+                 		}
+                 		// $('input[name="'+nameinput+'"]').val(selection);
+                	}
+	                 
+				});
+
+		});
+
+		$('#lending_cat').change(function(){
+			cat = $(this).val();
+			if(cat=="Business Financing")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').show();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+
+				$('.lending_types').hide();
+				$('.financing_types').show();
+				$('.equity_crowd').hide();
+				$('.mortgage_type').hide();
+			}
+			else if(cat=="Equity and Crowdfunding")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').show();
+				$('#mortgage_type').hide();
+
+				$('.lending_types').hide();
+				$('.financing_types').hide();
+				$('.equity_crowd').show();
+				$('.mortgage_type').hide();
+			}
+			else if(cat == "Residential or Commercial Mortgage")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').show();
+
+				$('.lending_types').hide();
+				$('.financing_types').hide();
+				$('.equity_crowd').hide();
+				$('.mortgage_type').show();
+			}
+			else
+			{
+				$('#lending_types').show();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+
+				$('.lending_types').show();
+				$('.financing_types').hide();
+				$('.equity_crowd').hide();
+				$('.mortgage_type').hide();
+			}
+		});
+
+		
+	$("#existing_loan").click(function(){
+			$('.select_box').slideToggle();
+		});
+	
+		$(".del").click(function(){
+			if(confirm('Are you sure you want to delete this file?'))
+      		{
+				var num_id = $(this).attr('id');
+				var num = num_id.replace("del","");
+				var val = $('#del_value_'+num).val();
+				var data = "&id=<%= @detail.id %>&num="+num+"&fname="+val;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/delete_file',
+	                 success:function(data){
+	                 	$("#del_val_").val("yes");
+	                 	$("#file"+num).hide();
+	                }
+	            
+	      		  });
+		 	}
+		});
+
+		$('.select_category').click(function(){
+			var id = $(this).attr('id');
+			var loan_id = $('.loan_id').val();
+			var data = "&id="+loan_id+"&num="+id+"&i="+id;
+		     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/emails/all_categories',
+                 success:function(data){
+                 	
+                 	$('.select_folder'+id).html(data);
+                 	
+                }
+            
+      		  });
+			$('#cat_'+id).slideToggle();
+			//$('#'+id).html("<img src='/assets/icon2.png'  class='select_img btnimg'>")
+		});
+
+		$('.select_cat').change(function(){
+ 		var id = $(this).attr('id');
+		sid= id.replace("select_category_", ""); 
+		loan_id = $('.loan_id').val();
+		file_name = $('#img_val_'+sid).val();
+		catname= $('#'+id).val();
+		if(loan_id=="")
+		{
+			alert("Please add or select loan first");
+			return false;
+		}
+		var data = "&loan_id="+loan_id+"&file_name="+file_name+"&category="+catname;
+		$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/emails/add_file',
+             success:function(data){
+             	
+            }
+        });
+		 $("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+	});
+
+		$('.img_btn').click(function(){
+			var id= $(this).attr('id');
+			sid = id.replace("img","");
+			nId = id.replace("img","img_");
+			inpt = id.replace("img","img_val_");
+			fname = $('#'+inpt).val();
+			$('#'+nId).val(fname);
+			/********* New Code ***********/
+				loan_id = $('.loan_id').val();
+				file_name = $('#img_val_'+sid).val();
+				if(loan_id=="")
+				{
+					alert("Please add or select loan first");
+					return false;
+				}
+				var data = "&loan_id="+loan_id+"&file_name="+file_name;
+				$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/emails/add_image',
+		             success:function(data){
+		             		$('#'+id).html("<img src='/assets/icon6.png'  class='select_img btnimg1'>");
+		            }
+		        });
+			/******** End ***************/
+
+
+		
+		});
+
+		$("#new_loan").click(function(){
+       	 
+       	 	 var data =  $('.add_loan').serialize();
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/add_loan',
+	                 success:function(data){
+	                    $('.loan_id').val(data);
+	                    $('#myModal').foundation('reveal', 'close');
+					}
+
+                
+          		  });
+
+		});
+
+	});
+
+
+</script>
+<div class="highlights left-headings">  Hightlights</div>
+		<div class="highlight_div" >
+			<div class="eow-field">
+				<input type ="text" class="loan_fields" name="_NetLoanAmountRequested0" id="amount_request" placeholder = "Net Loan Amount Requested"> 
+				<!-- <img src="/assets/icon1.png" id="amnt_btn" class="select_img" onclick="return forloan('_NetLoanAmountRequested0')"> -->
+			</div>
+			<div class="eow-field">
+				<input id="estimated_val" class="loan_fields" type="text" name="_EstimatedMarketValue" placeholder="Estimated Market Value"> 
+				<!-- <img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return forloan('_EstimatedMarketValues')"> -->
+			</div>
+			<div class="eow-field">
+				<select id="_DesiredTermLength" class="loan_fields" rows="1" name="_DesiredTermLength">
+					<option value="">Desired Term Length</option>
+					<option value="3">Less Than 3 Months</option>
+					<option value="6">3 to 6 Months</option>
+					<option value="12">6 to 12 Months</option>
+					<option value="24">12 to 24 Months</option>
+					<option value="25">More than 24 Months</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return selectloan('_DesiredTermLength')"> -->
+			</div>
+
+			<div class="eow-field">
+				<input id="loc_address" class="loan_fields" type="text" name="Address3" rows="1" placeholder = "Address">
+				<!-- <img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return forloan('City3')"> -->
+			</div>
+
+			<div class="eow-field">
+				<input id="loc_city" class="loan_fields" type="text" name="City3" rows="1" placeholder = "City">
+				<!-- <img src="/assets/icon1.png"  class="select_img" id="estimate" onclick="return forloan('City3')"> -->
+			</div>
+
+			<div class="eow-field">
+				<input id="loc_state" type="text" name="State3" class="loan_fields" rows="1" placeholder = "State">
+				<!-- <img src="/assets/icon1.png"  class="select_img btnimg" onclick="return forloan('State3')">
+-->						</div>
+
+			<div class="eow-field">
+				<input id="close_date" type="text" value="" rows="1" name="_ExpectedCloseDate" class="loan_fields" placeholder = "Expected Close Date(MM/DD/YYYY)">
+				<!-- <img src="/assets/icon1.png"   class="select_img" onclick="return forloan('_ExpectedCloseDate')"> -->
+			</div>
+
+			<div class="eow-field">
+				<select id="lending_cat" name="_LendingCategory" class="loan_fields">
+					<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+					<option value="Business Financing">Business Financing</option>
+					<option value="Equity and Crowdfunding">Equity and Crowdfunding</option>
+					<option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"   class="select_img" onclick="return selectloan('_LendingCategory')"> -->
+			</div>
+
+			
+
+			<div class="eow-field">
+				<select id="lending_types" name="_LendingTypes" class="loan_fields">
+					<option value="Single Family Residence">Single Family Residence</option>
+					<option value="Multifamily">Multifamily</option>
+					<option value="Condo">Condo</option>
+					<option value="Hospitality">Hospitality</option>
+					<option value="Commercial">Commercial</option>
+					<option value="Development">Development</option>
+					<option value="Mixed Use">Mixed Use</option>
+					<option value="Retail">Retail</option>
+					<option value="Health Care">Health Care</option>
+					<option value="Industrial">Industrial</option>
+					<option value="Other">Other</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"   class="lending_types select_img" onclick="return selectloan('_LendingTypes')" style="display:none"> -->
+
+				<select id="financing_types" name="_BusinessFinancingTypes" style="display:none;" class="loan_fields">
+						<option value="Equipment/Inventory">Equipment/Inventory</option>
+						<option value="Working Capital">Working Capital</option>
+						<option value="Factoring">Factoring</option>
+						<option value="Cash Advances">Cash Advances</option>
+						<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+						<option value="Supply Chain Financing">Supply Chain Financing</option>
+						<option value="Expansion Capital">Expansion Capital</option>
+						<option value="Equity">Equity</option>
+						<option value="SBA Financing">SBA Financing</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"   class="financing_types select_img" onclick="return selectloan('_BusinessFinancingTypes')" style="display:block"> -->
+
+				<select id="equity_crowd" name="_EquityandCrowdFunding" style="display:none;" class="loan_fields">
+					<option value="Project Financing">Project Financing</option>
+					<option value="Acquisition and Development">Acquisition and Development</option>
+					<option value="Start Up">Start Up</option>
+					<option value="Business Partnership">Business Partnership</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"   class="equity_crowd select_img" onclick="return selectloan('_EquityandCrowdFunding')" style="display:none"> -->
+
+
+				<select id="mortgage_type" name="_MortageTypes" style="display:none;" class="loan_fields">
+					<option value="Owner Occupied">Owner Occupied</option>
+					<option value="Second Home">Second Home</option>
+					<option value="Investment Property">Investment Property</option>
+					<option value="FHA">FHA</option>
+					<option value="VA">VA</option>
+					<option value="Reverse Mortgage">Reverse Mortgage</option>
+					<option value="Sub Prime">Sub Prime</option>
+					<option value="HUD Financing">HUD Financing</option>
+					<option value="Multifamily">Multifamily</option>
+					<option value="Hospitality">Hospitality</option>
+					<option value="Land Development">Land Development</option>
+					<option value="Mixed Use">Mixed Use</option>
+					<option value="Retail">Retail</option>
+					<option value="Industrial">Industrial</option>
+					<option value="Healthcare">Healthcare</option>
+					<option value="Other">Other</option>
+				</select>
+				<!-- <img src="/assets/icon1.png"   class="mortgage_type select_img" onclick="return selectloan('_MortageTypes')" style="display:none"> -->
+
+			</div>
+			<!-- <div class="eow-field">
+				<select id="transaction_type" rows="1" name="_TransactionType0" class="loan_fields">
+						<option value="">Transaction Type</option>
+						<option value="Purchase">Purchase</option>
+						<option value="Refinance">Refinance</option>
+						<option value="Both">Both</option>
+				</select>
+			</div> -->
+
+		</div>
+		<div class="overview left-headings">  Overview</div>
+		<div class="overview_div" style="display:block;">
+			<div class="eow-field">
+				 <textarea placeholder="Summary" name="_LoanSummaryWhatareyoulookingfor" id="loan_summary"  rows="8" class="loan_fields"></textarea>
+				<!-- <img src="/assets/icon1.png" id="summary_btn" class="select_img" onclick="return textloan('_LoanSummaryWhatareyoulookingfor')"> -->
+			</div>
+			
+		</div>
+		
+		<div class="exit_strategy left-headings">  Exit Strategy</div>
+		<div class="exit_strategy_div" style="display:block;">
+			<div class="eow-field">
+				<textarea id="exit_starategy" rows="8" name="_ExitStrategyHowwillyoupaytheloanoff" placeholder = "Exit Strategy" class="loan_fields"></textarea>
+				<!-- <img src="/assets/icon1.png"  id="exit_starategy_btn" class="select_img btnimg" onclick="textloan('_ExitStrategyHowwillyoupaytheloanoff')"> -->
+			</div>
+		</div>

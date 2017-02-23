@@ -1,0 +1,37 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <h3>Contact Information</h3>
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12" id="contact_FirstName" <% if @contact_tab.custom_fields.include? "FirstName"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong>First Name:</strong>
+            <input id="FirstName" name="FirstName" type="text" class="loan_info_fields">
+            <label class="error contact_FirstName"> This field is required. </label>
+        </div>
+      </div>
+
+      <div class="columns medium-12" id="contact_Email"  <% if @contact_tab.custom_fields.include? "Email"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong>Email:</strong>
+           <input id="Email" name="Email" type="text" class="loan_info_fields">
+           <label class="error contact_Email"> This field is required. </label>
+        </div>
+      </div>
+
+      <div class="columns medium-12"  id="contact_Phone"  <% if @contact_tab.custom_fields.include? "Phone"%> style="display:none;" <% end %>>
+        <div class="trans-info-item">
+          <strong>Phone:</strong>
+            <input id="Phone" name="Phone" type="text" class="loan_info_fields">
+            <label class="error contact_Phone"> This field is required. </label>
+            
+        </div>
+      </div>
+     
+
+     
+
+    </div>
+  </div>
+</div><!-- content-white-box -->

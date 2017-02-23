@@ -1,0 +1,153 @@
+<div class="sidebar-item-header">Highlights</div>
+<div class="sidebar-item-content">
+	<table border="0" cellpadding="0" cellspacing="0" id="loan_highlight" class="highlights-table">
+	  <tr>
+	      <td>Net Loan Amount Requested:</td>
+	       <% 
+	      	amnt_requested = ""
+	      	unless @loan.info['_NetLoanAmountRequested0'].blank?
+	      		amnt_requested = fd_money(@loan.info['_NetLoanAmountRequested0'].to_i)
+	      	end
+	      %>
+	      <td><input id="_NetLoanAmountRequested0" type="text" value="<%= amnt_requested %>"  name="_NetLoanAmountRequested0" class="loan_info_fields"></td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_NetLoanAmountRequested0"} %>
+	      </td>
+	  </tr>
+	  <tr>
+	      <td>Estimated Market Value:</td>
+	       <% 
+	      	estimated_val = ""
+	      	unless @loan.info['_EstimatedMarketValue'].blank?
+	      		estimated_val = fd_money(@loan.info['_EstimatedMarketValue'].to_i)
+	      	end
+	      %>
+	      <td><input id="_EstimatedMarketValue" type="text" value="<%= estimated_val %>" name="_EstimatedMarketValue" class="loan_info_fields"></td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_EstimatedMarketValue"} %>
+	      </td>
+	  </tr>
+	  <tr>
+	      <td>Desired Term Length:</td>
+	      <td>
+	        <select id="_DesiredTermLength" rows="1" name="_DesiredTermLength" class="loan_info_fields">
+	          <option value="3" <% if @loan.info['_DesiredTermLength']=="3" %> selected="selected" <% end %>>Less Than 3 Months</option>
+	          <option value="6" <% if @loan.info['_DesiredTermLength']=="6" %> selected="selected" <% end %>>3 to 6 Months</option>
+	          <option value="12" <% if @loan.info['_DesiredTermLength']=="12" %> selected="selected" <% end %>>6 to 12 Months</option>
+	          <option value="24" <% if @loan.info['_DesiredTermLength']=="24" %> selected="selected" <% end %>>12 to 24 Months</option>
+	          <option value="25" <% if @loan.info['_DesiredTermLength']=="25" %> selected="selected" <% end %>>More than 24 Months</option>
+	        </select>
+	      </td>
+	      <td>
+	           <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_DesiredTermLength"} %>
+	      </td>
+	  </tr>
+	  <tr>
+	      <td>Address:</td>
+	      <td><input id="loc_address" type="text" value="<%=@loan.info['Address3']%>" rows="1" name="Address3" class="autocomplete loan_info_fields"> </td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"Address3"} %>
+	      </td>
+	  </tr>
+
+	  <tr>
+	      <td>City:</td>
+	      <td><input id="loc_city" class="field locality loan_info_fields" type="text" name="City3" value="<%= @loan.info['City3'] %>"></td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"City3"} %>
+	      </td>
+	  </tr>
+
+	  <tr>
+	      <td>State:</td>
+	      <td><input id="loc_state" class="field administrative_area_level_1 loan_info_fields" type="text" name="State3" value="<%= @loan.info['State3'] %>" ></td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"State3"} %>
+	      </td>
+	  </tr>
+
+	  <tr>
+	      <td>Expected Close Date:</td>
+	      <td><input id="_ExpectedCloseDate" type="text" value="<%= @loan.info['_ExpectedCloseDate'] %>" name="_ExpectedCloseDate" class="loan_info_fields"></td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_ExpectedCloseDate"} %>
+	      </td>
+	  </tr>
+
+	  <tr>
+	      <td>Lending Category:</td>
+	      <td>
+	        <select id="_LendingCategory" name="_LendingCategory" class="loan_info_fields">
+	          <option value="Private Real Estate Loan" <% if @loan.info['_LendingCategory']=="Private Real Estate Loan" %> selected="selected" <% end %>>Private Real Estate Loan</option>
+	          <option value="Business Financing" <% if @loan.info['_LendingCategory']=="Business Financing" %> selected="selected" <% end %>>Business Financing</option>
+	          <option value="Equity and Crowdfunding" <% if @loan.info['_LendingCategory']=="Equity and Crowdfunding" %> selected="selected" <% end %>>Equity and Crowdfunding</option>
+	          <option value="Residential or Commercial Mortgage" <% if @loan.info['_LendingCategory']=="Residential or Commercial Mortgage" %> selected="selected" <% end %>>Residential or Commercial Mortgage</option>
+	        </select>
+	      </td>
+	      <td>
+	          <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_LendingCategory"} %>
+	      </td>
+	  </tr>
+
+	  <tr>
+	      <td>Asset Type:</td>
+	      <td>
+	        <select id="_LendingTypes" name="_LendingTypes" class="loan_info_fields">
+	          <option value="Single Family Residence"  <% if @loan.info['_LendingTypes']=="Single Family Residence" %> selected="selected" <% end %>>Single Family Residence</option>
+	          <option value="Multifamily" <% if @loan.info['_LendingTypes']=="Multifamily" %> selected="selected" <% end %>>Multifamily</option>
+	          <option value="Condo" <% if @loan.info['_LendingTypes']=="Condo" %> selected="selected" <% end %>>Condo</option>
+	          <option value="Hospitality" <% if @loan.info['_LendingTypes']=="Hospitality" %> selected="selected" <% end %>>Hospitality</option>
+	          <option value="Commercial" <% if @loan.info['_LendingTypes']=="Commercial" %> selected="selected" <% end %>>Commercial</option>
+	          <option value="Development" <% if @loan.info['_LendingTypes']=="Development" %> selected="selected" <% end %>>Development</option>
+	          <option value="Mixed Use" <% if @loan.info['_LendingTypes']=="Mixed Use" %> selected="selected" <% end %>>Mixed Use</option>
+	          <option value="Retail" <% if @loan.info['_LendingTypes']=="Retail" %> selected="selected" <% end %>>Retail</option>
+	          <option value="Health Care" <% if @loan.info['_LendingTypes']=="Health Care" %> selected="selected" <% end %>>Health Care</option>
+	          <option value="Industrial" <% if @loan.info['_LendingTypes']=="Industrial" %> selected="selected" <% end %>>Industrial</option>
+	          <option value="Other" <% if @loan.info['_LendingTypes']=="Other" %> selected="selected" <% end %>>Other</option>
+	        </select>
+
+	        <select id="_BusinessFinancingTypes" name="_BusinessFinancingTypes" style="display:none;" class="loan_info_fields">
+	          <option value="Equipment/Inventory" <% if @loan.info['_BusinessFinancingTypes']=="Equipment/Inventory" %> selected="selected" <% end %>>Equipment/Inventory</option>
+	          <option value="Working Capital" <% if @loan.info['_BusinessFinancingTypes']=="Working Capital" %> selected="selected" <% end %>>Working Capital</option>
+	          <option value="Factoring" <% if @loan.info['_BusinessFinancingTypes']=="Factoring" %> selected="selected" <% end %>>Factoring</option>
+	          <option value="Cash Advances" <% if @loan.info['_BusinessFinancingTypes']=="Cash Advances" %> selected="selected" <% end %>>Cash Advances</option>
+	          <option value="Accounts Receivable Financing" <% if @loan.info['_BusinessFinancingTypes']=="Accounts Receivable Financing" %> selected="selected" <% end %>>Accounts Receivable Financing</option>
+	          <option value="Supply Chain Financing" <% if @loan.info['_BusinessFinancingTypes']=="Supply Chain Financing" %> selected="selected" <% end %>>Supply Chain Financing</option>
+	          <option value="Expansion Capital" <% if @loan.info['_BusinessFinancingTypes']=="Expansion Capital" %> selected="selected" <% end %>> Expansion Capital</option>
+	          <option value="Equity"  <% if @loan.info['_BusinessFinancingTypes']=="Equity" %> selected="selected" <% end %>>Equity</option>
+	          <option value="SBA Financing" <% if @loan.info['_BusinessFinancingTypes']=="SBA Financing" %> selected="selected" <% end %>>SBA Financing</option>
+	        </select>
+
+	        <select id="_EquityandCrowdFunding" name="_EquityandCrowdFunding" style="display:none;" class="loan_info_fields">
+	          <option value="Project Financing" <% if @loan.info['_EquityandCrowdFunding']=="Project Financing" %> selected="selected" <% end %>>Project Financing</option>
+	          <option value="Acquisition and Development" <% if @loan.info['_EquityandCrowdFunding']=="Acquisition and Development" %> selected="selected" <% end %>>Acquisition and Development</option>
+	          <option value="Start Up" <% if @loan.info['_EquityandCrowdFunding']=="Start Up" %> selected="selected" <% end %>>Start Up</option>
+	          <option value="Business Partnership" <% if @loan.info['_EquityandCrowdFunding']=="Business Partnership" %> selected="selected" <% end %>>Business Partnership</option>
+	        </select>
+
+	        <select id="_MortageTypes" name="_MortageTypes" style="display:none;" class="loan_info_fields">
+	          <option value="Owner Occupied" <% if @loan.info['_MortageTypes']=="Owner Occupied" %> selected="selected" <% end %>>Owner Occupied</option>
+	          <option value="Second Home" <% if @loan.info['_MortageTypes']=="Second Home" %> selected="selected" <% end %>>Second Home</option>
+	          <option value="Investment Property" <% if @loan.info['_MortageTypes']=="Investment Property" %> selected="selected" <% end %>>Investment Property</option>
+	          <option value="FHA" <% if @loan.info['_MortageTypes']=="FHA" %> selected="selected" <% end %>>FHA</option>
+	          <option value="VA" <% if @loan.info['_MortageTypes']=="VA" %> selected="selected" <% end %>>VA</option>
+	          <option value="Reverse Mortgage" <% if @loan.info['_MortageTypes']=="Reverse Mortgage" %> selected="selected" <% end %>>Reverse Mortgage</option>
+	          <option value="Sub Prime" <% if @loan.info['_MortageTypes']=="Sub Prime" %> selected="selected" <% end %>>Sub Prime</option>
+	          <option value="HUD Financing" <% if @loan.info['_MortageTypes']=="HUD Financing" %> selected="selected" <% end %>>HUD Financing</option>
+	          <option value="Multifamily" <% if @loan.info['_MortageTypes']=="Multifamily" %> selected="selected" <% end %>>Multifamily</option>
+	          <option value="Hospitality" <% if @loan.info['_MortageTypes']=="Hospitality" %> selected="selected" <% end %>>Hospitality</option>
+	          <option value="Land Development" <% if @loan.info['_MortageTypes']=="Land Development" %> selected="selected" <% end %>>Land Development</option>
+	          <option value="Mixed Use" <% if @loan.info['_MortageTypes']=="Mixed Use" %> selected="selected" <% end %>>Mixed Use</option>
+	          <option value="Retail" <% if @loan.info['_MortageTypes']=="Retail" %> selected="selected" <% end %>>Retail</option>
+	          <option value="Industrial" <% if @loan.info['_MortageTypes']=="Industrial" %> selected="selected" <% end %>>Industrial</option>
+	          <option value="Healthcare" <% if @loan.info['_MortageTypes']=="Healthcare" %> selected="selected" <% end %>>Healthcare</option>
+	          <option value="Other" <% if @loan.info['_MortageTypes']=="Other" %> selected="selected" <% end %>>Other</option>
+	        </select>
+	      </td>
+	      <td >
+	         <%= render partial: 'show_hide', locals:{loan: @loan, field_name:"_LendingTypes"} %>
+	      </td>
+	  </tr>
+
+	</table>
+</div>

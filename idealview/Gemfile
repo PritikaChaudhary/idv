@@ -83,11 +83,44 @@ gem "jquery-fileupload-rails"
 #gem to generate PDF
 gem 'prawn'
 gem 'pdfkit'
+gem 'time_difference'
+gem 'chartkick'
+gem 'fastimage'
+
+
 
 gem 'awesome_print'
 gem 'wicked_pdf'
 gem 'will_paginate'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
+gem 'config'
+gem  'bcrypt-ruby'
+gem 'resque', :require => "resque/server"
+gem 'mail', :require => false
+gem 'redis', :require => false
+gem 'fog'
+# gem 'paperclip-optimizer'
+# gem 'mongomapper-paperclip'
+# gem 'paperclip-compression'
+# gem 'mongomapper-paperclip'
+# gem 'instant_darkroom', :git => 'git://github.com/al-evans/instant_darkroom.git'
+gem 'image_optim'
+gem 'image_optim_pack'
+# gem 'apartment'
+gem 'acts_as_tenant'
+gem 'aescrypt'
+gem 'recurly'
+# gem 'devise_aes_encryptable'
+gem 'devise-token_authenticatable'
+gem 'rubillow'
+gem 'nokogiri'
+gem "mini_magick"
+gem "dropbox-sdk"
+gem 'rubyzip'
+gem 'httparty'
+
+
+
 
 
 

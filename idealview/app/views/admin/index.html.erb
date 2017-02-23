@@ -1,23 +1,221 @@
+<!---------------------- Add Brokler Popup ---------------------------------->
+    
+    <div id="myModal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead" style="text-align:center">
+        <h5 id="modalTitle" style="font-weight:bold;">Add Admin</h5>
+      </div>
+       
+      <div class="small-12 small-centered columns">
+        <form method="post" action="https://<%= @hostname %>/admin/create_user" class="addAdmin">
+
+        <div class="field">
+          <label for="user_name">Name</label><br>
+          <input type="text" name="user[name]" id="user_name" autofocus="autofocus">
+        </div>
+
+        <div class="field">
+          <label for="user_email">Email</label><br>
+          <input type="email" name="user[email]" id="user_email">
+          <label class="existed" style="color:red; display:none;"> Email already exist. </label>
+           <label class="email_empty" style="color:red; display:none;"> Please enter email address. </label>
+        </div>
+
+        <div class="field">
+          <label for="user_email">Username</label><br>
+          <input type="text" name="user[username]" id="username">
+          <label class="uexisted" style="color:red; display:none;"> Username already exist. </label>
+          <label class="uname_empty" style="color:red; display:none;"> Please enter username. </label>
+        </div>
+    
+        <div class="field">
+          <label for="user_password">Password</label> <br>
+          <input type="password" name="user[password]" id="user_password" autocomplete="off">
+           <label class="too_short" style="color:red; display:none;"> Password is too short (minimum is 8 characters). </label>
+           <label class="pass_empty" style="color:red; display:none;"> Please enter password. </label>
+       </div>
+
+      <input type="hidden" name="roles[Admin]" value="Admin" id="roles_Admin">
+      <input type="hidden" name="admin_user" value="true">
+      
+
+
+
+      <div class="actions">
+        <input type="button" value="Create Admin" name="commit" class="add_admin_btn button">
+      </div>
+
+       
+     </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+
+
+<!---------------------- Add Broker Popup ---------------------------------->
 <div class='row'>
-	<div class="small-8 small-centered columns">
-
-<h2>Manage Users</h2>
-
-<table>
-	<tr><th>Name</th><th>Email</th><th>Roles</th></tr>
-  <% @users.each do |user| %>
-    <tr>
-      <td><%= user.name %></td>
-      <td><%= link_to(user.email,  admins_edit_user_path(user)) %></td>
-      <td><%= user.roles_text %></td>
-	  <td>
-	  	<%= link_to 'Delete', admins_destroy_user_path(user),
-              method: :delete,
-              data: { confirm: 'Are you sure?' } %>
-	  </td>
-    </tr>
-  <% end %>
-</table>
-
+	
+  <div class="row" style="text-align:center;">
+    
+      <h2>Manage Admins</h2>
+    </div>
+    <div class="row">
+     
+            <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; margin-left:16px; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_admins()}">
+     
+          <%
+           # link_to((button_tag 'Add Admin', class: 'tiny button'), admins_new_user_path()) 
+           %>
+           <input type="button" class="tiny button add_admin" value="Add Admin" style="float:right; margin-right:16px;">
+           <% @baseurl = request.base_url
+              if @baseurl.include? "idealview"
+                @burl = "https://dash.idealview.us/"
+              elsif @baseurl.include? "idvstage"
+                @burl = "https://dash.idvstage.us/"
+              else
+                @burl = "http://localhost:3000/"
+              end
+           %>
+           <a href="<%= @burl %>/admin/download_csv_admin" class="tiny button" style="float: right; height: 38px; margin-right: 10px;"> Download CSV </a>
+      
+    </div>
+      <div class="row">
+          <div class="small-12 small-centered columns all_admins">
+            <table style="width:100%">
+            	<tr><th><input type="checkbox" name="select_all_admin"  class="select_all_admins" style="float:left; margin-bottom:0px;"></th><th>Name</th><th>Email</th><th>&nbsp;</th></tr>
+              <% @users.each do |user| %>
+                <tr>
+                  <td><input type="checkbox" nid="check_<%= user.id %>" name="select_admin" value="<%= user.id %>" class="single_admin" style="float:left; margin-bottom:0px;"></td>
+                  <td><%= user.name %></td>
+                  <td><%= link_to(user.email,  admins_edit_user_path(user)) %></td>
+                  <td><%= link_to((button_tag 'Edit', class: 'tiny button'), admins_edit_user_path(user)) %></td>
+                   <!-- <td><%= user.roles_text %></td>
+                   <td><%= user.is_admin %></td> -->
+            	  <!-- <td>
+            	  	<%= link_to 'Delete', admins_destroy_user_path(user),
+                          method: :delete,
+                          data: { confirm: 'Are you sure?' } %>
+            	  </td> -->
+                </tr>
+              <% end %>
+            </table>
+          </div>
+      </div>
+  </div>
 </div>
-</div>
+<script type="text/javascript">
+  $('document').ready(function(){
+      $(".select_all_admins").change(function () {
+        $(".single_admin").prop('checked', $(this).prop("checked"));
+      });
+
+      $(".add_admin").click(function(){
+        $('#myModal').foundation('reveal', 'open');
+      });
+
+      $('.add_admin_btn').click(function(){
+        var status = "true";
+        fsubmit = status
+        // alert(fsubmit)
+        uemail = $('#user_email').val();
+        uname = $('#username').val();
+        
+
+        upass = $('#user_password').val();
+        var ucount = upass.length;
+        if(ucount<8)
+        {
+            $('.too_short').show();
+            status = "false";
+        }
+
+        if(uemail=="")
+        {
+            $('.email_empty').show();
+            $('.existed').hide();
+            status = "false";
+        }
+
+        if(uname=="")
+        {
+           $('.uname_empty').show();
+           $('.uexisted').hide();
+           status = "false";
+        }
+        
+        this_email = "email="+uemail;
+        $.ajax({
+            data: this_email,
+            type: 'POST',
+            url: '/admin/check_email',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.existed').show();
+                    $('.email_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+
+        this_name = "username="+uname;
+        $.ajax({
+            data: this_name,
+            type: 'POST',
+            url: '/admin/check_uname',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.uexisted').show();
+                    status = "false";
+                }
+               
+            }
+            
+        });
+
+      setTimeout(function() {
+         
+         if(status=="false")
+          {
+            // alert(status+"1");
+             return false;
+          }
+          else
+          {
+            // return false;
+            // alert(status+"2");
+             $('.addAdmin').submit(); 
+          }
+
+      }, 3000);       
+
+     });
+
+
+  });
+
+  function delete_admins()
+  {
+      var allVals=[];
+      $('input[name="select_admin"]:checked').each(function(){
+          allVals.push($(this).val());
+      });
+      if (allVals.length === 0) {
+          alert("Please select atleast one broker.");
+          return false;
+      }
+      var data = "&moredata=" + allVals;
+      $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/admin/delete_admins',
+               success:function(data){
+                  $('.all_admins').html(data);
+              }
+              
+          });
+
+  }
+</script>

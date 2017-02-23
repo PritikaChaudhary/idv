@@ -1,0 +1,10 @@
+<div id='main_image_preview' class='centered' style='width:80%;margin-left:auto;margin-right:auto;text-align:center'>
+		<% if @loan.featured_image %>
+		  <img style='max-height:400px;width:auto;' src="<%=@loan.featured_image['url']%>">
+		<% else %>
+            <% if @loan.info['Address3']%>
+                <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= @loan.info['Address3'] %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-left:45px;">
+            <% end %>
+        <% end %>
+</div>
+					  	

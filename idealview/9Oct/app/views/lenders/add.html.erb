@@ -1,0 +1,741 @@
+<style type="text/css">
+	.same_line
+	{
+		float: left;
+    	width: 48%;
+	}
+	.same_lines
+	{
+		float: left;
+    	margin-left: 23px;
+    	width: 48%;
+	}
+	.field
+	{
+		width:100%;
+		float: left;
+	}
+	#ui-datepicker-div
+	{
+		z-index: 99 !important;
+		background: none repeat scroll 0 0 #808080;
+	}
+	table
+	{
+		 border: 1px solid #000000;
+   		 margin-bottom: 0.25rem;
+	}
+	.ui-datepicker-next
+	{
+		margin-left: 8px;
+		color: #000000;
+	}
+	.ui-datepicker-prev
+	{
+		margin-left: 3px;
+		color: #000000;
+	}
+	.ui-datepicker-title
+	{
+		margin-left: 3px;
+	}
+	.actions
+	{
+		margin-top:14px;
+	}
+	h3
+	{
+		text-align: center;
+	}
+</style>
+<script type="text/javascript">
+	$('document').ready(function() {
+		 
+		$('.lend_cat').change(function(){
+	        var slct = $(this).val();
+	        if(slct=="Business Financing")
+	        {
+	            $('#lending_type').hide();
+	            $('#financing_type').show();
+	            $('#crowd_funding').hide();
+	            $('#mortgage_types').hide();
+	        }
+	        if(slct=="Equity and Crowd Funding")
+	        {
+	            $('#lending_type').hide();
+	            $('#financing_type').hide();
+	            $('#crowd_funding').show();
+	            $('#mortgage_types').hide();
+	        }
+	        if(slct=="Residential or Commercial Mortage")
+	        {
+	            $('#lending_type').hide();
+	            $('#financing_type').hide();
+	            $('#crowd_funding').hide();
+	            $('#mortgage_types').show();
+	        }
+	        if(slct=="Private Real Estate Loan")
+	        {
+	            $('#lending_type').show();
+	            $('#financing_type').hide();
+	            $('#crowd_funding').hide();
+	            $('#mortgage_types').hide();
+	        }
+    	});
+	});
+
+function check_email()
+{
+    fetch_email = $("#Email").val()
+     var data = "email=" + fetch_email;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/lenders/check_email',
+             success:function(response){
+				if(response=="no")
+                {
+                	alert("Email already exist.");
+                	
+                }
+                else
+                {
+                	$( "#lenderForm" ).submit();
+                }
+            }
+			
+		});
+			   
+}
+</script>
+<div class='row'>
+	<div class="small-8 small-centered columns">
+
+		<h3>Company Contact Information</h3>
+		  <form method="post" action="http://<%= @hostname %>/lenders/add_lender" id="lenderForm">
+		  
+		  <div class="field">
+				<label for="Company">Company Name</label>
+				<br>
+				<input id="Company" type="text" name="Company" autofocus="autofocus">
+		  </div>
+
+		   <div class="field">
+			<label for="JobTitle">Job Title</label>
+			<br>
+			<input id="JobTitle" type="text" name="JobTitle" autofocus="autofocus">
+		 </div>
+		 <div class="field">
+			<div class="same_line">
+				<label for="FirstName">First Name</label>
+				<br>
+				<input id="FirstName" type="text" name="FirstName" autofocus="autofocus">
+			 </div>
+			 <div class="same_lines">
+				<label for="LastName">Last Name</label>
+				<br>
+				<input id="LastName" type="text" name="LastName" autofocus="autofocus">
+		 	</div>
+		 </div>
+		 <div class="field">
+			<label for="Email">Email</label>
+			<br>
+			<input id="Email" type="text" name="Email" autofocus="autofocus">
+		 </div>
+		  <div class="field">
+			<label for="broker">Are you a broker who represents a lender at these terms?</label>
+			<br>
+			<input type="radio" value="1" name="broker" id="yes"> <label>Yes</label>
+			<input type="radio" checked="checked" value="0" name="broker" id="no"> <label>No</label>
+		 </div>
+		 <div class="field">
+			<label for="StreetAddress1">Address</label>
+			<br>
+			<input id="StreetAddress1" type="text" name="StreetAddress1" autofocus="autofocus">
+		 </div>
+		 <div class="field">
+			<label for="City">City</label>
+			<br>
+			<input id="City" type="text" name="City" autofocus="autofocus">
+		 </div>
+		  <div class="field">
+			<label for="State">State</label>
+			<br>
+			<select id="State" autofocus="autofocus"  name="State">
+			<option selected="selected" value="">Select</option>
+			<option value="Alabama">Alabama</option>
+			<option value="Alaska">Alaska</option>
+			<option value="Arizona">Arizona</option>
+			<option value="Arkansas">Arkansas</option>
+			<option value="California">California</option>
+			<option value="Colorado">Colorado</option>
+			<option value="Connecticut">Connecticut</option>
+			<option value="Delaware">Delaware</option>
+			<option value="District of Columbia">District of Columbia</option>
+			<option value="Florida">Florida</option>
+			<option value="Georgia">Georgia</option>
+			<option value="Hawaii">Hawaii</option>
+			<option value="Idaho">Idaho</option>
+			<option value="Illinois">Illinois</option>
+			<option value="Indiana">Indiana</option>
+			<option value="Iowa">Iowa</option>
+			<option value="Kansas">Kansas</option>
+			<option value="Kentucky">Kentucky</option>
+			<option value="Louisiana">Louisiana</option>
+			<option value="Maine">Maine</option>
+			<option value="Maryland">Maryland</option>
+			<option value="Massachusetts">Massachusetts</option>
+			<option value="Michigan">Michigan</option>
+			<option value="Minnesota">Minnesota</option>
+			<option value="Mississippi">Mississippi</option>
+			<option value="Missouri">Missouri</option>
+			<option value="Montana">Montana</option>
+			<option value="Nebraska">Nebraska</option>
+			<option value="Nevada">Nevada</option>
+			<option value="New Hampshire">New Hampshire</option>
+			<option value="New Jersey">New Jersey</option>
+			<option value="New Mexico">New Mexico</option>
+			<option value="New York">New York</option>
+			<option value="North Carolina">North Carolina</option>
+			<option value="North Dakota">North Dakota</option>
+			<option value="Ohio">Ohio</option>
+			<option value="Oklahoma">Oklahoma</option>
+			<option value="Oregon">Oregon</option>
+			<option value="Pennsylvania">Pennsylvania</option>
+			<option value="Rhode Island">Rhode Island</option>
+			<option value="South Carolina">South Carolina</option>
+			<option value="South Dakota">South Dakota</option>
+			<option value="Tennessee">Tennessee</option>
+			<option value="Texas">Texas</option>
+			<option value="Utah">Utah</option>
+			<option value="Vermont">Vermont</option>
+			<option value="Virginia">Virginia</option>
+			<option value="Washington">Washington</option>
+			<option value="West Virginia">West Virginia</option>
+			<option value="Wisconsin">Wisconsin</option>
+			<option value="Wyoming">Wyoming</option>
+			<option value="Armed Forces Americas">Armed Forces Americas</option>
+			<option value="Armed Forces Europe">Armed Forces Europe</option>
+			<option value="Armed Forces Pacific">Armed Forces Pacific</option>
+			</select>
+		 </div>
+		 
+		 	<div class="field">
+				<label for="PostalCode">Zip Code</label>
+				<br>
+				<input id="PostalCode" type="text" name="PostalCode" autofocus="autofocus" >
+			 </div>
+		 
+		  <div class="field">
+		 		<label for="_TimeInBusiness">Time In Business</label>
+				<br>
+				<select id="_TimeInBusiness"  autofocus="autofocus"  name="_TimeInBusiness">
+					<option value="1">1 Year</option>
+					<option value="2">2 Years</option>
+					<option value="3">3 Years</option>
+					<option value="4">4 Years</option>
+					<option value="5">5 Years</option>
+					<option value="6">6 Years</option>
+					<option value="7">7 Years</option>
+					<option value="8">8 Years</option>
+					<option value="9">9 Years</option>
+					<option value="10">10+ Years</option>
+				</select>
+		   </div>
+		
+		 <div class="field">
+			 <div class="same_line">
+				<label for="_SocialSecurityNumber">Social Security Number</label>
+				<br>
+				<input id="_SocialSecurityNumber" type="text" name="_SocialSecurityNumber" autofocus="autofocus">
+			 </div>
+			  <div class="same_lines">
+				<div class="field">
+					<label for="_BorrowerTimeInBusiness">How Long in Business?</label>
+					<br>
+					<select id="_BorrowerTimeInBusiness" name="_BorrowerTimeInBusiness">
+						<option value="1">1 Year</option>
+						<option value="2">2 Years</option>
+						<option value="3">3 Years</option>
+						<option value="4">4 Years</option>
+						<option value="5">5 Years</option>
+						<option value="6">6 Years</option>
+						<option value="7">7 Years</option>
+						<option value="8">8 Years</option>
+						<option value="9">9 Years</option>
+						<option value="10">10+ Years</option>
+					</select>
+				 </div>
+			 </div>
+		 </div>
+		 <div class="field">
+		  	
+				<label for="_CapitalizationStructure0">Capitalization Structure</label>
+				<br>
+				<select id="_CapitalizationStructure0" name="_CapitalizationStructure0" autofocus="autofocus">
+					<option value="Fund">Fund</option>
+					<option value="Private Company">Private Company</option>
+					<option value="Public Company">Public Company</option>
+					<option value="Individual">Individual</option>
+					<option value="Other">Other</option>
+				</select>
+		</div>
+		
+
+
+		 <h3>Loan Specs</h3>
+		 <div class="field">
+			<label for="_LoanMinDropDown">Min Loan Amount</label>
+			<br>
+				<select id="_LoanMinDropDown" name="_LoanMinDropDown" autofocus="autofocus">
+					<option selected="selected" value="0">$0</option>
+					<option value="10000">$10,000</option>
+					<option value="50000">$50,000</option>
+					<option value="100000">$100,000</option>
+					<option value="500000">$500,000</option>
+					<option value="1000000">$1,000,000</option>
+					<option value="2000000">$2,000,000</option>
+					<option value="5000000">$5,000,000</option>
+				</select>
+		</div>		
+
+		<div class="field">
+			<label for="_LoanMaxDropDown">Max Loan Amount</label>
+			<br>
+				<select id="_LoanMaxDropDown" name="_LoanMaxDropDown" autofocus="autofocus">
+					<option selected="selected" value="No Max">No Max</option>
+					<option value="50000">$50,000</option>
+					<option value="100000">$100,000</option>
+					<option value="500000">$500,000</option>
+					<option value="1000000">$1,000,000</option>
+					<option value="2000000">$2,000,000</option>
+					<option value="5000000">$5,000,000</option>
+				</select>
+		</div>	
+		
+		<div class="field">
+			<label for="_InterestRateMin">Min Interest Rate</label>
+			<br>
+				<select id="_InterestRateMin"  name="_InterestRateMin"  autofocus="autofocus">
+					<option value="">Select</option>
+					<option selected="selected" value="1">1%</option>
+					<option value="2">2%</option>
+					<option value="3">3%</option>
+					<option value="4">4%</option>
+					<option value="5">5%</option>
+					<option value="6">6%</option>
+					<option value="7">7%</option>
+					<option value="8">8%</option>
+					<option value="9">9%</option>
+					<option value="10">10%</option>
+					<option value="11">11%</option>
+					<option value="12">12%</option>
+					<option value="13">13%</option>
+					<option value="14">14%</option>
+					<option value="15">15%</option>
+					<option value="16">16%</option>
+					<option value="17">17%</option>
+					<option value="18">18%</option>
+					<option value="19">19%</option>
+					<option value="20">20%</option>
+					
+				</select>
+		</div>
+
+		<div class="field">
+			<label for="_InterestRateMax">Max Interest Rate</label>
+			<br>
+				<select id="_InterestRateMax" autofocus="autofocus" name="_InterestRateMax">
+					<option value="">Select</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+					<option value="11">11</option>
+					<option value="12">12</option>
+					<option value="13">13</option>
+					<option value="14">14</option>
+					<option value="15">15</option>
+					<option value="16">16</option>
+					<option value="17">17</option>
+					<option value="18">18</option>
+					<option value="19">19</option>
+					<option selected="selected" value="20">20</option>
+					<option value="21">21</option>
+					<option value="22">22</option>
+					<option value="23">23</option>
+					<option value="24">24</option>
+					<option value="25">25</option>
+					<option value="26">26</option>
+					<option value="27">27</option>
+					<option value="28">28</option>
+					<option value="29">29</option>
+					<option value="30">30</option>
+					<option value="31">31</option>
+					<option value="32">32</option>
+					<option value="33">33</option>
+					<option value="34">34</option>
+					<option value="35">35</option>
+					<option value="36">36</option>
+				</select>
+		</div>
+
+		<div class="field">
+			<label for="_PointsMin">Min Points</label>
+			<br>
+			<select id="_PointsMin" name="_PointsMin" autofocus="autofocus">
+				<option value="">Select</option>
+				<option selected="selected" value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+			</select>	
+		</div>
+
+		<div class="field">
+			<label for="_PointsMax">Max Points</label>
+			<br>
+			<select id="_PointsMax" autofocus="autofocus" name="_PointsMax">
+			<option value="">Select</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option selected="selected" value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			<option value="19">19</option>
+			<option value="20">20</option>
+			</select>	
+		</div>
+
+		
+		<div class="field">
+			<label for="_TermLengthType">Do you lend for years or for months?</label>
+			<br>
+			<select id="_TermLengthType"  name="_TermLengthType" autofocus="autofocus">
+				<option value="month(s)">month(s)</option>
+				<option value="year(s)">year(s)</option>
+			</select>	
+		</div>
+
+		<div class="field">
+			<label for="_TermLengthMin">Min Term Length</label>
+			<br>
+			<select id="_TermLengthMin" name="_TermLengthMin" autofocus="autofocus">
+				<option value="">Select</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+				<option value="24">24</option>
+				<option value="25">25</option>
+				<option value="26">26</option>
+				<option value="27">27</option>
+				<option value="28">28</option>
+				<option value="29">29</option>
+				<option value="30">30</option>
+				<option value="31">31</option>
+				<option value="32">32</option>
+				<option value="33">33</option>
+				<option value="34">34</option>
+				<option value="35">35</option>
+				<option value="36">36</option>
+			</select>	
+		</div>
+
+		<div class="field">
+			<label for="_TermLengthMax">Max Term Length</label>
+			<br>
+			<select id="_TermLengthMax" name="_TermLengthMax" autofocus="autofocus">
+				<option value="">Select</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option selected="selected" value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+				<option value="24">24</option>
+				<option value="25">25</option>
+				<option value="26">26</option>
+				<option value="27">27</option>
+				<option value="28">28</option>
+				<option value="29">29</option>
+				<option value="30">30</option>
+				<option value="31">31</option>
+				<option value="32">32</option>
+				<option value="33">33</option>
+				<option value="34">34</option>
+				<option value="35">35</option>
+				<option value="36">36</option>
+			</select>	
+		</div>
+	  
+
+
+		<h3>Lender Preferences</h3>
+		 <div class="field">
+				<label for="_LendingCategory">Lending Category</label>
+				<br>
+				<select id="_LendingCategory" class="lend_cat" name="_LendingCategory" autofocus="autofocus">
+					<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+					<option value="Business Financing">Business Financing</option>
+					<option value="Equity and Crowd Funding">Equity and Crowd Funding</option>
+					<option value="Residential or Commercial Mortage">Residential or Commercial Mortage</option>
+				</select>
+		</div>
+
+		<div class="field" id="lending_type">
+			<label for="_LendingTypes">Lending Types</label>
+			<br>
+			<select id="_LendingTypes" name="_LendingTypes[]" autofocus="autofocus" multiple="multiple" style="height:94px;">
+				<option value="">Select</option>
+				<option value="Single Family Residence">Single Family Residence</option>
+				<option value="Multifamily">Multifamily</option>
+				<option value="Hospitality">Hospitality</option>
+				<option value="Commercial">Commercial</option>
+				<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+				<option value="Development">Development</option>
+				<option value="Mixed Use">Mixed Use</option>
+				<option value="Retail">Retail</option>
+				<option value="Health Care">Health Care</option>
+				<option value="Industrial">Industrial</option>
+				<option value="Other">Other</option>
+			</select>
+		</div>
+
+		<div class="field" id="financing_type" style="display:none">
+			<label for="_BusinessFinancingTypes">Business Financing Types</label>
+			<br>
+			<select id="_BusinessFinancingTypes" autofocus="autofocus"  name="_BusinessFinancingTypes[]" multiple="multiple" style="height:94px;">
+				<option value="">All</option>
+				<option value="Equipment/Inventory">Equipment/Inventory</option>
+				<option value="Working Capital">Working Capital</option>
+				<option value="Factoring">Factoring</option>
+				<option value="Cash Advances">Cash Advances</option>
+				<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+				<option value="Supply Chain Financing">Supply Chain Financing</option>
+				<option value="Expansion Capital">Expansion Capital</option>
+				<option value="Equity">Equity</option>
+				<option value="SBA Financing">SBA Financing</option>
+				<option value="Other">Other</option>
+			</select>
+		</div>
+
+		<div class="field" id="crowd_funding" style="display:none">
+			<label for="_EquityandCrowdFunding">Equity & Crowd Funding </label>
+			<br>
+			<select id="_EquityandCrowdFunding" autofocus="autofocus" name="_EquityandCrowdFunding[]" multiple="multiple" style="height:94px;">
+				<option value="">Select</option>
+				<option value="Project Financing">Project Financing</option>
+				<option value="Acquisition and Development">Acquisition and Development</option>
+				<option value="Start Up">Start Up</option>
+				<option value="Business Partnership">Business Partnership</option>
+				<option value="Other">Other</option>
+			</select>
+		</div>
+
+		<div class="field" id="mortgage_types" style="display:none">
+			<label for="_MortageTypes">Mortgage Types</label>
+			<br>
+			<select id="_MortageTypes" autofocus="autofocus" name="_MortageTypes[]" multiple="multiple" style="height:94px;">
+				<option value="">Select</option>
+				<option value="Owner Occupied">Owner Occupied</option>
+				<option value="Second Home">Second Home</option>
+				<option value="Investment Property">Investment Property</option>
+				<option value="FHA">FHA</option>
+				<option value="Reverse Mortgage">Reverse Mortgage</option>
+				<option value="Sub Prime">Sub Prime</option>
+				<option value="HUD Financing">HUD Financing</option>
+				<option value="Multifamily">Multifamily</option>
+				<option value="Hospitality">Hospitality</option>
+				<option value="Land Development">Land Development</option>
+				<option value="Mixed Use">Mixed Use</option>
+				<option value="Retail">Retail</option>
+				<option value="Industrial">Industrial</option>
+				<option value="Healthcare">Healthcare</option>
+				<option value="Other">Other</option>
+			</select>
+		</div>
+
+		<div class="field">
+			<label for="_LendingStates0">Domestic Geography</label>
+			<br>
+			<select id="_LendingStates0" autofocus="autofocus" size="10" multiple="" name="_LendingStates0[]" style="height:94px;">
+				<option value="">Select</option>
+				<option value="Nationwide">Nationwide</option>
+				<option value="Alabama">Alabama</option>
+				<option value="Alaska">Alaska</option>
+				<option value="Arizona">Arizona</option>
+				<option value="Arkansas">Arkansas</option>
+				<option value="California">California</option>
+				<option value="Colorado">Colorado</option>
+				<option value="Connecticut">Connecticut</option>
+				<option value="Delaware">Delaware</option>
+				<option value="Florida">Florida</option>
+				<option value="Georgia">Georgia</option>
+				<option value="Hawaii">Hawaii</option>
+				<option value="Idaho">Idaho</option>
+				<option value="Illinois Indiana">Illinois Indiana</option>
+				<option value="Iowa">Iowa</option>
+				<option value="Kansas">Kansas</option>
+				<option value="Kentucky">Kentucky</option>
+				<option value="Louisiana">Louisiana</option>
+				<option value="Maine">Maine</option>
+				<option value="Maryland">Maryland</option>
+				<option value="Massachusetts">Massachusetts</option>
+				<option value="Michigan">Michigan</option>
+				<option value="Minnesota">Minnesota</option>
+				<option value="Mississippi">Mississippi</option>
+				<option value="Missouri">Missouri</option>
+				<option value="Montana Nebraska">Montana Nebraska</option>
+				<option value="Nevada">Nevada</option>
+				<option value="New Hampshire">New Hampshire</option>
+				<option value="New Jersey">New Jersey</option>
+				<option value="New Mexico">New Mexico</option>
+				<option value="New York">New York</option>
+				<option selected="" value="North Carolina">North Carolina</option>
+				<option value="North Dakota">North Dakota</option>
+				<option value="Ohio">Ohio</option>
+				<option value="Oklahoma">Oklahoma</option>
+				<option value="Oregon">Oregon</option>
+				<option value="Pennsylvania Rhode Island">Pennsylvania Rhode Island</option>
+				<option value="South Carolina">South Carolina</option>
+				<option value="South Dakota">South Dakota</option>
+				<option value="Tennessee">Tennessee</option>
+				<option value="Texas">Texas</option>
+				<option value="Utah">Utah</option>
+				<option value="Vermont">Vermont</option>
+				<option value="Virginia">Virginia</option>
+				<option value="Washington">Washington</option>
+				<option value="West Virginia">West Virginia</option>
+				<option value="Wisconsin">Wisconsin</option>
+				<option value="Wyoming">Wyoming</option>
+				<option value="International">International</option>
+			</select>
+		</div>
+
+
+		<div class="field" >
+			<label for="_LoanToValueMin">Min Loan To Value</label>
+			<br>
+			<select id="_LoanToValueMin"  name="_LoanToValueMin" autofocus="autofocus">
+				<option value="None">None</option>
+				<option value="20">20%</option>
+				<option value="25">25%</option>
+				<option value="30">30%</option>
+				<option value="35">35%</option>
+				<option value="40">40%</option>
+				<option value="45">45%</option>
+				<option value="50">50%</option>
+				<option value="55">55%</option>
+				<option value="60">60%</option>
+				<option value="65">65%</option>
+				<option value="70">70%</option>
+				<option value="75">75%</option>
+				<option value="80">80%</option>
+				<option value="85">85%</option>
+				<option value="90">90%</option>
+				<option value="95">95%</option>
+				<option value="100">100%</option>
+			</select>
+		</div>
+
+		<div class="field" >
+			<label for="_LoanToValueMax">Max Loan To Value</label>
+			<br>
+			<select id="_LoanToValueMax" autofocus="autofocus" name="_LoanToValueMax">
+				<option value="">Please select one</option>
+				<option value="10">10</option>
+				<option value="20">20</option>
+				<option value="30">30</option>
+				<option value="40">40</option>
+				<option value="50">50</option>
+				<option value="60">60</option>
+				<option value="70">70</option>
+				<option value="80">80</option>
+				<option value="90">90</option>
+				<option value="100">100</option>
+				<option value="None">None</option>
+			</select>
+		</div>
+
+
+
+		 <div class="field">
+			<label for="_OtherLendingPreferences">Do you have other lending preferences we should know about?</label>
+			<br>
+			<textarea name="_OtherLendingPreferences" id="_OtherLendingPreferences" autofocus="autofocus" style="width: 626px; height: 187px;"></textarea>
+		</div>
+			
+		  <div class="actions">
+		   <input type="button" value="SUBMIT" class="tiny button success" onclick="return check_email()">
+		  </div>
+		  </form>
+	</div>
+</div>

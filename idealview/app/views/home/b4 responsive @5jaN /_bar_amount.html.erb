@@ -1,0 +1,99 @@
+<script type="text/javascript">
+	google.charts.load("current", {packages:['corechart']});
+	google.charts.setOnLoadCallback(drawChart);
+	function drawChart() {
+	  var data = google.visualization.arrayToDataTable([
+	    ['Dates', 'Net Amount'],
+	    <% unless @dates.blank? %>
+	    <% @dates.each do |record|%>
+	    	["<%= record['date'] %>",<%= record['num'].to_i %>],
+	    <% end %>
+	    <% end %>
+	  ]);
+
+	  <% if @chart_type == "row_chart"%>
+	  	
+
+	      var options = {
+	        title: '<%= @bar_heading %>',
+	        height: 700,
+		    colors: ['#b0120a'],
+	        chartArea: {width: '50%'},
+	        hAxis: {
+	          title: 'Amount',
+	          minValue: 0
+	        },
+	        vAxis: {
+	          title: ''
+	        },
+	        width: 800,
+	      };
+
+	      var chart = new google.visualization.BarChart(document.getElementById('columnchart_plains'));
+	  <% elsif @chart_type == "area_chart"%>
+	  	   
+	  	   var options = {
+	          title: '<%= @bar_heading %>',
+	          colors: ['#b0120a'],
+	          hAxis: {title: '',  titleTextStyle: {color: '#333'}},
+	          vAxis: {minValue: 0},
+	          width: 800,
+	        };
+
+	        var chart = new google.visualization.AreaChart(document.getElementById('columnchart_plains'));
+	   
+	   <% elsif @chart_type == "line_chart"%>
+
+	  	var options = {
+          title: '<%= @bar_heading %>',
+          curveType: 'function',
+          colors: ['#b0120a'],
+          legend: { position: 'bottom' },
+          width: 800,
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('columnchart_plains'));
+      <% elsif @chart_type == "pie_chart"%>
+      		var options = {
+	          title: '<%= @bar_heading %>',
+	          width: 800,
+	        };
+
+	        var chart = new google.visualization.PieChart(document.getElementById('columnchart_plains'));
+	  <% elsif @chart_type == "donut_chart"%>
+      		 var options = {
+	          title: '<%= @bar_heading %>',
+	          pieHole: 0.4,
+	          width: 800,
+	        };
+
+	        var chart = new google.visualization.PieChart(document.getElementById('columnchart_plains'));
+
+	   <% elsif @chart_type == "scatter_chart"%>
+      		 var options = {
+	          title: '<%= @bar_heading %>',
+	          hAxis: {title: ''},
+	          vAxis: {title: 'Net Amount'},
+	          legend: 'none',
+	          width: 800,
+	        };
+
+	        var chart = new google.visualization.ScatterChart(document.getElementById('columnchart_plains'));
+	  <% else %>
+		  var options = {
+		    title: "<%= @bar_heading %>",
+		    height: 700,
+		    chartArea: {width: '90%'},
+	        bar: {groupWidth: '100%'},
+		    legend: { position: 'none' },
+		    colors: ['#b0120a'],
+		    width: 800,
+		  };
+		   var chart = new google.visualization.ColumnChart(document.getElementById('columnchart_plains'));
+	   <% end  %>
+	  	chart.draw(data, options);
+	  	
+		}
+</script>
+
+<div id="columnchart_plains" style="height: 750px; text-align:center !important;"></div>		

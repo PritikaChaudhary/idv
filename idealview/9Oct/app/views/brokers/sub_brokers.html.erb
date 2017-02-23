@@ -1,0 +1,230 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.large-3 {
+    width: 25%;
+}
+.large-2 {
+    width: 25.667%;
+}
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+$('document').ready(function(){
+     $('#search_form').submit(function() {
+      return false;
+    });
+})
+
+
+
+</script>
+<% unless @infoBroker.parent_broker.blank? %>
+        <div class="row" style="margin-top:25px">
+            <div class="br-header">
+                
+                <h3 class='text-center'>Admin</h3>
+            </div>
+        </div>
+        <div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+            <%= render partial: 'layouts/messages' %>
+            <% color_class = ''%>
+            <% 
+            unless @admins.blank?
+            @admins.each do |admin| 
+                 unless admin['delete']==1 %>
+                <div class='row <%=color_class%> bottom-space text-left'>
+                    
+                    
+                    
+                    <div class='large-3 columns'>
+                        <a href="http://<%= @hostname %>/brokers/show/<%= admin.id %>">
+                            <% unless admin.name.blank? %>
+                                <%= admin.name %>
+                            <% else %>
+                                 "N/A"
+                            <% end %>
+                         </a>
+                    </div>
+
+                    <div class='large-2 columns'>
+                        <%= admin.email %>
+                    </div>
+                    
+                    <div class='large-2 columns'>
+                        <a href="tel:<%= admin.phone1 %>"><%= admin.phone1 %></a>
+                    </div>
+
+                     <div class='large-2 columns'>
+                        <% unless @infoBroker.permissions.blank? 
+                             allow = @infoBroker.permissions.split(",")
+                             if allow.include? "change_passwords"
+                              
+                         %>
+                            <a href="http://<%= @hostname %>/brokers/change_password/<%= admin.id %>" class="tiny button success sortbtn" >
+                                Change Password
+                            </a>
+                        <%
+                         end
+                         else %>
+                            <a href="http://<%= @hostname %>/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
+                                Edit
+                            </a>
+                        <% end %>
+
+                        <a href="http://<%= @hostname %>/brokers/loans/<%= admin.id %>" class="tiny button" >
+                            View Loans
+                         </a>
+                       
+                     </div>
+                </div>
+
+               
+                    
+
+                <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+            <%
+            end
+           end 
+        end
+        %>
+
+        </div>
+<% end %>
+
+
+
+
+
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Sub brokers</h3>
+    </div>
+</div>
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <%= render partial: 'layouts/messages' %>
+    <% color_class = ''%>
+    <% 
+    unless @brokers.blank?
+    @brokers.each do |broker| 
+         unless broker['delete']==1 %>
+        <div class='row <%=color_class%> bottom-space text-left'>
+            
+            
+            
+            <div class='large-3 columns'>
+                <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
+                    <% unless broker.name.blank? %>
+                        <%= broker.name %>
+                    <% else %>
+                         "N/A"
+                    <% end %>
+                 </a>
+            </div>
+
+            <div class='large-2 columns'>
+                <%= broker.email %>
+            </div>
+            
+            <div class='large-2 columns'>
+                <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
+            </div>
+
+             <div class='large-2 columns'>
+               <% unless @infoBroker.permissions.blank? 
+                     allow = @infoBroker.permissions.split(",")
+                     if allow.include? "change_passwords"
+                 %>
+                    <a href="http://<%= @hostname %>/brokers/change_password/<%= broker.id %>" class="tiny button success sortbtn" >
+                        Change Password
+                    </a>
+                <%
+                 end
+                 else %>
+                    <a href="http://<%= @hostname %>/brokers/edit_user/<%= broker.id %>" class="tiny button success sortbtn" >
+                        Edit
+                    </a>
+                <% end %>
+                <a href="http://<%= @hostname %>/brokers/loans/<%= broker.id %>" class="tiny button" >
+                    View Loans
+                 </a>
+               
+             </div>
+        </div>
+
+       
+            
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+    <%
+    end
+   end 
+end
+%>
+
+</div>
+
+ 

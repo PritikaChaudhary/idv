@@ -1,0 +1,96 @@
+<div class="modalhead">
+    <h5 id="modalTitle" style="font-weight:bold; text-align:center;"> <%= @loan.name %> </h5>
+</div>
+<div class="modal_loan_detail">
+	<div class="large-12 columns" style="text-align:center">
+		<% if !@loan.loanInfo.blank? %>
+			<%
+		     if @loan.loanInfo.featured_image %>
+		     	<img src="<%= @loan.loanInfo.featured_image['url']%>">
+			<% else  %>
+				<% address = "" %>
+				<% unless @loan.info['Address3'].blank?%>
+					<% address = @loan.info['Address3'] %>
+				<% else %>
+					<% if @loan.info['City3'] && @loan.info['State3']%>
+						<% address = "#{@loan.info['City3']}, #{@loan.info['State3']}"%>
+					<% end %>
+				<% end %>
+		        <% if address!="" %>
+		          <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60">
+		        <% else %>
+		        	<img src="/assets/no-image-available.jpg" >
+		        <% end %>
+		    <% end %>
+	    <% else %>
+	    	<img src="/assets/no-image-available.jpg" >
+	    <% end %>
+    </div>
+
+    
+	<% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+		<div class="large-12 columns">
+			<h5>Summary</h5>
+	         <% field_text = @loan.info['_LoanSummaryWhatareyoulookingfor']%>
+	         <%= send('simple_format', field_text)%>
+	    </div>    
+  	<% end %>
+  	
+  	<% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+		<div class="large-12 columns">
+			<h5>Exit Strategy</h5>
+	         <% field_text = @loan.info['_ExitStrategyHowwillyoupaytheloanoff']%>
+	         <%= send('simple_format', field_text)%>
+	    </div>    
+  	<% end %>
+  	<div class="large-12 columns">
+		<h5>Origination Date</h5>
+	  	<% unless @loan.info['origination_date'].blank? %>
+			<%= @loan.info['origination_date']%>
+		<% else %>
+	  		-
+	  	<% end %>
+  	 </div>   
+  	
+	<div class="large-12 columns">
+		<h5>Maturity Date</h5>
+		<% unless @loan.info['_ExpectedCloseDate'].blank? %>
+         	<%= @loan.info['_ExpectedCloseDate']%>
+    	<% else %>
+    		-
+    	<% end %>
+    </div>    
+  	<div class="large-12 columns">
+		<h5>Unearned Fees</h5>
+  		<% unless @loan.info['unearned_fees'].blank? %>
+			<%= @loan.info['unearned_fees']%>
+		<% else %>
+			-
+		<% end %>
+	</div>    
+  	
+  	
+	<div class="large-12 columns">
+		<h5>Borrower's Name</h5>
+		<% unless @loan.info['borrower_name'].blank? %>
+         <%= @loan.info['borrower_name']%>
+        <% else %>
+        	-
+    	<% end %>
+    </div>    
+  	
+  	
+	<div class="large-12 columns">
+		<h5>Guarantor Name</h5>
+		<% unless @loan.info['guarantor_name'].blank? %>
+         	<%= @loan.info['guarantor_name']%>
+        <% else %>
+        	-
+        <% end %>
+    </div>    
+  	
+    
+
+
+</div>
+<a class="close-reveal-modal" aria-label="Close">&#215;</a>

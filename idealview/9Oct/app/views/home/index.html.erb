@@ -1,0 +1,27 @@
+<script type="text/javascript">
+	
+		var checkadmin = "<%= @checkAdmin %>";
+		var checkbroker = "<%= @checkBroker %>";
+		if(checkadmin=="false" && checkbroker=="true")
+		{
+			window.location.replace("http://<%= @hostname %>/loans");
+			//self.location="http://localhost:3000/loans";
+		}
+
+	
+</script>
+<% breadcrumb :root %>
+<% if defined? @success %>
+<div class="row">
+	<div class="small-8 small-centered columns" style="color:green; background-color: #dff0d8;">
+		You are registered successfuly.
+	</div>
+</div>
+<% end %>
+<div class='row'>
+<div class="small-8 small-centered columns">
+		<h1>Welcome to iDealView by Fundingdatabase.com</h1>
+		<p>You probably should not be on this page.<BR> If you are it means something went wrong.
+			<BR>Please contact us by sending an email to administrator@fundingdatabase.com if you would like to view any of our loans.</p>
+	</div>
+</div>

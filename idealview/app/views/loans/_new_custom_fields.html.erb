@@ -1,0 +1,23 @@
+<div class="content-white-box">
+  <div class="cwb-header">
+      <h3><% if  @custom_tab.display_name.blank? %> Custom Fields <% else %> <%= @custom_tab.display_name %> <% end %></h3>
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      
+      <% @new_custom_fields.each do |custom_field| %>
+        <div class="columns medium-12" id="custom_<%= custom_field.field_name %>">
+          <div class="trans-info-item">
+            <strong><%= custom_field.name %>:</strong>
+              <input id="<%= custom_field.field_name %>" name="<%= custom_field.field_name %>" type="text" class="loan_info_fields">
+              <label class="error custom_<%= custom_field.field_name %>"> This field is required. </label>
+          </div>
+        </div>
+      <% end %>
+     
+
+     
+
+    </div>
+  </div>
+</div><!-- content-white-box -->

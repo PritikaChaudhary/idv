@@ -1,0 +1,506 @@
+<% if defined? @loan.address && @loan.address!= 'None' %>
+<% @loc = "South City, Ludhiana, Punjab" %>
+<% end %>
+
+<style>
+    .scrolloff {
+        pointer-events: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+       
+      
+        // you want to enable the pointer events only on click;
+
+    });
+</script>
+
+<% if @collaterals.empty? %>
+	<input type="button" value="Add Collateral" class="button" id="add_new_collateral" style="margin-top:10px; margin-left:10px;">
+<% else %>
+	<input type="button" value="Add More Collateral" class="button" id="add_new_collateral" style="margin-top:10px; margin-left:10px;">
+<% end %>
+
+<div id="all_new_collaterals">
+<% if !@collaterals.empty? %>
+	<% serial = 1 %>
+	<% @collaterals.each do |collateral|%>
+		<div class="main_collateral crsr" id="collateral_<%= collateral.id %>">
+				<div class="content-white-box">
+				    <div class="cwb-header">
+				        <h3><%= serial %>. Collateral Information</h3>
+				        <!---------------- Hide/Show ---------------->
+				        <div class="cwb-controls">
+				            <div id="hidecollat_<%= collateral['_id'] %>" <% if collateral.hide == 1 %> style="display:none; float:right; margin-top:7px; margin-left:10px;" <% else %> style="float:right; margin-top:7px; margin-left:10px;" <% end %>>
+								<a style="color:black; float:right;" onclick="hide_collateral('<%= collateral['_id'] %>');"  title = "Hide">
+									<img  src="/assets/eye-icon.png">
+								</a>
+							</div>	
+							
+							<div id="showcollat_<%= collateral['_id'] %>"  <% if collateral.hide != 1 %> style="display:none; float:right; margin-top:7px; margin-left:10px;" <% else %> style="float:right; margin-top:7px; margin-left:10px;" <% end %>>
+								<a style="color:black; float:right;" onclick="show_collateral('<%= collateral['_id'] %>');"  title = "Show">
+									<img  src="/assets/eye-icon-slash.png">
+								</a>
+							</div>
+				        </div>
+				        <!-------------- Hide/Show ------------------>
+				    </div>
+				    <div class="cwb-content">
+				        <div class="row">
+				        	<div id="collateral_loc_<%= collateral['_id']  %>">
+					            <div class="columns medium-6 border-right">
+					                <div class="trans-info-item" tabindex="-1">
+					                    <label><strong tabindex="-1">Address:</strong></label>
+					                     <% if request.base_url.include? "idealview" %>
+					                    	<input class="address autocomplete collateral_info_fields" type="text" placeholder="Address" name="address" id="address_<%= collateral.id %>" autocomplete="off"  value="<%= collateral.address%>">
+					                    <% else %>
+					                    	<input class="address collateral_info_fields" type="text" placeholder="Address" name="address" id="address_<%= collateral.id %>" autocomplete="off"  value="<%= collateral.address%>">
+					                    <% end %>
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"address"}%>
+					                    </div>
+					                </div>
+					            </div>
+					            <div class="columns medium-6">
+					                <div class="trans-info-item" tabindex="-1">
+					                    <label><strong tabindex="-1">City:</strong></label>
+					                    <input class="field locality collateral_info_fields" type="text" placeholder="City" name="city" id="city_<%= collateral.id %>"  value="<%= collateral.city%>">
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"city"}%>
+					                    </div>
+					                </div>
+					            </div>
+					            <div class="columns medium-6 border-right" tabindex="-1">
+					                <div class="trans-info-item">
+					                    <label><strong tabindex="-1">State:</strong></label>
+					                    <input class="field administrative_area_level_1 collateral_info_fields" type="text" value="<%= collateral.state%>" placeholder="State" name="state" id="state_<%= collateral.id %>" >
+					                    <div class="tii-controls">
+					                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"state"}%>
+					                    </div>
+					                </div>
+					            </div>
+					            <div class="columns medium-6">
+					                <div class="trans-info-item" tabindex="-1">
+					                    <label><strong tabindex="-1">Postal Code:</strong></label>
+					                    <input class="field postal_code collateral_info_fields" type="text" placeholder="Postal Code" name="postalcode" id="postalcode_<%= collateral.id %>"  value="<%= collateral.postalcode%>">
+					                    <div class="tii-controls">
+					                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"postalcode"}%>
+					                    </div>
+					                </div>
+					            </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Estimated Property Value:</strong>
+				                    <% 
+								      	estimated_value = ""
+								      	unless collateral.estimated_value.blank?
+
+								      		estimated_value = fd_money(collateral.estimated_value.to_i)
+								      	end
+								      %>
+				                    <p><input id="estimated_value_<%= collateral.id %>" type="text"  rows="1" name="estimated_value" value="<%= estimated_value %>" class="collateral_info_fields"></p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"estimated_value"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				              <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Source Of Value:</strong>
+				                    
+				                    <select id="source_of_value_<%= collateral.id %>" rows="1" name="source_of_value" class="collateral_info_fields">
+										<option value="Appraisal" <% if collateral.source_of_value=="Appraisal" %> selected="selected" <% end %>>Appraisal</option>
+										<option value="BPO/CMA" <% if collateral.source_of_value=="BPO/CMA" %> selected="selected" <% end %>>BPO/CMA</option>
+										<option value="Market Research" <% if collateral.source_of_value=="Market Research" %> selected="selected" <% end %>>Market Research</option>
+									</select>
+									
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"source_of_value"}%>
+				                    </div>
+				                </div>
+				            </div>
+				            
+				            
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Mortgage Status:</strong>
+				                    
+					                    <select id="mortgage_status_<%= collateral.id %>"  name="mortgage_status" class="collateral_info_fields">
+											<option value="1" <% if collateral.mortgage_status=="1" %> selected="selected" <% end %>>Paid In Full</option>
+											<option value="0" <% if collateral.mortgage_status=="0" %> selected="selected" <% end %>>Has Mortgage</option>
+										</select>
+									
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"mortgage_status"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				           	<div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Amount Owed:</strong>
+				                     <% 
+								      	amount_owed = ""
+								      	unless collateral.amount_owed.blank?
+								      		amount_owed = fd_money(collateral.amount_owed.to_i)
+								      	end
+								      %>
+				                    <p><input id="amount_owed_<%= collateral.id %>" type="text" value="<%= amount_owed %>" rows="1" name="amount_owed" class="collateral_info_fields"></p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"amount_owed"}%>
+				                    </div>
+				                </div>
+				            </div>
+				            
+				           <!--  <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>Gross Monthly Income:</strong>
+				                    <% 
+								      	gross_mincome = ""
+								      	unless collateral.gross_monthly_income.blank?
+								      		gross_mincome = fd_money(collateral.gross_monthly_income.to_i)
+								      	end
+								      %>
+				                    <p><input id="gross_monthly_income_<%= collateral.id %>" type="text"  rows="1" name="gross_monthly_income" value="<%= gross_mincome %>" class="collateral_info_fields"></p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"gross_monthly_income"}%>
+				                    </div>
+				                </div>
+				            </div> -->
+
+				            <div class="columns medium-12" >
+				                <div class="trans-info-item">
+				                    <strong>Asset Type:</strong>
+				                   
+					                    <select id="asset_type_<%= collateral.id %>"  name="asset_type" class="collateral_info_fields">
+											<option value="Single Family Residence" <% if collateral.asset_type=="Single Family Residence" %> selected="selected" <% end %>>Single Family Residence</option>
+											<option value="Multifamily"  <% if collateral.asset_type=="Multifamily" %> selected="selected" <% end %>>Multifamily</option>
+											<option value="Condo" <% if collateral.asset_type=="Condo" %> selected="selected" <% end %>>Condo</option>
+											<option value="Hospitality"  <% if collateral.asset_type=="Hospitality" %> selected="selected" <% end %>>Hospitality</option>
+											<option value="Commercial" <% if collateral.asset_type=="Commercial" %> selected="selected" <% end %>>Commercial</option>
+											<option value="Development" <% if collateral.asset_type=="Development" %> selected="selected" <% end %>>Development</option>
+											<option value="Mixed Use" <% if collateral.asset_type=="Mixed Use" %> selected="selected" <% end %>>Mixed Use</option>
+											<option value="Retail" <% if collateral.asset_type=="Retail" %> selected="selected" <% end %>>Retail</option>
+											<option value="Health Care" <% if collateral.asset_type=="Health Care" %> selected="selected" <% end %>>Health Care</option>
+											<option value="Industrial" <% if collateral.asset_type=="Industrial" %> selected="selected" <% end %>>Industrial</option>
+											<option value="Other" <% if collateral.asset_type=="Other" %> selected="selected" <% end %>>Other</option>
+										</select>
+									
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"asset_type"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				          
+							
+							<div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>Land Size:</strong>
+				                    
+				                    <select id="size_<%= collateral.id %>" name="size" class="collateral_info_fields">
+				                    	<option value="Sq Footage" <% if collateral.size=="Sq Footage" %> selected="selected" <% end %>>Sq Footage</option>
+										<option value="Acres" <% if collateral.size=="Acres" %> selected="selected" <% end %>>Acres</option>
+									</select>
+									
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"size"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6" >
+				                <div class="trans-info-item sq_footage"  <% if collateral.size=="Acres" %> style="display:none;" <% end %>>
+				                    <strong>Sq Footage:</strong>
+				                    <p>
+				                    	<input id="sq_footage_<%= collateral.id %>" type="text" rows="1" name="sq_footage" value="<%= collateral.sq_footage %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"sq_footage"}%>
+				                    </div>
+				                </div>
+
+				                 <div class="trans-info-item acres" <% if collateral.size=="Acres" %> style="display:block;" <% else %> style="display:none;"<% end %>>
+				                    <strong>Acres:</strong>
+				                    <p>
+				                    <input id="acres_<%= collateral.id %>" type="text" rows="1" name="acres" value="<%= collateral.acres %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"acres"}%>
+				                    </div>
+				                </div>
+
+				            </div>
+
+				             <div class="columns  <% if collateral.structural_size=='Sq Footage' %> medium-6 <% else %> medium-12 <% end %> ask_structural_size">
+				                <div class="trans-info-item">
+				                    <strong>Structural Size:</strong>
+				                    
+				                    <select id="structural_size_<%= collateral.id %>" name="structural_size" class="collateral_info_fields">
+				                    	<option value=""> Select Structural Size</option>
+										<option value="Sq Footage" <% if collateral.structural_size=="Sq Footage" %> selected="selected" <% end %>>Sq Footage</option>
+										<option value="Units" <% if collateral.structural_size=="Units" %> selected="selected" <% end %>>Units</option>
+									</select>
+									
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"structural_size"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 structure_sq_footage" <% if collateral.structural_size!='Sq Footage' %> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>Sq Footage: </strong>
+				                    <p>
+				                    <input id="structural_sq_footage_<%= collateral.id %>" type="text" rows="1" name="structural_sq_footage" value="<%= collateral.structural_sq_footage %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"structural_sq_footage"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6  border-right structure_units" <% if collateral.structural_size!='Units' %> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>How Many Units?:</strong>
+				                    <p>
+				                    <input id="units_<%= collateral.id %>" type="text" rows="1" name="units" value="<%= collateral.units %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"units"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 structure_units" <% if collateral.structural_size!='Units' %> style="display:none;" <% end %> >
+				                <div class="trans-info-item">
+				                    <strong>SF per Unit:</strong>
+				                    <p>
+				                    	<input id="sf_per_unit_<%= collateral.id %>" type="text" rows="1" name="sf_per_unit" value="<%= collateral.sf_per_unit %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"sf_per_unit"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-item">
+				                    <strong>NOI (YTD):</strong>
+				                    <% 
+								      	noi_ytd = ""
+								      	unless  collateral.noi_ytd.blank?
+								      		noi_ytd = fd_money(collateral.noi_ytd.to_i)
+								      	end
+								      %>
+				                    <p>
+				                    	<input id="noi_ytd_<%= collateral.id %>" type="text" value="" rows="1" name="noi_ytd" value="<%= noi_ytd %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"noi_ytd"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-item">
+				                    <strong>NOI ( two years ago): </strong>
+				                     <% 
+								      	noi_two_years_ago = ""
+								      	unless  collateral.noi_two_years_ago.blank?
+								      		noi_two_years_ago = fd_money(collateral.noi_two_years_ago.to_i)
+								      	end
+								      %>
+				                    <p>
+				                    	<input id="noi_two_years_ago_<%= collateral.id %>" type="text" value="" rows="1" name="noi_two_years_ago" value="<%= noi_two_years_ago %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"noi_two_years_ago"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+
+				            <div class="columns medium-6 border-right">
+				                <div class="trans-info-last">
+				                    <strong>NOI (Last Year):</strong>
+				                    <p>
+				                    <% 
+								      	noi_last_year = ""
+								      	unless  collateral.noi_last_year.blank?
+								      		noi_last_year = fd_money(collateral.noi_last_year.to_i)
+								      	end
+								    %>
+
+				                    	<input id="noi_last_year_<%= collateral.id %>" type="text"  rows="1" name="noi_last_year" value="<%= noi_last_year %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                       <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"noi_last_year"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6">
+				                <div class="trans-info-last">
+				                    <strong>Collateral Value:</strong>
+				                    <p>
+				                    	<input id="collateral_value_<%= collateral.id %>" type="text"  rows="1" name="collateral_value" value="<%= collateral.collateral_value %>" class="collateral_info_fields">
+									</p>
+				                    <div class="tii-controls">
+				                        <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"collateral_value"}%>
+				                    </div>
+				                </div>
+				            </div>
+
+
+				        </div>
+				    </div>
+				</div><!-- content-white-box -->
+
+				
+				<div class="content-white-box map_container">
+					
+						<% unless collateral.address.blank? %>
+					
+							<% @loc = "#{collateral.postalcode}, #{collateral.address}, #{collateral.city}, #{collateral.state}" %>
+							<% #abort("#{@loc}") %>
+							<script type="text/javascript">
+							$('document').ready(function(){
+								
+								if($('#property<%= collateral.id %>').html().length==0){
+
+							   		// $('#property<%= collateral.id %>').html('<h1>zxczxczxczxc</h1>');
+							   		   var embed = '<iframe'+
+											' width="600"'+
+											' height="450"'+
+											' frameborder="0" style="border:0"'+
+											'class="map_canvas"'+
+											' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loc%>&zoom=15">'+
+									'</iframe>';
+							
+							
+									$('#property<%= collateral.id %>').html(embed);
+								}
+
+								$('.map_canvas').addClass('scrolloff'); // set the pointer events to none on doc ready
+						        $('.canvass').on('click', function () {
+						        	// alert("fgdfgdfg");
+						            $('.map_canvas').removeClass('scrolloff'); // set the pointer events true on click
+						        });
+
+						        // you want to disable pointer events when the mouse leave the canvas area;
+
+						        $(".map_canvas").mouseleave(function () {
+						            $('.map_canvas').addClass('scrolloff'); // set the pointer events to none when mouse leaves the map area
+						        });
+							});
+							</script>
+							
+							<div id='property<%= collateral.id %>' class="flex-video canvass"></div>
+							<style type="text/css">
+							.google-maps-link
+							{
+								display:none;
+							}
+							</style>
+							
+						
+						<% end %>	
+					
+				</div>
+
+				<div class="content-white-box">
+				  	<div class="cwb-header">
+				      	<label><h3>This Collateral is related to: </h3></label>
+				      	<div class="cwb-controls">
+				           <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"related_funds"} %>
+				      	</div>
+				  	</div>
+					<img class="edit-icon fund_edit_pen" style="float:left; margin-left:10px; margin-top: 10px;" src="/assets/edit-icon.png" onclick="fund_edit_pen('<%= collateral.id%>')" id="relate_fund_edit_<%= collateral.id %>">
+
+					<div class="cwb-content loan_all_funds" style="display:none;">
+						<!------ Render from select_related_funds ---->	
+					</div>
+
+					<div class="cwb-content related_collats">
+						<% unless collateral.related_funds.blank? %>
+							<% @relates = collateral.related_funds.split(",")
+								# abort("#{relates.inspect}")
+								i=1
+							%>
+
+							<table border="0" cellpadding="0" cellspacing="0" class="table-related-fund">
+
+						  <tr>
+						      <td></td>
+						      <td style="width:35%"><strong>Use</strong></td>
+						      <td style="width:33%"><strong>Beneficiary</strong></td>
+						      <td style="width:30%"><strong>Amount</strong></td>
+						  <!--<td><strong>Maturity / Contract Date</strong></td>
+						      <td><strong>Earned Deposit/Stats</strong></td> !-->
+						  </tr>
+						  	
+						  	
+						  
+						    <% @relates.each do |relate| %>
+						    <% unless relate.blank? %>
+						    	
+						    <% end %>
+						    <% fnd = UseOfFund.find_by_id("#{relate}") %> 
+							<% unless fnd.blank? %>
+							    	<tr id="<%= i %>_fund" class="fund_row">
+						                <td><a href="javascript:void(0);" style="color:black;" onclick="return remove_related_fund('<%= collateral.id %>', '<%= relate %>')"><b>x</b></a></td>
+						                <td><%= fnd.use %></td> 
+						                <td><%= fnd.beneficiary %></td> 
+						                <td><%= fnd.amount %></td>
+						              
+						            </tr>
+						        <% i += 1 %>
+						        <% end %>
+						    	 
+						    <% end %>
+						  
+							</table>
+						<% end %>
+					  
+					</div>
+
+			<input type="button" value="Add New Fund" class="button tiny add_collateral_fund" onclick="return add_related_funds('<%= collateral.id %>')">   
+			</div><!-- content-white-box -->
+		</div>
+
+		
+		<% serial += 1 %>
+	<% end %>
+<% end %>
+</div>
+
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.relation_edit').click(function(){
+			mainId = $(this).parents('.main_collateral').attr('id');
+			var atId = $(this).attr('id');
+			var id = atId.replace("rel_", ""); 
+			var loan_id = $('#add_loan_id').val();
+			var data = "loan_id="+loan_id+"&collateral_id="+id;
+			$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/loan_funds',
+		            success:function(response){
+		            	$('#'+mainId+' .edit_relation').html(response);
+		            	$('#'+mainId+' .edit_relation').show();
+		            	$('#'+mainId+' .related_collats').hide();
+		           }
+		        });
+		});
+
+		
+	});
+</script>
+
+

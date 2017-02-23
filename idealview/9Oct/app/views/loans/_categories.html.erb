@@ -1,0 +1,14 @@
+<select name="categories[<%= i %>]" class="select_cat" id="select_category_<%= i %>">
+	<option value="none" selected="selected">Select Category</option>
+	<option value="Borrower Info & Corporate Docs">Borrower Info & Corporate Docs</option>
+	<option value="Environmental">Environmental</option>
+	<option value="Property Inspections">Property Inspections</option>
+	<option value="Project">Project</option>
+	<option value="Title,Taxes & Insurance">Title,Taxes & Insurance</option>
+	<option value="Valuation">Valuation</option>
+	<option value="Other">Other</option>
+	<% @customs.each do |custom| %>
+		<option value="<%= custom.id %>"><%= custom.folder_name %></option>
+	<% end %>
+	<option value="custom_folder">Add Custom Folder</option>
+</select>

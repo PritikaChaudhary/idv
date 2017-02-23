@@ -3,84 +3,57 @@
 </div>
 
 <%= raw @email.content %> <br>
-	<% unless @loans.info['FirstName'].blank? %>
-		First Name : <%= @loans.info['FirstName'] %><br>
-	<% end %>
-	<% unless @loans.info['LastName'].blank? %>
-		Last Name : <%= @loans.info['LastName'] %><br>
-	<% end %>
-	<% unless @loans.info['Email'].blank? %>
-		Email :  <%= @loans.info['Email'] %><br>
-	<% end %>
-	<% unless @loans.info['Phone1'].blank? %>
-		Phone Number  : <%= @loans.info['Phone1'] %><br>
-	<% end %>
-	<% unless @loans.info['Birthday'].blank? %>
-		Phone Number :  <%= @loans.info['Birthday'] %><br>
-	<% end %>
+
 	<% unless @loans.info['_NetLoanAmountRequested0'].blank? %>
-		How much money do you need to borrow? :  <%= @loans.info['_NetLoanAmountRequested0']%><br>
+		<b>Loan Amount : </b><%= @loans.info['_NetLoanAmountRequested0'] %><br>
 	<% end %>
-	<% unless @loans.info['loan_for'].blank? %>
-		What do you need the loan for?  : <%= @loans.info['loan_for']%><br>
+
+	<% 
+	unless @collaterals.blank?
+		 @c=1
+		 @collaterals.each do |collateral| %>
+		 	<b> Collateral Location: </b><%= collateral.address %>, <%= collateral.city %>, <%= collateral.state %>, <%= collateral.postalcode %><br>
+		<% 
+		 @c = @c+1
+		 end
+	end
+	
+	%>
+
+	<% unless @loans.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+		<b>Loan Summary : </b><%= @loans.info['_LoanSummaryWhatareyoulookingfor'] %><br>
 	<% end %>
-	<% unless @loans.info['loan_for'].blank? %>
-		What do you need the loan for? :  <%= @loans.info['loan_for']%><br>
-	<% end %>
-	<% unless @loans.info['_BusinessName'].blank? %>
-		Business Name :  <%= @loans.info['_BusinessName']%><br>
-	<% end %>
-	<% unless @loans.info['industry'].blank? %>
-		Industry  : <%= @loans.info['industry']%><br>
-	<% end %>
-	<% unless @loans.info['_BorrowerTimeInBusiness'].blank? %>
-		Years In Business :  <%= @loans.info['_BorrowerTimeInBusiness']%> years<br>
-	<% end %>
-	<% unless @loans.info['Phone2'].blank? %>
-		Project Phone  : <%= @loans.info['Phone2']%> <br>
-	<% end %>
-	<% unless @loans.info['Address2Street1'].blank? %>
-		Business Address :  <%= @loans.info['Address2Street1']%> <br>
-	<% end %>
-	<% unless @loans.info['City2'].blank? %>
-		City :  <%= @loans.info['City2']%> <br>
-	<% end %>
-	<% unless @loans.info['State2'].blank? %>
-		State  : <%= @loans.info['State2']%><br>
-	<% end %>
-	<% unless @loans.info['PostalCode2'].blank? %>
-		Zip Code :  <%= @loans.info['PostalCode2']%><br>
-	<% end %>
-	<% unless @loans.info['_BusinessEIN'].blank? %>
-		EIN  : <%= @loans.info['_BusinessEIN']%> <br>
-	<% end %>
-	<% unless @loans.info['bank_account'].blank? %>
-		Number Of Bank Accounts :  <%= @loans.info['bank_account']%> <br>
-	<% end %>
-	<% unless @loans.info['sale_per_month'].blank? %>
-		Sales Per Month :  <%= @loans.info['sale_per_month']%> <br>
-	<% end %>
-	<% unless @loans.info['avg_daily_balance'].blank? %>
-		Average Daily Bailance :  <%= @loans.info['avg_daily_balance']%> <br>
-	<% end %>
-	<% unless @loans.info['avg_month_deposit'].blank? %>
-		Average Month Deposite :  <%= @loans.info['avg_month_deposit']%> <br>
-	<% end %>
-	<% unless @loans.info['_SocialSecurityNumber'].blank? %>
-		Social Security Number :  <%= @loans.info['_SocialSecurityNumber']%> <br>
-	<% end %>
-	<% unless @loans.info['credit_score'].blank? %>
-		Credit Score  : <%= @loans.info['credit_score']%> <br>
-	<% end %>
-	<% unless @loans.info['tax_lines'].blank? %>
-		Tax Lines :  <%= @loans.info['tax_lines']%> <br>
-	<% end %>
-	<% unless @loans.info['any_existing_loans'].blank? %>
-		Any Existing Loans :  <%= @loans.info['any_existing_loans']%> <br>
-	<% end %>
-	<% unless @loans.info['notes'].blank? %>
-		Additional Info :  <%= @loans.info['notes']%> 
-	<% end %>
+
+	<% 
+	unless @borrowers.blank?
+		@i=1
+		@borrowers.each do |borrower|%>
+			<% if borrower.borrower_guarantor == "Yes"%>
+				<b> Guarantor Name: </b><%= borrower.personal_name %><br>
+			<% else %>
+				<b> Guarantor Name: </b><%= borrower.guarantor_name %><br>
+			<% end %>
+		<%
+		 @i = @i+1
+		end 
+	end %>
+
+	
+
+	<% 
+	unless @collaterals.blank?
+		 @collaterals.each do |collateral| %>
+		 	<b> Primary collateral Value : </b><%= collateral.collateral_value %><br>
+		<% 
+		 end
+	end
+	
+	%>
+	<p><a href="http://dash.idealview.us/loans/<%= @loans.id %>">Click here</a> to  Edit this Submission. </p>
+	<p><a href="http://dash.idealview.us/loans/detail/<%= @loans.id %>">Click here</a> to  View this Submission. </p>
+	<p><a href="http://dash.idealview.us/loans/email_shop_loan/<%= @loans.id %>">Click here</a> to  Shop Loan. </p>
 
 
 
+	
+	

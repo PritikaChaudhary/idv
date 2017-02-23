@@ -1,0 +1,125 @@
+<div class="medium-12 column">
+  <div class="medium-6 column">
+    <b> Loan Submitted: </b>
+  </div>
+  <div class="medium-6 column">
+    <%= @user_loans %>
+  </div>
+</div>
+
+<div class="medium-12 column">
+  <div class="medium-6 column">
+    <b> Average Loans/Month: </b>
+  </div>
+  <div class="medium-6 column">
+    <%= @average_this_month  %>
+  </div>
+</div>
+
+<div class="medium-12 column">
+  <div class="medium-6 column">
+    <b>Amount Total: </b>
+  </div>
+  <div class="medium-6 column">
+    <%= fd_money(@u_loan_amount.to_i) %>
+  </div>
+</div>
+
+<div class="medium-12 column">
+  <div class="medium-6 column">
+    <b>Average Amount/Month: </b>
+  </div>
+  <div class="medium-6 column">
+    <%= @average_loan_amount %>
+  </div>
+</div>
+<% if @adminLogin == true%>
+	<div class="medium-12 column">
+	  <div class="medium-6 column">
+	    <b>Users: </b>
+	  </div>
+	  <div class="medium-6 column">
+	    <%= @sub_users %>
+	  </div>
+	</div>
+<% else %>
+	<% if @sub_brokers > 0  %>
+		<div class="medium-12 column">
+		  <div class="medium-6 column">
+		    <b>Sub Brokers: </b>
+		  </div>
+		  <div class="medium-6 column">
+		    <%= @sub_brokers %>
+		  </div>
+		</div>
+	<% end %>
+<% end %>
+
+
+<% if !@loan_type_array.blank? %>
+    <div class="medium-12 column">
+    	<div class="medium-3 small-centered columns">
+      		<b> Loan Types </b>
+      	</div>
+    </div>
+
+	<% @loan_type_array.each do |ltype| %>
+		<div class="medium-12 column">
+	      <div class="medium-6 column">
+	        <b><%= ltype['type']%>: </b>
+	      </div>
+	      <div class="medium-6 column">
+	        <%= ltype['total']%>
+	      </div>
+	    </div>
+	<% end %>		    
+<% end %>
+
+<% if !@result.blank? %>
+
+	<div class="medium-12 column" style="margin-top:20px;">
+		<div class="medium-9 small-centered columns">
+	  		<u><b> Result By Filters - <%= @loan_data_display %></b></u>
+	  	</div>
+	</div>
+
+	<div class="medium-12 column">
+	  <div class="medium-6 column">
+	    <b>Loan Submitted: </b>
+	  </div>
+	  <div class="medium-6 column">
+	    <%= @fuser_loans %>
+	  </div>
+	</div>
+
+	<div class="medium-12 column">
+	  <div class="medium-6 column">
+	    <b>Amount Total: </b>
+	  </div>
+	  <div class="medium-6 column">
+	    <%= fd_money(@f_loan_amount) %>
+	  </div>
+	</div>
+
+	
+
+	<% if !@floan_type_array.blank? %>
+	    <div class="medium-12 column">
+	    	<div class="medium-4 small-centered columns">
+	      		<b> Loan Types </b>
+	      	</div>
+	    </div>
+
+		<% @floan_type_array.each do |fltype| %>
+			<div class="medium-12 column">
+		      <div class="medium-6 column">
+		        <b><%= fltype['type']%>: </b>
+		      </div>
+		      <div class="medium-6 column">
+		        <%= fltype['total']%>
+		      </div>
+		    </div>
+		<% end %>		    
+	<% end %>
+
+<% end %>

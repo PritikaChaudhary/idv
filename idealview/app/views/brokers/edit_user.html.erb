@@ -49,13 +49,29 @@
 	}
 </style>
 <script type="text/javascript">
-	
+	$('document').ready(function(){
+		$('#submit_edit').click(function(){
+			fdata = $('#brokerForm').serialize();
+              $.ajax({
+            data: fdata,
+            type: 'POST',
+            url: '/brokers/edit_broker',
+            success:function(response){
+	            if(response=="done")
+	            {
+	              window.location.replace("https://<%= @hostname %>/brokers/sub_brokers");
+	            }
+                
+            	}
+        	});
+		});
+	});
 </script>
 <div class='row'>
 	<div class="small-8 small-centered columns">
 
 		<h3>Edit User</h3>
-		  <form method="post" action="http://localhost:3000/brokers/edit_broker" id="brokerForm">
+		  <form method="post" action="https://<%= @hostname %>/brokers/edit_broker" id="brokerForm">
 		  
 		  <div class="field">
 				<label for="name">First Name</label>
@@ -70,11 +86,11 @@
 				<input id="name" type="text" name="lastName" autofocus="autofocus" value="<%= @broker.lastName %>" >
 		  </div>
 
-		   <div class="field">
+		   <!-- <div class="field">
 			<label for="phone1">Phone</label>
 			<br>
 			<input id="phone1" type="text" name="phone1" autofocus="autofocus" value="<%= @broker.phone1 %>">
-		 </div>
+		 </div> -->
 		 <div class="field">
 			<label for="email">Email</label>
 				<br>
@@ -89,16 +105,17 @@
 		  unless @broker.permissions.blank?
 			permission = @broker.permissions.split(",") 
 		  end
+		  # abort("#{@broker.permissions.inspect}")
 		 %>
 		<div class="field">
 			<label for="permissions">Permission</label>
 			<br>
-			<input type="checkbox" <% if defined? permission
+			<input type="checkbox" <% unless @broker.permissions.blank?
 				if permission.include? 'add_users' %>
 			   		checked = "checked"
 			   <% end
 			end %> value="add_users" name="permissions[]"><label>Ability to add more users</label>
-			<input type="checkbox" <% if defined? permission
+			<input type="checkbox" <% unless @broker.permissions.blank?
 				if permission.include? 'change_passwords' %>
 			   		checked = "checked"
 			   <% end
@@ -110,7 +127,7 @@
 	
 		 
 		<div class="actions">
-		   <input type="submit" value="SUBMIT" class="tiny button success" >
+		   <input type="buttom" id="submit_edit" value="SUBMIT" class="tiny button success" >
 		  </div>
 		  </form>
 	</div>

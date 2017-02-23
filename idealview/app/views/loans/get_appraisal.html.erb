@@ -1,0 +1,18 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('#submit_appraisal').click(function(){
+		  var data = "&loan_id=<%= @loan.id %>";
+          $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/send_email',
+                    success:function(response){
+                     alert(response);
+                   }
+                });
+		});
+	});
+</script>
+
+<form method="post" class="appraisal_form">
+</form>

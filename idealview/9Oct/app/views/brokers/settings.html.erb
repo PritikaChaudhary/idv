@@ -1,0 +1,128 @@
+<style type="text/css">
+	.same_line
+	{
+		float: left;
+    	width: 48%;
+	}
+	.same_lines
+	{
+		float: left;
+    	margin-left: 23px;
+    	width: 48%;
+	}
+	.field
+	{
+		width:100%;
+		float: left;
+	}
+	#ui-datepicker-div
+	{
+		z-index: 99 !important;
+		background: none repeat scroll 0 0 #808080;
+	}
+	table
+	{
+		 border: 1px solid #000000;
+   		 margin-bottom: 0.25rem;
+	}
+	.ui-datepicker-next
+	{
+		margin-left: 8px;
+		color: #000000;
+	}
+	.ui-datepicker-prev
+	{
+		margin-left: 3px;
+		color: #000000;
+	}
+	.ui-datepicker-title
+	{
+		margin-left: 3px;
+	}
+	.actions
+	{
+		margin-top:14px;
+	}
+	h3
+	{
+		text-align: center;
+	}
+</style>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('#create_email').click(function(){
+			name = $('#name').val();
+			lower_name = name.toLowerCase(); 
+			nname = lower_name.replace(" ","_"); 
+			var d = new Date();
+    		var n = d.getTime();
+			systm_email = nname+n+"@idealview.us";
+			$("#created_email").html(systm_email);
+			$("#system_email").val(systm_email);
+		});
+	});
+</script>
+<div class='row'>
+	<div class="small-8 small-centered columns">
+
+		<h3>Settings</h3>
+		  <form method="post" action="http://<%= @hostname %>/brokers/update">
+		  
+		  <div class="field">
+				<label for="name">Name</label>
+				<br>
+				<% if defined? @broker.name
+					  name = @broker.name 
+					else
+						name=""
+					end %>
+				<input id="name" type="text" name="name" autofocus="autofocus" value="<%= name %>">
+		  </div>
+
+		   <div class="field">
+			<label for="phone1">Phone</label>
+			<br>
+			<% if defined? @broker.phone1
+					  phone = @broker.phone1 
+					else
+						phone=""
+					end %>
+			<input id="phone1" type="text" name="phone1" autofocus="autofocus" value="<%= phone %>" >
+		 </div>
+		 <div class="field">
+			<label for="email">Email</label>
+				<br>
+				<input id="email" type="text" name="email" autofocus="autofocus" readonly="readonly" value="<%= @broker.email %>">
+		</div>
+		<div class="field">
+			 <label for="password">Change Password</label>
+				<br>
+				<input id="password" type="password" name="password" autofocus="autofocus">
+		</div>
+		<div class="field">
+			 <label for="request_access">Request access to another account using its email address</label>
+				<br>
+				<% if defined? @broker.request_access
+					  request_access = @broker.request_access
+					else
+						request_access = ""
+					end %>
+				<textarea autofocus="autofocus" name="request_access"><%= request_access %></textarea>
+		</div>
+		<div class="field" style="margin-top:10px;">
+			 <label for="system_email" id="sys_email">System email  
+			 <% if @user.system_email.blank? %>
+			  <input type="button" value="CREATE" id="create_email" class="tiny button">  
+			 <% end %>
+			  </label>
+				
+				<input id="system_email" type="text" name="system_email" autofocus="autofocus" readonly="readonly" <% if defined? @user.system_email %> value="<%= @user.system_email %>" <% end %>>
+		</div>
+		
+		 
+		<div class="actions">
+		   <input type="submit" value="SUBMIT" class="tiny button success">
+		  </div>
+		  </form>
+	</div>
+</div>

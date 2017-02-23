@@ -1,0 +1,25 @@
+<div class="row">
+	<div class="small-8 small-centered columns">
+	<% if @success == "yes" %>
+		<div class="flash_notice">Terms and conditions are updated successfully.</div>
+	<% end %>
+		<form method="post" id="signupForm" action="https://<%= @hostname %>/lenders/agreement_add">
+			<h3 class="heading_signup"> Add Agreement </h3>
+				
+				
+				
+				<div class="medium-12 column">
+					<label> Header </label>
+					<input type="text" name="header" id="header" >
+				</div>
+				<div class="medium-12 column">
+					<label> Content </label>
+					<textarea name="content" style="width: 603px; height: 181px;"></textarea>
+				</div>
+				<input type="hidden" name="added_by" value="<%= current_user.id %>">
+				<div class="medium-12 column">
+					<input type="submit" value="SAVE" class="tiny button" style="margin-top:10px;">
+				</div>
+		</form>
+	</div>
+</div>

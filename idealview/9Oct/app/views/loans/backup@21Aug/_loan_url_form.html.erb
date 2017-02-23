@@ -1,0 +1,54 @@
+<div class='row'>
+	<%= render partial: 'layouts/messages' %>
+	<%= form_tag({:controller=>'loan_urls', :action=>'create'}, :onSubmit => 'return false', :id=>'loan-url-form') do %>
+	
+		<%= hidden_field_tag 'loan_id', @loan.id %>
+		<div class='medium-5 medium-offset-1 columns'><%=email_field_tag 'email', '', placeholder:'email@example.com' %></div>
+		<div class='medium-4 columns'><%=text_field_tag 'name', '', placeholder:'Full Name' %></div>
+		<% @url=url_for :controller=>'loan_urls', :action=>'create' %>
+		<div class='medium-1 columns'><%= button_tag "Add",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button'%></div>
+		<div class='medium-3 columns'></div>
+	<% end %>
+
+
+	<table class='small-12 access_email_list'>
+	<thead>
+		<tr class="panel_head"><th>Email</th><th>Name</th><th>Date Created</th><th>Link</th><th>Status</th><th>#Visits</th><th>Last Visit</th><th></th><th></th></tr>
+	</thead>
+	<tbody>
+	<% @loan.loan_urls.each do |loan_url|%>
+	<%= render partial: 'loan_urls/show', locals:{url:loan_url}%>
+	<% end %>
+	</tbody>
+	</table>
+</div>
+
+<div class="doc_page">
+<% if @loan.doc_url.blank? %>
+	<% @url=url_for :controller=>'loan_urls', :action=>'generate_url', :id=>@loan.id %>
+	<%= button_tag "Generate Documents URL",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button success'%>
+<% end %>
+<% if @loan.doc_url %>
+<div class="row">
+	<table class='small-12'>
+	<thead>
+		<tr><th>Upload Documents Link</th><th>Valid Upto</th><th>Action</th></tr>
+	</thead>
+	<tbody>
+	<tr><td>http://<%= @hostname %>/loans/docs/<%= @loan.doc_url %></td>
+	<td>
+	<% time = @loan.url_time
+       next_month = Time.utc(time.year, time.month+1, time.day) 
+     %>	
+     <%= next_month.strftime('%m/%d/%Y') %>
+	</td>
+	<td>
+	<% @url=url_for :controller=>'loan_urls', :action=>'extend_date', :id=>@loan.id %>
+	<%= button_tag "Extend Validity",  onclick:"callAjax('#{@url}','show-urls', 'loan-url-form' )", class: 'tiny button success'%>
+	</td>
+	</tr>
+	</tbody>
+	</table>
+</div>
+<% end %>
+</div>

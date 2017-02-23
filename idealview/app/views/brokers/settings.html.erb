@@ -48,55 +48,258 @@
 		text-align: center;
 	}
 </style>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('#create_email').click(function(){
+			name = $('#name').val();
+			lower_name = name.toLowerCase(); 
+			nname = lower_name.replace(/\s+/g,'_');
+			var d = new Date();
+    		var n = d.getTime();
+			systm_email = nname+n+"@idealview.us";
+			$("#created_email").html(systm_email);
+			$("#system_email").val(systm_email);
+		});
+
+		$('#request_access_emails').change(function(){
+			$('#settingsForm').addClass('prevented');
+		});
+
+		$('#settingsForm').submit(function(event){
+			if($(this).hasClass('prevented')){ 
+				event.preventDefault();
+				rqst = $('#request_access_emails').val();
+		        if(rqst!="")
+		        {
+		        	$.ajax({
+		            data: "request_access="+rqst,
+		            type: 'POST',
+		            url: '/brokers/check_account_type',
+		            success:function(response){
+		            	if(response != "true")
+		            	{
+							alert("We haven't found these brokers account in our system: "+response);
+		            		
+		            	}
+		            	else
+		            	{
+		            		$('#settingsForm').removeClass('prevented');
+		            		$('#settingsForm').submit();
+		            	}
+		            }
+		        	});
+		            
+		        }
+	    	}
+
+	        // event.preventDefault();
+    	});	 
+
+	});
+
+	function config_idv(email)
+	{
+		var data = "email=" + email;
+		 $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/config_account',
+            success:function(response){
+            	if(response == "no")
+            	{
+            		$('#myModal1').foundation('reveal', 'open');
+            	}
+            	else
+            	{
+            		$('#ids_config').hide();
+            		alert("Your account has been configured.");
+            	}
+                
+            }
+        });
+	}
+
+	function showForm()
+	{
+		$('.idsuiteForm').show();
+	}
+
+	function checkids()
+	{
+		var data=$('#idsForm').serialize();
+	    $.ajax({
+	            data: data,
+	            type: 'POST',
+	            url: '/brokers/checkids',
+	            success:function(response){
+	                if(response == "no")
+	            	{
+	            		alert("Please check your username and password.");
+	            	}
+	            	else
+	            	{
+	            		$('#myModal1').foundation('reveal', 'close');
+	            		$('#ids_config').hide();
+	            		alert("Your account has been configured.");
+	            	}
+	            }
+	        });	
+	}
+
+	function noAccount()
+	{
+		$('#myModal1').foundation('reveal', 'close');
+	}
+
+</script>
+
+<!---------------------- Add Brokler Popup ---------------------------------->
+    
+    <div id="myModal1" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead small-12 small-centered columns">
+        <h5 id="modalTitle" style="font-weight:bold;"> This email id haven't registered with "idealsuite.us". Do you have any other account registered with idealsuite ?  </h5>
+      </div>
+       
+       <div class="small-12 small-centered columns">
+       	<input type="button" value="Yes" class="button" onclick="showForm()"> <input type="button" value="No" class="button alert" onclick="noAccount()"> 
+       </div>
+      <div class="small-12 small-centered columns idsuiteForm" style="display:none;">
+        <form method="post"  id="idsForm">
+          		<div class="row">
+          			<div class="small-12 columns">
+                      <input type="text" name="username" placeholder="Username">
+                    </div>
+                    <div class="small-12 columns">
+                      <input type="password" name="password" placeholder="Password">
+                    </div> 
+                </div>
+         
+                <div class="small-3 small-centered columns">
+                  <input type="button" id="submit_frm"  value="Submit" class="tiny button" onclick="checkids()">
+                </div>
+         
+        </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+
+
+<!---------------------- Add Broker Popup ---------------------------------->
+
+
+
 
 <div class='row'>
 	<div class="small-8 small-centered columns">
 
 		<h3>Settings</h3>
-		  <form method="post" action="http://<%= @hostname %>/brokers/update">
+		  <form method="post" action="https://<%= @hostname %>/brokers/update" id="settingsForm" class="prevented">
 		  
 		  <div class="field">
 				<label for="name">Name</label>
 				<br>
-				<% if defined? @broker.name
+				<% 
+				unless @broker.blank?
+					if defined? @broker.name
 					  name = @broker.name 
 					else
 						name=""
-					end %>
+					end
+				else
+					name = @user.name
+				end %>
 				<input id="name" type="text" name="name" autofocus="autofocus" value="<%= name %>">
 		  </div>
 
 		   <div class="field">
 			<label for="phone1">Phone</label>
 			<br>
-			<% if defined? @broker.phone1
-					  phone = @broker.phone1 
-					else
-						phone=""
-					end %>
+			<% 
+				if defined? @broker.phone1 
+				 if !@broker.phone1.blank?
+				  phone = @broker.phone1 
+				 else
+				  if !@user.phone.blank?
+				 	phone = @user.phone
+				  else
+				 	phone=""
+				  end
+				 end
+				else
+				  if !@user.phone.blank?
+				 	phone = @user.phone
+				  else
+				 	phone=""
+				  end
+				end
+
+			 %>
 			<input id="phone1" type="text" name="phone1" autofocus="autofocus" value="<%= phone %>" >
 		 </div>
 		 <div class="field">
 			<label for="email">Email</label>
 				<br>
-				<input id="email" type="text" name="email" autofocus="autofocus" readonly="readonly" value="<%= @broker.email %>">
+				<% 
+				unless @broker.blank?
+					email = @broker.email
+				else
+					email = @user.email
+				end	
+				%>
+				<input id="email" type="text" name="email" autofocus="autofocus" readonly="readonly" value="<%= email %>">
 		</div>
 		<div class="field">
 			 <label for="password">Change Password</label>
 				<br>
 				<input id="password" type="password" name="password" autofocus="autofocus">
 		</div>
-		<div class="field">
-			 <label for="request_access">Request access to another account using its email address</label>
-				<br>
-				<% if defined? @broker.request_access
-					  request_access = @broker.request_access
-					else
-						request_access = ""
-					end %>
-				<textarea autofocus="autofocus" name="request_access"><%= request_access %></textarea>
-		</div>
-		 
+		<% unless @broker.blank? %>
+			<% if @adminLogin != true %>
+				<div class="field">
+					 <label for="request_access">Request access to another account using its email address</label>
+						<br>
+						<% if defined? @broker.request_access
+							  request_access = @broker.request_access
+							else
+								request_access = ""
+							end %>
+						<textarea autofocus="autofocus" name="request_access" id="request_access_emails"><%= request_access %></textarea>
+				</div>
+			<% end %>
+		<% end %>
+		<% @createEmail = ""%>
+		<% if @adminLogin == true%>
+			<% @createEmail = "yes"%>
+		<% else%>
+			<% if @brokerLogin==true && current_user.forward_email == 1 %>
+				<% @createEmail = "yes"%>
+			<% end %>
+		<% end %>
+
+		<% if @createEmail == "yes" %>
+			<div class="field" style="margin-top:10px;">
+				 <label for="system_email" id="sys_email">System email 
+				<% if @user.system_email.blank? %>
+				  <input type="button" value="CREATE" id="create_email" class="tiny button">  </label>
+				<% end %>
+					<input id="system_email" type="text" name="system_email" autofocus="autofocus" readonly="readonly" <% if defined? @user.system_email %> value="<%= @user.system_email %>" <% end %>>
+			</div>
+		<% end %>
+		
+		<% #if @user.ids_config != 1%>
+
+			<!-- <div class="field" style="margin-top:10px;" id="ids_config">
+				 <input type="button" value="Configure your account with IDS?" class="secondary button" onclick="config_idv('<%= email %>')">
+			</div> -->
+
+		<% #end %>
+		
+		<% unless @broker.blank? %>
+				<input type="hidden" name="is_broker" value="yes">	
+		<% else %>
+		 		<input type="hidden" name="is_broker" value="no">
+		<% end %>
+
 		<div class="actions">
 		   <input type="submit" value="SUBMIT" class="tiny button success">
 		  </div>

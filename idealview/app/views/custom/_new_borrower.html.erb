@@ -1,0 +1,545 @@
+<% borrower =Borrower.new%>
+<div class="borrower_main" id="borrow_<%= borrower.id %>">
+	<div class="content-white-box one_div">
+	    <div class="cwb-header">
+	        <h3> Borrower Information</h3>
+	        <!---------------- Hide/Show ---------------->
+	        
+	        <!-------------- Hide/Show ------------------>
+	    </div>
+	    <div class="cwb-content">
+	        <div class="row">
+	        	<div class="columns medium-12"  id = "borrower_borrower_type" <% if @borrowers_tab.custom_fields.include? "borrower_type"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Borrower Type :</strong>
+		                    <select id="borrower_type" rows="1" name="borrower_type" class="borrower_edit_field">
+		                    	<option value="">Select Type</option>
+								<option value="Individual">Individual Borrower & Personal Gurarantor(s)</option>
+								<option value="Company or Trust">Corporate Borrower & Personal Guarantor(s)</option>
+							</select>
+		                    
+		                </div>
+		        </div>
+
+		        <div class="personal_info">
+		        <div class="columns medium-6 border-right for_both individual_border" id = "borrower_personal_name" <% if @borrowers_tab.custom_fields.include? "personal_name"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Name:</strong>
+		                    <input id="personal_name" type="text" name="personal_name"  class="borrower_edit_field">
+		                    
+		                </div>
+		        </div>
+		        <div class="columns medium-6 individual_div" id = "borrower_personal_phone"   <% if @borrowers_tab.custom_fields.include? "personal_phone"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Phone:</strong>
+		                    <input id="personal_phone" type="text" rows="1" name="personal_phone" class="borrower_edit_field">
+		                    
+		                </div>
+		        </div>
+		        <div class="columns medium-6 border-right individual_div" id = "borrower_personal_email"  <% if @borrowers_tab.custom_fields.include? "personal_email"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Email:</strong>
+		                    <input  type="email" name="personal_email" class="borrower_edit_field">
+		                    
+		                </div>
+		        </div>
+		        <div class="columns medium-6 for_both"  id = "borrower_personal_monthly_income"  <% if @borrowers_tab.custom_fields.include? "personal_monthly_income"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong> Monthly Income:</strong>
+	                      
+	                    <p><input  type="text"  name="personal_monthly_income" class="borrower_edit_field"></p>
+	                    
+	                </div>
+	            </div>
+		        <div id="personal_loc">
+			        <div class="columns medium-6 border-right"   id = "borrower_personal_address"   <% if @borrowers_tab.custom_fields.include? "personal_address"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <strong>Address:</strong>
+			                    <input class="personal_address borrower_edit_field" type="text" >
+			                   
+			                </div>
+			        </div>
+			        <div class="columns medium-6" id = "borrower_personal_city"   <% if @borrowers_tab.custom_fields.include? "personal_city"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <strong>City:</strong>
+			                    <input class="field locality borrower_edit_field" type="text" placeholder="City" >
+			                   
+			                </div>
+			        </div>
+			        <div class="columns medium-6 border-right" id = "borrower_personal_state"   <% if @borrowers_tab.custom_fields.include? "personal_state"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <strong>State:</strong>
+			                    <input class="field administrative_area_level_1 borrower_edit_field" type="text"  placeholder="State" name="personal_state" >
+			                   
+			                </div>
+			        </div>
+			        <div class="columns medium-6" id = "borrower_personal_postalcode"  <% if @borrowers_tab.custom_fields.include? "personal_postalcode"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <strong>Postal Code:</strong>
+			                    <input class="field postal_code borrower_edit_field" type="text" placeholder="Postal Code" name="personal_postalcode" >
+			                    
+			                </div>
+			        </div>
+		        </div>
+	        	
+
+	            
+	            <div class="columns medium-6 border-right for_both" id = "borrower_personal_income_source"  <% if @borrowers_tab.custom_fields.include? "personal_income_source"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item" style="height:107px;">
+	                    <strong> Income Source:</strong>
+	                    <p><input id="personal_income_source" type="text" rows="1" name="personal_income_source" class="borrower_edit_field"></p>
+	                   
+	                </div>
+	            </div>
+	            <div class="columns medium-6  for_both individual_border" id = "borrower_income_how_long"   <% if @borrowers_tab.custom_fields.include? "income_how_long"%> style="display:none;" <% end %> >
+	                <div class="trans-info-item">
+	                    <strong> How long has income been derived from this source?:</strong>
+		                    <select id="income_how_long" rows="1" name="income_how_long" class="borrower_edit_field">
+								<option value="1" >1 to 24 Months</option>
+								<option value="2" >24 Months to 5 Years</option>
+								<option value="3" >5 Years + </option>
+							</select>
+	                    
+	                </div>
+	            </div>
+	            
+	            <div class="columns medium-6  border-right individual_div" id = "borrower_personal_dob" <% if @borrowers_tab.custom_fields.include? "personal_dob"%> style="display:none;" <% end %> >
+	                <div class="trans-info-item">
+	                    <strong>Birthday:</strong>
+	                    <input id="personal_dob" type="text" name="personal_dob" maxlength="20"  class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	           
+
+	            <div class="columns medium-6 " id = "borrower_ever_borrow_money" <% if @borrowers_tab.custom_fields.include? "ever_borrow_money"%> style="display:none;" <% end %> >
+	                <div class="trans-info-item">
+	                    <strong>Have you ever borrowed private money?:</strong>
+	                    <select id="ever_borrow_money" class="borrower_edit_field" name="ever_borrow_money">
+							<option value="Yes" >Yes</option>
+							<option value="No">No</option>
+						</select>
+	                    
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 border-right" id = "borrower_personal_ein"  <% if @borrowers_tab.custom_fields.include? "personal_ein"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>EIN:</strong>
+	                    <p><input id="personal_ein" type="text" class="borrower_edit_field" name="personal_ein" ></p>
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 individual_div"  id = "borrower_estimated_fico"  <% if @borrowers_tab.custom_fields.include? "estimated_fico"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Estimated FICO score:</strong>
+	                    <p><input id="estimated_fico" type="text" name="estimated_fico" class="borrower_edit_field"></p>
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 border-right individual_div" id = "borrower_net_worth"  <% if @borrowers_tab.custom_fields.include? "net_worth"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Net Worth:</strong>
+	                     
+	                    <p><input id="net_worth" type="text" class="borrower_edit_field" name="net_worth"></p>
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 individual_div"  id = "borrower_personal_gross"  <% if @borrowers_tab.custom_fields.include? "personal_gross"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Gross Monthly Income:</strong>
+	                   
+	                    <p><input id="personal_gross" type="text" class="borrower_edit_field" rows="1" name="personal_gross"></p>
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 border-right individual_div"  id = "borrower_personal_cashContribution"  <% if @borrowers_tab.custom_fields.include? "personal_cashContribution"%> style="display:none;" <% end %>>
+	                <div class="trans-info-last">
+	                    <strong>Borrower Cash Contribution:</strong>
+	                   
+	                    <p><input id="personal_cashContribution" type="text" name="personal_cashContribution" class="borrower_edit_field"></p>
+						
+	                </div>
+	            </div>
+	           
+	           	<div class="columns medium-6 individual_div" id = "borrower_borrower_guarantor"  <% if @borrowers_tab.custom_fields.include? "borrower_guarantor"%> style="display:none;" <% end %>>
+	                <div class="trans-info-last">
+	                    <strong>Borrower Also The Guarantor?:</strong>
+	                    <p>
+	                    <select id="borrower_guarantor" name="borrower_guarantor" class="borrower_edit_field">
+	                    	<option value="">Select</option>
+							<option value="Yes" >Yes</option>
+							<option value="No">No</option>
+						</select>
+						</p>
+						
+	                </div>
+	            </div>
+
+	        </div>
+	        </div>
+	    </div>
+	</div><!-- content-white-box -->
+
+
+		<div class="content-white-box business_info">
+		    <div class="cwb-header">
+		        <h3>Business Information</h3>
+		    </div>
+		    <div class="cwb-content">
+		        <div class="row">
+
+		        	<div class="columns medium-6 border-right" id = "borrower_business_name"  <% if @borrowers_tab.custom_fields.include? "business_name"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Business Name :</strong>
+		                    <input id="business_name" type="text" name="business_name" class="borrower_edit_field">
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6"  id = "borrower_business_phone"  <% if @borrowers_tab.custom_fields.include? "business_phone"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Business Phone :</strong>
+		                    <input id="business_phone" type="text" class="borrower_edit_field" name="business_phone">
+							
+		                </div>
+		            </div>
+
+		          
+		            <div class="columns medium-6 border-right" id = "borrower_time_in_business"  <% if @borrowers_tab.custom_fields.include? "time_in_business"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Time In Business:</strong>
+		                    <select id="time_in_business" name="time_in_business" class="borrower_edit_field">
+								<option value="1">Less Than A Year</option>
+								<option value="2">1 - 3 Years</option>
+								<option value="3">3 - 10 Years</option>
+								<option value="10">10+ Years</option>
+							</select>
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id = "borrower_revenue_time_period"   <% if @borrowers_tab.custom_fields.include? "revenue_time_period"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Business years of Revenue:</strong>
+		                    <select id="revenue_time_period" rows="1" name="revenue_time_period" class="borrower_edit_field">
+								<option value="1">Less Than A Year</option>
+								<option value="2">1 - 3 Years</option>
+								<option value="3">3 - 10 Years</option>
+								<option value="10">10+ Years</option>
+							</select>
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6 border-right"  id = "borrower_business_ein"   <% if @borrowers_tab.custom_fields.include? "business_ein"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Business EIN:</strong>
+		                    <input  type="text" rows="1" name="business_ein" class="borrower_edit_field">
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6"  id = "borrower_business_type"   <% if @borrowers_tab.custom_fields.include? "business_type"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Business Type:</strong>
+		                    <input id="business_type" type="text"  name="business_type" class="borrower_edit_field">
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6 border-right" id = "borrower_state_of_incorporation"   <% if @borrowers_tab.custom_fields.include? "state_of_incorporation"%> style="display:none;" <% end %>>
+		                <div class="trans-info-last">
+		                    <strong>Business state of Incorporation:</strong>
+		                     <select id="state_of_incorporation" class="borrower_edit_field" name="state_of_incorporation">
+								<option value="AL">AL</option>
+								<option value="AK">AK</option>
+								<option value="AZ">AZ</option>
+								<option value="AR">AR</option>
+								<option value="CA">CA</option>
+								<option value="CO">CO</option>
+								<option value="CT">CT</option>
+								<option value="DE">DE</option>
+								<option value="DC">DC</option>
+								<option value="FL">FL</option>
+								<option value="GA">GA</option>
+								<option value="HI">HI</option>
+								<option value="ID">ID</option>
+								<option value="IL">IL</option>
+								<option value="IN">IN</option>
+								<option value="IA">IA</option>
+								<option value="KS">KS</option>
+								<option value="KY">KY</option>
+								<option value="LA">LA</option>
+								<option value="ME">ME</option>
+								<option value="MD">MD</option>
+								<option value="MA">MA</option>
+								<option value="MI">MI</option>
+								<option value="MN">MN</option>
+								<option value="MS">MS</option>
+								<option value="MO">MO</option>
+								<option value="MT">MT</option>
+								<option value="NE">NE</option>
+								<option value="NV">NV</option>
+								<option value="NH">NH</option>
+								<option value="NJ">NJ</option>
+								<option value="NM">NM</option>
+								<option value="NY">NY</option>
+								<option value="NC">NC</option>
+								<option value="ND">ND</option>
+								<option value="OH">OH</option>
+								<option value="OK">OK</option>
+								<option value="OR">OR</option>
+								<option value="PA">PA</option>
+								<option value="RI">RI</option>
+								<option value="SC">SC</option>
+								<option value="SD">SD</option>
+								<option value="TN">TN</option>
+								<option value="TX">TX</option>
+								<option value="UT">UT</option>
+								<option value="VT">VT</option>
+								<option value="VA">VA</option>
+								<option value="WA">WA</option>
+								<option value="WV">WV</option>
+								<option value="WI">WI</option>
+								<option value="WY">WY</option>
+								</select>
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id = "borrower_business_balance_sheet"   <% if @borrowers_tab.custom_fields.include? "business_balance_sheet"%> style="display:none;" <% end %>>
+		                <div class="trans-info-last">
+		                    <strong>Business Balance Sheet Value:</strong>
+		                    <input id="business_balance_sheet" type="text" name="business_balance_sheet" class="borrower_edit_field"  >
+							
+		                </div>
+		            </div>	
+		        </div>
+		    </div>
+		</div>
+		<div class="content-white-box borrower_bio"  id = "borrower_bio"   <% if @borrowers_tab.custom_fields.include? "bio"%> style="display:none;" <% end %>>
+			<div class="cwb-header">
+				<h3>Borrower Bio</h3>
+				
+			</div>
+			<div class="cwb-content">
+				<textarea  name="bio" class="borrower_edit_field" id="bio"></textarea>
+			</div>
+		</div>
+	
+	<div class="content-white-box business_financials" >
+	    <div class="cwb-header">
+	        <h3>Business Financials </h3>
+	    </div>
+	    <div class="cwb-content">
+	        <div class="row">
+	        	<div class="columns medium-6 border-right" id = "borrower_cash_on_hand"   <% if @borrowers_tab.custom_fields.include? "cash_on_hand"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Cash On Hand:</strong>
+	                   
+	                    <input id="cash_on_hand" type="text" rows="1" name="cash_on_hand" class="borrower_edit_field" >
+						
+	                </div>
+	            </div>
+
+	          
+
+	            <div class="columns medium-6"  id = "borrower_available_credit"   <% if @borrowers_tab.custom_fields.include? "available_credit"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Available Business Credit:</strong>
+	                    
+	                    <input id="available_credit" type="text"  rows="1" name="available_credit" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+	        	
+	        	<div class="columns medium-6 border-right" id = "borrower_monthly_noi"   <% if @borrowers_tab.custom_fields.include? "monthly_noi"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong> Monthly NOI:</strong>
+	                  
+	                    <input id="monthly_noi" type="text" rows="1" name="monthly_noi" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6" id = "borrower_annual_noi"   <% if @borrowers_tab.custom_fields.include? "annual_noi"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong> Annual NOI:</strong>
+	                     
+	                    <input id="annual_noi" type="text"  rows="1" name="annual_noi" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6 border-right"  id = "borrower_account_recievable"   <% if @borrowers_tab.custom_fields.include? "account_recievable"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong> Accounts Receivable:</strong>
+	                   
+	                    <input id="account_recievable" type="text" rows="1" name="account_recievable" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6"  id = "borrower_account_payable"   <% if @borrowers_tab.custom_fields.include? "account_payable"%> style="display:none;" <% end %>>
+	                <div class="trans-info-last">
+	                    <strong> Accounts Payable:</strong>
+	                   
+	                    <input id="account_payable" type="text" rows="1" name="account_payable" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+
+	        </div>
+	    </div>
+	</div>
+
+	<div class="content-white-box guarantor_info" >
+	    <div class="cwb-header">
+	        <h3>Guarantor Information  </h3>
+	    </div>
+	    <div class="cwb-content">
+	        <div class="row">
+	        	
+	        	<div class="columns medium-6 border-right" id = "borrower_guarantor_name"   <% if @borrowers_tab.custom_fields.include? "guarantor_name"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Guarantor Name:</strong>
+	                    <input id="guarantor_name" type="text" name="guarantor_name" class="borrower_edit_field" >
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6" id = "borrower_guarantor_phone"   <% if @borrowers_tab.custom_fields.include? "guarantor_phone"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Guarantor Phone:</strong>
+	                    <input id="guarantor_phone" type="text" name="guarantor_phone" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6  border-right" id = "borrower_guarantor_email"   <% if @borrowers_tab.custom_fields.include? "guarantor_email"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Guarantor Email:</strong>
+	                    <input id="guarantor_email" type="text" name="guarantor_email" class="borrower_edit_field">
+						
+	                </div>
+	            </div>
+
+	            <div class="columns medium-6" id = "borrower_guarantor_monthly_income"   <% if @borrowers_tab.custom_fields.include? "guarantor_monthly_income"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Guarantor Monthly Income:</strong>
+	                   
+	                    <input id="guarantor_monthly_income" type="text"  rows="1" name="guarantor_monthly_income" class="borrower_edit_field">
+						
+	                </div>
+		        </div>
+
+	            
+
+	            <div class="columns medium-6 border-right" id = "borrower_guarantor_income_source"   <% if @borrowers_tab.custom_fields.include? "guarantor_income_source"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Guarantor Income Source:</strong>
+	                    <input id="guarantor_income_source" type="text" rows="1" name="guarantor_income_source" class="borrower_edit_field" value="<%= borrower.guarantor_income_source %>">
+						
+	                </div>
+		        </div>
+
+		        
+
+		       <div class="columns medium-6  for_both individual_border" id = "borrower_guarantor_income_how_long"   <% if @borrowers_tab.custom_fields.include? "guarantor_income_how_long"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong> How long has income been derived from this source?(Months):</strong>
+		                    <select id="guarantor_income_how_long" rows="1" name="guarantor_income_how_long" class="borrower_edit_field">
+								<option value="1" >1 to 24 Months</option>
+								<option value="2">24 Months to 5 Years</option>
+								<option value="3">5 Years + </option>
+							</select>
+	                    
+	                </div>
+	            </div>
+
+	            <div id="guarantor_loc"  id = "borrower_guarantor_address"   <% if @borrowers_tab.custom_fields.include? "guarantor_address"%> style="display:none;" <% end %>>
+		            <div class="columns medium-6 border-right">
+		                <div class="trans-info-item">
+		                    <strong>Guarantor Address:</strong>
+		                    <input class="guarantor_address autocomplete borrower_edit_field" type="text" id="guarantor_address" name="guarantor_address" placeholder="Address" autocomplete="off">
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id = "borrower_guarantor_city"   <% if @borrowers_tab.custom_fields.include? "guarantor_city"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Guarantor City:</strong>
+		                    <input class="field locality borrower_edit_field" type="text" placeholder="City" name="guarantor_city" id="guarantor_city">
+							
+		                </div>
+		            </div>
+	            	
+	            	<div class="columns medium-6 border-right" id = "borrower_guarantor_state"   <% if @borrowers_tab.custom_fields.include? "guarantor_state"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Guarantor State:</strong>
+		                    <input class="field administrative_area_level_1 borrower_edit_field" type="text" placeholder="State" name="guarantor_state" id="guarantor_state" >
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id = "borrower_guarantor_postalcode"   <% if @borrowers_tab.custom_fields.include? "guarantor_postalcode"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Guarantor Postal Code:</strong>
+		                    <input class="field postal_code borrower_edit_field" type="text" placeholder="Postal Code" name="guarantor_postalcode" >
+							
+		                </div>
+		            </div>
+
+	            </div>
+
+		      
+
+		        <div class="columns medium-6 border-right"  id = "borrower_guarantor_estimated_ficco" <% if @borrowers_tab.custom_fields.include? "guarantor_estimated_ficco"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                   <strong>Guarantor Estimated FICO:</strong>
+	                   <input id="guarantor_estimated_ficco" type="text" name="guarantor_estimated_ficco" class="borrower_edit_field" >
+						
+	                </div>
+		        </div>
+
+	        	<div class="columns medium-6" id = "borrower_guarantor_net_worth" <% if @borrowers_tab.custom_fields.include? "guarantor_net_worth"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                   <strong> Guarantor Net Worth:</strong>
+	                   
+	                   <input id="guarantor_net_worth" type="text" name="guarantor_net_worth" class="borrower_edit_field" >
+						
+	                </div>
+		        </div>
+
+		        <div class="columns medium-12 "  id = "borrower_guarantor_borrow_money" <% if @borrowers_tab.custom_fields.include? "guarantor_borrow_money"%> style="display:none;" <% end %>>
+	                <div class="trans-info-item">
+	                    <strong>Have you ever borrowed private money?:</strong>
+	                    <select id="guarantor_borrow_money" class="borrower_edit_field" name="guarantor_borrow_money">
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+	                    
+	                </div>
+	            </div>
+
+	        </div>
+	    </div>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+

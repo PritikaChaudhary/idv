@@ -1,0 +1,31 @@
+    <script type="text/javascript">
+    $('document').ready(function(){
+         $( "form" ).submit();
+    });
+    </script>
+
+    <div class="row" style="display:none;">
+        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+            
+        </div>
+        <%= form_for(:user, :url => session_path(:user)) do |f| %>
+        <div class="medium-12 column">
+            Email : <input id="user_email" type="text" name="user[email]" value="<%=@email %>">
+        </div>
+        <div class="medium-12 column">
+            Password: <input id="user_password" type="password" name="user[password]" value="<%=@password%>">
+        </div>
+        <div class="medium-12 column">
+        <div class="field">
+                <%= f.check_box :remember_me %>
+                <%= f.label :remember_me %>
+        </div>
+        </div>
+        <input type="hidden" name="commit" value="Sign in">
+        <div class="medium-12 column">
+            <input type="button" id="sbmt"> 
+            <%= link_to "Forgot your password?", new_password_path(:user) %>
+            <a href="javascript:void(0);" id="sign_up" style="float:right; text-decoration:underline">Sign Up</a>
+         </div>
+        <% end %>
+    </div>

@@ -1,0 +1,64 @@
+<script type="text/javascript">
+  $('document').ready(function(){
+      $('.funds_field').change(function(){
+        $("#check_use_of_funds").val("yes");
+      });
+
+  });
+</script>
+<div class="content-white-box">
+<input type="hidden" id="check_use_of_funds">
+  <div class="cwb-header">
+      <label><h3>Use of Funds</h3></label>
+     
+  </div>
+  <div class="cwb-content">
+    <form id="all_funds_form" method="post">
+      <table border="0" cellpadding="0" cellspacing="0" class="table-use-fund">
+        
+          <% unless @funds.blank? %>
+            <tr>
+                <td>&nbsp;</td>
+                <td><strong>Description</strong></td>
+                <td><strong>Beneficiary</strong></td>
+                <td><strong>Amount</strong></td>
+            <!--<td><strong>Maturity / Contract Date</strong></td>
+                <td><strong>Earned Deposit/Stats</strong></td> !-->
+            </tr>
+          <% else %>
+            <tr>
+                <td><strong>Description</strong></td>
+                <td><strong>Beneficiary</strong></td>
+                <td><strong>Amount</strong></td>
+            </tr>
+          <% end %>
+        
+            <tr id="1_fund" class="fund_row">
+                <td>
+                    <select class="use funds_field fund_select" name="use[]" style="width:125px;">
+                      <option value="">Select</option>
+                      <option value="Payoff">Payoff</option>
+                      <option selected="selected" value="Improvement">Improvement</option>
+                      <option value="Construction">Construction</option>
+                      <option value="Operations">Operations</option>
+                      <option value="Purchase">Purchase</option>
+                      <option value="Other">Other</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="Beneficiary" name="beneficiary[]" class="funds_field"></td>
+                <td><input type="text" placeholder="Amount" name="amount[]" class="funds_field"></td>
+                <!--<td><input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" style="display:none"><input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" name="contractDate[]" style="display:none"></td>
+                <td><input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" style="display:none;" class="purchase_funds"><input type="text" placeholder="Stats" name="stats[]" style="display:none;" class="payoff_funds"></td>-->
+            </tr>
+          
+      </table>
+    </form>
+    <div class="add_more">
+          <!-- <input type="button" value="Save" class="tiny button" id="save_use_funds"> -->
+        <b>
+          <a class="add_more_fund" style="font-size:24px; float:right;" href="  javascript:void(0);">+</a>
+        </b>
+    </div>
+  </div>
+  <label class="error error_funds"> This field is required. </label>
+</div><!-- content-white-box -->

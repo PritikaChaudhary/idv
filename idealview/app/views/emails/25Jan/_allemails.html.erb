@@ -1,0 +1,44 @@
+<% color_class = ''%>
+    <% 
+    if !@emails.blank?
+        @emails.each do |email|%>
+
+            <div class='row <%=color_class%> bottom-space text-left'>
+
+                <div class="large-1 columns">
+                    <input type="checkbox" name="select_email" value="<%= email.id %>">
+                    <% if email.read_status == 1 %>
+                        <img src='/assets/read.png'  class='read_status'>            
+                    <% else %>
+                        <img src='/assets/unread.png'  class='unread_status'>
+                    <% end %>
+                </div>
+                <div class="large-4 columns">
+                     <%= email.from %>            
+                </div>
+                <div class="large-3 columns">
+                    <%= email.subject %>
+                </div>
+                <div class="large-4 columns">
+                   <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>"> <%= email.body[0, 20] %>....</a>
+                </div>
+                
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <%
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        You have not received any email yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>

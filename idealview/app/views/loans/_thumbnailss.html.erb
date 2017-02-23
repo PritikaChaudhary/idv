@@ -1,0 +1,10 @@
+<% images.each do |image| %>
+  <%if !image.url.blank? %>
+  <li id='<%=image._id%>'>
+  	<a class='th' href="<%=image.url %>">
+  		<img style='height:100px;width:100px;' src="<%=image.url %>">
+  	</a>
+  	<BR>
+	</li>
+  <% end %>
+<% end %>

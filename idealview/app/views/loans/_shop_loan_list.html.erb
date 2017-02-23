@@ -1,0 +1,114 @@
+  <% color_class = ''%>
+    <% i=0
+    if !@loans.blank?
+        @loans.each do |loan|
+            i = i+1 %>
+            <% active = loan.active_user %>
+            <% bInfo = loan.broker %>
+            <% uInfo = loan.user %> 
+            <div class='row <%=color_class%> bottom-space text-left'>
+                <div class="large-1 columns">
+                    <input type="checkbox" value="<%= loan.id %>" name="checkLoan"> 
+                </div>
+                <div class="large-2 columns">
+                 <a href="http://<%= @hostname %>/loans/shop_loan/<%= loan.id %>">
+                    <% unless loan.info['_LoanName'].blank? %>
+                        <%= loan.info['_LoanName'] %>
+                    <% else %>
+                        &nbsp;
+                    <% end %>
+                 </a>
+                </div>
+                <div class="large-2 columns">
+                     <% unless loan.amount.blank? %>
+                        <%=fd_money(loan.amount)%> 
+                    <% else %>
+                        &nbsp;
+                    <% end %>          
+                </div>
+                <div class="large-1 columns">
+                   &nbsp; <% if !loan.info['City3'].blank? && !loan.info['State3'].blank?%>
+                        <%= "#{loan.info['City3']}, #{loan.info['State3']}"%>
+                     <% elsif !loan.info['City3'].blank? %>
+                        <%= "#{loan.info['City3']}"%>
+                     <% elsif !loan.info['State3'].blank? %>
+                        <%= "#{loan.info['State3']}"%>
+                     <% else %>
+                        &nbsp;
+                     <% end %>
+                </div>
+                <div class="large-1 columns">
+                  <% unless loan.created_by_name.blank? %>  
+                    <%= loan.created_by_name %>
+                  <% else %>
+                    &nbsp;
+                  <% end %>         
+                </div>
+                <div class="large-2 columns">
+                <% unless loan.created_date.blank? %>  
+                    <%= loan.created_date %>
+                  <% else %>
+                    &nbsp;
+                  <% end %>
+                
+                </div>
+                <div class="large-2 columns">
+                    <% if loan.reject == 1 %>
+                        Rejected        
+                    <% else %>
+                       <% if !active.blank? %>
+                            <%  etime = Time.parse(active.end_time)
+                                @endt = etime.strftime("%a %b %d %Y %H:%M:%S")
+                                now_time = Time.now %>  
+
+                              <%  if etime < now_time %>
+                                        Expired
+                              <%  else %>
+                                  <div class="active_users<%= loan.id %>">
+                                        <%= active.lender.email %> : <br>
+                                        <script type="text/javascript">
+                                            $('document').ready(function(){
+                                                $('#countdown<%=i %>').timeTo({
+                                                timeTo: new Date(new Date('<%= @endt %>')),
+                                                displayDays: 2,
+                                                theme: "black",
+                                                displayCaptions: true
+                                                });
+                                            });
+                                        </script>
+                                        <div id="countdown<%=i %>" class = "countdown" ></div>
+                                   </div>
+                               <% end  %>
+                       <% else %>
+
+                       <% end %>
+                    <% end %>
+
+                 </div>
+                 <div class="large-1 columns">
+                  <% if !active.blank? %>
+                 <% if loan.reject != 1 %>
+                        <a id="cancel" class="alert tiny button" href="#" onclick="cancel_shop('<%= loan.id %>')">Cancel</a>
+                 <%  end %>
+                 <% end %>    
+                 </div>
+                              
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <% 
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        No shop loans request yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>

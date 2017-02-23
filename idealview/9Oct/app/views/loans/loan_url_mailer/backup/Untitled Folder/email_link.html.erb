@@ -1,0 +1,25 @@
+<%
+	@content = @email.content
+	rplc = {"loan_url" => @loan_url.get_url,"loan_name" => @loan.name, "loan_amount" =>fd_money(@loan.info['_NetLoanAmountRequested0']), "estimated_market_value" => fd_money(@loan.info['_EstimatedMarketValue']), "desired_length" => Loan.term_lengths.invert[@loan.info['_DesiredTermLength']]}
+	changed = @content.gsub(/\w+/) { |m| rplc.fetch(m,m)}
+	
+
+ %>
+
+<div style='max-height:75px;text-align:center'><img style='max-height:75px;width:auto;' src="https://s3-us-west-2.amazonaws.com/idealview/idealview-logo.png"></div>
+<div style='text-align:center;border-bottom: 1px double #000000;padding:5px'>
+There is a new loan for you to review at iDealView.us from FundingDatabase.com.<BR>
+</div>
+<div style='margin-top:40px;'>
+<h3><a href="<%=@loan_url.get_url%>"><%=@loan.name%></a></h3>
+<div><b>Net Loan Amount Requested: </b><%=fd_money(@loan.info['_NetLoanAmountRequested0'])%></div>
+<div><b>Value: </b><%=fd_money(@loan.info['_EstimatedMarketValue'])%></div>
+<div><b>Desired Term Length: </b><%=Loan.term_lengths.invert[@loan.info['_DesiredTermLength']]%></div>
+
+
+
+</div> 	
+<p style='margin-bottom:60px'>To view the details of this loan and to indicate interest visit this link: <a href="<%=@loan_url.get_url%>"><%=@loan.name%></a>
+	
+</p>	
+	

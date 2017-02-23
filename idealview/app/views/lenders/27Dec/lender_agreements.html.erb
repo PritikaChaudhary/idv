@@ -1,0 +1,154 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.read_status
+{
+    width: 25px;
+    margin-left: 10px;
+}
+
+.unread_status
+{
+    width: 31px;
+    margin-left: 6px;
+}
+.bin
+{
+    width: 28px;
+    float: right;
+    margin-right: 45px;
+}
+</style>
+<script type="text/javascript">
+    function delete_loans()
+    {
+        var allVals=[];
+
+        $('input[name="checkLoan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one email.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/delete_copy_loans',
+                 success:function(data){
+                    $('#email_records').html(data);
+                    $('.flash_notice').show();
+                }
+                
+            });
+
+    }
+
+    function reject_loans()
+    {
+         var allVals=[];
+
+        $('input[name="checkLoan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one email.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/reject',
+                 success:function(data){
+                    $('#email_records').html(data);
+                    $('.flash_notice').show();
+                }
+                
+            });
+    }
+
+</script>
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Lender Agreements</h3>
+        <div class="broker_search">
+            
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <a class="button secondary tiny" href="https://<%= @hostname %>/lenders/add_agreement">Add Agreement</a>
+</div>
+<div class="row">
+    <div class="large-3 columns"><b>Added By</b></div>
+    <div class="large-6 columns"><b>Content</b></div>
+    <div class="large-3 columns"><b>Date</b></div>
+</div>
+
+<div class='row' id="email_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <% color_class = ''%>
+    <% 
+    if !@agreements.blank?
+        @agreements.each do |agreement|%>
+            <div class='row <%=color_class%> bottom-space text-left'>
+                
+                <div class="large-3 columns">
+                    <% if !agreement.user.blank? %>
+                        <%= agreement.user.email %>
+                    <% else %>
+                        -
+                    <% end %>
+
+                </div>
+                <div class="large-6 columns">
+                    <%= agreement.content %>           
+                </div>
+               
+                <div class="large-3 columns">
+                  <% adate = Date.parse agreement.added_date
+                      agreement_date = adate.strftime("%d %b, %Y") %>
+                      <%= agreement_date %>
+                </div>
+                
+                
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <%
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        No shop loans request yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>
+
+</div>
+
+ 

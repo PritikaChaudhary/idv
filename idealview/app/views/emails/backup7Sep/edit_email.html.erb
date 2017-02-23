@@ -1,0 +1,557 @@
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.highlights').click(function(){
+			$('.highlight_div').slideToggle();
+		});
+
+		$('.overview').click(function(){
+			$('.overview_div').slideToggle();
+		});
+
+		$('.borrower').click(function(){
+			$('.borrower_div').slideToggle();
+		});
+
+		$('.collateral').click(function(){
+			$('.collateral_div').slideToggle();
+		});
+
+		$('.exit_strategy').click(function(){
+			$('.exit_strategy_div').slideToggle();
+		});
+
+		$('.loan_name').click(function(){
+			$('.name-div').slideToggle();
+		});
+
+		$('#lending_cat').change(function(){
+			cat = $(this).val();
+			if(cat=="Business Financing")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').show();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+			else if(cat=="Equity and Crowdfunding")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').show();
+				$('#mortgage_type').hide();
+			}
+			else if(cat == "Residential or Commercial Mortgage")
+			{
+				$('#lending_types').hide();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').show();
+			}
+			else
+			{
+				$('#lending_types').show();
+				$('#financing_types').hide();
+				$('#equity_crowd').hide();
+				$('#mortgage_type').hide();
+			}
+		});
+
+		$('#amnt_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#amount_request').val(selection)
+		});
+
+		$('#estimate').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#estimated_val').val(selection)
+		});
+
+		$('#term_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#term_length').val(selection)
+		});
+
+		$('#summary_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loan_summary').val(selection)
+		});
+
+		$('#funds_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#funds').val(selection)
+		});
+
+		$('#city_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loc_city').val(selection)
+		});
+
+		$('#state_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#loc_state').val(selection)
+		});
+
+		$('#close_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#close_date').val(selection)
+		});
+
+		$('#close_btn').click(function(){
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#close_date').val(selection)
+		});
+
+		$('.btnimg').click(function(){
+			btn_id = $(this).attr('id');
+			field_id = btn_id.replace("_btn", ""); 
+			if (window.getSelection) {
+			      selection = window.getSelection();
+			  }
+			$('#'+field_id).val(selection)
+		});
+	$("#existing_loan").click(function(){
+			$('.select_box').slideToggle();
+		});
+	
+		$(".del").click(function(){
+			var num = $(this).attr('id')
+			var data = "&id=<%= @detail.id %>&num="+num;
+		     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/emails/delete_file',
+                 success:function(data){
+                 	$("#file<%= @detail.id %>").hide();
+                }
+            
+      		  });
+		});
+
+		$('.select_category').click(function(){
+			var id = $(this).attr('id');
+			var loan_id = $('.loan_id').val();
+			var data = "&id="+loan_id+"&num="+id;
+		     $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/emails/all_categories',
+                 success:function(data){
+                 	
+                 	$('.select_folder'+id).html(data)
+                }
+            
+      		  });
+			$('#cat_'+id).slideToggle();
+			//$('#'+id).html("<img src='/assets/icon2.png'  class='select_img btnimg'>")
+		});
+
+		$('.select_cat').change(function(){
+			var id = $(this).attr('id');
+			sid= id.replace("select_category_", ""); 
+			$("#"+sid).html("<img src='/assets/icon5.png'  class='select_img btnimg1'>");
+		});
+
+		$('.img_btn').click(function(){
+			var id= $(this).attr('id');
+			nId = id.replace("img","img_");
+			inpt = id.replace("img","img_val_");
+			fname = $('#'+inpt).val();
+			$('#'+nId).val(fname);
+			$('#'+id).html("<img src='/assets/icon6.png'  class='select_img btnimg1'>");
+		});
+
+		$("#new_loan").click(function(){
+       	 
+       	 	 var data =  $('.add_loan').serialize();
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/add_loan',
+	                 success:function(data){
+	                    $('.loan_id').val(data);
+	                    $('.add_edit').show();
+	                	$('.save_loan').show();
+	                	$('#existing_loan').hide();
+	                	$('#new_loan').hide();	
+	                	$('.select_box').hide();
+					}
+
+                
+          		  });
+
+		});
+
+	});
+
+
+</script>
+
+ <script type="text/javascript">
+     
+
+      $(document).ready(function() {
+       
+
+       $("select.flexselect").flexselect({
+			  allowMismatch: true,
+			  inputNameTransform:  function(name) 
+			  { return "new_" + name; 
+			  
+				}
+			  
+			});
+
+       $(".flexselect").change(function(){
+       	 current= $(this).val();
+       	 var option = $('option:selected', this).attr('mytag');
+       	$(".loan_name").html(option);
+       	$("#loan_name").val(option);
+       	if ($.isNumeric(current)) {
+       	 	 var data = "&loanId=" + current;
+			     $.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/emails/loan_detail',
+	                 success:function(data){
+	                    $('.left_tab').html(data);
+	                	$('.add_edit').show();
+	                	$('.save_loan').show();
+	                	$('#existing_loan').hide();
+	                	$('#new_loan').hide();	
+	                	$('.select_box').hide();
+					}
+
+                
+          		  });
+			}
+			
+       });
+
+      });
+    </script>
+<div class="row main_div">
+	<form action="http://<%= @hostname %>/emails/create_application" method="post" class="add_loan">  
+		<div class="large-12 columns center_txt">
+		<input type="hidden" name="uId" value="<%= @infoUser.id %>">
+			<span class="loan_name">  Loan Name </span>
+			<div class="small-6 large-centered columns name-div" style="display:none;">
+				<div class="eow-field">
+					<input type="text" name="_LoanName" id="loan_name" placeholder="Loan Name">
+					<img src="/assets/icon1.png"  class="select_img btnimg" id="loan_name_btn">
+				</div>
+			</div>
+			
+		</div>
+		<div class="large-12 columns btn-div">
+					<input type="submit" value="Submit Loan" class="tiny button save_loan" style="display:none;">
+					<input type="button" value="Ammend Existing Loan" class="tiny button" id="existing_loan">
+					<input type="button" value="New Loan" class="tiny button" id="new_loan">
+
+					
+					<div id="example1" class="example">
+					</div>
+					<div class="select_box" style="display:none;">
+						<label> Select Loan </label>
+						<select id="flexselect" name="president" class="flexselect">
+							<option value=""></option>>
+							<% @loans.each do |loan| %>
+								<option value="<%= loan.id %>" mytag="<%= loan.name %>"> <%= loan.name %> </option>
+							<% end %>
+						</select>
+					</div>
+		</div>
+
+
+		<div class="email-outer-wrap add_edit" style="display:none;">
+			<div class="large-3 columns left_tab">
+			<input type="hidden" name="id" class="loan_id">
+					<div class="highlights left-headings"> > Hightlights</div>
+					<div class="highlight_div" style="display:none;">
+						<div class="eow-field">
+							<input type ="text" name="_NetLoanAmountRequested0" id="amount_request" placeholder = "Net Loan Amount Requested"> 
+							<img src="/assets/icon1.png" id="amnt_btn" class="select_img">
+						</div>
+						<div class="eow-field">
+							<input id="estimated_val" type="text" name="_EstimatedMarketValues" placeholder="Estimated Market Value"> 
+							<img src="/assets/icon1.png"  class="select_img" id="estimate">
+						</div>
+						<div class="eow-field">
+							<select id="_DesiredTermLength" rows="1" name="_DesiredTermLength">
+								<option value="">Desired Term Length</option>
+								<option value="3">Less Than 3 Months</option>
+								<option value="6">3 to 6 Months</option>
+								<option value="12">6 to 12 Months</option>
+								<option value="24">12 to 24 Months</option>
+								<option value="25">More than 24 Months</option>
+							</select>
+						</div>
+
+						<div class="eow-field">
+							<input id="loc_city" type="text" name="City3" rows="1" placeholder = "City">
+							<img src="/assets/icon1.png"  id="city_btn" class="select_img">
+						</div>
+
+						<div class="eow-field">
+							<input id="loc_state" type="text" name="State3" rows="1" placeholder = "State">
+							<img src="/assets/icon1.png"  id="loc_state_btn" class="select_img btnimg">
+						</div>
+
+						<div class="eow-field">
+							<input id="close_date" type="date" value="" rows="1" name="_ExpectedCloseDate" placeholder = "Expected Close Date">
+							<img src="/assets/icon1.png"  id="close_btn" class="select_img">
+						</div>
+
+						<div class="eow-field">
+							<select id="lending_cat" name="_LendingCategory">
+								<option value="Private Real Estate Loan">Private Real Estate Loan</option>
+								<option value="Business Financing">Business Financing</option>
+								<option value="Equity and Crowdfunding">Equity and Crowdfunding</option>
+								<option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+							</select>
+						</div>
+
+						
+
+						<div class="eow-field">
+							<select id="lending_types" name="_LendingTypes" >
+								<option value="Single Family Residence">Single Family Residence</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Condo">Condo</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Commercial">Commercial</option>
+								<option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+								<option value="Development">Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Health Care">Health Care</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Other">Other</option>
+							</select>
+
+							<select id="financing_types" name="_BusinessFinancingTypes" style="display:none;">
+									<option value="Equipment/Inventory">Equipment/Inventory</option>
+									<option value="Working Capital">Working Capital</option>
+									<option value="Factoring">Factoring</option>
+									<option value="Cash Advances">Cash Advances</option>
+									<option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+									<option value="Supply Chain Financing">Supply Chain Financing</option>
+									<option value="Expansion Capital">Expansion Capital</option>
+									<option value="Equity">Equity</option>
+									<option value="SBA Financing">SBA Financing</option>
+							</select>
+
+							<select id="equity_crowd" name="_EquityandCrowdFunding" style="display:none;">
+								<option value="Project Financing">Project Financing</option>
+								<option value="Acquisition and Development">Acquisition and Development</option>
+								<option value="Start Up">Start Up</option>
+								<option value="Business Partnership">Business Partnership</option>
+							</select>
+
+							<select id="mortgage_type" name="_MortageTypes" style="display:none;">
+								<option value="Owner Occupied">Owner Occupied</option>
+								<option value="Second Home">Second Home</option>
+								<option value="Investment Property">Investment Property</option>
+								<option value="FHA">FHA</option>
+								<option value="VA">VA</option>
+								<option value="Reverse Mortgage">Reverse Mortgage</option>
+								<option value="Sub Prime">Sub Prime</option>
+								<option value="HUD Financing">HUD Financing</option>
+								<option value="Multifamily">Multifamily</option>
+								<option value="Hospitality">Hospitality</option>
+								<option value="Land Development">Land Development</option>
+								<option value="Mixed Use">Mixed Use</option>
+								<option value="Retail">Retail</option>
+								<option value="Industrial">Industrial</option>
+								<option value="Healthcare">Healthcare</option>
+								<option value="Other">Other</option>
+							</select>
+
+						</div>
+						<div class="eow-field">
+							<select id="transaction_type" rows="1" name="_TransactionType0">
+									<option value="">Transaction Type</option>
+									<option value="Purchase">Purchase</option>
+									<option value="Refinance">Refinance</option>
+									<option value="Both">Both</option>
+							</select>
+						</div>
+
+					</div>
+					<div class="overview left-headings"> > Overview</div>
+					<div class="overview_div" style="display:none;">
+						<div class="eow-field">
+							 <textarea placeholder="Summary" name="_LoanSummaryWhatareyoulookingfor" id="loan_summary"  rows="8"></textarea>
+							<img src="/assets/icon1.png" id="summary_btn" class="select_img">
+						</div>
+						<div class="eow-field">
+							 <textarea placeholder="Use of Funds" name="_UseofFundsWhatdoyouneedthecapitalfor" id="funds" rows="8"></textarea>
+							<img src="/assets/icon1.png"  id="funds_btn" class="select_img btnimg">
+						</div>
+					</div>
+					<div class="borrower left-headings"> > Borrower</div>
+					<div class="borrower_div" style="display:none;">
+						<div class="eow-field">
+							<input id="fname" type="text" placeholder="First Name" name="FirstName">
+							<img src="/assets/icon1.png"  id="fname_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="lname" type="text" placeholder="Last Name" name="LastName">
+							<img src="/assets/icon1.png"  id="lname_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="email" type="text" placeholder="Email" name="Email" <%    if @brokerLogin==true %>value="<%= current_user.email %>" readonly="readonly" <% end %>>
+							<img src="/assets/icon1.png"  id="email_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="birthday" type="date" placeholder = "Birthday" name="Birthday">
+							<img src="/assets/icon1.png"  id="birthday_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="ein" type="date" placeholder = "EIN" name="_EIN">
+							<img src="/assets/icon1.png"  id="ein_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="gross" type="date" placeholder="Gross Monthly Income" name="_GrossMonthlyIncome">
+							<img src="/assets/icon1.png"  id="gross_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<input id="cash" type="date" placeholder="Borrower Cash Contribution" name="_CashContribution">
+							<img src="/assets/icon1.png"  id="cash_btn" class="select_img btnimg">
+						</div>
+						<div class="eow-field">
+							<select name="_BorrowerTimeInBusiness" id="_BorrowerTimeInBusiness">
+								<option value="">Borrower Time In Business</option>
+								<option value="1">1 Year</option>
+								<option value="2">2 Years</option>
+								<option value="3">3 Years</option>
+								<option value="4">4 Years</option>
+								<option value="5">5 Years</option>
+								<option value="6">6 Years</option>
+								<option value="7">7 Years</option>
+								<option value="8">8 Years</option>
+								<option value="9">9 Years</option>
+								<option value="10">10+ Years</option>
+							</select>
+						</div>
+					</div>
+					<div class="collateral left-headings"> > Collateral</div>
+					<div class="collateral_div" style="display:none;">
+						<div class="eow-field">
+							<input id="market_val" type="text" placeholder = "Estimated Property Value" rows="1" name="_EstimatedMarketValue">
+							<img src="/assets/icon1.png"  id="market_val_btn" class="select_img btnimg">
+						</div>
+
+						<div class="eow-field">
+							<input id="amount_owed" type="text" value="" rows="1" name="_AmountOwed" placeholder = "Amount Owed">
+							<img src="/assets/icon1.png"  id="amount_owed_btn" class="select_img btnimg">
+						</div>
+
+						<div class="eow-field">
+							<select rows="1" name="_FreeandClear0" id="_FreeandClear0">
+								<option value="">Mortgage Status</option>
+								<option value="1">Paid In Full</option>
+								<option value="0">Has Mortgage</option>
+							</select>
+						</div>
+
+						<div class="eow-field">
+							<input id="monthly_income" type="text" placeholder="Gross Monthly Income" name="_HowmuchGrossMonthlyIncome">
+							<img src="/assets/icon1.png"  id="monthly_income_btn" class="select_img btnimg">
+						</div>
+
+						<div class="eow-field">
+							<input id="purchase_price" type="text" placeholder = "Purchase Price" name="_PurchasePrice">
+							<img src="/assets/icon1.png"  id="purchase_price_btn" class="select_img btnimg">
+						</div>
+
+						<div class="eow-field">
+							<textarea rows="8" name="_AdditionalCollateralWhatelsecanyouofferassecurity0" id="additional_collateral" placeholder = "Additional Collateral"></textarea>
+							<img src="/assets/icon1.png"  id="additional_collateral_btn" class="select_img btnimg">
+						</div>
+					</div>
+					<div class="exit_strategy left-headings"> > Exit Strategy</div>
+					<div class="exit_strategy_div" style="display:none;">
+						<div class="eow-field">
+							<textarea id="exit_starategy" rows="8" name="_ExitStrategyHowwillyoupaytheloanoff" placeholder = "Exit Strategy"></textarea>
+							<img src="/assets/icon1.png"  id="exit_starategy_btn" class="select_img btnimg">
+						</div>
+					</div>
+				</div>
+			<div class="large-9 columns">
+				<div class="row">
+					<div class="large-12 columns bordr_top">
+						Subject : <%= @detail.subject %>
+					</div>
+					<div class="large-12 columns esummary">
+						<%= simple_format(@detail.body) %>
+						<% if !@detail.file_name.blank? && @detail.file_name!="" 
+								fileArray = @detail.file_name.split(",")
+								i = 0
+							fileArray.each do |attachment|
+
+							%>
+							<div id="file<%= i %>">
+									<div class="large-8 columns" style="color:blue;" >
+									<a href="http://<%=@hostname%>/emails/show_file/<%= @detail.id %>/<%= i %>" title="download"><%= attachment %></a>
+									</div>
+									<div class="large-4 columns">
+											<a href="javascript:void(0);" id="<%= i %>" class="select_category">
+												<img src="/assets/icon2.png"  class="select_img btnimg1">
+											</a>
+
+											<a href="javascript:void(0);" class="img_btn" id="img<%= i %>">
+												<img src="/assets/icon3.png"  id="exit_starategy_btn" class="select_img btnimg" >
+											</a>
+											<br>
+											<input type="hidden" id="img_val_<%= i %>" value="<%= attachment %>">
+											<input type="hidden" name="images[<%= i %>]" id="img_<%= i %>">
+											<div id = "cat_<%= i %>" style="display:none;">
+												<input type="hidden" name="file_name[<%= i %>]" value="<%= attachment %>">
+												<div class="select_folder<%= i %>">
+													<select name="categories[<%= i %>]" class="select_cat" id="select_category_<%= i %>">
+														<option value="none" selected="selected">Select Category</option>
+														<option value="Borrower Info & Corporate Docs">Borrower Info & Corporate Docs</option>
+														<option value="Environmental">Environmental</option>
+														<option value="Property Inspections">Property Inspections</option>
+														<option value="Project">Project</option>
+														<option value="Title,Taxes & Insurance">Title,Taxes & Insurance</option>
+														<option value="Valuation">Valuation</option>
+														<option value="Other">Other</option>
+
+													</select>
+												</div>
+											</div>
+									</div>
+
+									<div class="form<%= attachment %>" >
+									</div>
+							</div>
+							<% 
+							i= i+1
+							end %>
+						<% end %>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

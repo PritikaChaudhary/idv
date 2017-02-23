@@ -1,0 +1,25 @@
+<% unless loan.hide_fields.blank? %>
+    <span id="show_loan_<%=field_name%>" <% if loan.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+      <a style="" onclick="show_loan_field('<%= loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+        <img src="/assets/eye-icon-slash.png" tabindex="0">
+      </a>
+    </span>
+
+      <span id="hide_loan_<%=field_name%>" <% if loan.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+      <a style="" onclick="hide_loan_field('<%= loan.id %>', '<%= field_name%>');" tabindex="0" title = "Hide">
+        <img src="/assets/eye-icon.png" tabindex="0">
+      </a>
+    </span>
+  <% else %>
+    <span id="show_loan_<%= field_name %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+      <a style="" onclick="show_loan_field('<%= loan.id %>', '<%=field_name%>');" tabindex="0" title = "Show">
+        <img src="/assets/eye-icon-slash.png" tabindex="0">
+      </a>
+    </span>
+
+      <span id="hide_loan_<%=field_name%>"  style="float:right; margin-top:0px; margin-right:2px;">
+      <a style="" onclick="hide_loan_field('<%= loan.id %>', '<%=field_name%>');" tabindex="0" title = "Hide">
+        <img src="/assets/eye-icon.png" tabindex="0">
+      </a>
+    </span>
+<% end %>

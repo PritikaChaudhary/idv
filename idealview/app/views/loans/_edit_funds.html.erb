@@ -1,0 +1,21 @@
+<% if @funds.blank?  %>
+	<div class="large-12 columns">
+		<div class="small-8 columns"> <input type="text" name="use[]" placeholder="Description"></div>
+		<div class="small-4 columns"><input type="text" name="amount[]" placeholder="Amount">
+		<input type="hidden" name="id[]" value="">
+		</div>
+	</div>
+<% else %>
+	<% @funds.each do |fund| %>
+		<div class="large-12 columns">
+			<div class="small-8 columns"> <input type="text" name="use[]" placeholder="Description" value="<%= fund.use %>"></div>
+			<div class="small-4 columns"><input type="text" name="amount[]" placeholder="Amount" value="<%= fund.amount %>">
+			<input type="hidden" name="id[]" value="<%= fund.id %>">
+			</div>
+		</div>
+	<% end %>
+
+
+<% end %>
+
+

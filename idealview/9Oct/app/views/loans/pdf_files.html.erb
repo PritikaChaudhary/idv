@@ -1,0 +1,84 @@
+<style>
+ .sortbtn
+ {
+ 	width:153px;
+ }
+
+ .generatepdf
+ {
+ 	float: right;
+ 	margin-right: 36px;
+ }
+ .large-2 {
+    width: 27.667%;
+     word-wrap: break-word;
+}
+.large-3 {
+    width: 31%;
+    word-wrap: break-word;
+}
+ul {
+    margin-left: 0px;
+}
+.row
+{
+    margin-top: 10px !important;
+}
+
+</style>
+
+
+
+<h3 class='text-center' style="width:100%">Pipeline Summaries</h3>
+<div class='row' id="loan_records" style="border-top: 7px solid rgb(242, 242, 242); width:100%">
+<% color_class = ''%>
+<div class='row <%=color_class%> bottom-space text-left'>
+<div class='large-2 columns'><h5>Filename</h5></div>
+<div class='large-2 columns'><h5>Emails</h5></div>
+<!-- <div class='large-2 columns'><h5>Created Date</h5></div> -->
+<div class='large-2 columns'><h5>Edit</h5></div>
+</div>
+<% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+<% @pdfs.each do |pdf|  %>
+<% if pdf.name.blank? || pdf.file_name.blank?%>
+<% else %>
+<div class='row <%=color_class%> bottom-space text-left'>
+    
+    <div class='large-2 columns'>
+      
+       <% file = pdf.file_name %>
+       <% if file.blank?%>
+             N/A
+       <% else %>
+          <a href='javascript:void(0);'>
+            <%= file %>
+          </a>
+       <% end %>
+      
+    </div>
+    
+    <div class='large-2 columns'>
+        <% if pdf.emails.blank?%>
+             N/A 
+       <% else %>
+          <%= pdf.emails %>
+       <% end %>
+    </div>
+    
+    
+
+    <div class='large-2 columns'>
+    <a href='<%=url_for :controller=>'loans', :action=>'edit_pdf',:id=>pdf.id %>'>
+        <input type="button" class="tiny button" value="Edit">
+    </a>
+    </div>
+
+</div>
+
+<% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+<% end %>
+<% end %>
+
+
+ 

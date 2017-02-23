@@ -1,0 +1,998 @@
+<style>
+ .sortbtn
+ {
+    width:153px;
+ }
+
+ .generatepdf
+ {
+    float: right;
+    /*margin-right: 36px;*/
+    margin-right: 20px;
+    color:#ffffff;
+ }
+
+ .large-2 {
+    width: 12.667%;
+}
+.large-3 {
+    width: 25%;
+}
+ul {
+    margin-left: 0px;
+}
+.row
+{
+    margin-top: 10px !important;
+}
+.loan_info
+{
+    width:50%;
+}
+.info
+{
+    float: left;
+     
+}
+label
+{
+    font-weight: bold;
+}
+.half
+{
+    width:40%;
+}
+.br-header {
+    float: left;
+    margin-left: 57px;
+    margin-top: 10px;
+    position: relative;
+    width: 100%;
+}
+table, th, td
+{
+    border: 1px solid #eeeeee;
+} 
+table tr:nth-of-type(2n) {
+    background: none repeat scroll 0 0 #ffffff;
+}
+.crsr
+{
+    cursor: all-scroll;
+}
+.modalhead
+{
+    background-color:  #eeeeee;
+    text-align: center;
+    font-weight: bold;
+}
+.countdown ul
+{
+    line-height:1 !important;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.countdown
+{
+    margin-bottom: 10px;
+}
+
+.reveal-modal .close-reveal-modal, dialog .close-reveal-modal
+{
+    top: 0;
+}
+.timeTo ul li
+{
+    font-size:31px !important;
+}
+</style>
+<% if @checkAdmin == true %>
+<style type="text/css">
+    .large-3 {
+            width: 31%;
+        }
+</style>
+<% end %>
+<script type="text/javascript">
+$(window).bind("pageshow", function() {
+  $("#orderby").val('recent');
+});
+$(function(){
+$("#offices").children("tbody").sortable({
+    stop: function (event, ui) {
+        countRows(); // re-number rows after sorting
+    }
+});
+});
+function countRows() {
+    var i = 0;
+    $('#offices td input').each(function () {
+        $(this).attr("value", ++i);
+    });
+}
+
+
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+http://dash.idealview.us/
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+}); });
+
+    function generate_pdf()
+    {
+         var allVals = [];
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/generate_pdf',
+                success:function(response){
+                //window.open('http://localhost:3000/loans/show_pdf/'+response);
+                window.open('https://<%= @hostname %>/loans/show_pdf/'+response);
+                //$("a#pdf_download").attr("href","http://idealview.us/pdfs/"+response);
+                $("a#pdf_download").fadeIn();
+            }
+            });
+
+    }
+
+    function send_pdf()
+    {
+        var allVals = [];
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+        //var data = "moredata=" + allVals;
+        //$.form('http://idealview.us/loans/pdf', { q: allVals }, 'POST').submit();
+        $.form('https://<%= @hostname %>/loans/pdf', { q: allVals }, 'POST').submit();
+       // $.form('http://localhost:3000/loans/pdf', { q: allVals }, 'POST').submit();     
+    }
+
+
+    function delete_loans()
+    {
+        var allVals=[];
+        var ordring = $('#orderby').val();
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+        var data = "&moredata=" + allVals + "&order=" + ordring;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/delete_loans',
+                 success:function(data){
+                    $('#loan_records').html(data);
+                }
+                
+            });
+
+    }
+
+    $('document').ready(function(){
+        <% if @agree == "false" %>
+            $('#myModal').foundation('reveal', 'open',{
+                close_on_background_click:false,
+                close_on_esc:false
+            });
+
+            $('#close_popup').click(function(){
+                window.location.replace("https://<%= @hostname %>/");
+            });
+        <% end %>
+
+           $("#accept_contract").click(function(){
+                var signature = $('#signature').val();
+                if(signature=="")
+                {
+                    $("#required").show();
+                }
+                else
+                {
+                    var data=$('#agreementForm').serialize();   
+                    $.ajax({
+                            data: data,
+                            type: 'POST',
+                            url: '/lenders/accept_agreement',
+                            success:function(response){
+                               $('#myModal').foundation('reveal', 'close');  
+                            }
+                        });
+         
+                }
+
+            });
+
+           $('#signature').focus(function(){
+                $("#required").hide();
+           });
+
+
+
+        $(".pagination a").on("click", function() {
+            $(".pagination").html("Page is loading...");
+            $.getScript('/loans/recent/desc');
+            return false;
+          });
+
+
+        $('.click_hide').click(function(){
+            var c_id=$(this).attr('id');
+            var lendr_id=c_id.replace("click_hide_","");
+            var div_id="click_"+lendr_id;
+            $("#"+div_id).show();
+            $("#"+c_id).hide();
+            $("#loan_lenders"+lendr_id).hide();
+
+        });
+
+        $('#lendingCategory').change(function(){
+            var slct = $(this).val();
+            if(slct=="Business Financing")
+            {
+                $('#lendingTypes').val('');
+                $('#lendingTypes').hide();
+                $('#businessFinancingTypes').show();
+                $('#equityandCrowdFunding').val('');
+                $('#equityandCrowdFunding').hide();
+                $('#mortageTypes').val('');
+                $('#mortageTypes').hide();
+            }
+            if(slct=="Equity and Crowd Funding")
+            {
+                $('#lendingTypes').hide();
+                $('#lendingTypes').val('');
+                $('#businessFinancingTypes').hide();
+                $('#businessFinancingTypes').val('');
+                $('#equityandCrowdFunding').show();
+                $('#mortageTypes').val('');
+                $('#mortageTypes').hide();
+            }
+            if(slct=="Residential or Commercial Mortage")
+            {
+                $('#lendingTypes').hide();
+                $('#lendingTypes').val('');
+                $('#businessFinancingTypes').hide();
+                $('#businessFinancingTypes').val('');
+                $('#equityandCrowdFunding').hide();
+                $('#equityandCrowdFunding').val('');
+                $('#mortageTypes').show();
+            }
+            if(slct=="Private Real Estate Loan")
+            {
+                $('#lendingTypes').show();
+                $('#businessFinancingTypes').hide();
+                $('#businessFinancingTypes').val('');
+                $('#equityandCrowdFunding').hide();
+                $('#equityandCrowdFunding').val('');
+                $('#mortageTypes').hide();
+                $('#mortageTypes').val('');
+            }
+        });
+
+    
+    }); 
+    function lender_change(sts, id)
+    {
+            var status=sts.value;
+            var lender_id=id;
+            var data = "&status=" +status
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loan_urls/'+lender_id+'/save_status',
+                 success:function(response){
+                    $('#del_'+id).hide();
+                }
+            }) ;
+    }
+
+    function order_lenderhide(id)
+    {
+            var lendr_id=id;
+           // var lendr_id=c_id.replace("click_hide_","");
+            var div_id="click_"+lendr_id;
+            $("#"+div_id).show();
+            $("#click_hide_"+lendr_id).hide();
+            $("#loan_lenders"+lendr_id).hide();
+
+    }
+
+    function callAjax(customUrl, divId, formId){
+    if(typeof(formId)==='undefined') data = '';
+    else data = $('#'+formId).serialize();
+    if(typeof(divId)===undefined) divId ='';
+     $('#loan_lenders').html('loading...');
+    $.ajax({
+        type: 'POST',
+        url: customUrl,
+        data:data,
+        success:function(data){
+                $('#'+divId).html(data);    
+            
+            
+            if(formId=="lender_loans")
+            {
+                var a_id=divId.replace('loan_lenders','');
+                $('#click_'+a_id).hide();
+                $('#click_hide_'+a_id).show();
+                $("#loan_lenders"+a_id).show();
+            }
+
+                },
+        error:function(data){
+            alert('Something went wrong.');
+            
+            },
+        dataType: 'html',
+
+
+    });
+        
+}
+
+function callSort(customUrl, divId, formId, type){
+    $('#sorting').val(type);
+    var form_val = $('#used').val();
+    if(form_val=="true")
+    {
+        var data=$('#custom_search').serialize();
+        $('#used').val('true');
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/custom_search',
+                success:function(response){
+                   $('#loan_records').html(response);
+                }
+            });
+
+    }
+    else
+    {
+        if(typeof(formId)==='undefined') data = '';
+        else data = $('#'+formId).serialize();
+        if(typeof(divId)===undefined) divId ='';
+        $('#loan_lenders').html('loading...');
+        $.ajax({
+            type: 'POST',
+            url: customUrl,
+            data:data,
+            success:function(data){
+
+                $('#'+divId).html(data);
+                if(formId=="lender_loans")
+                {
+                    var a_id=divId.replace('loan_lenders','');
+                    $('#click_'+a_id).hide();
+                    $('#click_hide_'+a_id).show();
+                    $("#loan_lenders"+a_id).show();
+                }
+
+                    },
+            error:function(data){
+                alert('Something went wrong.');
+                
+                },
+            dataType: 'html',
+
+
+        });
+    }
+        
+}
+
+function custom_searchForm()
+{
+    var data=$('#custom_search').serialize();
+    $('#used').val('true');
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/custom_search',
+            success:function(response){
+               $('#loan_records').html(response);
+            }
+        });
+}
+
+/**************** For New Changes ********************************/
+$('document').ready(function(){
+    $("#orderby").change(function(){
+        var val = $("#orderby").val();
+        var form_val = $('#used').val();
+        $('#sorting').val(val);
+        divId = "loan_records"
+        if(val=="recent")
+        {
+            customUrl='/loans/recent/desc'
+        }
+        else
+        {
+            customUrl='loans/priority/ordering'
+        }
+        if(form_val=="true")
+        {
+            var data=$('#custom_search').serialize();
+            $('#used').val('true');
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/custom_search',
+                    success:function(response){
+                       $('#loan_records').html(response);
+                    }
+                });
+
+        }
+        else
+        {
+            if(typeof(formId)==='undefined') data = '';
+            else data = $('#'+formId).serialize();
+            if(typeof(divId)===undefined) divId ='';
+            $('#loan_lenders').html('loading...');
+            $.ajax({
+                type: 'POST',
+                url: customUrl,
+                data:data,
+                success:function(data){
+
+                    $('#'+divId).html(data);
+                    if(formId=="lender_loans")
+                    {
+                        var a_id=divId.replace('loan_lenders','');
+                        $('#click_'+a_id).hide();
+                        $('#click_hide_'+a_id).show();
+                        $("#loan_lenders"+a_id).show();
+                    }
+
+                        },
+                error:function(data){
+                    alert('Something went wrong.');
+                    
+                    },
+                dataType: 'html',
+
+
+            });
+        }
+        
+    });
+
+    $(".search_change").change(function(){
+    var data=$('#custom_search').serialize();
+    $('#used').val('true');
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/lenders/loan_custom_search',
+            success:function(response){
+               $('#loan_records').html(response);
+            }
+        });
+    });
+
+    $('#accept').click(function(){
+        var allVals = [];
+        sorting_type = $('#sorting').val();
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one loan.");
+            return false;
+        }
+        var data = "&moredata=" + allVals +"&sorting="+sorting_type;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/manual_shop_loan',
+                success:function(response){
+                   $('#loan_records').html(response);
+                   $('#myModal').foundation('reveal', 'close');   
+                   //alert("Your shop loan request has been sent to admin.");
+                }
+            });
+    });
+
+    $('#cancel').click(function(){
+        $('#myModal').foundation('reveal', 'close');
+    });
+
+});
+
+function send_to_cpc()
+{
+    var allVals = [];
+    $('input[name="select_loan"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one loan.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/send_to_cpc',
+            success:function(response){
+                alert("Loans are sent to CPC");
+            }
+        });
+    //$.form('http://<%= @hostname %>/loans/send_to_cpc', { q: allVals }, 'POST').submit();
+        
+}
+
+function shop_loan()
+{
+     var allVals = [];
+    $('input[name="select_loan"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one loan.");
+        return false;
+    }
+    else
+    {
+        $('#myModal').foundation('reveal', 'open');    
+    }
+    
+
+    //$.form('http://<%= @hostname %>/loans/send_to_cpc', { q: allVals }, 'POST').submit();
+}
+function loan_archive()
+{
+    var allVals = [];
+    $('input[name="select_loan"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one loan.");
+        return false;
+    }
+    var data = "&ids=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/archive',
+            success:function(response){
+                $('#loan_records').html(response);
+             // alert("Loans are archived successfuly."); 
+            }
+        });
+}
+</script>
+<script src="https://rawgit.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <div id="myModal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold;"><%= @agreement.header %></h5>
+      </div>
+        <p><%= @agreement.content %> </p>
+
+      <div class="small-8 small-centered columns">
+        <form method="post" action="https://<%= @hostname %>/lenders/acept_agreement" id="agreementForm">
+          <div class="row">
+          
+                    <div class="small-3 columns">
+                      <label for="right-label" class="right">Signature</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input type="text" id="signature" name="signature">
+                      <label id="required" style="color:red; margin-bottom:10px; display:none;"> Signature is required. </label>
+                    </div>
+
+          </div>
+
+          <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">Date</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="agreement_date" value="<%= @bdate %>">
+                      <input type="hidden" name="agreement_date_time" value="<%= @adate %>">
+                      <input type="hidden" name="agreement_id" value="<%= @agreement.id %>">
+                      <input type="hidden" name="lender_id" value="<%= @all_lenders.id %>">
+                    </div>
+
+              
+          </div>
+           <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">IP Address</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="ip_address" value="<%= @ip %>">
+                    </div>
+
+          </div>
+
+          <div class="row">
+                <div class="small-6 small-centered columns">
+                  <input type="button" id="accept_contract"  value="Accept  & Sign Contract" class="tiny button">
+                </div>
+          </div>
+        </form>
+      </div>
+         <a class="close-reveal-modal" aria-label="Close" id="close_popup">&#215;</a>
+     </div>
+    
+    </div>
+    </div>
+
+
+
+<div class="container heading">
+    <div class="medium-12 column" style="background:#F1F1F1; padding-top:20px; padding-bottom:20px; margin-bottom: 25px;">
+        <h3>Potential Deals</h3>
+    </div>
+</div>
+<!-- <div class="container"  style="padding-left:48px; padding-right:60px;"> -->
+<div class="container">
+
+<% if @lenderLogin == true %>
+<div class="search_div medium-3 small-12 column">
+<form class="custom_search" name="custom_search" id="custom_search">
+    <input type="hidden" name="sorting" id="sorting" value="recent" style="text">
+        <div class="input_container row" style="text-align:center;">
+            <label>Loan Range</label>
+            <div class="small-6 column">
+                <select name="loanMinDropDown" class="search_change">
+                    <option value="">From</option>
+                    <option value="0">0</option>
+                    <option value="1000">1000</option>
+                    <option value="10000">10000</option>
+                    <option value="50000">50000</option>
+                    <option value="100000">100000</option>
+                    <option value="500000">500000</option>
+                    <option value="1000000">1000000</option>
+                    <option value="2000000">2000000</option>
+                    <option value="5000000">5000000</option>
+                </select>
+            </div>
+            <div class="small-6 column">
+                <select name="loanMaxDropDown" class="search_change">
+                    <option value="0">To</option>
+                    <option value="50000">50000</option>
+                    <option value="100000">100000</option>
+                    <option value="250000">250000</option>
+                    <option value="500000">500000</option>
+                    <option value="1000000">1000000</option>
+                    <option value="2000000">2000000</option>
+                    <option value="5000000">5000000</option>
+                    <option value="0">No Max</option>
+                </select>
+            </div>
+        </div>
+
+       <div class="input_container">
+        <label>Lending Category</label>
+        <select name="lendingCategory" id="lendingCategory" class="search_change">
+            <option value="all">All</option>
+            <option value="Private Real Estate Loan">Private Real Estate Loan</option>
+            <option value="Business Financing">Business Financing</option>
+            <option value="Equity and Crowd Funding">Equity and Crowd Funding</option>
+            <option value="Residential or Commercial Mortage">Residential or Commercial Mortage</option>
+        </select> 
+        </div>
+
+        <div class="input_container">
+        <label>Lending Types</label>
+        <select name="lendingTypes" id="lendingTypes" class="search_change">
+            <option value="">All</option>
+            <option value="Single Family Residence">Single Family Residence</option>
+            <option value="Multifamily">Multifamily</option>
+            <option value="Hospitality">Hospitality</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Short Term Real Estate Loan">Short Term Real Estate Loan</option>
+            <option value="Development">Development</option>
+            <option value="Mixed Use">Mixed Use</option>
+            <option value="Retail">Retail</option>
+            <option value="Health Care">Health Care</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Other">Other</option>
+        </select> 
+        <select name="businessFinancingTypes" style="display:none;" id="businessFinancingTypes" class="search_change">
+            <option value="">All</option>
+            <option value="Equipment/Inventory">Equipment/Inventory</option>
+            <option value="Working Capital">Working Capital</option>
+            <option value="Factoring">Factoring</option>
+            <option value="Cash Advances">Cash Advances</option>
+            <option value="Accounts Receivable Financing">Accounts Receivable Financing</option>
+            <option value="Supply Chain Financing">Supply Chain Financing</option>
+            <option value="Expansion Capital">Expansion Capital</option>
+            <option value="Equity">Equity</option>
+            <option value="SBA Financing">SBA Financing</option>
+            <option value="Other">Other</option>
+        </select>
+        <select name="equityandCrowdFunding" style="display:none;" id="equityandCrowdFunding" class="search_change">
+            <option value="">All</option>
+            <option value="Project Financing">Project Financing</option>
+            <option value="Acquisition and Development">Acquisition and Development</option>
+            <option value="Start Up">Start Up</option>
+            <option value="Business Partnership">Business Partnership</option>
+            <option value="Other">Other</option>
+        </select>  
+        <select name="mortageTypes" style="display:none;" id="mortageTypes" class="search_change">
+            <option value="">All</option>
+            <option value="Owner Occupied">Owner Occupied</option>
+            <option value="Second Home">Second Home</option>
+            <option value="Investment Property">Investment Property</option>
+            <option value="FHA">FHA</option>
+            <option value="Reverse Mortgage">Reverse Mortgage</option>
+            <option value="Sub Prime">Sub Prime</option>
+            <option value="HUD Financing">HUD Financing</option>
+            <option value="Multifamily">Multifamily</option>
+            <option value="Hospitality">Hospitality</option>
+            <option value="Land Development">Land Development</option>
+            <option value="Mixed Use">Mixed Use</option>
+            <option value="Retail">Retail</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Other">Other</option>
+        </select> 
+        </div>
+
+        <div class="input_container">
+        <label>States</label>
+        <select size="10" multiple="" id="State3" name="State3[]" style="height:178px;" class="search_change">
+            <option value="">Select States</option>
+            <option value="Nationwide">Nationwide</option>
+            <option value="Alabama">Alabama</option>
+            <option value="Alaska">Alaska</option>
+            <option value="Arizona">Arizona</option>
+            <option value="Arkansas">Arkansas</option>
+            <option value="California">California</option>
+            <option value="Colorado">Colorado</option>
+            <option value="Connecticut">Connecticut</option>
+            <option value="Delaware">Delaware</option>
+            <option value="Florida">Florida</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Hawaii">Hawaii</option>
+            <option value="Idaho">Idaho</option>
+            <option value="Illinois Indiana">Illinois Indiana</option>
+            <option value="Iowa">Iowa</option>
+            <option value="Kansas">Kansas</option>
+            <option value="Kentucky">Kentucky</option>
+            <option value="Louisiana">Louisiana</option>
+            <option value="Maine">Maine</option>
+            <option value="Maryland">Maryland</option>
+            <option value="Massachusetts">Massachusetts</option>
+            <option value="Michigan">Michigan</option>
+            <option value="Minnesota">Minnesota</option>
+            <option value="Mississippi">Mississippi</option>
+            <option value="Missouri">Missouri</option>
+            <option value="Montana Nebraska">Montana Nebraska</option>
+            <option value="Nevada">Nevada</option>
+            <option value="New Hampshire">New Hampshire</option>
+            <option value="New Jersey">New Jersey</option>
+            <option value="New Mexico">New Mexico</option>
+            <option value="New York">New York</option>
+            <option value="North Carolina">North Carolina</option>
+            <option value="North Dakota">North Dakota</option>
+            <option value="Ohio">Ohio</option>
+            <option value="Oklahoma">Oklahoma</option>
+            <option value="Oregon">Oregon</option>
+            <option value="Pennsylvania Rhode Island">Pennsylvania Rhode Island</option>
+            <option value="South Carolina">South Carolina</option>
+            <option value="South Dakota">South Dakota</option>
+            <option value="Tennessee">Tennessee</option>
+            <option value="Texas">Texas</option>
+            <option value="Utah">Utah</option>
+            <option value="Vermont">Vermont</option>
+            <option value="Virginia">Virginia</option>
+            <option value="Washington">Washington</option>
+            <option value="West Virginia">West Virginia</option>
+            <option value="Wisconsin">Wisconsin</option>
+            <option value="Wyoming">Wyoming</option>
+            <option value="International">International</option>
+        </select>
+        </div>
+
+        <input type="hidden" name="used" id="used">
+       <!-- <div class="input_container noborder">
+        <input class="search" type="button" value="Search" onclick="custom_searchForm();">
+        </div> -->
+
+  </form>
+
+
+</div>
+<!------------------------- Header Buttons ------------------------------>
+    <!--  <div class="medium-9 small-12 columns" id="new_buttons">
+        <div class="small-5 columns">
+            <span class="small-6">Sort By</span>
+            <select class="small-6" name="sortby" id="orderby">
+                <option value="recent" >Recent</option>
+                <option value="priority">Priority</option>
+            </select>
+        </div>
+        <div class="small-7 columns top_buttons">
+            <% if @checkAdmin==true %>
+                <a href="javascript:void(0);" class="button secondary tiny" onclick="send_to_cpc()" >Send to CPC</a>
+            <% end %>
+            <% if @checkBroker==true %>
+            <a href="javascript:void(0);" class="button secondary tiny" onclick="shop_loan()">Shop Loan</a>
+            <% end %>
+           <% if @checkAdmin==true %>
+            <a href="javascript:void(0);" class="button secondary tiny" onclick="loan_archive()">Archive</a>
+            <% end %>
+            <% if @checkAdmin==true %>
+                <a href="javascript:void(0);" onclick="if(confirm('Are you sure you want to delete these items?')){delete_loans()}" class="button secondary tiny trash">
+                    <i class="fa fa-trash"></i>
+                </a>
+                <%= button_tag "Create Pipeline",  onclick:"send_pdf()", class: 'tiny button secondary generatepdf'%>
+                <a id="pdf_download" href="#" download target="_blank" style="display:none;">Download PDF</a>
+            <% end %>
+        </div>
+    </div> -->
+    <div id="loan_records" class="medium-9 small-12 column">
+                 <% # render partial: 'layouts/messages' %>
+                <% color_class = ''%>
+                <div class="small-12 columns">
+                    <table width="100%" class="list_loans">
+                        <thead>
+                            <tr>
+                                <th>Loan Name</th>
+                                <th>Net Amount</th>
+                                <th>Location</th>
+                                <th>Time Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                <%
+                i = 1;
+                unless @loans.blank?
+                 @loans.each do |loan_rec|
+                    loan=loan_rec.copy_loan
+                    #abort("#{loan.inspect}")
+                    
+                 %>
+
+                <!-- <div class='row <%=color_class%> bottom-space text-left'> -->
+                    <% if loan.name.blank?
+                        #abort("#{loan|Loan_id|}")
+                        loan_name = 'No Loan Title'
+                       else
+                        loan_name = loan.name
+                       end
+
+                    %>
+                    
+                    <tr>
+                        
+                        <td><a href="https://<%= @hostname %>/lenders/loan_detail/<%= loan_rec.id %>"><%= loan_name%> </td>
+                        <td>
+                                <!-- <span>Net Amount:</span><BR> -->
+                                <% if loan.info['_NetLoanAmountRequested0'].blank? %>
+                                    N/A
+                                <% else %>
+                                    <%=fd_money(loan.info['_NetLoanAmountRequested0'])%>
+                                <% end %>
+                        </td>
+                        <td>
+                            <!-- <span>Location :</span> -->
+                            <% if loan.info['City3'].blank? && loan.info['State3'].blank? %>
+                               N/A
+                            <% else %>
+                              <%= loan.info['City3']+', '%> <%= loan.info['State3']%>
+                            <% end %>
+                        </td>
+                        
+
+
+                <td>
+                <% 
+                    etime = Time.parse(loan_rec.end_time)
+                    @endt = etime.strftime("%a %b %d %Y %H:%M:%S")
+                    now_time = Time.now %>
+
+                  <%  if etime < now_time %>
+                            Expired
+                  <%  else %>
+                        <script type="text/javascript">
+                            $('document').ready(function(){
+                                $('#countdown<%=i %>').timeTo({
+                                timeTo: new Date(new Date('<%= @endt %>')),
+                                displayDays: 2,
+                                theme: "black",
+                                displayCaptions: true
+                                });
+                            });
+                        </script>
+                        <div id="countdown<%=i %>" class = "countdown" ></div>
+                  <% end  %>
+                </td>
+         
+                 
+                    
+
+                    
+                    </tr>
+              <% i = i+1 %>
+              <% end %>
+                        
+                <%
+                else %>
+                <tr>
+                    <td colspan="4">
+                        <% if @empty.blank? %>
+                                No Potential deals found.
+                        <% else %> 
+                                <%= @empty %>
+                        <%  end %>
+                    </td>
+                </tr>
+              <% end %>
+                </tbody>
+              </table>
+            </div>
+       
+    </div>
+
+<% else %>
+<div class="msg"><h6><a href="https://<%= @hostname %>/lenders/prefrences">Click here</a> to register as a LENDER to receive potential deals.</h6></div>
+
+<% end %>
+</div>
+
+ 

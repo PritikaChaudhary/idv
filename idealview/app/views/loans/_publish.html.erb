@@ -1,0 +1,71 @@
+<script type="text/javascript">
+  function share_lender()
+  {
+    $('#myModal3').foundation('reveal', 'open');
+  }
+</script>
+<div class="sidebar-item-content">
+  <ul class="publish-btns">
+    <li>
+        <a href="http://<%= @hostname %>/loans/detail/<%= @loan['_id'] %>" target="_blank">
+            <span class="p-thumb"><img src="/assets/p-ico-001.png"></span>
+            <span class="p-title">Preview</span>
+        </a>
+    </li>
+     <% @url=url_for :controller=>'loan_urls', :action=>'generate_url', :id=>@loan.id %>
+     <% if @brokerLogin == true && current_user.req_docs == 1%>
+       
+        <li>
+          <a href="javascript:void(0);" <% if @loan.doc_url.blank? %> onclick="callFun('<%= @url %>','show-urls','loan-url-form','generate_doc_url')" <% else %> class="show_doc_div" <% end %> id="gen_url">
+              <span class="p-thumb"><img src="/assets/p-ico-002.png"></span>
+              <span class="p-title">Request Docs</span>
+          </a>
+        </li>
+    <% elsif @adminLogin==true %>
+        <li>
+          <a href="javascript:void(0);" <% if @loan.doc_url.blank? %> onclick="callFun('<%= @url %>','show-urls','loan-url-form','generate_doc_url')" <% else %> class="show_doc_div" <% end %> id="gen_url">
+              <span class="p-thumb"><img src="/assets/p-ico-002.png"></span>
+              <span class="p-title">Request Docs</span>
+          </a>
+        </li>
+    <% else %>
+        <li>
+          <a href="javascript:void(0);" id="request_docs_modal">
+              <span class="p-thumb"><img src="/assets/p-ico-002.png"></span>
+              <span class="p-title">Request Docs</span>
+          </a>
+        </li>
+    <% end %>
+    
+    <li>
+        <a href="javascript:void(0);" class="share_page"  onclick="share_lender();">
+            <span class="p-thumb"><img src="/assets/p-ico-003.png"></span>
+            <span class="p-title">Share</span>
+        </a>
+    </li>
+
+    <% if @adminLogin==true %>
+      <li>
+          <a href="javascript:void(0);" onclick="send_form_link();">
+              <span class="p-thumb"><img src="/assets/p-ico-004.png"></span>
+              <span class="p-title">Form Link</span>
+          </a>
+      </li>
+    <% elsif @brokerLogin == true && current_user.loan_application_links == 1 %>
+        <li>
+          <a href="javascript:void(0);" onclick="send_form_link();">
+              <span class="p-thumb"><img src="/assets/p-ico-004.png"></span>
+              <span class="p-title">Form Link</span>
+          </a>
+        </li>
+    <% else %>
+        <li>
+          <a href="javascript:void(0);" id="restrict_form_popup">
+              <span class="p-thumb"><img src="/assets/p-ico-004.png"></span>
+              <span class="p-title">Form Link</span>
+          </a>
+        </li>
+    <% end %>
+
+  </ul>
+</div>

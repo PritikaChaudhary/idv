@@ -1,0 +1,80 @@
+<div class="small-12 small-centered columns">
+      <form method="post" action="<% @hostname %>/admin/add_fund_related" class="addRelatedFund">
+
+        <div class="field">
+          <label for="user_name">Use</label><br>
+          <select class="uses_related" name="use" onchange="return fund_fields()">
+			<option value="">Select</option>
+			<option value="Payoff">Payoff</option>
+			<option value="Improvement">Improvement</option>
+			<option value="Construction">Construction</option>
+			<option value="Operations">Operations</option>
+			<option value="Purchase">Purchase</option>
+			<option value="Other">Other</option>
+		  </select>
+        </div>
+
+        <div class="field">
+          	<label for="user_email">Benificiary</label><br>
+        	<input type="text"  placeholder="Beneficiary" name="beneficiary">
+        </div>
+    
+        <div class="field">
+          <label for="user_password">Amount</label> <br>
+         <input type="text"  placeholder="Amount" name="amount">
+       </div>
+
+       <div class="payOff_fund" style="display:none;">
+	       	<div class="field">
+	          	<label for="user_email">Maturity Date</label><br>
+	        	<input type="text"  placeholder="Maturity Date" name="maturityDate">
+	        </div>
+	    
+	       <div class="field">
+	          	<label for="user_email">Stats</label><br>
+	        	<input type="text"  placeholder="Stats" name="stats">
+	        </div>
+       </div>
+
+       <div class="purchase_fund" style="display:none;">
+	       	<div class="field">
+	          	<label for="user_email">Contract Date</label><br>
+	        	<input type="text"  placeholder="Maturity Date" name="contractDate">
+	        </div>
+	    
+	       <div class="field">
+	          	<label for="user_email">Earned Deposit</label><br>
+	        	<input type="text"  placeholder="Earned Deposit" name="earnedDeposit">
+	        </div>
+       </div>
+
+      <input type="hidden" name="collateral_id" value="<%= @colid %>">
+      <input type="hidden" name="loan_id"  value="<%= @loanId %>">
+      
+
+
+
+      <div class="actions">
+        <input type="button" value="Submit" name="commit" class="button tiny " onclick="add_related_fund()">
+      </div>
+
+       
+     </form>
+</div>
+
+<script type="text/javascript">
+	function add_related_fund()
+	{
+	    var data = $('.addRelatedFund').serialize();
+	    $.ajax({
+	      data: data,
+	      type: 'POST',
+	      url: '/loans/add_fund_related',
+	      success:function(response)
+	      {
+	      	after_add_funds(response, "<%= @colid %>");
+	      }
+	    });
+	  
+	}
+</script>

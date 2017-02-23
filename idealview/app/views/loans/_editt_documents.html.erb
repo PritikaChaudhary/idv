@@ -1,0 +1,381 @@
+<style type="text/css">
+	.folder_name
+	{
+		color: #f09569;
+	}
+	
+	.add_new_folder
+	{
+		display:none;
+	    border: 3px solid rgb(231, 231, 231); 
+		padding: 12px; 
+		margin-bottom: 23px;
+	}
+	.folder_content
+	{
+		margin-top:30px;
+		width:100%
+	}
+	.hidebtn
+	{
+		width:26px; 
+		float:left;	
+	}
+	.hide_del
+	{
+		width: 8%; 
+		float:right;
+	}
+	.del
+	{
+		float:left;
+	}
+	.folder_namex
+	{
+		float: left;
+		color: #f09569;
+	}
+	.del_span
+	{
+		float:right; 
+		font-size: 12px;
+    	margin-right: 14px;
+	}
+	.hide_span
+	{
+		float: left;
+		font-size: 12px;	
+		margin-left: -17px;
+	}
+	.add_bottom
+	{
+		border-bottom: medium solid rgb(248, 248, 248);
+	}
+	.tiny.button.fileinput-button 
+	{
+		    float: right;
+		    margin: -31px 0 10px;
+	}
+	.progress
+	{
+		display: none;
+	}
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<!---------------------------------- Loan Detail Custom Folder ---------------------->
+
+<% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+
+<% else %>
+		<% if params[:action] != "docs"%>
+			 <% unless current_user.blank? %>
+				<div class="custom_folder"><input type="button" class="tiny button add-custom" value="Add Custom Folder" id="add_custom_folder"></div>
+			<% end %>
+		 <% end %>
+<% end %>
+<div class="add_new_folder">
+	<form method="post" id="add_folder_form">
+		<label> Folder Name</label><input type="text" name="folder_name" class="folder_name">
+		<input type="hidden" name="loan_id" value="<%= @loan.id %>">
+		<% unless current_user.blank? %>
+			<input type="hidden" name="user_id" value="<%= current_user.id %>">
+		<% end %>
+		<input type="button" class="tiny button success" value="SAVE" id="add_folder">
+		<input type="button" class="tiny button alert" value="CANCEL" id="cancel_add_folder">
+	</form>
+</div>
+
+<div class="row custom_folders">
+<%
+  unless @folders.blank?
+
+	@folders.each do |folder| %>
+
+		<div  class="folder_content" id="foldr_<%= folder.id %>" >
+			
+			<div class="small-12 column" style="margin-top:60px;">
+				<div class="small-12 column">
+					
+							<b class="folder_namex"><%= folder.folder_name %></b>
+							<% if params[:action] != "docs" %>
+								<% unless current_user.blank? %>
+									<a  onclick="if(confirm('Are you sure? You want to delete this folder')){del_folder('<%= folder.id %>')}" style="color:red; margin-left:10px;"><i class="fa fa-times-circle"></i></a>
+								<% end %>
+							<% end %>
+							
+					</div>
+				
+				<div class="small-12 column" >
+				<%
+					fldr = folder.folder_name
+					formId=fldr.gsub(',','_') 
+					formId=formId.gsub('&','_') 
+					formId=formId.gsub(' ','_') 
+					%>
+					<% if @fileUpload == "true" %>
+						<%= render partial:'folder_file', locals:{contact_id:@loan._id, form_id:formId+'_upload', controller:'loans', action:'upload_file', folder:folder.id, multiple:'true', type:'full', button_label:'Upload new files'}
+						%>
+					<% else %>
+						<ul class="button-group">
+							<li class="tiny button fileinput-button" tabindex="0" onclick = "alert('Please update your plan.')">
+								<span tabindex="0">
+									<i class="fa fa-cloud-upload" tabindex="0"></i>
+									Upload new files
+								</span>
+							</li>
+						</ul>
+					<% end %>
+
+				
+				</div>
+			</div>
+			
+		</div>
+
+
+		<div id="folder_<%= folder.id %>" >
+		<% if params[:action] != "docs" %>
+			<% if params[:action] != "docs" %>
+				<% unless current_user.blank? %>
+					<% 
+					all_files = folder.files_by_folder(@loan._id)
+					unless all_files.blank?  %>
+						<div class="small-12 column ">
+							<div class="small-12 column add_bottom" >
+								<div class="small-6 column">
+									<span class="hide_span">Hide</span>
+								</div>
+								<div class="small-6 column">
+									<span class="del_span">Delete</span>
+								</div>
+							</div>
+						</div>
+					<% end %>
+				<% end %>
+			<% end %>
+		<% end %>
+		<% 
+		all_files = folder.files_by_folder(@loan._id)
+		unless all_files.blank? 
+			all_files.each do |file| %>
+				
+				<div class="file_show small-12 column" id="del_file<%= file.id %>">
+				  <div class="small-12 column add_bottom">
+				  <% if params[:action] != "docs" %>
+				   	<% unless current_user.blank? %>
+					    
+						    <div class="hidebtn" id="hidebtn_<%= file.id %>">
+							    
+							    <div id="hidefile_<%= file.id %>" <% if file.hide==1 %> style="display:none;" <% end %> >
+							   		<a  onclick="hide_doc('<%= file.id %>');" style="color:black;"><i class="fa fa-eye-slash"></i></a>
+							   	</div>
+
+							   	
+							   	<div id="showfile_<%= file.id %>" <% if file.hide!=1 %> style="display:none;" <% end %>>
+							   		<a  onclick="show_doc('<%= file.id %>');" style="color:black;"><i class="fa fa-eye"></i></a>
+							   	</div>
+							   	
+						   	</div>
+					<% end %>
+				  <% end %>
+				   <% url=url_for :controller=>'loans', :action=>'view_file',:id=>file[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=file.name%></a>
+				   <% if params[:action] != "docs" %>
+					   <% unless current_user.blank? %>
+						    <div class="hide_del" >
+								<div class="del">
+							   		<a  onclick="if(confirm('Are you sure? You want to delete this file')){del_doc('<%= file.id %>')}" style="color:red;"><i class="fa fa-times-circle"></i></a>
+							   	</div> 
+						   	</div>
+					   <% end %>
+				   <% end %>
+
+			  </div>
+			</div>
+	 		<% end
+		end
+		%>
+
+		
+	  </div>
+	<% end
+   end
+  %>
+</div>
+
+
+<!---------------------------------- End Loan Detail Custom Folder ------------------>
+<% Loan.file_categories.each do |cat| 
+%>
+<% if cat=='Other' %>
+		<h3> <%=cat%> </h3>
+		
+
+		<%
+
+		 @loan.documents.each do |doc| 
+		 	if doc.category.blank? && doc.delete!=1 
+		 		%>
+		      	<% if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin') || current_user.role?('Broker') ) && controller.action_name=="show" %>
+				  <div class="doc_show" id="del_<%= doc.id %>">
+					   <div class="hidebtn" id="hidebtn_<%= doc.id %>">
+							    
+							    <% if @user_plan != "SOLO" %>
+								    <div id="hidefor_<%= doc.id %>" <% if doc.hide==1 %> style="display:none;" <% end %> >
+								   		<a  onclick="hide_file('#{doc.id}');" style="color:black;"><i class="fa fa-eye-slash"></i></a>
+								   	</div>
+								   	
+								   	<div id="showfor_<%= doc.id %>" <% if doc.hide!=1 %> style="display:none;" <% end %>>
+								   		<a  onclick="show_file('#{doc.id}');" style="color:black;"><i class="fa fa-eye"></i></a>
+								   	</div>
+							   	<% end %>
+					   </div>
+					   
+					   <%
+					    if !doc.url.blank? %>
+				       		 <a href='<%= doc.url %>' target='_blank'><%=doc.name%></a>
+						   	
+					   	 <% else %>
+					   	 	
+					   	 	 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+						   	 <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+
+					   	 <% end %>
+					   
+					    <div class="hide_del" >
+						    
+							<div class="del">
+						   		<a  onclick="if(confirm('Are you sure? You want to delete this file')){del_file('<%= doc.id %>')}" style="color:red;"><i class="fa fa-times-circle"></i></a>
+						   	</div> 
+					   	</div>
+				  </div>
+			   	  <BR> 
+		       <% else %>
+
+		       		<% if doc.hide!=1 %>
+		       			<%
+		       				if !doc.url.blank? %>
+				       		<a href='<%= doc.url %>' target='_blank'><%=doc.name%></a>
+					   	 <% else %>
+					   	 	 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+						   	 <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+					   	 <% end %>
+					<% end %> 
+				    <BR> 
+		       <% end %>
+		    <% end %>
+		<% end %>			    
+<%end%>
+
+
+<!----------------------------------- Loan Detail ------------------------------------>
+	<div class="row">
+	<%
+	formId=cat.gsub(',','_') 
+	formId=formId.gsub('&','_') 
+	formId=formId.gsub(' ','_') 
+	%>
+	<div style='margin-top:30px;width:100%' class="small-12 column droparea" id="dropzone_<%= formId %>_upload">
+				
+				<div class="small-12 column" style="margin-top:17px;"><b class="folder_name"  ><%= cat %></b></div>
+				
+				<% if @fileUpload == "true" %>
+					<div style="float:right;" class="small-12 column">
+						<%= render partial: 'file_upload', locals:{contact_id:@loan._id, form_id:formId+'_upload', controller:'loans', action:'upload_doc', category:cat, multiple:'true', type:'full', button_label:'Upload new files'}
+						%>
+
+					</div>
+				<% else %>
+						<ul class="button-group">
+							<li class="tiny button fileinput-button" tabindex="0" onclick = "alert('Please update your plan.')">
+								<span tabindex="0">
+									<i class="fa fa-cloud-upload" tabindex="0"></i>
+									Upload new files
+								</span>
+							</li>
+						</ul>
+					
+				<% end %>
+			</div>			
+	<% if !@loan.docs_by_category(cat).blank?%>
+		<% if params[:action] != "docs" %>
+			<% unless current_user.blank? %>
+				<div class="small-12 column ">
+					<div class="file_show small-12 column add_bottom">
+						<div class="small-6 column">
+							<span class="hide_span">Hide</span>
+						</div>
+						<div class="small-6 column">
+							<span class="del_span">Delete</span>
+						</div>
+					</div>
+				</div>
+			<% end %>
+		<% end %>
+	<% end%>
+<div class="small-12 column">
+	<%@loan.docs_by_category(cat).each do |doc| 
+		#abort("#{doc.inspect}")
+		%>
+		<% if doc.delete!=1 %>
+		   <% if !current_user.blank? && (current_user.is_admin || current_user.role?('Admin') || current_user.role?('Broker')) && controller.action_name=="show" 
+		   	%>
+			   	<div class = "small-12 column add_bottom">
+				  <div class="small-12 column" id="del_<%= doc.id %>">
+					   
+							<div class="hidebtn" id="hidebtn_<%= doc.id %>">
+							     <% 	# => abort("sdfsd")
+							     if @user_plan != "SOLO" %>
+							    <div id="hidefor_<%= doc.id %>" <% if doc.hide==1 %> style="display:none;" <% end %> >
+							   		<a  onclick="hide_file('<%= doc.id %>');" style="color:black;"><i class="fa fa-eye-slash"></i></a>
+
+							   	</div>
+							   	
+							   	<div id="showfor_<%= doc.id %>" <% if doc.hide!=1 %> style="display:none;" <% end %>>
+							   		<a  onclick="show_file('<%= doc.id %>');" style="color:black;"><i class="fa fa-eye"></i></a>
+							   	</div>
+							   	<% end %>
+						   	</div>
+						    <%
+						    if !doc.url.blank? 
+						     %>   		
+							   	 <a href='<%= doc.url %>' target='_blank'><%=doc.name%></a>
+						   	 <% else %>
+						   	 	 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+							   	 <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+						   	 <% end %>
+					   
+					    <div class="hide_del" >
+
+							<div class="del" >
+						   		<a  onclick="if(confirm('Are you sure? You want to delete this file')){del_file('<%= doc.id %>')}" style="color:red;"><i class="fa fa-times-circle"></i></a>
+						   	</div> 
+					   	</div>
+				  </div>
+				</div>
+			   <BR> 
+	       <% else %>
+	       		<% if doc.hide!=1 %>
+		       		 
+		       		 <% 
+		       		 if !doc.url.blank? %>
+				       		<div class="small-12 column add_bottom">
+						   	 <a href='<%= doc.url %>' target='_blank'><%=doc.name%></a>
+						   	 </div>
+					   	 <% else %>
+					   	 	 <div class="small-12 column add_bottom">
+					   	 	 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+						   	 <a href='<%=url%>' target='_blank'><%=doc.name%></a>
+					   		 </div>
+					   	 <% end %>
+				 <% end %> 
+			    <BR> 
+	       <% end %>
+	    <% end %>
+	<% end %>
+	</div>
+</div>			
+
+
+<%end %>
+<!---------------------------------------- End Loan Detail --------------------------------->

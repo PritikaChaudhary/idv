@@ -1,0 +1,389 @@
+<% #abort("#{@bucket_size}")
+if defined? @num
+	@form_show = ""
+	@user_plan = ""
+	if(@brokerLogin==true ) 
+		if defined?@infoBroker.plan 
+			if @infoBroker.plan == "SOLO"
+				@user_plan = "SOLO"
+				if (@num == 1 || @num>1)
+					@form_show = "no" 
+				end
+			end
+		end
+	 end 
+end
+%>
+<script>
+function callFun(customUrl, divId, formId, plan){
+	if(typeof(formId)==='undefined') data = '';
+	else data = $('#'+formId).serialize();
+	if(typeof(divId)===undefined) divId ='';
+	 $('#loan_lenders').html('loading...');
+	$.ajax({
+		type: 'POST',
+		url: customUrl,
+		data:data,
+		success:function(data){
+
+			$('#'+divId).html(data);
+			
+			if(plan == "SOLO")
+			{
+				$('#loan-url-form').hide();
+			}
+			if(formId=="lender_loans")
+			{
+				var a_id=divId.replace('loan_lenders','');
+				$('#click_'+a_id).hide();
+				$('#click_hide_'+a_id).show();
+				$("#loan_lenders"+a_id).show();
+			}
+
+				},
+		error:function(data){
+			alert('Something went wrong.');
+			
+			},
+		dataType: 'html',
+
+
+	});
+		
+}
+
+function handleMainImage(files) {
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var imageType = /image.*/;
+    
+    if (!file.type.match(imageType)) {
+      continue;
+    }
+    
+    var img = document.createElement("img");
+    img.classList.add("obj");
+    img.file = file;
+    mainDiv = document.getElementById("main_image_preview");
+    mainDiv.innerHTML = '';
+    
+    mainDiv.appendChild(img); // Assuming that "preview" is a the div output where the content will be displayed.
+    
+    var reader = new FileReader();
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+    reader.readAsDataURL(file);
+  }
+}
+
+function hide_file(id)
+{
+	if(confirm('Are you sure? You want to hide this file')){
+		var data = "&id=" + id;
+		$.ajax({
+	            data: data,
+	            type: 'POST',
+	            url: '/loans/hide_file',
+	            success:function(response){
+	            	$('#showfor_'+id).show();
+	            	$('#hidefor_'+id).hide();
+	           }
+	        });
+	}
+}
+
+function hide_doc(id)
+{
+	if(confirm('Are you sure? You want to hide this file')){
+		var data = "&id=" + id;
+		$.ajax({
+	            data: data,
+	            type: 'POST',
+	            url: '/loans/hide_doc',
+	            success:function(response){
+	            	$('#showfile_'+id).show();
+	            	$('#hidefile_'+id).hide();
+	           }
+	        });
+	}
+}
+
+function show_file(id)
+{
+	var data = "&id=" + id;
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/show_file',
+            success:function(response){
+            	$('#hidefor_'+id).show();
+	            $('#showfor_'+id).hide();
+        	}
+        });
+}
+
+function show_doc(id)
+{
+	var data = "&id=" + id;
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/show_doc',
+            success:function(response){
+            	$('#hidefile_'+id).show();
+	            $('#showfile_'+id).hide();
+        	}
+        });
+}
+
+function del_file(id)
+{
+	var data = "&id=" + id;
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_file',
+            success:function(response){
+           		$('#del_'+id).hide();
+        	}
+        });
+}
+
+function del_doc(id)
+{
+	var data = "&id=" + id;
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_doc',
+            success:function(response){
+           		$('#del_file'+id).hide();
+        	}
+        });
+}
+
+function del_folder(id)
+{
+	var data = "&id=" + id;
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/del_folder',
+            success:function(response){
+           		$('#folder_'+id).hide();
+        	}
+        });
+}
+
+
+$('document').ready(function(){
+	$( ".lender_status" ).change(function() {
+		var status=$(this).val();
+		var id=$(this).attr('id');
+		var lender_id=id.replace('lender','');
+		var data = "&status=" +status
+		$.ajax({
+			data: data,
+			type: 'POST',
+            url: '/loan_urls/'+lender_id+'/save_status',
+             success:function(response){
+           		$('#del_'+id).hide();
+        	}
+        }) ;
+	});
+
+	$("#add_custom_folder").click(function(){
+		$(".add_new_folder").slideToggle();		
+	});
+
+	$("#cancel_add_folder").click(function(){
+		$(".add_new_folder").hide();
+		$(".folder_name").val("")
+	});
+
+	$("#add_folder").click(function(){
+		var data=$('#add_folder_form').serialize();
+		$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/add_folder',
+            success:function(response){
+            	$(".add_new_folder").hide();
+            	$(".folder_name").val("")
+            	$(".custom_folders").html(response);
+           	}
+        });
+	});
+	
+});
+
+function copyToClipboard(text) {
+  window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+}
+
+function loan_location()
+{
+	$('#l_location').show();
+	$('.loc').hide();
+}
+
+function location_edit()
+{
+	var data=$('#loc_form').serialize();
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/save_loc',
+            success:function(response){
+            	var city=$('#loc_city').val();
+            	var state=$('#loc_state').val();
+            	$('.loc').html(city+', '+state);
+            	$('.loc').show();
+            	$('#l_location').hide();
+           	}
+        });
+}
+
+function cancel_loc()
+{
+	$('#l_location').hide();
+	$('.loc').show();
+}
+function lender_change(sts, id)
+    {
+            var status=sts.value;
+            var lender_id=id;
+            var data = "&status=" +status
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loan_urls/'+lender_id+'/save_status',
+                 success:function(response){
+                    $('#del_'+id).hide();
+                }
+            }) ;
+    }
+
+</script>
+
+<div class='loan_head'>
+<div class="row">
+<h1 class='text-left loan-heading'>
+		<%temp_name = '_LoanName'%>
+		<span id='<%=temp_name%>'>
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_text',
+					field_type: 'text_field_tag', 
+					field_label: '', 
+					field_name:temp_name,
+					field_value:@loan.info[temp_name],
+					field_options:'',
+				} %>
+		</span>
+
+</h1>
+</div> <!-- row -->
+</div> <!-- loan_main -->
+<% #abort("#{@brokerInfo}")%>
+
+<% if(@brokerLogin==true && @adminLogin!=true) %>
+	<div id='show-urls' style='padding-left:50px;padding-right:50px;'>
+	<%= render partial: 'loan_url_form'%>
+	</div>
+<% end %>
+<% if policy(@loan).update? %>
+<div id='show-urls' style='padding-left:50px;padding-right:50px;'>
+	<%= render partial: 'loan_url_form'%>
+</div>
+
+<% end %>
+
+
+
+<div class='row' id="loan_tabs">
+
+
+
+	<div class="large-9  columns">
+		<dl class="tabs" data-tab>
+		  <dd class="active"><a href="#overview">Overview</a></dd>
+		  <dd><a href="#borrower">Borrower</a></dd>
+		  <dd><a href="#collateral" onclick='get_property_map();'>Collateral</a></dd>
+		   <dd><a href="#exit-strategy">Exit Strategy</a></dd>
+		  <dd><a href="#pictures">Pictures</a></dd>
+		  <dd><a href="#documents" style="margin-right:0;">Documents</a></dd>
+		</dl>
+		<div class="tabs-content">
+		  <div class="content active" id="overview">
+			
+				<%= render partial: 'overview' %>
+		     
+		  </div>
+		  <div class="content" id="borrower">
+		  	
+				<%= render partial: 'borrower' %>
+		
+		  </div>
+		  
+		  <div class="content" id="collateral">
+		   	
+		    	<%=render partial: 'collateral'%>
+	
+		    
+		  </div>
+		  
+		  
+		  
+		  
+		  <div class="content" id="pictures">
+		  	
+		    <ul id='pictures-container' class="clearing-thumbs" data-clearing>
+		    	<%=render partial: 'thumbnails', locals:{images: @images, loan_id:@loan._id}%>
+		    </ul>
+		    <% if @fileUpload == "true" %>
+			<div style='margin-top:30px;width:100%'>
+				<%= render partial: 'file_upload', locals:{contact_id:@loan._id, form_id:'image_upload', controller:'loans', action:'upload_image', multiple:'true', type:'full', button_label:'Add Pictures'}
+				%>
+			</div>	
+			<% end %>
+		    
+		  </div>
+		  
+
+		  <div class="content" id="exit-strategy">
+		    <%=render partial: 'exitstrategy'%>
+		  </div>
+		  
+		  
+		  <div class="content" id="documents">
+
+		    	<%=render partial: 'documents'%>
+
+		  </div>
+		</div>
+		
+		
+		
+
+		
+		
+		
+	</div>
+
+
+	<div class='large-3 columns' id="highlight_box">
+		<h3 class='text-center'>
+			Highlights
+		</h3>
+		<div class='medium-only-text-center small-only-text-center highlight_desc'>
+		    	<%=render partial: 'highlights'%>
+		  </div>
+	
+	</div>
+
+
+	
+	
+</div>

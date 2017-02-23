@@ -1,0 +1,327 @@
+<form method="post" class="appraisal_form">
+	<div class="columns large-12" style="margin-top:30px;">
+		<h6 style="font-weight:bold">Property Information</h6>
+		<div class="columns medium-12 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Client:</strong></label>
+	           	<input type="hidden" name="api_key" value="<%= @key_val %>">
+	           	<input type="hidden" name="loan_number" value="<%= @loan_id %>">
+	           	<select name="client_id">
+	            	<% @clients.each do |client|%>
+	            		<option value="<%= client['id'] %>"><%= client['name'] %></option>
+	            	<% end %>
+	            </select>
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Address1:</strong></label>
+	            <input type="text" name="address1" value="<%= @collateral.address%>" placeholder="Address1">
+	            
+	        </div>
+		</div>
+        <div class="columns medium-6">
+            <div class="trans-info-item">
+                <label><strong>Address2:</strong></label>
+                 <input type="text" name="address2"  placeholder="Address2">
+            </div>
+        </div>
+        <div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Zip Code:</strong></label>
+	            <input type="text" name="zip" value="<%= @collateral.postalcode%>" placeholder="Zip Code">
+	            
+	        </div>
+		</div>
+
+		<div class="columns medium-6">
+	        <div class="trans-info-item">	
+	            <label><strong>City:</strong></label>
+	            <input type="text" name="city" value="<%= @collateral.city%>" placeholder="City">
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>State:</strong></label>
+            	<input type="text" name="state" value="<%= @collateral.state%>" placeholder="State">
+	            
+	        </div>
+		</div>
+		<div class="columns medium-6">
+	        <div class="trans-info-item">
+	            <label><strong>Country:</strong></label>
+	            <input type="text" name="county" placeholder="Country">
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Property Type:</strong></label>
+            	<select name="property_type">
+	            	<option value="">Select Property Type </option>
+	            	<option value="Single Family">Single Family</option>
+	            	<option value="Multi Family">Multi Family</option>
+	            	<option value="Condominium">Condominium</option>
+	            	<option value="Duplex">Duplex</option>
+	            	<option value="Manufactured Home">Manufactured Home</option>
+	            	<option value="Mobile Home">Mobile Home</option>
+	            	<option value="Modular Home">Modular Home</option>
+	            	<option value="Vacant Land">Vacant Land</option>
+	            	<option value="Vacant Lot">Vacant Lot</option>
+	            	<option value="Other">Other</option>
+	            </select>
+	            
+	        </div>
+		</div>
+		<div class="columns medium-6">
+	        <div class="trans-info-item">
+	            <label><strong>Job Type:</strong></label>
+	           <select name="job_type" id="job_type" onchange="return check_job_type()">
+	           		<% @jobs.each do |job| %>
+	           			<option value="<%= job['id'] %>"><%= job['name'] %></option>
+	           		<% end %>
+	           </select>
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Job Fee:</strong></label>
+            	<input type="text" name="job_fee" placeholder="Job Fee">
+	        </div>
+		</div>
+		<div class="columns medium-6">
+	        <div class="trans-info-item">
+	            <label><strong>Management Fee:</strong></label>
+	            <input type="text" name="job_type" placeholder="Management Fee">
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Loan Type:</strong></label>
+            	<select name="loan_type">
+            		<option value="">Select Loan type</option>
+            		<option value="Refinance">Refinance</option>
+            		<option value="Purchase">Purchase</option>
+            		<option value="Ascertain Market Value">Ascertain Market Value</option>
+            		<option value="Other">Other</option>
+            	</select>
+	        </div>
+		</div>
+		<div class="columns medium-6">
+	        <div class="trans-info-item">
+	            <label><strong>Loan Amount:</strong></label>
+	            <input type="text" name="loan_amount" placeholder="Loan Amount">
+	        </div>
+		</div>
+
+		<div class="columns medium-6 border-right">
+	        <div class="trans-info-item">
+	            <label><strong>Purchase Amount:</strong></label>
+            	<input type="text" name="purchase_amount" placeholder="Purchase Amount">
+	        </div>
+		</div>
+		<div class="columns medium-6">
+	        <div class="trans-info-item">
+	            <label><strong>Occupancy:</strong></label>
+	        	<select name="occupancy">
+	        		<option value=""> Select Occupancy </option>
+	        		<option value="Owner">Owner</option>
+	        		<option value="Tenant">Tenant</option>
+	        		<option value="Vacant">Vacant</option>
+	        		<option value="New Construction">New Construction</option>
+	        	</select>
+	        </div>
+		</div>
+	</div>
+
+	<div class="columns large-12" style="margin-top:30px;">
+		<h6 style="font-weight:bold">Inspection Contacts and Access Information</h6>
+
+		<ul class="inner-nav tabs appraisal_tab" data-tab style="margin-top:0px;">
+ 			<li class="tab-title tabpannel_b active "><a href="javascript:void(0);" onclick="appraisal_tabs('pannel_b')" >Borrower</a></li>
+            <li class="tab-title tabpannel_c"><a href="javascript:void(0);" onclick="appraisal_tabs('pannel_c')">Co-borrower</a></li>
+            <li class="tab-title tabpannel_o"><a href="javascript:void(0);" onclick="appraisal_tabs('pannel_o')">Owner</a></li>
+            <li class="tab-title tabpannel_r"><a href="javascript:void(0);" onclick="appraisal_tabs('pannel_r')">Relator/Other</a></li>
+        </ul>
+        <div class="tabs-content">
+	        <div class="content appraisal_content active" id="pannel_b">
+	        	<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>First Name:</strong></label>
+		            	<input type="text" name="borrower_fname" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Last Name:</strong></label>
+			        	<input type="text" name="borrower_lname" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Home Number:</strong></label>
+		            	<input type="text" name="borrower_home_number" placeholder="Home Number">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Work Number:</strong></label>
+			        	<input type="text" name="borrower_work_number" placeholder="Work Number">
+			        </div>
+				</div>
+	        	
+	        	<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Cell Number:</strong></label>
+		            	<input type="text" name="borrower_cell_number" placeholder="Cell Number">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Email:</strong></label>
+			        	<input type="text" name="borrower_email" placeholder="Email">
+			        </div>
+				</div>
+
+
+
+	        </div>
+
+	        
+	        <div class="content appraisal_content" id="pannel_c">
+	        	<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>First Name:</strong></label>
+		            	<input type="text" name="coborrower_fname" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Last Name:</strong></label>
+			        	<input type="text" name="coborrower_lname" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Home Number:</strong></label>
+		            	<input type="text" name="coborrower_home_number" placeholder="Home Number">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Work Number:</strong></label>
+			        	<input type="text" name="coborrower_work_number" placeholder="Work Number">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Cell Number:</strong></label>
+		            	<input type="text" name="coborrower_cell_number" placeholder="Cell Number">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Email:</strong></label>
+			        	<input type="text" name="coborrower_email" placeholder="Email">
+			        </div>
+				</div>
+
+
+	        </div>
+	        <div class="content appraisal_content" id="pannel_o">
+	        	
+	        	<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>First Name:</strong></label>
+		            	<input type="text" name="owner_fname" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Last Name:</strong></label>
+			        	<input type="text" name="owner_lname" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Home Number:</strong></label>
+		            	<input type="text" name="owner_home_number" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Work Number:</strong></label>
+			        	<input type="text" name="owner_work_number" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Cell Number:</strong></label>
+			        	<input type="text" name="owner_cell_number" placeholder="Last Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Email:</strong></label>
+		            	<input type="text" name="owner_email" placeholder="Email">
+			        </div>
+				</div>
+
+	        </div>
+	        <div class="content appraisal_content" id="pannel_r">
+	        	<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>First Name:</strong></label>
+		            	<input type="text" name="other_fname" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Last Name:</strong></label>
+			        	<input type="text" name="other_lname" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Home Number:</strong></label>
+		            	<input type="text" name="other_home_number" placeholder="First Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Work Number:</strong></label>
+			        	<input type="text" name="other_work_number" placeholder="Last Name">
+			        </div>
+				</div>
+
+				<div class="columns medium-6 border-right">
+			        <div class="trans-info-item">
+			            <label><strong>Cell Number:</strong></label>
+			        	<input type="text" name="other_cell_number" placeholder="Last Name">
+			        </div>	
+				</div>
+				<div class="columns medium-6">
+			        <div class="trans-info-item">
+			            <label><strong>Email:</strong></label>
+		            	<input type="text" name="other_email" placeholder="Email">
+			        </div>
+				</div>
+
+	        </div>
+        </div>
+        <div class="columns large-12" style="margin-top:30px;">
+        	<input type="button" value="Submit" class="button" id="appraisal_form" onclick="return appraisal_form_submit();">
+        </div>
+
+	</div>
+</form>

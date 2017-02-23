@@ -1,11 +1,11 @@
 <tr>
 	<td><%=url.email%></td>
 	<td><%=url.name%></td>
-	<td><%=url.dateCreated.strftime('%m/%d/%Y') %></td>
 	<td style='max-width:200px;word-wrap: break-word'><a href="javascript:void(0);" onclick="copyToClipboard('<%=url.get_url%>')">Copy</a></td>
+	<td><img src="/assets/notes_icon.png" onclick="add_notes('<%= url.id %>')"></td>
 	<td>
 	<% unless url.status.blank? %>
-		<select name="status"  id="lender<%=url.id%>" style="width:102px;" onchange="lender_change(this, '<%=url.id%>')">
+		<select name="status"  id="lender<%=url.id%>" style="width:105px;" onchange="lender_change(this, '<%=url.id%>')" >
 			<option value="">Status</option>
 			<option <% if url.status=="Opened" %> selected="selected" <% end %> value="Opened">Opened</option>
 			<option <% if url.status=="Unopened" %> selected="selected" <% end %> value="Unopened">Unopened</option>
@@ -28,16 +28,16 @@
 		
 	</td>
 	<td><%=url.visits.count%></td>
-	<td>
-		<% if !url.visits.last.blank? %>
-		<%=url.visits.last.strftime('%m/%d/%Y')%>
-		<% end %>
-	</td>
-	
 	<% @url=url_for :controller=>'loan_urls', :action=>'email_link', :id=>url.id %>
-	<td><%= button_tag "Email",  onclick:"if(confirm('Are you sure you want to send this email?')){callAjax('#{@url}','show-urls', 'loan-url-form' )}", class: 'tiny button success'%></td>
-	
-	<% @url=url_for :controller=>'loan_urls', :action=>'destroy', :id=>url.id %>
-	<td><%= button_tag "Remove",  onclick:"if(confirm('Are you sure you delete access?')){callAjax('#{@url}','show-urls', 'loan-url-form' )}", class: 'tiny button alert'%></td>
+	<td><%= button_tag "Email",  onclick:"if(confirm('Are you sure you want to send this email?')){callAjax('#{@url}','show-urlxs', 'loan-url-form' )}", class: 'tiny button success'%></td>
+	<% if @brokerLogin == true %>
+		<% if @infoBroker.plan != "free"%>
+			<% @url=url_for :controller=>'loan_urls', :action=>'destroy', :id=>url.id %>
+			<td><%= button_tag "Remove",  onclick:"if(confirm('Are you sure you delete access?')){callAjax('#{@url}','show-urlxs', 'loan-url-form', 'loan-url-delete' )}", class: 'tiny button alert'%></td>	
+		<% end %>
+	<% else %>
+		<% @url=url_for :controller=>'loan_urls', :action=>'destroy', :id=>url.id %>
+		<td><%= button_tag "Remove",  onclick:"if(confirm('Are you sure you delete access?')){callAjax('#{@url}','show-urlxs', 'loan-url-form', 'loan-url-delete' )}", class: 'tiny button alert'%></td>
+	<% end %>
 </tr>
 

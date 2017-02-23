@@ -1,16 +1,83 @@
-<% images.each do |image| %>
-  <%if !image.url.blank? %>
-  <li id='<%=image._id%>'>
-  	<a class='th' href="<%=image.url %>">
-  		<img style='height:100px;width:100px;' src="<%=image.url %>">
-  	</a>
-  	<BR>
-	<% if policy(Loan).update? %>
-	   <% url=url_for :controller=>'loans', :action=>'delete_image',:id=>image['_id'] %>
-	  	<div onclick='callAjax("<%=url%>","<%=image._id%>" );' class='label alert' style='z-index:1000;width:100%;text-align:center;cursor:pointer'>
-	  		Remove
-	  	</div>
-	<% end %>
-  </li>
-  <% end %>
+<script type="text/javascript">
+  $('document').ready(function(){
+       <% if @alert_msgsub == 'true' %> 
+        $('.img_uploading').click(function(){
+         var r=confirm("You have less then 10gb of memmory left. Press cancel to cancel uploading or Ok to proceed.");
+          if (r == false) {
+           return false;
+          }
+        });
+    <% end %>
+
+
+       $('.owl-carousel').owlCarousel({
+          loop:true,
+          margin:10,
+          nav:true,
+          lazyLoad : true,
+          responsive:{
+              0:{
+                  items:1
+              },
+              600:{
+                  items:3
+              },
+              1000:{
+                  items:5
+              }
+          }
+      });
+  
+  });
+</script>
+<ul  class="clearing-thumbs" data-clearing> 
+  <div class="owl-carousel">
+    <% images.each do |image| %>
+      <%if !image.url.blank? %>
+        <div  class="item" id="<%=image._id%>">
+          
+          <a class='th' href="<%=image.url %>">
+            <img style='height:100px;width:100px;' src="/temp/<%= image.name %>">
+          </a>
+          <BR>
+          <div class = "row">
+
+         <% # if policy(Loan).update? %>
+            <a href="javascript:void(0)" style="float:left; width:31px; margin-left:22px; text-decoration:underline;" id="edit_picture_<%= image['_id']%>" onclick = "edit_picture('<%= image['_id']%>')" class="edit_mse">Edit</a>
+               <% url=url_for :controller=>'loans', :action=>'delete_image',:id=>image['_id'] %>
+                <div  onclick="if(confirm('Are you sure? You want to delete this image?')){
+                callAjax('<%=url%>','<%=image._id%>' );}"style='cursor: pointer; color: red; margin-left:10px; float: left;'>
+                  <i class="fa fa-remove"></i>
+                </div>
+          <% # end %>
+          </div>
+          </div>
+      <% end %>
+    <% end %>
+  </div>
+
+
+  <div id="myModal4" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+             <div class="modalhead" id="edit_pictures_popup">
+                Edit Picture
+             </div>
+   <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+  </div>
+</ul>
+<% if @fileUpload == "true" %>
+    <div style='margin-top:30px;width:100%'>
+      <%= render partial: 'file_upload', locals:{contact_id:loan_id, form_id:'image_upload', controller:'loans', action:'upload_image', multiple:'true', type:'full', button_label:'Add Pictures'}
+      %>
+    </div>  
+<% else %>
+    <div class="small-12 columns centered " tabindex="0" style="margin-top:46px;">
+      <ul class="button-group" tabindex="0">
+        <li class="tiny button fileinput-button" tabindex="0" onclick="alert('Please update your plan.');">
+          <span tabindex="0">
+            <i class="fa fa-cloud-upload" tabindex="0"></i>
+            Add Pictures
+          </span>
+        </li>
+      </ul>
+    </div>
 <% end %>

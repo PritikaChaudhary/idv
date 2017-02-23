@@ -1,0 +1,226 @@
+<script>
+$('document').ready(function(){
+<% if defined? @loan.address && @loan.address!= 'None' %>
+    if($('#property-map').html().length==0)
+    {
+
+        var embed = '<iframe'+
+                    ' width="600"'+
+                    ' height="450"'+
+                    ' frameborder="0" style="border:0"'+
+                    ' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loan.address%>&zoom=15">'+
+            '</iframe>';
+    
+    
+        $('#property-map').html(embed);
+    }
+
+<% end %>
+   });
+</script>
+<!--
+    <div class="header">
+        <nav class="navbar main-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">LOGO</a>
+                <div class="pull-right">
+                    <button type="button" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <ul class="">
+                        <li class=""><a href="#home">Login</a></li>
+                    </ul>
+                    -- /.navbar-collapse --
+                </div>
+            </div>
+             /.container-fluid --
+        </nav>
+    </div> -->
+    <style type="text/css">
+        .login
+        {
+            display: none !important; 
+        }
+    </style>
+    <div class="lp-bg"></div>
+    <div class="content-section">
+        <div class="container">
+            <div class="row text-center"><h1 class="page-title"><%= @loan.name %></h1></div>
+            <div class="row">
+                <div class="medium-4 column">
+                    <div class="l-sidebar">
+                        <div class="gray-box">
+                            <h3>Highlights</h3>
+                            <ul class="hl-list">
+                                <li>
+                                    <span class="hl-l">Loan Amount:</span>
+                                    <span class="hl-r"><%= fd_money(@loan.info['_NetLoanAmountRequested0']) %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Value:</span>
+                                    <span class="hl-r"><%= @loan.info['_EstimatedMarketValue'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Term Length:</span>
+                                    <span class="hl-r"><%= @loan.info['_DesiredTermLength'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Location: </span>
+                                    <span class="hl-r">
+                                    <% unless @loan.info['City3'].blank? %>
+                                        <%= @loan.info['City3']+", "%>
+                                    <% end %>
+                                    <% unless @loan.info['State3'].blank? %>
+                                        <%= @loan.info['State3']%>
+                                    <% end %>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Expected Close:</span>
+                                    <span class="hl-r"><%= @loan.info['_ExpectedCloseDate'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Lending Category:</span>
+                                    <span class="hl-r"><%= @loan.info['_LendingCategory'] %></span>
+                                </li>
+                                <li>
+                                    <span class="hl-l">Loan Type: </span>
+                                    <span class="hl-r"><%= @loan.info['_LendingTypes'] %></span>
+                                </li>
+                                 <li>
+                                    <span class="hl-l">Transaction Type: </span>
+                                    <span class="hl-r"><%= @loan.info['_TransactionType0'] %></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <!--
+                        <a href="#" class="btn btn-im-i">IM Interested</a>
+                        <a href="#" class="btn btn-dec">Decline</a>
+                        -->
+                    </div>
+                </div>
+                <div class="medium-8 column">
+                    <div class="r-content">
+                        <div class="sbanner-wrap">
+                            <div class="sbanner-inner">
+                                <!-- <img src="/assets/property-image.jpg"> -->
+                    <% if @loan.featured_image %>
+                        <img style="height: 348px; width: 748px;" src="<%=@loan.featured_image['url']%>">
+                    <% end %>
+                            </div>
+                            <div class="lp-tabs-head row">
+                                <div id="lp-tab1" class="medium-4 column">
+                                    <span class="icon-r"><img src="/assets/cat-icon-o.png"></span>
+                                    <p class="lp-th-title">Category</p>
+                                    <p><%= @loan.info['_LendingCategory'] %></p>
+                                </div>
+                                <div id="lp-tab2" class="medium-4 column">
+                                    <span class="icon-r"><img src="/assets/location-icon-o.png"></span>
+                                    <p class="lp-th-title">Location</p>
+                                    <p>
+                                    <% unless @loan.info['City3'].blank? %>
+                                        <%= @loan.info['City3']+", "%>
+                                    <% end %>
+                                    <% unless @loan.info['State3'].blank? %>
+                                        <%= @loan.info['State3']+", "%>
+                                    <% end %>
+                                    </p>
+                                </div>
+                                <div id="lp-tab3" class="medium-4 column">
+                                    <span class="icon-r"><img src="/assets/ltv-icon-o.png"></span>
+                                    <p class="lp-th-title">LTV</p>
+                                    <p>
+                                    <%
+                                     unless @loan.info['_NetLoanAmountRequested0'].blank? 
+                                            unless @loan.info['_EstimatedMarketValue'].blank?
+                                               if @loan.info['_EstimatedMarketValue'].to_i>0
+                                                ltv = @loan.info['_NetLoanAmountRequested0'].to_i/@loan.info['_EstimatedMarketValue'].to_i
+                                                end
+                                            end
+                                        end
+                                     %></p>
+                                     <% unless ltv.blank? %>
+                                        <%= ltv.round(2) %>
+                                     <% end %>
+                                     </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="white-content-box">
+                            <div class="wcb-head">Summary</div>
+                            <div class="wcb-content">
+                                
+                                <% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+                                <article>
+                                    <% field_text = @loan.info['_LoanSummaryWhatareyoulookingfor']%>
+                                    <%= send('simple_format', field_text)%>
+                                </article>
+                              <% end %> 
+                               <div id='property-map' class="flex-video"></div>
+
+                               
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+
+                        <div class="white-content-box">
+                            <div class="wcb-head">Use of Funds</div>
+                            <div class="wcb-content">
+                                
+                                <% unless @loan.info['_UseofFundsWhatdoyouneedthecapitalfor'].blank? %>
+                                <article>
+                                    <% field_text = @loan.info['_UseofFundsWhatdoyouneedthecapitalfor']%>
+                                    <%= send('simple_format', field_text)%>
+                                </article>
+
+                                <% end %>
+                                
+                                
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                        <div class="white-content-box">
+                            <div class="wcb-head">Exit Strategy</div>
+                            <div class="wcb-content">
+                                 <% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+                                  <article>
+                                    <% field_text = @loan.info['_ExitStrategyHowwillyoupaytheloanoff']%>
+                                    <%= send('simple_format', field_text)%>
+                                  </article>
+                                 <% end %>
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                        <div class="white-content-box">
+                            <div class="wcb-head">Offering Documents</div>
+                            <div class="wcb-content">
+                                
+                                   
+                                    <% @loan.documents.each do |doc| %>
+                                       <div class="add-files-outer">
+                                            <div class="uploaded-files">
+                                             <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+                                                <a href="<%= url %>"><%= doc.name %>
+                                            </div>
+                                        </div>
+                                    <% end %>
+                                    
+                                   
+                                
+                                
+                            </div>
+                        </div><!-- white-content-box -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    
+
+    $('article').readmore({speed: 500});
+  </script>

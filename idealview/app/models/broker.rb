@@ -3,6 +3,8 @@ class Broker
   include ActionView::Helpers
 
   many :loans
+  one :user
+  #one :plan
 
   key :infusion_id, Integer
   key :firstName, String
@@ -19,7 +21,7 @@ class Broker
   key :phone1, String
   key :phone2, String
   key :fax1, String
-  key :email, String
+  key :email, String,   :required => true,   :unique => true
   key :website, String
   key :address2Street1, String
   key :address2Street2, String
@@ -43,7 +45,8 @@ class Broker
   key :permissions, String
   key :broker_admin, Integer
   key :customer_id, String
-
+  key :plan, String
+  key :lender, Integer
   
 
   def self.highlight_fields
@@ -77,6 +80,14 @@ class Broker
        :PostalCode3,   
        :Country3, 
     ]
+  end
+
+  def user
+    User.find_by_email(self.email)
+  end
+
+  def plan_info
+    Plan.find_by_plan_id(self.plan)
   end
 
 end

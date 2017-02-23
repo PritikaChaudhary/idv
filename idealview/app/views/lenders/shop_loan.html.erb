@@ -1,0 +1,515 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("/assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.text-center {
+    margin-right: 216px;
+}
+.existed
+{
+    color: red;
+}
+.more-option, .less-option {
+    border: 2px solid;
+    border-radius: 50%;
+    color: #780f2a;
+    float: left;
+    font-size: 14px;
+    height: 19px;
+    padding: 0 2px;
+    position: relative;
+    top: 0;
+    width: 19px;
+}
+</style>
+<script type="text/javascript">
+
+    jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+    });
+
+   
+ });
+
+$('document').ready(function(){
+     $('#search_form').submit(function() {
+      return false;
+    });
+
+     $('.click_hide').click(function(){
+            var c_id=$(this).attr('id');
+            var lendr_id=c_id.replace("click_hide_","");
+            var div_id="click_"+lendr_id;
+            $("#"+div_id).show();
+            $("#"+c_id).hide();
+            $("#sub_brokers"+lendr_id).hide();
+
+        });
+
+     $("#all_loans").change(function () {
+        $(".single_loan").prop('checked', $(this).prop("checked"));
+      });
+
+     $('#save_broker').click(function(){
+        var status = "true";
+        bemail = $('.broker_email').val();
+        uname = $('.broker_username').val();        
+
+        bpass = $('.broker_password').val();
+        var pcount = bpass.length;
+        if(pcount<8)
+        {
+            $('.too_short').show();
+            status = "false";
+        }
+
+        if(bemail=="")
+        {
+            $('.email_empty').show();
+            $('.existed').hide();
+            status = "false";
+        }
+
+        if(uname=="")
+        {
+            $('.uname_empty').show();
+            $('.uexisted').hide();
+            status = "false";
+        }
+        
+        this_email = "email="+bemail;
+        $.ajax({
+            data: this_email,
+            type: 'POST',
+            url: '/brokers/check_email',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.existed').show();
+                    $('.email_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+
+        this_uname = "username="+uname;
+        $.ajax({
+            data: this_uname,
+            type: 'POST',
+            url: '/admin/check_uname',
+             success:function(response){
+                if(response=="no")
+                {
+                    $('.uexisted').show();
+                    $('.uname_empty').hide();
+                    status = "false";
+                }
+                
+            }
+            
+        });
+        
+        setTimeout(function() {
+           // return false;
+          if(status=="false")
+          {
+
+            return false;
+          }
+          else
+          {
+              $('#brokerForm').submit(); 
+          } 
+      }, 2000);
+
+     });
+
+      $('.brokers_total').change(function(){
+        pg = $(this).val();
+         window.location.replace("<%= @base %>/account_management/?per_page="+pg);
+       });
+
+      $("#all_brokers").change(function () {
+        $(".single_user").prop('checked', $(this).prop("checked"));
+      });
+
+
+      $(".add_broker").click(function(){
+        $('#myModal1').foundation('reveal', 'open');
+    });
+
+      $(".market_access").change(function(){
+         mkt_id = $(this).prop('id');
+         id = mkt_id.replace('market_access_', '');  
+
+
+        if ($(this).is(':checked')) {
+          data = "broker_id="+id+"&market_access=1";
+        }
+        else
+        {
+          data = "broker_id="+id+"&market_access=0"; 
+        }
+
+         $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/account_management/market_access',
+             success:function(data){
+            
+            }
+            
+        });
+      })
+
+});
+
+function delete_brokers()
+{
+    var allVals=[];
+    $('input[name="select_broker"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one broker.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/brokers/delete_brokers',
+             success:function(data){
+                $('#broker_records').html(data);
+            }
+            
+        });
+
+}
+
+function search_fun()
+{
+    var data=$('#search_form').serialize();
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/account_management/search',
+            success:function(response){
+                $('#broker_records').html(response);
+            }
+        });
+}
+
+    function delete_users()
+    {
+        var allVals=[];
+        $('input[name="select_loan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one user.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/account_management/delete_users',
+                 success:function(data){
+                    location.reload();
+                }
+                
+            });
+
+    }
+
+    function callAjax(customUrl, divId, formId){
+    if(typeof(formId)==='undefined')
+    {
+        data = '';
+    } 
+    else     
+    {
+        data = $('#'+formId).serialize();
+
+    }
+    if(typeof(divId)===undefined) divId ='';
+     $('#loan_lenders').html('loading...');
+    $.ajax({
+        type: 'POST',
+        url: customUrl,
+        data:data,
+        success:function(data){
+                $('#'+divId).html(data);    
+            
+            
+            if(formId=="lender_loans")
+            {
+                var a_id=divId.replace('sub_brokers','');
+                $('#click_'+a_id).hide();
+                $('#click_hide_'+a_id).show();
+                $("#sub_brokers"+a_id).show();
+            }
+
+                },
+        error:function(data){
+            alert('Something went wrong.');
+            
+            },
+        dataType: 'html',
+
+
+    });
+        
+}
+
+</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+		<select class="brokers_total" style="float:left; margin-left:10px; width:16%">
+          <option value="">Number of records</option>
+          <option value="10"<% if params[:per_page]=="10"%> selected="selected" <% end %>> 10 </option>
+          <option value="20"<% if params[:per_page]=="20"%> selected="selected" <% end %>> 20 </option>
+          <option value="50" <% if params[:per_page]=="50"%> selected="selected" <% end %>> 50 </option>
+          <option value="100"<% if params[:per_page]=="100"%> selected="selected" <% end %>> 100 </option>
+      </select>
+
+        <a class="button secondary tiny trash" onclick="if(confirm('Are you sure you want to delete these users?')){delete_users()}" href="javascript:void(0);" style="float:left; margin-left:10px;">
+          <i class="fa fa-trash"></i>
+        </a>
+
+        <h3 class='text-center' style=" float:left; margin-left:181px; text-align:center !important;">Manage Accounts</h3>
+        <div class="broker_search">
+            <form name="search_form" id="search_form" style="width:250px;">
+                <div class="form_wrap">
+                    <input type="text" name="search" placeholder="Search" onkeyup="search_fun();">
+                    <input type="button" id="search_btn" onclick="search_fun();">
+                    <input type="hidden" name = "total_pages" value="<%= params[:per_page] %>">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class='row' id="broker_records" style="border-top: 7px solid rgb(242, 242, 242);">
+<% if @flash == "yes" %>
+    <div class="flash_notice">Your changes has been saved successfuly.</div>
+<% end %>
+<div class="small-12 columns">
+	<table width="100%" class="list_loans">
+		<thead>
+			<tr>
+                <th><input id="all_brokers" type="checkbox" name="all_loans"></th>
+				<th width="350">Name</th>
+				<th>Email</th>
+				<th>Plan</th>
+				<th>Users</th>
+				<th>Share/Lenders</th>
+				<th>Upload Max</th>
+				<th>File Storage</th>
+                <th>Market Place Access</th>
+			</tr>
+		</thead>
+		<tbody>
+<% color_class = ''%>
+    <% @brokers.each do |broker| 
+    	@roles = broker.roles
+                  
+	    @names = Array.new
+	    unless  broker.broker.blank?
+	    	@roles.each do |role|
+	      		@names = role['name']
+	    	end	
+	    end
+	    
+	    unless @names.include?('Admin')   %>
+
+    
+        <% unless broker.broker.blank? %>   
+            <tr>
+                <td>
+                    <input type="checkbox" id="check_<%= broker.id %>" name="select_loan" value="<%= broker.id %>" style="float:left;margin-top:7px; margin-right:5px;" class="single_user">
+                     <div id="click_<%= broker.id %>" style="float:left;"> 
+                    <% @url=url_for :controller=>'account_management', :action=>'fetch_sub_brokers', :id=>broker.id %>
+                    <a class="more-option" href="javascript:void(0);"  onclick="callAjax('<%= @url %>','sub_brokers<%= broker.id %>', 'lender_loans')"><i class="fa fa-plus"></i></a>
+                    </div>
+                    <div id="click_hide_<%= broker.id %>" style="float:left; display:none;" class="click_hide"  onclick="order_brokerhide('<%= broker.id %>')">
+                        <a class="less-option" href="javascript:void(0);" class="hide_broker_<%= broker.id %>"><i class="fa fa-minus-circle"></i></a>
+                    </div>
+                </td>
+            	<td>
+                        
+                    <a href="<%= request.base_url %>/account_management/edit_account/<%= broker.id %>">
+                        <% unless broker.name.blank? %>
+                            <%= broker.name %>
+                        <% else %>
+                             "N/A"
+                        <% end %>
+                    </a>
+                    <br>
+                    
+
+                    <div id="sub_brokers<%= broker.id %>">
+                    
+                    </div> 
+                    
+                </td>
+
+                <td>
+                    <%= broker.email %>
+                </td>
+                 	
+                <td>
+
+                	<% 
+                		if defined? broker.broker['plan']
+    	            		if broker.broker['plan'].blank?
+    	            			plan = "free"
+    	            	    elsif broker.broker['plan'] == "Pro"
+                            	plan = "free"
+                       		else
+    	            	   	 	plan = broker.broker['plan'].downcase
+    	            	    end
+                		else
+                			plan = "free"
+                		end
+                	%>	
+                
+
+                    <%= plan.camelcase %>
+                </td>
+
+                <td>
+                	<% 
+                		
+                				
+                 		num = broker.count_users
+                 		if plan == "free"
+                			total_users = 1
+                			num = num+1
+                		elsif plan == "business"
+                			total_users = 5
+                			num = num+1
+                		elsif plan == "enterprise"
+                			total_users = 15
+                			num = num+1
+                		end
+                	%>
+                	<% usr_cal = "#{num}/#{broker.max_users}" %>
+                	<%= usr_cal %>
+                </td>
+                <td>
+                	<% 
+                		snum = broker.share_lenders
+                		if plan == "free"
+                			stotal_users = 5
+                		elsif plan == "business"
+                			stotal_users = "No Limit"
+                		elsif plan == "enterprise"
+                			stotal_users = "No Limit"
+                		end
+
+                	%>
+                	<%= share = "#{snum}/#{broker.max_lenders}"%>
+                </td>
+                <td>
+                	<% 
+                		if plan == "free"
+                			max_upload = "10MB"
+                		elsif plan == "business"
+                			max_upload = "25MB"
+                		elsif plan == "enterprise"
+                			max_upload = "No File Cap"
+                		end
+    				%>
+    				<%= broker.max_upload %>
+                </td>
+                <td>
+                	<% 
+                		if plan == "free"
+                		  max_size = "1GB"
+                		elsif plan == "business"
+                		  max_size = "5GB"
+                		elsif plan == "enterprise"
+                		  max_size = "100GB"
+                		end
+                	%>
+                	<% if broker.memory.blank? 
+                	   	 mem = 0
+                	   else 
+                	   	 mem = broker.memory
+                	   end %>
+                	<%= mem %>MB/<%= broker.max_storage %>
+    			</td>
+                 <td>
+                    <input type="checkbox" name="market_access" id="market_access_<%= broker.id %>" class="market_access" <% if broker.market_access == 1%> checked <% end %>>
+                </td>
+    		</tr>
+         <% end %>
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+         <%
+    end
+end %>
+    </tbody>
+ </table>
+   
+    <%= will_paginate @brokers, :params => { :my_excluded_param => nil } %>
+</div>
+
+
+ 

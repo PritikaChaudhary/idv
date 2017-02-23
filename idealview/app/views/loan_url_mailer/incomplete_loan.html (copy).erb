@@ -1,0 +1,236 @@
+<div style='max-height:75px;text-align:center'><img style='max-height:75px;width:auto;' src="https://s3-us-west-2.amazonaws.com/idealview/idealview-logo.png"></div>
+<div style='text-align:center;border-bottom: 1px double #000000;padding:5px'>
+</div>
+
+<%= raw @email.content %> <br>
+
+	<% unless @loans.info['_LendingCategory'].blank? %>
+		Loan Category : <%= @loans.info['_LendingCategory'] %><br>
+	<% end %>
+	<% unless @loans.info['_LendingTypes'].blank? %>
+		Loan Type : <%= @loans.info['_LendingTypes'] %><br>
+	<% end %>
+	<% unless @loans.info['_BusinessFinancingTypes'].blank? %>
+		Business Financing Types : <%= @loans.info['_BusinessFinancingTypes'] %><br>
+	<% end %>
+	<% unless @loans.info['_EquityandCrowdFunding'].blank? %>
+		Equity & Crowd Funding : <%= @loans.info['_EquityandCrowdFunding'] %><br>
+	<% end %>
+	<% unless @loans.info['_MortageTypes'].blank? %>
+		Mortgage Types : <%= @loans.info['_MortageTypes'] %><br>
+	<% end %>
+	<% unless @loans.info['ContactType'].blank? %>
+		What type of applicant are you? : <%= @loans.info['ContactType'] %><br>
+	<% end %>
+	<% unless @loans.info['_LoanName'].blank? %>
+		Loan Name : <%= @loans.info['_LoanName'] %><br>
+	<% end %>
+	<% unless @loans.info['GurantorEmail'].blank? %>
+		Guarantor Email : <%= @loans.info['GurantorEmail'] %><br>
+	<% end %>
+	<% unless @loans.info['GurantorFname'].blank? %>
+		Guarantor FirstName : <%= @loans.info['GurantorFname'] %><br>
+	<% end %>
+	<% unless @loans.info['GurantorLname'].blank? %>
+		Guarantor LastName : <%= @loans.info['GurantorLname'] %><br>
+	<% end %>
+	<% unless @loans.info['GuarantorAddress'].blank? %>
+		Guarantor Address : <%= @loans.info['GuarantorAddress'] %><br>
+	<% end %>
+	<% unless @loans.info['GuarantorCity'].blank? %>
+		Guarantor City : <%= @loans.info['GuarantorCity'] %><br>
+	<% end %>
+	<% unless @loans.info['GuarantorState'].blank? %>
+		Guarantor State : <%= @loans.info['GuarantorState'] %><br>
+	<% end %>
+	<% unless @loans.info['GuarantorCode'].blank? %>
+		Guarantor Code : <%= @loans.info['GuarantorCode'] %><br>
+	<% end %>
+	<% unless @loans.info['GuarantorCode'].blank? %>
+		Guarantor Code : <%= @loans.info['GuarantorCode'] %><br>
+	<% end %>
+	<% unless @loans.info['IsBorrowerBusiness'].blank? %>
+		
+Is the borrower a business? : <%= @loans.info['IsBorrowerBusiness'] %><br>
+	<% end %>
+	<% unless @loans.info['IsBorrowerBusiness'].blank? %>
+		
+Is the borrower a business? : <%= @loans.info['IsBorrowerBusiness'] %><br>
+	<% end %>
+
+	<% unless @loans.info['FirstName'].blank? %>
+		First Name : <%= @loans.info['FirstName'] %><br>
+	<% end %>
+	<% unless @loans.info['LastName'].blank? %>
+		Last Name : <%= @loans.info['LastName'] %><br>
+	<% end %>
+	<% unless @loans.info['Email'].blank? %>
+		Email :  <%= @loans.info['Email'] %><br>
+	<% end %>
+	<% unless @loans.info['Phone1'].blank? %>
+		Phone Number  : <%= @loans.info['Phone1'] %><br>
+	<% end %>
+	<% unless @loans.info['CellPhone'].blank? %>
+		Cell Phone  : <%= @loans.info['CellPhone'] %><br>
+	<% end %>
+	<% unless @loans.info['Birthday'].blank? %>
+		Birthday :  <%= @loans.info['Birthday'] %><br>
+	<% end %>
+	<% unless @loans.info['_NetLoanAmountRequested0'].blank? %>
+		How much money do you need to borrow? :  <%= @loans.info['_NetLoanAmountRequested0']%><br>
+	<% end %>
+	<% unless @loans.info['loan_for'].blank? %>
+		What do you need the loan for?  : <%= @loans.info['loan_for']%><br>
+	<% end %>
+	<% unless @loans.info['loan_for'].blank? %>
+		What do you need the loan for? :  <%= @loans.info['loan_for']%><br>
+	<% end %>
+	<% unless @loans.info['_BusinessName'].blank? %>
+		Business Name :  <%= @loans.info['_BusinessName']%><br>
+	<% end %>
+	<% unless @loans.info['_BusinessType'].blank? %>
+		Business Type :  <%= @loans.info['_BusinessType']%><br>
+	<% end %>
+	<% unless @loans.info['industry'].blank? %>
+		Industry  : <%= @loans.info['industry']%><br>
+	<% end %>
+	<% unless @loans.info['_BorrowerTimeInBusiness'].blank? %>
+		Years In Business :  <%= @loans.info['_BorrowerTimeInBusiness']%> years<br>
+	<% end %>
+	<% unless @loans.info['_EstFICO'].blank? %>
+		Est. FICO Score :  <%= @loans.info['_EstFICO']%> years<br>
+	<% end %>
+	<% unless @loans.info['Phone2'].blank? %>
+		Home Phone  : <%= @loans.info['Phone2']%> <br>
+	<% end %>
+	<% unless @loans.info['Address2Street1'].blank? %>
+		Business Address :  <%= @loans.info['Address2Street1']%> <br>
+	<% end %>
+	<% unless @loans.info['City2'].blank? %>
+		City :  <%= @loans.info['City2']%> <br>
+	<% end %>
+	<% unless @loans.info['State2'].blank? %>
+		State  : <%= @loans.info['State2']%><br>
+	<% end %>
+	<% unless @loans.info['PostalCode2'].blank? %>
+		Zip Code :  <%= @loans.info['PostalCode2']%><br>
+	<% end %>
+	<% unless @loans.info['_BusinessEIN'].blank? %>
+		EIN  : <%= @loans.info['_BusinessEIN']%> <br>
+	<% end %>
+	<% unless @loans.info['bank_account'].blank? %>
+		Number Of Bank Accounts :  <%= @loans.info['bank_account']%> <br>
+	<% end %>
+	<% unless @loans.info['sale_per_month'].blank? %>
+		Sales Per Month :  <%= @loans.info['sale_per_month']%> <br>
+	<% end %>
+	<% unless @loans.info['avg_daily_balance'].blank? %>
+		Average Daily Bailance :  <%= @loans.info['avg_daily_balance']%> <br>
+	<% end %>
+	<% unless @loans.info['avg_month_deposit'].blank? %>
+		Average Month Deposite :  <%= @loans.info['avg_month_deposit']%> <br>
+	<% end %>
+	<% unless @loans.info['_SocialSecurityNumber'].blank? %>
+		Social Security Number :  <%= @loans.info['_SocialSecurityNumber']%> <br>
+	<% end %>
+	<% unless @loans.info['credit_score'].blank? %>
+		Credit Score  : <%= @loans.info['credit_score']%> <br>
+	<% end %>
+	<% unless @loans.info['tax_lines'].blank? %>
+		Tax Lines :  <%= @loans.info['tax_lines']%> <br>
+	<% end %>
+	<% unless @loans.info['any_existing_loans'].blank? %>
+		Any Existing Loans :  <%= @loans.info['any_existing_loans']%> <br>
+	<% end %>
+	<% unless @loans.info['notes'].blank? %>
+		Additional Info :  <%= @loans.info['notes']%> 
+	<% end %>
+	<% unless @loans.info['_SubmittedByBroker'].blank? %>
+		Are you working with a broker? :  <%= @loans.info['_SubmittedByBroker']%> 
+	<% end %>
+	<% unless @loans.info['_DesiredTermLength'].blank? %>
+		Desired Term Length :  <%= @loans.info['_DesiredTermLength']%> 
+	<% end %>
+	<% unless @loans.info['_ExpectedCloseDate'].blank? %>
+		Expected Closing Date  :  <%= @loans.info['_ExpectedCloseDate']%> 
+	<% end %>
+	<% unless @loans.info['_TransactionType0'].blank? %>
+		Transaction Type :  <%= @loans.info['_TransactionType0']%> 
+	<% end %>
+	<% unless @loans.info['_CashContribution'].blank? %>
+		Borrower's Cash Contribution :  <%= @loans.info['_CashContribution']%> 
+	<% end %>
+	<% unless @loans.info['_PurchasePrice'].blank? %>
+		Current Purchase Price :  <%= @loans.info['_PurchasePrice']%> 
+	<% end %>
+	<% unless @loans.info['_ExpectedPurchaseDate'].blank? %>
+		Expected Purchase Date :  <%= @loans.info['_ExpectedPurchaseDate']%> 
+	<% end %>
+	<% unless @loans.info['_OriginalPurchasePriceifitsarefinance'].blank? %>
+		Original Purchase Price :  <%= @loans.info['_OriginalPurchasePriceifitsarefinance']%> 
+	<% end %>
+	<% unless @loans.info['_OriginalPurchaseDateifitsarefinance'].blank? %>
+		Original Purchase Date  :  <%= @loans.info['_OriginalPurchaseDateifitsarefinance']%> 
+	<% end %>
+	<% unless @loans.info['_EstimatedMarketValue'].blank? %>
+		Estimated Market Value  :  <%= @loans.info['_EstimatedMarketValue']%> 
+	<% end %>
+	<% unless @loans.info['_DateofValuation'].blank? %>
+		Valuation Date  :  <%= @loans.info['_DateofValuation']%> 
+	<% end %>
+	<% unless @loans.info['_SourceofValuatoin'].blank? %>
+		Source of Valuation  :  <%= @loans.info['_SourceofValuatoin']%> 
+	<% end %>
+	<% unless @loans.info['Address3Street1'].blank? %>
+		Collateral Street Address  :  <%= @loans.info['Address3Street1']%> 
+	<% end %>
+	<% unless @loans.info['City3'].blank? %>
+		Collateral City  :  <%= @loans.info['City3']%> 
+	<% end %>
+	<% unless @loans.info['State3'].blank? %>
+		Collateral State  :  <%= @loans.info['State3']%> 
+	<% end %>
+	<% unless @loans.info['PostalCode3'].blank? %>
+		Collateral Zipcode  :  <%= @loans.info['PostalCode3']%> 
+	<% end %>
+	<% unless @loans.info['_appraisal'].blank? %>
+		Do you have a recent appraisal? :  <%= @loans.info['_appraisal']%> 
+	<% end %>
+	<% unless @loans.info['_Mostrecentappraisedvalue'].blank? %>
+		Appraised Value :  <%= @loans.info['_Mostrecentappraisedvalue']%> 
+	<% end %>
+	<% unless @loans.info['_AppraisalDate'].blank? %>
+		Appraisal Date :  <%= @loans.info['_AppraisalDate']%> 
+	<% end %>
+	<% unless @loans.info['_Doesthepropertycurrentlygenerateincome'].blank? %>
+		Does the property currently generate income?  :  <%= @loans.info['_Doesthepropertycurrentlygenerateincome']%> 
+	<% end %>
+	<% unless @loans.info['_HowmuchNetIncome'].blank? %>
+		Net Operating Income  :  <%= @loans.info['_HowmuchNetIncome']%> 
+	<% end %>
+	<% unless @loans.info['_HowmuchGrossMonthlyIncome'].blank? %>
+		Gross Monthly Income  :  <%= @loans.info['_HowmuchGrossMonthlyIncome']%> 
+	<% end %>
+	<% unless @loans.info['_HaveAdditionaliCollateral'].blank? %>
+		Do you have additional collateral?  :  <%= @loans.info['_HaveAdditionaliCollateral']%> 
+	<% end %>
+	<% unless @loans.info['_AdditionalCollateral'].blank? %>
+		Additional Collateral Value :  <%= @loans.info['_AdditionalCollateral']%> 
+	<% end %>
+	<% unless @loans.info['CollateralFree'].blank? %>
+		Is the collateral free and clear? :  <%= @loans.info['CollateralFree']%> 
+	<% end %>
+	<% unless @loans.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+		Loan Summary - What are you looking for? :  <%= @loans.info['_LoanSummaryWhatareyoulookingfor']%> 
+	<% end %>
+	<% unless @loans.info['_UseofFundsWhatdoyouneedthecapitalfor'].blank? %>
+		Use of Funds - What do you need the capital for? :  <%= @loans.info['_UseofFundsWhatdoyouneedthecapitalfor']%> 
+	<% end %>
+	<% unless @loans.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+		Exit Strategy - How will you pay the loan off? :  <%= @loans.info['_ExitStrategyHowwillyoupaytheloanoff']%> 
+	<% end %>
+
+
+
+
+

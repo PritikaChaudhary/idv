@@ -1,0 +1,146 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.read_status
+{
+    width: 25px;
+    margin-left: 10px;
+}
+
+.unread_status
+{
+    width: 31px;
+    margin-left: 6px;
+}
+.bin
+{
+    width: 28px;
+    float: right;
+    margin-right: 45px;
+}
+.linked
+{
+    color: black;
+    text-decoration: none;
+}
+
+.linked:hover;
+{
+    color: blue;
+    text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+    function delete_emails()
+    {
+        var allVals=[];
+        $('input[name="select_email"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one email.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/emails/delete_emails',
+                 success:function(data){
+                    $('#email_records').html(data);
+                    $('.flash_notice').show();
+                }
+                
+            });
+
+    }
+
+</script>
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Recieved Emails</h3>
+        <div class="broker_search">
+            
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+<div class="flash_notice" style="display:none">Emails are deleted successfully.</div>
+    <div class="large-1 columns">
+        <a  onclick="if(confirm('Are you sure you want to delete these emails?')){delete_emails()}" href="javascript:void(0);">
+            <img src='/assets/bin2.png'  class='bin'>   
+        </a>
+    </div>
+    <div class="large-4 columns"><b>From</b></div>
+    <div class="large-3 columns"><b>Subject</b></div>
+    <div class="large-4 columns"><b>Content</b></div>
+</div>
+
+<div class='row' id="email_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <% color_class = ''%>
+    <% 
+    if !@emails.blank?
+        @emails.each do |email|%>
+
+            <div class='row <%=color_class%> bottom-space text-left'>
+
+                <div class="large-1 columns">
+                    <input type="checkbox" name="select_email" value="<%= email.id %>">
+                   <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>">
+                    <% if email.read_status == 1 %>
+                        <img src='/assets/read.png'  class='read_status'>            
+                    <% else %>
+                        <img src='/assets/unread.png'  class='unread_status'>
+                    <% end %>
+                    </a>
+                </div>
+                <div class="large-4 columns">
+                     <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>" class="linked"><%= email.from %> </a>
+                </div>
+                <div class="large-3 columns">
+                    <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>" class="linked"><%= email.subject %> </a>
+                </div>
+                <div class="large-4 columns">
+                   <a href="http://<%= @hostname %>/emails/edit_email/<%= email.id %>" class="linked"> <%= email.body[0, 20] %>....</a>
+                </div>
+                
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <%
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        You have not received any email yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>
+
+</div>
+
+ 

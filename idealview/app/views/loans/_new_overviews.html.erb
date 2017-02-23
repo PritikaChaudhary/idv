@@ -1,0 +1,577 @@
+<div id="place_featured_image">
+<!---------------------------- Featured Image ------------------------------>
+    <script>
+function handleMainImage(files) {
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var imageType = /image.*/;
+    
+      checksize =""
+      <% if !@infoBroker.blank? && @infoBroker.plan == "free"%>
+     if(file.size > 10485760) //10MB in KB
+     {
+          checksize = "exceed";
+          msg = "You cannot upload file greater than 10 MB. Please upgrade your plan to business.";
+     }
+    <% end %>
+
+    <% if !@infoBroker.blank? && @infoBroker.plan == "BUSINESS"%>
+     if(file.size > 26214400) //25MB in KB
+     {
+          checksize = "exceed";
+          msg = "You cannot upload file greater than 25 MB. Please upgrade your plan to enterprise.";
+     }
+    <% end %>
+
+    <% if @fileUpload == "false" %>
+          checksize = "exceed";
+          <% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+              msg = "Sorry, you have used your free 1gb storage."
+          <% end %>
+          <% if !@infoBroker.blank? && @infoBroker.plan == "BUSINESS"%>
+              msg = "Sorry, you have used your free 5gb storage."
+          <% end %>
+    <% end %>
+  
+  if(checksize=="exceed")
+  {
+    alert(msg);
+    return false;
+  }
+
+    if (!file.type.match(imageType)) {
+      continue;
+    }
+    $("#main_image_preview").css({"float":"right",  "margin-right":"77px", "margin-top":"20px"}); 
+    var img = document.createElement("img");
+    img.classList.add("obj");
+    img.file = file;
+    mainDiv = document.getElementById("for_target");
+    mainDiv.innerHTML = '';
+    
+    mainDiv.appendChild(img); // Assuming that "preview" is a the div output where the content will be displayed.
+    
+    var reader = new FileReader();
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; aImg.id = "target";
+
+      var dkrm = new Darkroom('#target', {
+      // Size options
+      minWidth: 100,
+      minHeight: 100,
+      maxWidth: 600,
+      maxHeight: 500,
+      ratio: 4/3,
+      backgroundColor: '#000',
+
+      // Plugins options
+      plugins: {
+        //save: false,
+        crop: {
+          quickCropKey: 67, //key "c"
+          //minHeight: 50,
+          //minWidth: 50,
+          //ratio: 4/3
+        }
+      },
+
+      // Post initialize script
+      initialize: function() {
+        var cropPlugin = this.plugins['crop'];
+        // cropPlugin.selectZone(170, 25, 300, 300);
+        // cropPlugin.requireFocus();
+      }
+    });
+
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+    ga('send', 'pageview');
+
+  }; })(img);
+
+
+
+    reader.readAsDataURL(file);
+  }
+}
+
+  function for_check()
+  {
+
+    var img = $('#for_target img').attr('src');
+    // response.data = new Buffer(matches[2], 'base64');
+    // Set your data that will be sent to reflect this change
+    var loan_id = $('#add_loan_id').val();
+    $('#img_fullpath').val(img);
+
+    data = $('#featured_image').serialize();
+        $.ajax({
+          type: 'POST',
+          url: '/loans/upload_main_imagex/'+loan_id,
+          data:data,
+          success:function(data){
+            if(data!="true")
+            {
+              $('#file').hide();
+              $('#main_image').hide();
+              $('#nt_allowed').show();
+            }
+            $("#main_image_preview").css({ "margin-top":"20px", "margin-right": "0px"});
+              // $('#myModal4').foundation('reveal', 'close'); 
+              // var datax = "&id=<%= @loan_id%>";
+              // $.ajax({
+              //             data: datax,
+              //             type: 'POST',
+              //             url: '/loans/loan_images',
+              //             success:function(response){
+              //                 $('#pictures-container').html(response);
+              //             }
+              //         });
+          }
+        });
+  }
+
+    (function() {
+'use strict';
+
+Darkroom.plugins['save'] = Darkroom.Plugin.extend({
+
+  defaults: {
+    callback: function() {
+      this.darkroom.selfDestroy();
+        
+      $('#if_edit').val('yes');
+      setTimeout(function() {
+       for_check(); //your code to be executed after 1 second
+      }, 1000);
+    
+
+    }
+  },
+
+  initialize: function InitializeDarkroomSavePlugin() {
+    var buttonGroup = this.darkroom.toolbar.createButtonGroup();
+
+    this.destroyButton = buttonGroup.createButton({
+      image: 'save'
+    });
+
+    this.destroyButton.addEventListener('click', this.options.callback.bind(this));
+
+   
+  },
+});
+
+})();
+
+</script>
+       
+         <!--  <div class='image-upload-section'>
+            <%=form_tag({:controller=>'loans', :action=>'upload_main_imagex',:id=>46456},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
+                <div class='small-12 medium-loan-detil columns inline' style="position:relative;">
+                  <% if @fileUpload == "true" %>
+                    <div id="file" style="position:absolute;"class="btn-choose-img"  >
+                    Featured Image</div>
+                    <%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:242px;height:41px;cursor:pointer", :id=>'main_image'%>
+                  <% else %>
+                    <div class="btn-choose-img"  id="file" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px;" onclick="alert('Please update your plan.')" >
+                    Choose Image</div>
+                  <% end %>
+
+                  <div class="btn-choose-img"  id="nt_allowed" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px; display:none;" onclick="alert('Please update your plan.')" >
+                    Choose Image</div>
+
+                </div>
+                <input type="hidden" id="img_fullpath" name="feature_fullpath">
+                
+            <%end%>
+
+            <div id='main_image_preview' class='centered large-12 columns' style='float:right;  margin-top:20px;'>
+          
+              <div id="content">
+                  <div class="container">
+                    <div class="figure-wrapper">
+                           <figure class="image-container target" id="for_target">
+                         
+                          </figure>
+                      </div>
+                    </div>
+              </div>
+            </div>
+
+          </div>
+                
+</div> -->
+<!---------------------------- End Featured Image -------------------------->
+
+
+<!---------------------------- Highlights ---------------------------------->
+  
+  <div class="content-white-box">
+  <div class="cwb-header">
+      <h3>Highlights</h3>
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong>Net Loan Amount Requested:</strong>
+            <p><input id="_NetLoanAmountRequested0" type="text"  name="_NetLoanAmountRequested0" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong>Desired Term Length:</strong>
+            <p>
+            <select id="_DesiredTermLength" rows="1" name="_DesiredTermLength" class="loan_info_fields">
+            <option value="3" >Less Than 3 Months</option>
+            <option value="6" >3 to 6 Months</option>
+            <option value="12" >6 to 12 Months</option>
+            <option value="24" >12 to 24 Months</option>
+            <option value="25" >More than 24 Months</option>
+          </select>
+            </p>
+            
+        </div>
+      </div>
+      <div id="loan_highlight">
+        <div class="columns medium-12">
+          <div class="trans-info-item">
+            <strong>Address:</strong>
+            <% if request.base_url.include? "idealview" %>
+              <p><input id="loc_address" type="text"  rows="1" name="Address3" class="autocomplete loan_info_fields"></p>
+            <% else %>
+              <p><input id="loc_address" type="text"  rows="1" name="Address3" class="loan_info_fields"></p>
+            <% end %>
+              
+          </div>
+        </div>
+
+        <div class="columns medium-12">
+          <div class="trans-info-item">
+            <strong>City:</strong>
+              <p><input id="loc_city" class="field locality loan_info_fields" type="text" name="City3" ></p>
+              
+          </div>
+        </div>
+       
+       <div class="columns medium-12">
+          <div class="trans-info-item">
+            <strong>State:</strong>
+              <p><input id="loc_state" class="field administrative_area_level_1 loan_info_fields" type="text" name="State3" ></p>
+              
+          </div>
+        </div>
+      </div>
+       <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong>Expected Close Date:</strong>
+            <p><input id="_ExpectedCloseDate" type="text" name="_ExpectedCloseDate" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong>Lending Category:</strong>
+            <p>
+            <select id="_LendingCategory" name="_LendingCategory" class="loan_info_fields">
+            <option value="Private Real Estate Loan">Private Real Estate Loan</option>
+            <option value="Business Financing" >Business Financing</option>
+            <option value="Equity and Crowdfunding" >Equity and Crowdfunding</option>
+            <option value="Residential or Commercial Mortgage">Residential or Commercial Mortgage</option>
+          </select>
+          </p>
+            
+        </div>
+      </div>
+
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong>Asset Type:</strong>
+            <p>
+          <select id="_LendingTypes" name="_LendingTypes" class="loan_info_fields">
+            <option value="Single Family Residence" >Single Family Residence</option>
+            <option value="Multifamily">Multifamily</option>
+            <option value="Condo">Condo</option>
+            <option value="Hospitality" >Hospitality</option>
+            <option value="Commercial" >Commercial</option>
+            <option value="Development" >Development</option>
+            <option value="Mixed Use" >Mixed Use</option>
+            <option value="Retail" >Retail</option>
+            <option value="Health Care">Health Care</option>
+            <option value="Industrial" >Industrial</option>
+            <option value="Other" >Other</option>
+          </select>
+
+          <select id="_BusinessFinancingTypes" name="_BusinessFinancingTypes" style="display:none;" class="loan_info_fields">
+            <option value="Equipment/Inventory">Equipment/Inventory</option>
+            <option value="Working Capital" >Working Capital</option>
+            <option value="Factoring" >Factoring</option>
+            <option value="Cash Advances" >Cash Advances</option>
+            <option value="Accounts Receivable Financing" >Accounts Receivable Financing</option>
+            <option value="Supply Chain Financing" >Supply Chain Financing</option>
+            <option value="Expansion Capital" > Expansion Capital</option>
+            <option value="Equity">Equity</option>
+            <option value="SBA Financing" >SBA Financing</option>
+          </select>
+
+          <select id="_EquityandCrowdFunding" name="_EquityandCrowdFunding" style="display:none;" class="loan_info_fields">
+            <option value="Project Financing">Project Financing</option>
+            <option value="Acquisition and Development" >Acquisition and Development</option>
+            <option value="Start Up">Start Up</option>
+            <option value="Business Partnership" >Business Partnership</option>
+          </select>
+
+          <select id="_MortageTypes" name="_MortageTypes" style="display:none;" class="loan_info_fields">
+            <option value="Owner Occupied" >Owner Occupied</option>
+            <option value="Second Home" >Second Home</option>
+            <option value="Investment Property" >Investment Property</option>
+            <option value="FHA">FHA</option>
+            <option value="VA" >VA</option>
+            <option value="Reverse Mortgage" >Reverse Mortgage</option>
+            <option value="Sub Prime" >Sub Prime</option>
+            <option value="HUD Financing" >HUD Financing</option>
+            <option value="Multifamily">Multifamily</option>
+            <option value="Hospitality" >Hospitality</option>
+            <option value="Land Development" >Land Development</option>
+            <option value="Mixed Use" >Mixed Use</option>
+            <option value="Retail" >Retail</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Other" >Other</option>
+          </select>
+          </p>
+            
+        </div>
+      </div>
+
+     
+
+    </div>
+  </div>
+</div><!-- content-white-box -->
+
+
+<!---------------------------- End Highlights ---------------------------------->
+
+<div class="content-white-box">
+  <div class="cwb-header">
+      <h3>Summary</h3>
+    
+  </div>
+  <div class="cwb-content">
+    
+      <textarea class="loan_summary"></textarea>
+    
+  </div>
+</div><!-- content-white-box -->
+
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Transaction Information</h3></label>
+      
+  </div>
+  <div class="cwb-content">
+    <div class="row">
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <label><strong>Transaction Type:</strong></label>
+          <p>
+            <select name="transaction_type" id="transaction_type" class="loan_info_fields">
+                <option value=""> Select Transaction Type </option>
+                <option value="Purchase">Purchase</option>
+                <option value="Refinance">Refinance</option>
+            </select>
+          </p>
+         
+        </div>
+      </div>
+      <div class="columns medium-6 border-right purchase"  style="display:none;" >
+        
+        <div class="trans-info-item">
+            <label><strong>Contract Closing Date:</strong></label>
+            <p><input id="contract_closing_date" name="contract_closing_date" type="text"  class="loan_info_fields"></p>
+           
+        </div>
+        
+      </div>
+
+      <div class="columns medium-6 purchase"  style="display:none;">
+        
+        <div class="trans-info-item">
+            <label><strong>Purchase Price:</strong></label>
+            <p><input id="purchase_price" name="purchase_price" rows="1"  type="text" class="loan_info_fields"></p>
+           
+        </div>
+       
+      </div>
+
+      <div class="columns medium-6 border-right purchase"  style="display:none;" >
+        
+        <div class="trans-info-item">
+            <label><strong>Rehab Amount:</strong></label>
+            <p><input id="rehab_amount" name="rehab_amount" rows="1"  type="text" class="loan_info_fields"></p>
+           
+        </div>
+      </div>
+
+      <div class="columns medium-6 purchase" style="display:none;" >
+        <div class="trans-info-item">
+            <label><strong>Cash To Contribute:</strong></label>
+            <p><input id="purchase_cash_contribute" name="purchase_cash_contribute" rows="1" type="text" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right refinance"  style="display:none;">
+        <div class="trans-info-item">
+            <strong>Maturity Date:</strong>
+            <p><input id="maturity_date" type="text" rows="1" name="maturity_date" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+      <div class="columns medium-6 refinance" style="display:none;" >
+        <div class="trans-info-item">
+            <strong>Cash To Contribute:</strong>
+            <p><input id="refinance_cash_contribute" name="refinance_cash_contribute" rows="1"  type="text" class="loan_info_fields"></p>
+            
+        </div>
+      </div>
+      
+      <div class="columns medium-6 ask_broker ">
+        <div class="trans-info-item">
+          <strong> Submitted By Broker:</strong>
+          <p>
+            <input type="radio" name="isBroker" value="Yes" class="loan_info_fields"  ><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="isBroker" value="No" ><label> No </label>
+          </p>
+        
+        </div>
+      </div>
+
+      <div class="columns medium-6 yes_broker"  style="display:none;">
+        <div class="trans-info-item">
+          <strong> Who is the broker?:</strong>
+          <p>
+            <input id="who_broker" type="text" fsUBMITTE rows="1" name="who_broker" class="loan_info_fields">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-12">
+        <div class="trans-info-item">
+          <strong> Free and Clear:</strong>
+          <p>
+            <input type="radio" name="free_clear" value="Yes" class="loan_info_fields"><label> Yes </label>
+            <input type="radio" class="loan_info_fields" name="free_clear" value="No"><label> No </label>
+          </p>
+          
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear" style="display:none;" >
+        <div class="trans-info-item">
+          <strong>Original Purchase Price:</strong>
+          <p>
+            <input id="original_purchase_price" type="text"  class="loan_info_fields" name="original_purchase_price">
+          </p>
+        
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear"  style="display:none;" >
+        <div class="trans-info-item">
+          <strong>Original Purchase Date:</strong>
+          <p>
+            <input id="original_purchase_date" type="text"  class="loan_info_fields" name="original_purchase_date" maxlength="20">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-6 border-right free_clear" style="display:none;">
+        <div class="trans-info-last">
+          <strong>Vested by:</strong>
+          <p>
+            <input id="vested_by" type="text" rows="1" name="vested_by" maxlength="20" class="loan_info_fields ">
+          </p>
+         
+        </div>
+      </div>
+
+      <div class="columns medium-6 free_clear"  style="display:none;">
+        <div class="trans-info-last">
+          <strong>Cash contributed:</strong>
+          <p>
+            <input id="cash_contributed" type="text" rows="1" name="cash_contributed" maxlength="20" class="loan_info_fields">
+          </p>
+         
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- content-white-box -->
+
+<div class="content-white-box">
+  <div class="cwb-header">
+      <label><h3>Use of Funds</h3></label>
+     
+  </div>
+  <div class="cwb-content">
+    <form id="all_funds_form" method="post">
+      <div style="overflow-x:auto;">
+        <table border="0" cellpadding="0" cellspacing="0" class="table-use-fund app_table">
+          
+            <% unless @funds.blank? %>
+              <tr>
+                  <td>&nbsp;</td>
+                  <td><strong>Description</strong></td>
+                  <td><strong>Beneficiary</strong></td>
+                  <td><strong>Amount</strong></td>
+              <!--<td><strong>Maturity / Contract Date</strong></td>
+                  <td><strong>Earned Deposit/Stats</strong></td> !-->
+              </tr>
+            <% else %>
+              <tr>
+                  <td><strong>Description</strong></td>
+                  <td><strong>Beneficiary</strong></td>
+                  <td><strong>Amount</strong></td>
+              </tr>
+            <% end %>
+          
+              <tr id="1_fund" class="fund_row">
+                  <td>
+                      <select class="use funds_field app_table_field" name="use[]">
+                        <option value="">Select</option>
+                        <option value="Payoff">Payoff</option>
+                        <option selected="selected" value="Improvement">Improvement</option>
+                        <option value="Construction">Construction</option>
+                        <option value="Operations">Operations</option>
+                        <option value="Purchase">Purchase</option>
+                        <option value="Other">Other</option>
+                      </select>
+                  </td>
+                  <td><input type="text" placeholder="Beneficiary" name="beneficiary[]" class="funds_field  app_table_field"></td>
+                  <td><input type="text" placeholder="Amount" name="amount[]" class="funds_field app_table_field"></td>
+                  <!--<td><input class="maturityDates payoff_funds" type="text" placeholder="Maturity Date" name="maturityDate[]" style="display:none"><input class="contractDates purchase_funds" type="text"  placeholder="Contract Date" name="contractDate[]" style="display:none"></td>
+                  <td><input type="text" placeholder="Earned Deposit" name="earnedDeposit[]" style="display:none;" class="purchase_funds"><input type="text" placeholder="Stats" name="stats[]" style="display:none;" class="payoff_funds"></td>-->
+              </tr>
+            
+        </table>
+      </div>
+    </form>
+    <div class="add_more">
+          <!-- <input type="button" value="Save" class="tiny button" id="save_use_funds"> -->
+        <b>
+          <a class="add_more_fund" style="font-size:24px; float:right;" href="  javascript:void(0);">+</a>
+        </b>
+    </div>
+  </div>
+</div><!-- content-white-box -->

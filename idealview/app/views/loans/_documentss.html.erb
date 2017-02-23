@@ -1,0 +1,105 @@
+<style type="text/css">
+	.folder_name {
+    color: #f09569;
+}
+</style>
+<% Loan.file_categories.each do |cat| 
+%>
+<% if cat=='Other' %>
+		
+		 <ul class="offering-document">
+			<% @loan.documents.each do |doc|  %>
+		 	<li>
+			 	<% if doc.category.blank? && doc.delete!=1 %>
+			 		<% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc.id%>
+			 		<a href='<%= url %>' target='_blank'><%=doc.name%></a><br>
+			    <% end %>
+		    </li>
+			<% end %>
+		</ul>			    
+<%end%>
+	
+		
+	<div style='margin-top:30px;width:100%'>
+				<%
+				formId=cat.gsub(',','_') 
+				formId=formId.gsub('&','_') 
+				formId=formId.gsub(' ','_') 
+				%>
+				<b class="folder_name" tabindex="0"><%= cat %></b>
+				
+			</div>
+		<ul class="offering-document">
+			<% @loan.docs_by_category(cat).each do |doc| 
+				%>
+				<li>
+				<% if doc.delete!=1 %>
+					 <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc.id%>
+					<a href='<%=url%>' target='_blank'><%=doc.name%></a> <br>
+				<% end %>
+				</li>
+			<% end %>
+		</ul>
+			
+
+
+<%end %>
+<% unless @folders.blank? %>
+	<h3 style="text-align:center;"> Custom Folders </h3>
+<% end %>
+<% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+
+<% else %>
+
+	 
+
+<% end %>
+<div class="add_new_folder" style="display:none; border: 3px solid rgb(231, 231, 231); padding: 12px; margin-bottom: 23px;">
+	<form method="post" id="add_folder_form">
+		<label> Folder Name</label><input type="text" name="folder_name" class="folder_name">
+		<input type="hidden" name="loan_id" value="<%= @loan.id %>">
+		<% unless current_user.blank? %>
+			<input type="hidden" name="user_id" value="<%= current_user.id %>">
+		<% end %>
+		<input type="button" class="tiny button success" value="SAVE" id="add_folder"> <input type="button" class="tiny button alert" value="CANCEL" id="cancel_add_folder">
+	</form>
+</div>
+
+<div class="custom_folders">
+<%
+  unless @folders.blank?
+	@folders.each do |folder| %>
+		<%
+				fldr = folder.folder_name
+				formId=fldr.gsub(',','_') 
+				formId=formId.gsub('&','_') 
+				formId=formId.gsub(' ','_') 
+				%>
+			
+		
+		<div id="folder_<%= folder.id %>" >
+		<div style="margin-top: 30px; width: 100%;">
+			<b class="folder_name" tabindex="0"><%= folder.folder_name %></b>
+		</div>
+		<% 
+		all_files = folder.files_by_folder(@loan.loan_id)
+		unless all_files.blank? %>
+		  <ul class="offering-document">
+		  	<% all_files.each do |file| %>
+				<li>
+				
+				   <% url=url_for :controller=>'loans', :action=>'view_file',:id=>file[:_id] %>
+				    <a href='<%=url%>' target='_blank'><%=file.name%></a>
+				   
+				</li>
+			<% end %>
+	 		</ul>
+		<% end
+		%>
+
+		
+	  </div>
+	<% end
+   end
+  %>
+</div>

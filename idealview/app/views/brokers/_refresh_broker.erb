@@ -1,30 +1,46 @@
 <%= render partial: 'layouts/messages' %>
-    <% color_class = ''%>
+<% color_class = ''%>
+<% unless @brokers.blank? %>
+  <table style="width:100%;">
+    <tr>
+      <th> 
+        <input type="checkbox"  title="Select All" name="select_all_broker" class="select_all_brokers" style="float:left">
+      </th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+    </tr>
     <% @brokers.each do |broker| 
-        unless broker['delete']==1 %>
-        <div class='row <%=color_class%> bottom-space text-left'>
-            
-            <div class='large-2 columns'>
-            <input type="checkbox" id="check_<%= broker.id %>" name="select_broker" value="<%= broker.id %>" style="float:left;margin-top:7px;">
-            </div>
-            
-            <div class='large-3 columns'>
-                <% unless broker.firstName.blank? %>
-                    <%= broker.firstName+' '+broker.lastName %>
-                <% else %>
-                     "N/A"
-                <% end %>
-            </div>
+           unless broker['delete']==1 %>
+            <tr>
+                
+                <td>
+                  <input type="checkbox" id="check_<%= broker.id %>" name="select_broker" value="<%= broker.id %>" class="single_broker" style="float:left;margin-top:7px;">
+                </td>
+                
+                <td>
+                    <a href="http://<%= @hostname %>/brokers/show/<%= broker.id %>">
+                        <% unless broker.name.blank? %>
+                            <%= broker.name %>
+                        <% else %>
+                             "N/A"
+                        <% end %>
+                     </a>
+                </td>
 
-            <div class='large-2 columns'>
-                <%= broker.email %>
-            </div>
-            
-            <div class='large-2 columns'>
-                <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
-            </div>
-        </div>
+                <td>
+                    <%= broker.email %>
+                </td>
+                
+                <td>
+                    <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
+                </td>
+            </tr>
 
-        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
-        <% end %>
-    <% end %>
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+          <%
+          end
+    end   %>
+    </table>
+<% end %>

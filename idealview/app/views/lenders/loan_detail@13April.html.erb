@@ -1,0 +1,2100 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<%= javascript_include_tag "https://rawgit.com/OwlFonk/OwlCarousel/master/owl-carousel/owl.carousel.min.js"%>
+<!-- Owl Carousel Assets -->
+    <link href="https://rawgit.com/OwlFonk/OwlCarousel/master/owl-carousel/owl.carousel.css" rel="stylesheet">
+    <link href="https://rawgit.com/OwlFonk/OwlCarousel/master/owl-carousel/owl.theme.css" rel="stylesheet">
+
+<% if @access != "false" && @login != "false"%>
+<script>
+$('document').ready(function(){
+<% if @agree == "false" %>
+        $('#myModal').foundation('reveal', 'open',{
+            close_on_background_click:false,
+            close_on_esc:false
+        });
+ <% end %>
+
+ $('#close_popup').click(function(){
+                window.location.replace("http://<%= @hostname %>/");
+            });
+
+// <% if defined? @loan.address && @loan.address!= 'None' %>
+//     if($('#property-map').html().length==0)
+//     {
+
+//         var embed = '<iframe'+
+//                     ' width="600"'+
+//                     ' height="450"'+
+//                     ' frameborder="0" style="border:0"'+
+//                     ' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loan.address%>&zoom=15">'+
+//             '</iframe>';
+    
+    
+//         $('#property-map').html(embed);
+//     }
+
+// <% end %>
+   
+   });
+</script>
+<% end %>
+
+<script type="text/javascript">
+$('document').ready(function(){
+    $('#countdown').timeTo({
+        timeTo: new Date(new Date('<%= @endt %>')),
+        displayDays: 2,
+        theme: "black",
+        displayCaptions: true,
+        fontSize: 48,
+        captionSize: 14
+    });
+
+
+   /////////////////////////////// For New User////////////////////////
+        <% 
+        if @login!="true" %>
+             $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+         <% end %>
+        
+         $('#passwordset').click(function(){
+            pass = $('#password').val();
+            cpass = $('#cpassword').val();
+            if(pass != cpass)
+            {
+               $('#pass_error').show();
+               return false;
+            }
+            alert("Matched");
+            var data = $('#setPassword').serialize(); 
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/set_password',
+                    success:function(data){
+                                            outside(data);
+                                        }
+            });
+         });
+     
+    
+    $("#sign_up").click(function(){
+        $('#myModal2').foundation('reveal', 'close');
+        $('#myModal3').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+
+    $("#log_in").click(function(){
+        $('#myModal3').foundation('reveal', 'close');
+        $('#myModal2').foundation('reveal', 'open',{
+                    close_on_background_click:false,
+                    close_on_esc:false
+             });
+    });
+    //////////////////////////// End For New User /////////////////////
+
+    $('#interested').click(function(){
+        var status = "<%= @auth %>";
+       if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/acept_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    $("#interested").hide();
+                    $("#decline").hide();
+                    alert("Your request has been accepted.");
+               }
+            });
+        }
+    });
+
+     $('#decline').click(function(){
+        var status = "<%= @auth %>";
+        if(status == "login")
+        {
+            alert("Please login first.")
+        }
+        else if(status == "auth")
+        {
+            alert("You are not authorized to perform this action.")
+        }
+        else
+        {
+            var id = "<%= @info.id %>";
+            data = "&id="+id;
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/decline_loan',
+                success:function(response){
+                    $("#countdown").hide();
+                    alert("Your request has been declined.");
+                    window.location.replace("http://<%= @hostname %>/");
+               }
+            });  
+        }
+    });
+
+    $("#accept_contract").click(function(){
+        var signature = $('#signature').val();
+        if(signature=="")
+        {
+            $("#required").show();
+        }
+        else
+        {
+            var data=$('#agreementForm').serialize();   
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/lenders/accept_agreement',
+                    success:function(response){
+                       $('#myModal').foundation('reveal', 'close');  
+                    }
+                });
+ 
+        }
+
+    });
+
+    $('#counter').jQuerySimpleCounter({
+        start:  0.0,
+        end:    '<%= @lltv %>',
+        easing: 'swing', // jQuery easing effects
+        duration: 600, // animation speed
+        complete: '' // callback function
+    });
+
+
+});
+</script>
+<!--
+    <div class="header">
+        <nav class="navbar main-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">LOGO</a>
+                <div class="pull-right">
+                    <button type="button" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <ul class="">
+                        <li class=""><a href="#home">Login</a></li>
+                    </ul>
+                    -- /.navbar-collapse --
+                </div>
+            </div>
+             /.container-fluid --
+        </nav>
+    </div> -->
+
+<style type="text/css">
+  .tblDiv
+  {
+    border: 1px solid #dddddd;
+  }
+  .tblcolm {
+    border: 1px solid #dddddd;
+    float: left !important;
+    font-size: 14px;
+    height: 46px;
+    padding: 4px;
+}
+  .scrolloff {
+        pointer-events: none;
+    }
+</style>
+    <style type="text/css">
+        .login
+        {
+            display: none !important; 
+        }
+      
+        .modalhead
+        {
+            background-color:  #eeeeee;
+            text-align: center;
+            font-weight: bold;
+        }
+        .reveal-modal .close-reveal-modal, dialog .close-reveal-modal
+        {
+            top: 0;
+        }
+        #chart-1
+        {
+            height:170px !important;
+        }
+       .detail_header
+       {
+        color: #db765e;
+       }
+       .orbit-bullets
+       {
+        display: none;
+       }
+        .l-sidebar.sticky{
+           position: fixed;
+           top:40px;
+           background: none repeat scroll 0 0 #ffffff;
+           width:26%;
+           padding-left: 2px;
+           padding-right: 34px;
+        }
+        #chart-1 svg {
+            margin-left: -123px !important;
+        }
+
+        /* .sticky .btn{
+           width:67%;
+        }*/
+
+        /*.sticky li
+        {
+          width: 66%;
+        }*/
+
+        #breakPoint{
+            position: relative;
+            top:60px;
+            width: 100%;
+            float:left;
+        }
+        #myModal2
+        {
+          top:239px;
+        }
+        body
+        {
+          background:#f6f4f4;
+        }
+        .l-sidebar {  position: absolute; padding-right: 15px; background: #ffffff; top: 30px;}
+        .l-sidebar-wrapper.sticky .l-sidebar {top: 0;}
+        .l-sidebar-wrapper.sticky { left: 0; position: fixed;  right: 0;  width: 100%; top: 60px; }
+
+    </style>
+    <% if @access == "true" %>
+    <div id="myModal" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead">
+        <h5 id="modalTitle" style="font-weight:bold;"><%= @agreement.header %></h5>
+      </div>
+        <p><%= @agreement.content %> </p>
+
+      <div class="small-8 small-centered columns">
+        <form method="post" action="http://<%= @hostname %>/lenders/acept_agreement" id="agreementForm">
+          <div class="row">
+          
+                    <div class="small-3 columns">
+                      <label for="right-label" class="right">Signature</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input type="text" id="signature" name="signature">
+                      <label id="required" style="color:red; margin-bottom:10px; display:none;"> Signature is required. </label>
+                    </div>
+
+          </div>
+
+          <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">Date</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="agreement_date" value="<%= @bdate %>">
+                      <input type="hidden" name="agreement_date_time" value="<%= @adate %>">
+                      <input type="hidden" name="agreement_id" value="<%= @agreement.id %>">
+                      <input type="hidden" name="lender_id" value="<%= @info.lender.id %>">
+                    </div>
+
+              
+          </div>
+           <div class="row">
+          
+                     <div class="small-3 columns">
+                      <label for="right-label" class="right">IP Address</label>
+                    </div>
+                    <div class="small-9 columns">
+                      <input readonly="readonly" id="right-label" name="ip_address" value="<%= @ip %>">
+                    </div>
+
+          </div>
+
+          <div class="row">
+                <div class="small-6 small-centered columns">
+                  <input type="button" id="accept_contract"  value="Accept  & Sign Contract" class="tiny button">
+                </div>
+          </div>
+        </form>
+      </div>
+        <a class="close-reveal-modal" aria-label="Close"  id="close_popup">&#215;</a>   
+     </div>
+    <% end %>
+
+    <!-- For new User -->
+  
+        <div id="myModal2" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+                <h5 id="modalTitle" style="font-weight:bold;"> Log In</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                        <%= form_for(:user, :id =>'login_form', :url => session_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                            Email : <%= f.text_field :email %>
+                           <input type="hidden" name="lenderDetail" value="yes">
+                        </div>
+                        <div class="medium-12 column">
+                            Password: <%= f.password_field :password %>
+                        </div>
+                        <div class="medium-12 column">
+                        <div class="field">
+                                <%= f.check_box :remember_me %>
+                                <%= f.label :remember_me %>
+                        </div>
+                        </div>
+                        <div class="medium-12 column">
+                            <%= f.submit 'Sign in' %> 
+                            <%= link_to "Forgot your password?", new_password_path(:user) %>
+                            <a href="javascript:void(0);" id="sign_up" style="float:right; text-decoration:underline">Sign Up</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+
+
+          <div id="myModal3" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+           <div class="modalhead">
+
+                <h5 id="modalTitle" style="font-weight:bold;"> Sign Up</h5>
+           </div>
+           <div class="small-10 small-centered columns">
+                <div class="row">
+                        <div class="medium-12 column" id="pass_error" style="color:red; display:none;">
+                            
+                        </div>
+                       <%= form_for(:user, :url => registration_path(:user)) do |f| %>
+                        <div class="medium-12 column">
+                           Email:
+                           <%= f.email_field :email, autofocus: true %>
+                        </div>
+                        <div class="medium-12 column">
+                            Password: 
+                            <% if @validatable %>
+                            <em>(<%= @minimum_password_length %> characters minimum)</em>
+                            <% end %><br />
+                            <%= f.password_field :password, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                            Confirm: 
+                            <%= f.password_field :password_confirmation, autocomplete: "off" %>
+                        </div>
+                        <div class="medium-12 column">
+                             <%= f.submit "Sign up" %> <a href="javascript:void(0);" id="log_in" style="float:right; text-decoration:underline">Log In</a>
+                         </div>
+                        <% end %>
+                    </div>
+                
+           </div>
+           <a class="close-reveal-modal" aria-label="Close">&#215;</a>   
+         </div>
+    
+    <!-- End New User -->
+
+    <div class="lp-bg"></div>
+    <div class="content-section">
+
+      
+
+      <h2 class="loan_msg">The loan opportunity will be given to another Lender in</h2>
+      <div id="countdown"></div>
+
+      <div class="l-sidebar-wrapper"> 
+          <div class="row">
+            <div class="medium-4 column" style="float:right">
+                <div id="breakPoint"> </div>
+              <div class="l-sidebar">
+                  <!-- <div class="gray-box"> -->
+                  <div>
+                        <h3>Highlights:</h3>
+                        <% unless @loan.hide_fields.blank? 
+                            @checkif = @loan.hide_fields
+                        else 
+                            @checkif = ""
+                        end %>
+                        <ul class="hl-list">
+                            <% unless @checkif.include? "_NetLoanAmountRequested0" %>
+                            <li>
+                                <span class="hl-l">Loan Amount:</span>
+                                <span class="hl-r">
+                                   <% 
+                                      unless @loan.info['_NetLoanAmountRequested0'].blank? 
+                                        if @loan.info['_NetLoanAmountRequested0'].include? "$"
+                                          loan_amnt = @loan.info['_NetLoanAmountRequested0'].gsub('$', '')
+                                        else
+                                          loan_amnt = @loan.info['_NetLoanAmountRequested0']
+                                        end
+                                        loan_amnt = loan_amnt.gsub(',','')
+                                     %>
+                                     <%= fd_money(loan_amnt.to_i) %> 
+                                    <% end %>
+                                </span>
+                            </li>
+                            <% end %>
+                             <% unless @checkif.include? "_EstimatedMarketValue" %>
+                            <li>
+                                <span class="hl-l">Value:</span>
+                                <span class="hl-r">
+                                  <% 
+                                      unless @loan.info['_EstimatedMarketValue'].blank? 
+                                        if @loan.info['_EstimatedMarketValue'].include? "$"
+                                          estimated_value = @loan.info['_EstimatedMarketValue'].gsub('$', '')
+                                        else
+                                          estimated_value = @loan.info['_EstimatedMarketValue']
+                                        end
+                                     estimated_value = estimated_value.gsub(',','')
+                                     %>
+                                     <%= fd_money(estimated_value.to_i) %> 
+                                    <% end %>
+                               </span>
+                            </li>
+                            <% end %>
+                            <% unless @checkif.include? "_DesiredTermLength" %>
+                            
+                            <li>
+                                <span class="hl-l">Term Length:</span>
+                                <span class="hl-r"><%= @loan.info['_DesiredTermLength'] %></span>
+                            </li>
+
+                            <% end %>
+                            
+                            <% unless @checkif.include? "location" %>
+                            <li>
+                                <span class="hl-l">Location: </span>
+                                <span class="hl-r">
+                                <% unless @loan.info['City3'].blank? %>
+                                    <%= @loan.info['City3']+", "%>
+                                <% end %>
+                                <% unless @loan.info['State3'].blank? %>
+                                    <%= @loan.info['State3']%>
+                                <% end %>
+                                </span>
+                            </li>
+                            <% end %>
+
+                            <% unless @checkif.include? "_ExpectedCloseDate" %>
+                            <li>
+                                <span class="hl-l">Expected Close:</span>
+                                <span class="hl-r"><%= @loan.info['_ExpectedCloseDate'] %></span>
+                            </li>
+                            <% end %>
+
+                            <% unless @checkif.include? "_LendingCategory" %>
+                            <li>
+                                <span class="hl-l">Lending Category:</span>
+                                <span class="hl-r"><%= @loan.info['_LendingCategory'] %></span>
+                            </li>
+                            <% end %>
+
+                            <% unless @checkif.include? "_LendingTypes" %>
+                            <li>
+                                <span class="hl-l">Loan Type: </span>
+                                <span class="hl-r"><%= @loan.info['_LendingTypes'] %></span>
+                            </li>
+                            <% end %>
+                             
+                             <% unless @checkif.include? "_TransactionType0" %>
+                             <li>
+                                <span class="hl-l">Transaction Type: </span>
+                                <span class="hl-r"><%= @loan.info['_TransactionType0'] %></span>
+                            </li>
+                            <% end  %>
+                        </ul>
+                    </div>
+                  <br>
+                  <% 
+                  if @login=="true" 
+                      if @info.status != "accept" %>
+                          <a class="button expand btn" href="javascript:void(0);" id="interested">I am interested</a>
+                          <a class="button expand btn" href="javascript:void(0);" id="decline">I decline</a>
+                   <% 
+                      end
+                  end %>
+              </div>
+          </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="loan-share-content">      
+          
+          <div class="medium-8 column">
+              <div class="row">
+
+                  <div class="property_info medium-9 column">
+                      <h1 class="page-title"><%= @loan.name %></h1>
+                      <% unless @loan.info['_LendingCategory'].blank? %>
+                          <h5><span style="float:left;">Category:</span><label style="float:left; font-size:17px;"><%= @loan.info['_LendingCategory'] %></label></h5>
+                      <% end %>
+                      <br>
+                      <h5><span style="float:left;">Location:</span>
+                          <label style="float:left; font-size:17px;">
+                              <% unless @loan.info['City3'].blank? %>
+                                  <%= @loan.info['City3']+", "%>
+                              <% end %>
+                              <% unless @loan.info['State3'].blank? %>
+                                  <%= @loan.info['State3']%>
+                              <% end %>
+                          </label>
+                      </h5>
+                   </div> 
+                     
+                      
+                   
+                 
+                  <div class="medium-3 column ltv_prop">
+                                                            
+                          <% unless @lltv.blank? %>
+                              <span>LTV:</span>  
+                               
+                              <div id="counter"></div> 
+                            <% end %>
+                  </div>
+              </div> <!-- top row -->
+              <div class="r-content">
+              <div class="medium-12 column" style="background:#ffffff">
+                  <% if !@loan.images.blank?  %>
+                      <div id="owl-demo" class="owl-carousel">
+                        <% if !@loan.images.blank? %>
+                            <% @loan.images.each do |img|%>
+                          <div class="item"> <img style="height: 348px; width: 748px;" data-src="<%= img['url']%>" class="lazyOwl"></div>
+                            <% end %> 
+                        <% end %>
+                      </div>
+                   <% end%>
+                 </div>
+                  <ul class="tabs" data-tab>
+                    <li class="tab-title active"><a href="#panel1">OVERVIEW</a></li>
+                    <li class="tab-title"><a href="#panel2">BORROWER</a></li>
+                    <li class="tab-title"><a href="#panel3">COLLATERAL</a></li>
+                    <li class="tab-title"><a href="#panel4">ANALYSIS</a></li>
+                    
+                  </ul>
+               <% if @access != "false" && @login != "false"%>
+                  <div class="tabs-content">
+                         <div class="content active" id="panel1">
+                          <% unless @checkif.include? "use_of_fund" %>
+                            <% if !@funds.blank? %>
+                                    <div class="white-content-box">
+                                        <div class="detail_header"><b>Use Of Funds</b></div>
+                                        
+                                        <b>
+                                            
+                                             <% 
+                                                unless @loan.info['_NetLoanAmountRequested0'].blank? 
+                                                  if @loan.info['_NetLoanAmountRequested0'].include? "$"
+                                                    loan_amnt = @loan.info['_NetLoanAmountRequested0'].gsub('$', '')
+                                                  else
+                                                    loan_amnt = @loan.info['_NetLoanAmountRequested0']
+                                                  end
+                                                  loan_amnt = loan_amnt.gsub(',','')
+                                               %>
+                                               <%= fd_money(loan_amnt.to_i) %> 
+                                              <% end %>
+
+                                        </b><span style="color:#777777;"> - Total Loan Amount</span>
+                                             <% unless @funds.blank? %>
+                                        
+                                            <div id="chart_div"></div>
+                                            <script type="text/javascript">
+                                              google.charts.load("current", {packages:["corechart"]});
+                                                google.charts.setOnLoadCallback(drawChart);
+
+                                                 function drawChart() {
+                                                    var data = google.visualization.arrayToDataTable([<%= raw @uses.to_json %>,
+                                                        <%= raw @amounts.to_json %>]);
+                                                      var formatter = new google.visualization.NumberFormat(
+                                                      {prefix: '$', negativeColor: 'red', negativeParens: true});
+                                                      arr =  <%= raw @amounts.to_json %>;
+                                                      
+                                                      for (i = 1; i < arr.length; i++) {
+                                                          formatter.format(data, i);
+                                                      }
+
+                                                      var view = new google.visualization.DataView(data);
+                                                     
+                                                                       
+                                                      var options = {
+                                                        width: 600,
+                                                        height: 100,
+                                                        legend: { position: 'top', maxLines: 3 },
+                                                        bar: { groupWidth: '75%' },
+                                                        isStacked: true
+                                                      };
+                                                      var chart = new google.visualization.BarChart(document.getElementById("chart_div"));
+                                                      chart.draw(view, options);
+                                                  }
+                                            </script>
+                                        <% end %> 
+
+                                            
+                                    </div><!-- white-content-box -->
+                            <% end %>
+                          <% end %>
+                          <% unless @checkif.include? "_LoanSummaryWhatareyoulookingfor" %>
+                            <div class="white-content-box">
+                                <div class="detail_header"><b>Summary</b></div>
+                                <div class="wcb-content">
+                                    
+                                    <% unless @loan.info['_LoanSummaryWhatareyoulookingfor'].blank? %>
+                                    <article>
+                                        <% field_text = @loan.info['_LoanSummaryWhatareyoulookingfor']%>
+                                        <%= send('simple_format', field_text)%>
+                                    </article>
+                                  <% end %> 
+                                   <!-- <div id='property-map' class="flex-video"></div> -->
+
+                                   
+                                    
+                                </div>
+                            </div><!-- white-content-box -->
+                          <% end %>
+                          <% unless @checkif.include? "_ExitStrategyHowwillyoupaytheloanoff" %>
+                              <div class="white-content-box">
+                                  <div class="detail_header"><b>Exit Strategy</b></div>
+                                  <div class="wcb-content">
+                                       <% unless @loan.info['_ExitStrategyHowwillyoupaytheloanoff'].blank? %>
+                                        <article>
+                                          <% field_text = @loan.info['_ExitStrategyHowwillyoupaytheloanoff']%>
+                                          <%= send('simple_format', field_text)%>
+                                        </article>
+                                       <% end %>
+                                      
+                                  </div>
+                              </div><!-- white-content-box -->
+                          <% end %>
+                          <!-------- Transaction Information ------>
+
+                            <div class="white-content-box">
+                                  <div class="detail_header"><b> Transaction Information</b></div>
+
+                                 
+                                    <div class="wcb-content">
+                                       <div class="row tblDiv">
+                                       <% unless @checkif.include? "transaction_type" %>
+                                          <div class="large-6 columns tblcolm"><b>Transaction Type : </b>
+                                           <%= @loan.info['transaction_type'] %> 
+                                          </div>
+                                       <% end %>
+                                        <% if @loan.info['transaction_type']=="Purchase"  %>
+                                            <% unless @checkif.include? "contract_closing_date" %>
+                                            <div class="large-6 columns tblcolm">
+                                                <b>Contract Closing Date : </b>
+                                                 <%= @loan.info['contract_closing_date'] %> 
+                                            </div>
+                                          <% end %>
+                                          <% unless @checkif.include? "purchase_price" %>
+                                            <div class="large-6 columns tblcolm">
+                                              <b>Purchase Price : </b>
+                                                <% 
+                                                unless @loan.info['purchase_price'].blank?
+                                                  if @loan.info['purchase_price'].include? "$"
+                                                      purchase_price = @loan.info['purchase_price'].gsub('$', '')
+                                                   else
+                                                    purchase_price = @loan.info['purchase_price']
+                                                   end
+                                                purchase_price = purchase_price.gsub(',','')
+                                                 %>
+
+                                                 <%= fd_money(purchase_price.to_i) %> 
+                                                <% end %>
+                                            </div>
+                                          <% end %>
+                                          <% unless @checkif.include? "rehab_amount" %>
+                                             <div class="large-6 columns tblcolm"><b>Rehab Amount  : </b>
+                                                 <%
+                                                  unless @loan.info['rehab_amount'].blank?
+                                                    if @loan.info['rehab_amount'].include? "$"
+                                                      rehab_amount = @loan.info['rehab_amount'].gsub('$', '')
+                                                    else
+                                                      rehab_amount = @loan.info['rehab_amount']
+                                                    end
+                                                rehab_amount = rehab_amount.gsub(',','')
+                                                 %>
+                                                <%= fd_money(rehab_amount.to_i) %> 
+                                                <% end %>
+                                              </div>
+                                          <% end %>
+                                          <% unless @checkif.include? "purchase_cash_contribute" %>
+                                            <div class="large-6 columns tblcolm"><b>Cash to contribute : </b>
+                                              <% 
+                                                unless @loan.info['purchase_cash_contribute'].blank? 
+                                                  if @loan.info['purchase_cash_contribute'].include? "$"
+                                                    purchase_cash_contribute = @loan.info['purchase_cash_contribute'].gsub('$', '')
+                                                  else
+                                                    purchase_cash_contribute = @loan.info['purchase_cash_contribute']
+                                                  end
+                                                  purchase_cash_contribute = purchase_cash_contribute.gsub(',','')
+                                               %>
+                                               <%= fd_money(purchase_cash_contribute.to_i) %> 
+                                              <% end %>
+                                            </div>
+                                          <% end %>
+                                        <% end %>
+
+                                         <% if @loan.info['transaction_type']=="Refinance"  %>
+                                          <% unless @checkif.include? "maturity_date" %>
+                                            <div class="large-6 columns tblcolm">
+                                              <b>Maturity Date : </b>
+                                              <%= @loan.info['maturity_date']  %> 
+                                            </div>
+                                          <% end %>
+                                          
+                                          <% unless @checkif.include? "refinance_cash_contribute" %>
+                                                <div class="large-6 columns tblcolm">
+                                                  <b>Cash to contribute : </b>
+                                                  <% 
+                                                if defined? @loan.info['refinance_cash_contribute']
+
+                                                    unless @loan.info['refinance_cash_contribute'].blank?
+                                                      if @loan.info['refinance_cash_contribute'].include? "$"
+                                                      refinance_cash_contribute = @loan.info['refinance_cash_contribute'].gsub('$', '')
+                                                     else
+                                                       refinance_cash_contribute = @loan.info['refinance_cash_contribute']
+                                                     end
+                                                     unless refinance_cash_contribute.blank?
+                                                        refinance_cash_contribute = refinance_cash_contribute.gsub(',','')
+                                                     else
+                                                        refinance_cash_contribute = "0"
+                                                     end
+                                                   %>
+                                                      <%= fd_money(refinance_cash_contribute.to_i)  %> 
+                                                    <% end %>
+                                                <% end %>
+                                                </div>
+                                          <% end %>
+                                        <% end %>
+                                         <% unless @checkif.include? "isBroker" %>
+                                              <div class="large-6 columns tblcolm">
+                                              <b>Submitted by Broker: </b>
+
+                                                 <%= @loan.info['isBroker'] %> 
+                                              </div>
+                                         <% end %>
+
+                                         <% if @loan.info['isBroker']=="Yes"  %>
+                                            <% unless @checkif.include? "who_broker" %>
+                                              <div class="large-6 columns tblcolm">
+                                              <b>Who the broker is: </b>
+
+                                                 <%= @loan.info['who_broker'] %> 
+                                              </div>
+                                           <% end %>
+                                         <% end %>
+
+                                        <% if @loan.info['free_clear']=="Yes"  %>
+                                         <% unless @checkif.include? "original_purchase_price" %>
+                                               <div class="large-6 columns tblcolm"><b>Original Purchase Price : </b>
+                                             <% 
+                                                unless @loan.info['original_purchase_price'].blank?
+                                                  if @loan.info['original_purchase_price'].include? "$"
+                                                    original_purchase_price = @loan.info['original_purchase_price'].gsub('$', '')
+                                                  else
+                                                    original_purchase_price = @loan.info['original_purchase_price']
+                                                  end
+                                                original_purchase_price = original_purchase_price.gsub(',','')
+                                               %>
+                                                  <%= fd_money(original_purchase_price.to_i) %> 
+                                                <% end %>
+                                              </div>
+                                          <% end %>
+                                          <% unless @checkif.include? "original_purchase_date" %>
+                                            <div class="large-6 columns tblcolm">
+                                            <b>Original Purchase Date: </b>
+
+                                               <%= @loan.info['original_purchase_date'] %> 
+                                            </div>
+                                          <% end %>
+                                          <% unless @checkif.include? "vested_by" %>
+                                             <div class="large-6 columns tblcolm">
+                                            <b>Vested by : </b>
+                                              <%= @loan.info['vested_by']  %> 
+                                            </div>
+                                          <% end %>  
+                                          <% unless @checkif.include? "cash_contributed" %>
+                                              <div class="large-6 columns tblcolm">
+                                                 <b>Cash contributed: </b>
+                                                 <% 
+                                                 unless @loan.info['cash_contributed'].blank?
+                                                   if @loan.info['cash_contributed'].include? "$"
+                                                    cash_contributed = @loan.info['cash_contributed'].gsub('$', '')
+                                                   else
+                                                    cash_contributed = @loan.info['cash_contributed']
+                                                   end
+                                                 cash_contributed = cash_contributed.gsub(',','')
+                                               %>
+                                                   <%= fd_money(cash_contributed.to_i) %> 
+                                                <% end %>
+                                              </div>
+                                          <% end %>
+                                        <% end %>
+                                       
+                                      </div>
+                                    </div>
+                            </div>
+
+                          <!-------- Transaction Information ------>
+                          <div class="white-content-box">
+                              <div class="detail_header"><b>Offering Documents</b></div>
+                              <div class="wcb-content">
+                                  
+                                     
+                                      <% @loan.documents.each do |doc| %>
+                                         <div class="add-files-outer">
+                                              <div class="uploaded-files">
+                                               <% url=url_for :controller=>'loans', :action=>'view_doc',:id=>doc[:_id] %>
+                                                  <a href="<%= url %>"><%= doc.name %></a>
+                                              </div>
+                                          </div>
+                                      <% end %>
+                                      
+                                     
+                                  
+                                  
+                              </div>
+                          </div><!-- white-content-box -->
+                        </div>
+
+                        <div class="content" id="panel2">
+                          <% if !@borrowers.empty? %> 
+                                <% serial = 1 %>
+                                <% @borrowers.each do |borrower| 
+
+                                    unless borrower.hide_fields.blank? 
+                                        @bcheckif = borrower.hide_fields
+                                    else 
+                                        @bcheckif = ""
+                                    end 
+                                  %> 
+                                <h3><%= serial %>. Borrower Information</h3>  
+                                    <div class="white-content-box">
+                                            <div class="detail_header"><b>Personal Information</b></div>
+                                           <div class="wcb-content">
+                                                <div class="row tblDiv" tabindex="0">
+                                                      <% unless @bcheckif.include? "borrower_type" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                          <b>Borrower Type : </b> 
+                                                           <%= borrower.borrower_type %> 
+                                                        </div>
+                                                      <% end %>
+                                                      <% unless @bcheckif.include? "personal_name" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                          <b>Name : </b> 
+                                                           <%= borrower.personal_name %> 
+                                                       </div>
+                                                      <% end %>
+                                                    <% unless @bcheckif.include? "personal_email" %>
+                                                        <div class="large-6 columns tblcolm"><b>Email : </b> <%= borrower.personal_email %> 
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_dob" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                        <b>Birthday : </b>  <%= borrower.personal_dob %>  </td>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_phone" %>
+                                                        <div class="large-6 columns tblcolm"><b>Phone : </b>
+                                                        <%= borrower.personal_phone  %>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_address" %>
+                                                        <div class="large-6 columns tblcolm"><b>Address : </b>
+                                                        <%= borrower.personal_address  %>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_address" %>
+                                                        <div class="large-6 columns tblcolm"><b>City : </b>
+                                                        <%= borrower.personal_city  %>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_address" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                        <b>State : </b>
+                                                        <%= borrower.personal_state  %></td>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_monthly_income" %>
+                                                      <div class="large-6 columns tblcolm"><b>Monthly Income : </b>
+                                                        <% 
+                                                        unless borrower.personal_monthly_income.blank?
+                                                          if borrower.personal_monthly_income.include? "$"
+                                                            personal_monthly_income = borrower.personal_monthly_income.gsub('$', '')
+                                                          else
+                                                            personal_monthly_income = borrower.personal_monthly_income
+                                                          end
+                                                        
+                                                         %>  
+                                                        <%= fd_money(personal_monthly_income.to_i)  %>
+                                                        <% end %>
+                                                      </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "personal_income_source" %>
+                                                      <div class="large-6 columns tblcolm"><b>Income Source : </b>
+                                                        <%= borrower.personal_income_source  %>
+                                                      </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "net_worth" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                          <b>Net Worth : </b>  
+                                                          <% 
+                                                        unless borrower.net_worth.blank?
+                                                          if borrower.net_worth.include? "$"
+                                                            net_worth = borrower.net_worth.gsub('$', '')
+                                                          else
+                                                            net_worth = borrower.net_worth
+                                                          end
+                                                        net_worth = net_worth.gsub(',','')
+                                                         %>  
+                                                          <%= fd_money(net_worth.to_i)  %>
+                                                        <% end %>
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "estimated_fico" %>
+                                                        <div class="large-6 columns tblcolm"><b>Estimated FICO score: </b>
+                                                        <%= borrower.estimated_fico  %>
+                                                        </div>
+                                                    <% end %>
+                                                   <% unless @bcheckif.include? "personal_cashContribution" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                        <b>Borrower Cash Contribution : </b>
+                                                        <% 
+                                                        unless borrower.personal_cashContribution.blank?
+                                                          if borrower.personal_cashContribution.include? "$"
+                                                            personal_cashContribution = borrower.personal_cashContribution.gsub('$', '')
+                                                          else
+                                                            personal_cashContribution = borrower.personal_cashContribution
+                                                          end
+                                                        personal_cashContribution = personal_cashContribution.gsub(',','')
+                                                         %>  
+                                                        <%= fd_money(personal_cashContribution.to_i)  %> 
+                                                        <% end %>
+                                                        </div>
+                                                  <% end %>
+                                                  <% unless @bcheckif.include? "borrower_guarantor" %>
+                                                        <div class="large-6 columns tblcolm">
+                                                        <b>Borrower Also The Guarantor: </b>
+                                                    <%= borrower.borrower_guarantor  %> 
+                                                        </div>
+                                                  <% end %>
+                                                </div>
+                                            </div>
+                                    </div><!-- white-content-box -->
+                                    <% unless @bcheckif.include? "bio" %>
+                                      <div class="white-content-box">
+                                          <div class="detail_header"><b>Borrower Bio</b></div>
+                                          <div class="wcb-content">
+                                               <% unless borrower.bio.blank? %>
+                                                <article>
+                                                  <% field_text = borrower.bio %>
+                                                  <%= send('simple_format', field_text)%>
+                                                </article>
+                                               <% end %>
+                                              
+                                          </div>
+                                      </div><!-- white-content-box -->
+                                    <% end %>
+                                    <% if borrower.borrower_type=="Company or Trust"%>
+                                        <div class="white-content-box">
+                                                <div class="detail_header"><b>Business Information</b></div>
+                                               <div class="wcb-content">
+                                                    <div class="row tblDiv">
+                                                        <% unless @bcheckif.include? "business_name" %>
+                                                          <div class="large-6 columns tblcolm">
+                                                          <b>Name : </b>  
+                                                            <%= borrower.business_name %>  
+                                                          </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_phone" %>
+                                                            <div class="large-6 columns tblcolm"><b>Phone : </b>
+                                                             <%= borrower.business_phone %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_address" %>
+                                                            <div class="large-6 columns tblcolm"> <b>Address : </b> 
+                                                              <%= borrower.business_address %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_address" %>
+                                                            <div class="large-6 columns tblcolm">
+                                                            <b>City : </b>
+                                                            <%= borrower.business_city %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_address" %>
+                                                            <div class="large-6 columns tblcolm"> <b>State : </b> 
+                                                              <%= borrower.business_state %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_address" %>
+                                                            <div class="large-6 columns tblcolm"><b>Postalcode : </b>
+                                                            <%= borrower.business_postalcode %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "time_in_business" %>
+                                                            <div class="large-6 columns tblcolm"><b>Time In Business : </b> 
+                                                            <% unless borrower.time_in_business.blank?  %>
+                                                              <%= borrower.time_in_business %> Years
+                                                            <% end %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "revenue_time_period" %>
+                                                            <div class="large-6 columns tblcolm"><b>Years of Revenue : </b>
+                                                            <%= borrower.revenue_time_period %>
+                                                            </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "business_type" %>
+                                                            <div class="large-6 columns tblcolm"><b>Business Type : </b>  <%= borrower.business_type %> </div>
+                                                         <% end %>
+                                                         <% unless @bcheckif.include? "state_of_incorporation" %>
+                                                            <div class="large-6 columns tblcolm"><b>State of Incorporation : </b>
+                                                                <%= borrower.state_of_incorporation %>
+                                                            </div>
+                                                         <% end %>
+                                                         <% unless @bcheckif.include? "business_balance_sheet" %>
+                                                             <div class="large-6 columns tblcolm"><b>Business Balance Sheet Value : </b>  
+                                                             <% unless borrower.business_balance_sheet.blank?
+                                                                    if borrower.business_balance_sheet.include? "$"
+                                                                      business_balance_sheet = borrower.business_balance_sheet.gsub('$', '')
+                                                                    else
+                                                                      business_balance_sheet = borrower.business_balance_sheet
+                                                                    end
+                                                                  business_balance_sheet = business_balance_sheet.gsub(',','')
+                                                                   %>  
+                                                                  <%= fd_money(business_balance_sheet.to_i)  %> 
+                                                               <% end %>
+                                                                     
+                                                                      </div>
+                                                                  <% end %>
+
+                                                    </div >
+                                                </div>
+                                        </div><!-- white-content-box -->
+                                        <div class="white-content-box">
+                                                <div class="detail_header"><b>Business Financials</b></div>
+                                                 <div class="wcb-content">
+                                                     <div class="row tblDiv" >
+                                                       <% unless @bcheckif.include? "cash_on_hand" %>
+                                                            <div class="large-6 columns tblcolm"><b> Cash On Hand : </b> 
+                                                        <% 
+                                                        unless borrower.cash_on_hand.blank?
+                                                          if borrower.cash_on_hand.include? "$"
+                                                            cash_on_hand = borrower.cash_on_hand.gsub('$', '')
+                                                          else
+                                                            cash_on_hand = borrower.cash_on_hand
+                                                          end
+                                                         cash_on_hand = cash_on_hand.gsub(',','')
+                                                         %>  
+                                                             <%= fd_money(cash_on_hand.to_i) %>  
+                                                          <% end %>   
+
+                                                             </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "available_credit" %>
+                                                        <div class="large-6 columns tblcolm"><b>Available Credit : </b>
+                                                            <% 
+                                                          unless borrower.available_credit.blank?
+                                                            if borrower.available_credit.include? "$"
+                                                                available_credit = borrower.available_credit.gsub('$', '')
+                                                            else
+                                                              available_credit = borrower.available_credit
+                                                            end
+                                                            available_credit = available_credit.gsub(',','')
+                                                           %>
+                                                            <%= fd_money(available_credit.to_i) %>
+                                                        <% end
+                                                         %>  
+                                                              
+                                                           </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "monthly_noi" %>
+                                                        <div class="large-6 columns tblcolm"> <b> Monthly NOI : </b>  
+                                                        <% 
+                                                        unless borrower.monthly_noi.blank?
+                                                          if borrower.monthly_noi.include? "$"
+                                                            monthly_noi = borrower.monthly_noi.gsub('$', '')
+                                                          else
+                                                            monthly_noi = borrower.monthly_noi
+                                                          end
+                                                          monthly_noi = monthly_noi.gsub(',','')
+                                                         %> 
+
+                                                         <%= fd_money(monthly_noi.to_i) %> 
+                                                          <% end %>
+                                                          </div>
+                                                          <% end %>
+                                                          <% unless @bcheckif.include? "annual_noi" %>
+                                                        <div class="large-6 columns tblcolm"><b> Annual NOI : </b>
+                                                        <% 
+                                                        unless borrower.annual_noi.blank?
+                                                          if borrower.annual_noi.include? "$"
+                                                            annual_noi = borrower.annual_noi.gsub('$', '')
+                                                          else
+                                                            annual_noi = borrower.annual_noi
+                                                          end
+                                                          annual_noi = annual_noi.gsub(',','')
+                                                         %>
+                                                         <%= fd_money(annual_noi.to_i) %>
+                                                         <% end %> 
+                                                        </div>
+                                                        <% end %>
+                                                         <% unless @bcheckif.include? "account_recievable" %>
+                                                        <div class="large-6 columns tblcolm"><b> Accounts Receivable : </b>  
+
+                                                       <% 
+                                                       unless borrower.available_credit.blank?
+                                                       if borrower.account_recievable.include? "$"
+                                                            account_recievable = borrower.account_recievable.gsub('$', '')
+                                                          else
+                                                            account_recievable = borrower.account_recievable
+                                                          end
+                                                          account_recievable = account_recievable.gsub(',','')
+                                                         %> 
+
+                                                        <%= fd_money(account_recievable.to_i) %> 
+                                                        <% end %>
+                                                        </div>
+                                                        <% end %>
+                                                        <% unless @bcheckif.include? "account_payable" %>
+                                                        <div class="large-6 columns tblcolm"><b>Accounts Payable : </b>
+                                                             <% 
+                                                             unless borrower.account_payable.blank?
+                                                             if borrower.account_payable.include? "$"
+                                                                account_payable = borrower.account_payable.gsub('$', '')
+                                                              else
+                                                                account_payable = borrower.account_payable
+                                                              end
+                                                              account_payable = account_payable.gsub(',','')
+                                                         %> 
+                                                                <%= fd_money(account_payable.to_i) %>
+                                                              <% end %>
+                                                            </div>
+                                                        <% end %>
+                                                    </div>
+                                                </div>
+                                        </div><!-- white-content-box -->
+                                    <% end %>
+                                    <% if borrower.borrower_guarantor == "No" %>
+                                        <div class="white-content-box">
+                                            <div class="detail_header"><b>Guarantor Information</b></div>
+                                             <div class="wcb-content">
+                                                <div class="row tblDiv" >
+
+                                                    <% unless @bcheckif.include? "guarantor_name" %>
+                                                        <div class="large-6 columns tblcolm"><b> Name : </b>  <%= borrower.guarantor_name %> 
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_phone" %>
+                                                        <div class="large-6 columns tblcolm"><b> Phone : </b>  <%= borrower.guarantor_phone %> </td> 
+                                                        </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_email" %><div class="large-6 columns tblcolm"><b> Email : </b>  <%= borrower.guarantor_email %> </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_address" %><div class="large-6 columns tblcolm"><b> Address : </b>  <%= borrower.guarantor_address %> </td> 
+                                                    </div>
+                                                    <% end  %>
+
+                                                    <% unless @bcheckif.include? "guarantor_address" %><div class="large-6 columns tblcolm"><b> State : </b>  <%= borrower.guarantor_state %> </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_address" %><div class="large-6 columns tblcolm"><b> City : </b>  <%= borrower.guarantor_city %>  </div>
+                                                    <% end  %>
+                                                    <% unless @bcheckif.include? "guarantor_address" %><div class="large-6 columns tblcolm"><b> Postalcode : </b>  <%= borrower.guarantor_postalcode %> </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_monthly_income" %><div class="large-6 columns tblcolm">
+                                                    <b> Monthly Income : </b>  
+                                                       <% 
+                                                       unless borrower.guarantor_monthly_income.blank?
+                                                        if borrower.guarantor_monthly_income.include? "$"
+                                                            guarantor_monthly_income = borrower.guarantor_monthly_income.gsub('$', '')
+                                                        else
+                                                          guarantor_monthly_income = borrower.guarantor_monthly_income
+                                                        end
+                                                        guarantor_monthly_income = guarantor_monthly_income.gsub(',','')
+                                                         %>
+                                                      <%= fd_money(guarantor_monthly_income.to_i) %> 
+                                                      <% end %>
+                                                      </div>
+                                                      <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_income_source" %><div class="large-6 columns tblcolm"><b> Income Source : </b>  <%= borrower.guarantor_income_source %> </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_income_how_long" %><div class="large-6 columns tblcolm"><b> Income derived from this source : </b>  <%= borrower.guarantor_income_how_long %> </div>
+                                                    <% end %>
+                                                    <% unless @bcheckif.include? "guarantor_birthday" %><div class="large-6 columns tblcolm"><b>Birthday : </b>  <%= borrower.guarantor_birthday %> </td> 
+                                                    </div>
+                                                    <% end %>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    <% end %>
+                                    <% serial = serial+1 %>
+                                <% end %>
+                          <% end %>
+        </div><!--- panel2 ------------>
+
+                         
+                        <div class="content" id="panel3">
+                          <% serial =  1 %>
+                             <% @collaterals.each do |collateral|
+
+                                unless collateral.hide_fields.blank? 
+                                    @ccheckif = collateral.hide_fields
+                                else 
+                                    @ccheckif = ""
+                                end 
+
+                              %>
+                                <div class="white-content-box">
+                                    <div class="detail_header"><b><%= serial %>. Collateral Information</b></div>
+                                    <div class="wcb-content">                                           
+                                        <div class="row tblDiv">
+                                            <% unless @ccheckif.include? "address" %><div class="large-6 columns tblcolm"><b> Address : </b>  
+                                                <%= collateral.address %>  </div>
+                                            <% end %>
+                                            <% unless @ccheckif.include? "address" %><div class="large-6 columns tblcolm"><b> City : </b>  
+                                                <%= collateral.city %>  </div>
+                                            <% end %>
+                                            <% unless @ccheckif.include? "address" %><div class="large-6 columns tblcolm"><b> State : </b>  
+                                                <%= collateral.state %>  </div>
+                                            <% end %>
+                                             <% unless @ccheckif.include? "address" %><div class="large-6 columns tblcolm"><b> PostalCode : </b>  
+                                                <%= collateral.postalcode %>  </div>
+                                            <% end %>
+                                             <% unless @ccheckif.include? "estimated_value" %><div class="large-6 columns tblcolm"><b> Estimated Property Value :  </b>  
+                                                <% 
+                                                unless collateral.estimated_value.blank?
+                                                if collateral.estimated_value.include? "$"
+                                                    estimated_value = collateral.estimated_value.gsub('$', '')
+                                                else
+                                                  estimated_value = collateral.estimated_value
+                                                end
+                                                estimated_value = estimated_value.gsub(',','')
+                                                 %>
+                                                <%= fd_money(estimated_value.to_i) %>
+                                                <% end %>
+                                                </div>
+                                             <% end %>
+                                            <% unless @ccheckif.include? "amount_owed" %><div class="large-6 columns tblcolm">
+                                            <b>Amount Owed : </b>
+                                              <% 
+                                              unless collateral.amount_owed.blank?
+                                              if collateral.amount_owed.include? "$"
+                                                  amount_owed = collateral.amount_owed.gsub('$', '')
+                                              else
+                                                amount_owed = collateral.amount_owed
+                                              end
+                                              amount_owed = amount_owed.gsub(',','')
+                                               %>
+                                              <%= fd_money(amount_owed.to_i) %>
+                                              <% end %>
+                                              </div>
+                                            <% end %>
+                                            <% unless @ccheckif.include? "asset_type" %><div class="large-6 columns tblcolm"><b>Asset Type : </b>
+                                                <%= collateral.asset_type %> </div>
+                                            <% end %>
+                                            <% unless @ccheckif.include? "source_of_value" %><div class="large-6 columns tblcolm"><b> Source Of Value : </b>
+                                                    <%= collateral.source_of_value %>
+                                                </div>
+                                            <% end %>
+                                            
+                                            <% unless @ccheckif.include? "date_last_bpo" %><div class="large-6 columns tblcolm"><b>Date of last BPO :  </b>
+                                                <% if collateral.source_of_value=="BPO/CMA" %>
+                                                  <%= collateral.date_last_bpo %> 
+                                                <% end %>
+                                                </div>
+                                            <% end %>
+                                            <% unless @ccheckif.include? "date_last_valuation" %><div class="large-6 columns tblcolm"><b>Date of last valuation:  </b>
+                                                    <% if collateral.source_of_value=="Appraisal"
+                                                  %>
+                                                      <%= collateral.date_last_valuation %> 
+                                                    <% end %>
+                                                </div>
+                                            <% end %>
+                                                
+                                            
+                                            
+                                            
+
+                                            <% unless @ccheckif.include? "size" %><div class="large-6 columns tblcolm"><b>Size: </b>
+                                                <%= collateral.size %> </div>
+                                            <% end %>
+                                             <% unless @ccheckif.include? "size" %><div class="large-6 columns tblcolm">
+                                                <% if collateral.size=="Units" %>
+                                                    <b> Units : </b>
+                                                    <%= collateral.units %>
+                                                <% elsif collateral.size =="Acres" %>
+                                                    <b> Acres : </b>
+                                                    <%= collateral.acres %>
+                                                <% elsif collateral.size =="Sq Footage" %>
+                                                    <b> Sq Footage : </b>
+                                                    <%= collateral.sq_footage %>
+                                                <% end %>
+                                                </div>
+                                            <% end %>
+
+                                            <% unless @ccheckif.include? "structural_size" %><div class="large-6 columns tblcolm"><b>Structural Size: </b>
+                                                <%= collateral.structural_size %> </div>
+                                            <% end %>
+
+                                            <% if collateral.structural_size == "Sq Footage" %>
+                                              <% unless @ccheckif.include? "structural_sq_footage" %><div class="large-6 columns tblcolm"><b>Structural Sq Footage: </b>
+                                                  <%= collateral.structural_sq_footage %> </div>
+                                              <% end %>
+                                            <% end %>
+
+                                            <% if collateral.structural_size == "Units" %>
+                                               <% unless @ccheckif.include? "structural_sq_footage" %><div class="large-6 columns tblcolm"><b>Units: </b>
+                                                  <%= collateral.units %> </div>
+                                              <% end %>
+
+                                              <% unless @ccheckif.include? "sf_per_unit" %><div class="large-6 columns tblcolm"><b>SF per Unit: </b>
+                                                  <%= collateral.sf_per_unit %> </div>
+                                              <% end %>
+                                            <% end %>
+                                                 
+                                              <% unless @ccheckif.include? "noi_ytd" %><div class="large-6 columns tblcolm"><b>NOI (YTD) : </b>
+                                               <% 
+                                              unless collateral.noi_ytd.blank?
+                                                if collateral.noi_ytd.include? "$"
+                                                    noi_ytd = collateral.noi_ytd.gsub('$', '')
+                                                else
+                                                    noi_ytd = collateral.noi_ytd
+                                                end
+                                                noi_ytd = noi_ytd.gsub(',','')
+                                                 %>
+                                                <%= fd_money(noi_ytd.to_i) %> 
+                                               <% end %>
+                                                </div>
+                                                <% end %>
+                                                <% unless @ccheckif.include? "noi_two_years_ago" %><div class="large-6 columns tblcolm"><b>NOI ( two years ago) : </b>
+                                                <% 
+                                                unless collateral.noi_two_years_ago.blank?
+                                                if collateral.noi_two_years_ago.include? "$"
+                                                    noi_two_years_ago = collateral.noi_two_years_ago.gsub('$', '')
+                                                else
+                                                    noi_two_years_ago = collateral.noi_two_years_ago
+                                                end
+                                                noi_two_years_ago = noi_two_years_ago.gsub(',','')
+                                                 %>
+                                                <%= fd_money(noi_two_years_ago.to_i) %>
+                                                <% end %>
+                                                 </div>
+                                                <% end %>
+                                           
+                                              <% unless @ccheckif.include? "noi_last_year" %><div class="large-6 columns tblcolm"><b>NOI (Last Year)  : </b>
+                                              <% 
+                                                unless collateral.noi_last_year.blank?
+                                                if collateral.noi_last_year.include? "$"
+                                                    noi_last_year = collateral.noi_last_year.gsub('$', '')
+                                                else
+                                                    noi_last_year = collateral.noi_last_year
+                                                end
+                                                noi_last_year = noi_last_year.gsub(',','')
+                                                 %>
+                                                <%= fd_money(noi_last_year.to_i) %> 
+                                                <% end %>
+                                                </div>
+                                                <% end %>
+
+                                                <% unless @ccheckif.include? "collateral_value" %>
+                                                    <div class="large-6 columns tblcolm"><b>Collateral Value : </b>  <% 
+                                                    unless collateral.collateral_value.blank?
+                                                      if collateral.collateral_value.include? "$"
+                                                        collateral_value = collateral.collateral_value.gsub('$', '')
+                                                      else
+                                                        collateral_value = collateral.collateral_value
+                                                      end
+                                                    collateral_value = collateral_value.gsub(',','')
+                                                     %>  
+                                                    <%= fd_money(collateral_value.to_i)  %> 
+                                                    <% end %>
+                                                   
+                                                    </div>
+                                                <% end %>
+                                                
+                                      
+                                        </div>
+                                    </div>
+                                    <% unless @ccheckif.include? "address" %>
+                                      <% @loc = "#{collateral.address}, #{collateral.city}, #{collateral.state}, #{collateral.postalcode}" %>
+                                        <% #abort("#{@loc}") %>
+                                        <script type="text/javascript">
+                                        $('document').ready(function(){
+                                          
+                                          if($('#property<%= collateral.id %>').html().length==0){
+
+                                              // $('#property<%= collateral.id %>').html('<h1>zxczxczxczxc</h1>');
+                                                 var embed = '<iframe'+
+                                                ' width="600"'+
+                                                ' height="450"'+
+                                                'class="map_canvas"'+
+                                                ' frameborder="0" style="border:0"'+
+                                                ' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loc%>&zoom=15">'+
+                                            '</iframe>';
+                                        
+                                        
+                                            $('#property<%= collateral.id %>').html(embed);
+                                          }
+
+                                          $('.map_canvas').addClass('scrolloff'); // set the pointer events to none on doc ready
+                                          $('.canvass').on('click', function () {
+                                            // alert("fgdfgdfg");
+                                              $('.map_canvas').removeClass('scrolloff'); // set the pointer events true on click
+                                          });
+
+                                          // you want to disable pointer events when the mouse leave the canvas area;
+
+                                          $(".map_canvas").mouseleave(function () {
+                                              $('.map_canvas').addClass('scrolloff'); // set the pointer events to none when mouse leaves the map area
+                                          });
+                                        });
+                                        </script>
+                                        
+                                        <!-- <div id='property-map<%= collateral['_id'] %>' class="flex-video"></div> -->
+                                        <div id='property<%= collateral.id %>' class="flex-video canvass"></div>
+                                      <% end %>
+
+
+                                </div><!-- white-content-box -->
+                                <div class="white-content-box">
+                                  <div class="detail_header"><b> This collateral is related to : </b></div>
+                                    <div class="wcb-content">
+                                      <% unless collateral.related_funds.blank? %>
+                                        <table style="width:100%">
+                                          <tr>
+                                            <th> Use </th>
+                                            <th> Amount </th>
+                                            <th> Beneficiary </th>
+                                          </tr>
+                                        <% relates = collateral.related_funds.split(",") 
+
+                                        relates.each do |relate|
+                                          fnd = UseOfFund.find_by_id(relate)
+                                        unless fnd.blank?
+                                        %>
+                                          <tr>
+                                            <td><%= fnd.use %></td>
+                                            <td>
+                                              <% 
+                                              unless fnd.amount.blank?
+                                                famnt = fnd.amount.to_s
+                                                if famnt.include? "$"
+                                                    amnt = famnt.gsub('$', '')
+                                                else
+                                                    amnt = famnt
+                                                end
+                                                amnt = amnt.gsub(',','')
+                                              %>
+                                              <%= fd_money(amnt.to_i) %>
+                                              <% end %>
+                                            </td>
+                                            <td><%= fnd.beneficiary %></td>
+                                          </tr>
+                                        <% end %>
+                                        <% end %>
+                                        </table>
+                                      <% end %>
+                                    </div>
+                                </div>
+                                
+                              <% serial = serial+1 %>
+                             <% end %> 
+                        </div>
+                        <div class="content" id="panel4">
+
+                        <div class="white-content-box">
+                        <div class="detail_header" tabindex="0">
+                          <b tabindex="0">Key Metrics</b>
+                        </div>
+                          <div class="row tblDiv">
+                            <% unless @checkif.include? "gross_loan_amount" %>
+                              <div class="large-6 columns tblcolm"><b> Gross Loan Amount : </b>  
+                               <% 
+                                              unless  @loan.info['gross_loan_amount'].blank?
+                                                gross_amnt = @loan.info['gross_loan_amount'].to_s
+                                                if gross_amnt.include? "$"
+                                                    gamnt = gross_amnt.gsub('$', '')
+                                                else
+                                                    gamnt = gross_amnt
+                                                end
+                                                gamnt = gamnt.gsub(',','')
+                                              %>
+                                              <%= fd_money(gamnt.to_i) %>
+                                              <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "analysis_units" %>
+                              <div class="large-6 columns tblcolm"><b>Units : </b>  
+                                            <% 
+                                              unless  @loan.info['analysis_units'].blank? %>
+                                                
+                                              <%= @loan.info['analysis_units'] %>
+                                              <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_value" %>
+                              <div class="large-6 columns tblcolm"><b> As-Is Value: </b>  
+                                           <% 
+                                              unless  @loan.info['as_is_value'].blank?
+                                                as_value = @loan.info['as_is_value'].to_s
+                                                if as_value.include? "$"
+                                                    avl = as_value.gsub('$', '')
+                                                else
+                                                    avl = as_value
+                                                end
+                                                avl = avl.gsub(',','')
+                                              %>
+                                              <%= fd_money(avl.to_i) %>
+                                              <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_improved_value" %>
+                              <div class="large-6 columns tblcolm"><b>As-Improved Value: </b>  
+                                           <% 
+                                              unless  @loan.info['as_improved_value'].blank?
+                                                as_imvalue = @loan.info['as_improved_value'].to_s
+                                                if as_imvalue.include? "$"
+                                                    imavl = as_imvalue.gsub('$', '')
+                                                else
+                                                    imavl = as_imvalue
+                                                end
+                                                imavl = imavl.gsub(',','')
+                                              %>
+                                              <%= fd_money(imavl.to_i) %>
+                                              <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "value_source" %>
+                                  <div class="large-6 columns tblcolm"><b> Value Source : </b>  
+                                                <% 
+                                                  unless  @loan.info['value_source'].blank? %>
+                                                    
+                                                  <%= @loan.info['value_source'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "value_date" %>
+                                  <div class="large-6 columns tblcolm"><b> Value Date : </b>  
+                                                <% 
+                                                  unless  @loan.info['value_date'].blank? %>
+                                                    
+                                                  <%= @loan.info['value_date'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "completed_square_footage" %>
+                                  <div class="large-6 columns tblcolm"><b> Completed Square Footage : </b>  
+                                                <% 
+                                                  unless  @loan.info['completed_square_footage'].blank? %>
+                                                    
+                                                  <%= @loan.info['completed_square_footage'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "improved_sale_sf" %>
+                                  <div class="large-6 columns tblcolm"><b> Improved/For Sale SF : </b>  
+                                                <% 
+                                                  unless  @loan.info['improved_sale_sf'].blank? %>
+                                                    
+                                                  <%= @loan.info['improved_sale_sf'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "unimproved_sf" %>
+                                  <div class="large-6 columns tblcolm"><b> Unimproved SF: </b>  
+                                                <% 
+                                                  unless  @loan.info['unimproved_sf'].blank? %>
+                                                    
+                                                  <%= @loan.info['unimproved_sf'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "begining_unit" %>
+                                  <div class="large-6 columns tblcolm"><b> Beginning $/Unit: </b>  
+                                                <% 
+                                                  unless  @loan.info['begining_unit'].blank? %>
+                                                    
+                                                  <%= @loan.info['begining_unit'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "improved_unit" %>
+                                  <div class="large-6 columns tblcolm"><b> Improved $/Unit: </b>  
+                                                <% 
+                                                  unless  @loan.info['improved_unit'].blank? %>
+                                                    
+                                                  <%= @loan.info['improved_unit'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "acash_to_contribute" %>
+                                  <div class="large-6 columns tblcolm"><b> Cash to Contribute: </b>  
+                                                <% 
+                                                  unless  @loan.info['acash_to_contribute'].blank? %>
+                                                    
+                                                  <%= @loan.info['acash_to_contribute'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "cash_value_ratio" %>
+                                  <div class="large-6 columns tblcolm"><b>Cash-Value-Ratio: </b>  
+                                                <% 
+                                                  unless  @loan.info['cash_value_ratio'].blank? %>
+                                                    
+                                                  <%= @loan.info['cash_value_ratio'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "apurchase_price" %>
+                                  <div class="large-6 columns tblcolm"><b>Purchase Price: </b>  
+                                                <% 
+                                                  unless  @loan.info['apurchase_price'].blank? %>
+                                                    
+                                                  <%= @loan.info['apurchase_price'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_ltv" %>
+                                  <div class="large-6 columns tblcolm"><b>As-Is LTV: </b>  
+                                                <% 
+                                                  unless  @loan.info['as_is_ltv'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_is_ltv'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_ltc" %>
+                                  <div class="large-6 columns tblcolm"><b>As-Is LTC: </b>  
+                                                <% 
+                                                  unless  @loan.info['as_is_ltc'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_is_ltc'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_ltv_purchaseprice" %>
+                                  <div class="large-6 columns tblcolm"><b>As-Is LTV on Purchase Price: </b>  
+                                                <% 
+                                                  unless  @loan.info['as_is_ltv_purchaseprice'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_is_ltv_purchaseprice'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_ltv_borrower_purchaseprice" %>
+                                  <div class="large-6 columns tblcolm"><b>As-IS LTV on Borrower Purchase Price: </b>  
+                                                <% 
+                                                  unless  @loan.info['as_is_ltv_borrower_purchaseprice'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_is_ltv_borrower_purchaseprice'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_improved_ltv" %>
+                                  <div class="large-6 columns tblcolm"><b>As-Improved LTV: </b>  
+                                                <% unless  @loan.info['as_improved_ltv'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_improved_ltv'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "as_is_ltc_completed" %>
+                                  <div class="large-6 columns tblcolm"><b>As-Improved LTC (11 completed): </b>  
+                                                <% 
+                                                  unless  @loan.info['as_is_ltc_completed'].blank? %>
+                                                    
+                                                  <%= @loan.info['as_is_ltc_completed'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "begining_sales" %>
+                                  <div class="large-6 columns tblcolm"><b>Beginning Sales %: </b>  
+                                                <% 
+                                                  unless  @loan.info['begining_sales'].blank? %>
+                                                    
+                                                  <%= @loan.info['begining_sales'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "ending_sale" %>
+                                  <div class="large-6 columns tblcolm"><b>Ending Sale %: </b>  
+                                                <% 
+                                                  unless  @loan.info['ending_sale'].blank? %>
+                                                    
+                                                  <%= @loan.info['ending_sale'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "begining_project_completion" %>
+                                  <div class="large-6 columns tblcolm"><b>Beginning Project Completion %: </b>  
+                                                <% 
+                                                  unless  @loan.info['begining_project_completion'].blank? %>
+                                                    
+                                                  <%= @loan.info['begining_project_completion'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "sales_upb" %>
+                                  <div class="large-6 columns tblcolm"><b>% of Sales Proceeds toward UPB: </b>  
+                                               <% 
+                                              unless  @loan.info['sales_upb'].blank?
+                                                upb = @loan.info['sales_upb'].to_s
+                                                if upb.include? "$"
+                                                    up = upb.gsub('$', '')
+                                                else
+                                                    up = upb
+                                                end
+                                                up = up.gsub(',','')
+                                              %>
+                                              <%= fd_money(up.to_i) %>
+                                              <% end %>    
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "sale_gross_income" %>
+                                  <div class="large-6 columns tblcolm"><b>Sales/Gross Income: </b>  
+                                                 <% 
+                                              unless  @loan.info['sale_gross_income'].blank?
+                                                sale_gross = @loan.info['sale_gross_income'].to_s
+                                                if sale_gross.include? "$"
+                                                    sgross = sale_gross.gsub('$', '')
+                                                else
+                                                    sgross = sale_gross
+                                                end
+                                                sgross = sgross.gsub(',','')
+                                              %>
+                                              <%= fd_money(sgross.to_i) %>
+                                              <% end %> 
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "ending_sale_noi" %>
+                                  <div class="large-6 columns tblcolm"><b>Ending Sales/NOI: </b>  
+                                                 <% 
+                                              unless  @loan.info['ending_sale_noi'].blank?
+                                                end_sale = @loan.info['ending_sale_noi'].to_s
+                                                if end_sale.include? "$"
+                                                    esale = end_sale.gsub('$', '')
+                                                else
+                                                    esale = end_sale
+                                                end
+                                                esale = esale.gsub(',','')
+                                              %>
+                                              <%= fd_money(esale.to_i) %>
+                                              <% end %> 
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "post_sales_upb" %>
+                                  <div class="large-6 columns tblcolm"><b>Post Sales UPB: </b>  
+                                                 <% 
+                                              unless  @loan.info['post_sales_upb'].blank?
+                                                post_sale = @loan.info['post_sales_upb'].to_s
+                                                if post_sale.include? "$"
+                                                    psale = post_sale.gsub('$', '')
+                                                else
+                                                    psale = post_sale
+                                                end
+                                                psale = psale.gsub(',','')
+                                              %>
+                                              <%= fd_money(psale.to_i) %>
+                                              <% end %> 
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "post_sales_value" %>
+                                  <div class="large-6 columns tblcolm"><b>Post Sales Value: </b>  
+                                                 <% 
+                                              unless  @loan.info['post_sales_value'].blank?
+                                                post_sale_val = @loan.info['post_sales_value'].to_s
+                                                if post_sale.include? "$"
+                                                    psalev = post_sale_val.gsub('$', '')
+                                                else
+                                                    psalev = post_sale_val
+                                                end
+                                                psalev = psalev.gsub(',','')
+                                              %>
+                                              <%= fd_money(psalev.to_i) %>
+                                              <% end %> 
+                                  </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "post_sales_ltv" %>
+                                  <div class="large-6 columns tblcolm"><b>Post Sales LTV: </b>  
+                                                <% 
+                                                  unless  @loan.info['post_sales_ltv'].blank? %>
+                                                    
+                                                  <%= @loan.info['post_sales_ltv'] %>
+                                                  <% end %>  
+                                  </div>
+                            <% end %>
+                         </div>   
+                      </div>
+
+                      <div class="white-content-box">
+                        <div class="detail_header" tabindex="0">
+                          <b tabindex="0">Profitability</b>
+                        </div>
+                          <div class="row tblDiv">
+                            <% unless @checkif.include? "interest_income" %>
+                              <div class="large-6 columns tblcolm"><b> Interest Income: </b>  
+                                <%  unless  @loan.info['interest_income'].blank? %>
+                                  <%= @loan.info['interest_income'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+                                                
+                           
+                            <% unless @checkif.include? "fee_income" %>
+                              <div class="large-6 columns tblcolm"><b> Fee Income: </b>  
+                                <%  unless  @loan.info['fee_income'].blank? %>
+                                  <%= @loan.info['fee_income'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "total_regular_income" %>
+                              <div class="large-6 columns tblcolm"><b> Total Regular Income: </b>  
+                                <%  unless  @loan.info['total_regular_income'].blank? %>
+                                  <%= @loan.info['total_regular_income'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+                          
+                            <% unless @checkif.include? "extension_fee" %>
+                              <div class="large-6 columns tblcolm"><b> Extension Fee: </b>  
+                                <%  unless  @loan.info['extension_fee'].blank? %>
+                                  <%= @loan.info['extension_fee'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "month_early_exit_roi" %>
+                              <div class="large-6 columns tblcolm"><b> 6-Month Early Exit ROI: </b>  
+                                <%  unless  @loan.info['month_early_exit_roi'].blank? %>
+                                  <%= @loan.info['month_early_exit_roi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "six_month_exit_roi" %>
+                              <div class="large-6 columns tblcolm"><b> 6-Month Exit ROI (Annualized): </b>  
+                                <%  unless  @loan.info['six_month_exit_roi'].blank? %>
+                                  <%= @loan.info['six_month_exit_roi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "twel_month_exit_roi" %>
+                              <div class="large-6 columns tblcolm"><b> 12-Month (Term) Exit ROI :</b>  
+                                <%  unless  @loan.info['twel_month_exit_roi'].blank? %>
+                                  <%= @loan.info['twel_month_exit_roi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "fifteen_month_extend_exit_roi" %>
+                              <div class="large-6 columns tblcolm"><b> 15-Month Extended Exit ROI : </b>  
+                                <%  unless  @loan.info['fifteen_month_extend_exit_roi'].blank? %>
+                                  <%= @loan.info['fifteen_month_extend_exit_roi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+
+
+                        </div>
+                      </div>
+
+                      <div class="white-content-box">
+                        <div class="detail_header" tabindex="0">
+                          <b tabindex="0">Rental Scenario</b>
+                        </div>
+                        <div class="row tblDiv">
+                            
+                            <% unless @checkif.include? "average_rental_rate" %>
+                              <div class="large-6 columns tblcolm"><b> Average Rental Rate: </b>  
+                                <%  unless  @loan.info['average_rental_rate'].blank? %>
+                                  <%= @loan.info['average_rental_rate'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "elvn_units_noi" %>
+                              <div class="large-6 columns tblcolm"><b> 11 Units NOI: </b>  
+                                <%  unless  @loan.info['elvn_units_noi'].blank? %>
+                                  <%= @loan.info['elvn_units_noi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "completed_elvn_units_dscr" %>
+                              <div class="large-6 columns tblcolm"><b> Completed 11 Units DSCR: </b>  
+                                <%  unless  @loan.info['completed_elvn_units_dscr'].blank? %>
+                                  <%= @loan.info['completed_elvn_units_dscr'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "cap_rate" %>
+                              <div class="large-6 columns tblcolm"><b>Cap Rate (11 Units):  </b>  
+                                <%  unless  @loan.info['cap_rate'].blank? %>
+                                  <%= @loan.info['cap_rate'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "fortyeight_units_noi" %>
+                              <div class="large-6 columns tblcolm"><b>48 Units NOI: </b>  
+                                <%  unless  @loan.info['fortyeight_units_noi'].blank? %>
+                                  <%= @loan.info['fortyeight_units_noi'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                             <% unless @checkif.include? "fully_occupied_dscr" %>
+                              <div class="large-6 columns tblcolm"><b>Fully Occupied DSCR: </b>  
+                                <%  unless  @loan.info['fully_occupied_dscr'].blank? %>
+                                  <%= @loan.info['fully_occupied_dscr'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                            <% unless @checkif.include? "fully_occupied_cap_rate" %>
+                              <div class="large-6 columns tblcolm"><b>Fully Occupied Cap Rate: </b>  
+                                <%  unless  @loan.info['fully_occupied_cap_rate'].blank? %>
+                                  <%= @loan.info['fully_occupied_cap_rate'] %>
+                                <% end %>  
+                              </div>
+                            <% end %>
+
+                        </div>
+                      </div>
+
+                  </div>
+              <% end %>
+              <% if @access == "false" && @login == "false" %>
+                  <div class="white-content-box">
+                      <h5>Please login to see the loan details. </h5> 
+                  </div>  
+              <% end %>
+
+              </div> <!-- r-content -->
+          </div> <!-- medium-8 -->
+
+
+          <div class="medium-4 column">
+              
+              
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+      jQuery(function($){
+
+        $( window ).resize(function() {
+           console.log($( window ).width());
+        });
+       
+
+
+        var breakPoint =$('#breakPoint').offset().top;
+         var sidebar=  $('.l-sidebar-wrapper');
+          $(window).scroll(function(){
+                 var wintop= $(window).scrollTop();
+                   sidebar[(wintop >breakPoint )? "addClass": "removeClass" ]("sticky");
+                  //console.log(wintop,breakPoint,sidebar);
+          })
+
+      });
+
+    $('article').readmore({speed: 500});
+  </script>
+  <script>
+    $(document).ready(function() {
+
+      $("#owl-demo").owlCarousel({
+        items : 1,
+        lazyLoad : true,
+        navigation : true,
+        dots: false,
+        pagination: false
+       });
+
+    });
+    $(window).load(function(){
+      $('svg #defs').next('g').remove();
+      
+    });
+
+    function resizePanel()
+    {
+      $('svg #defs').next('g').remove();
+      // $('.row').next('div').remove();
+    }
+
+    $(window).resize(function(){
+    resizePanel();
+    });
+    </script>

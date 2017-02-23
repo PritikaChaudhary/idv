@@ -1,0 +1,187 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	google.charts.load("current", {packages:['corechart']});
+	google.charts.setOnLoadCallback(drawChart);
+	function drawChart() {
+	  var data = google.visualization.arrayToDataTable([
+	    ['Dates', 'Number Of Loans'],
+	    <% @dates.each do |record|%>
+	    	["<%= record['date'] %>",<%= record['num'].to_i %>],
+	    <% end %>
+	  ]);
+	  var options = {
+	    title: "<%= @bar_heading %>",
+	    width: 800,
+	    height: 400,
+	    chartArea: {width: '90%'},
+        bar: {groupWidth: '100%'},
+	    legend: { position: 'none' },
+	  };
+	  var chart = new google.visualization.ColumnChart(document.getElementById('columnchart_plain'));
+	  chart.draw(data, options);  
+	}
+
+	$('document').ready(function(){
+		$('.select_range').change(function(){
+			range = $(this).val();
+			data = "range="+range;
+			if(range == "custom")
+			{
+				$('.custom_form').show();
+			}
+			else if(range != "")
+			{
+				$("#loading_img").show();
+				$.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/home/select_range',
+	                success:function(response){
+	                  $('#display_bar').html(response); 
+	                  $('.custom_form').hide();
+	                  $("#loading_img").hide();
+
+	                }
+            	});	
+			}
+			
+			else
+			{
+				$('.custom_form').hide();
+				$("#loading_img").hide();
+			}
+			
+		});
+
+		$('#submit_custom_form').click(function(){
+			from_day = $('#from_date').val();
+			from_month = $('#from_month').val();
+			from_year = $('#from_year').val();
+			
+			from_date = from_year+"-"+from_month+"-"+from_day
+
+			to_day = $('#to_date').val();
+			to_month = $('#to_month').val();
+			to_year = $('#to_year').val();
+			
+			to_date = to_year+"-"+to_month+"-"+to_day
+			data = "from_date="+from_date+"&to_date="+to_date;
+			$("#loading_img").show();
+			$.ajax({
+	                data: data,
+	                type: 'POST',
+	                url: '/home/custom_form',
+	                success:function(response){
+	                  $('#display_bar').html(response); 
+	                  $("#loading_img").hide();
+	                }
+            	});	
+
+		});
+	});
+</script>
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+<div class='row'>
+		
+		<div class="small-8 small-centered columns" >
+			<div class="small-12 column select_bar_range">
+				<div class="small-8 small-centered columns">
+					<select class="select_range">
+						<option value=""> Select Range </option>
+						<option value="last_30_days" selected="selected"> Last 30 Days </option>
+						<option value="last_week"> Last Week </option>
+						<option value="previous_month_record"> Previous Month </option>
+						<option value="last_year"> Last Year </option>
+						<option value="custom"> Custom </option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+</div>
+<div class='row custom_form' style="display:none;">
+		
+		<div class="small-12 small-centered columns" >
+			<div class="small-12 column">
+				<div class="small-5 column">
+					<h6 style=" float: left; margin-top: 6px;width: 44px;">From:</h6>
+					<select class="range_fields" id="from_date">
+						<option value="">Date</option>
+						<% dates = 01..31 %>
+						<% dates.each do |date|%>
+							<option value="<%= date %>"> <%= date %> </option>
+						<% end %>
+					</select>
+
+					<select class="range_fields"  id="from_month">
+						<option value="">Month</option>
+						<% months = 01..12 %>
+						<% months.each do |month|%>
+							<option value="<%= month %>"> <%= month %> </option>
+						<% end %>
+					</select>
+
+					<select class="range_fields"   id="from_year">
+						<option value="">Year </option>
+						<% years = @from_year..@current_year %>
+						<% years.each do |year|%>
+							<option value="<%= year %>"> <%= year %> </option>
+						<% end %>
+					</select>
+				</div>
+
+				<div class="small-5 column">
+				<h6 style="float: left; margin-top: 6px; width: 25px;">To:</h6>
+					<select class="range_fields date_range" id="to_date">
+						<option value="">Date</option>
+						<% dates = 1..31 %>
+						<% dates.each do |date|%>
+							<option value="<%= date %>"> <%= date %> </option>
+						<% end %>
+					</select>
+
+					<select class="range_fields" id="to_month">
+						<option value="">Month</option>
+						<% months = 1..12 %>
+						<% months.each do |month|%>
+							<option value="<%= month %>"> <%= month %> </option>
+						<% end %>
+					</select>
+
+					<select class="range_fields" id="to_year">
+						<option value="">Year </option>
+						<% years = @from_year..@current_year %>
+						<% years.each do |year|%>
+							<option value="<%= year %>"> <%= year %> </option>
+						<% end %>
+					</select>
+				</div>
+				<div class="small-2 column">
+					<input type="button" class="tiny button" value="Submit" id="submit_custom_form">
+				</div>
+			</div>
+		</div>
+</div>
+<div class="row">
+		<div class="small-11 small-centered columns" >	
+			<div class="small-12 column" id="display_bar" style="overflow-x: scroll; overflow-y: hidden; height:450px;">
+				<div id="columnchart_plain" style="width: 900px; height: 300px;"></div>		
+			</div>
+		</div>
+</div>

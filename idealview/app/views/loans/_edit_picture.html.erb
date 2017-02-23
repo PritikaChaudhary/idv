@@ -1,0 +1,261 @@
+<style type="text/css">
+  button#image_edit_save {
+        border: medium none;
+        color: #ffffff;
+        font-size: 12px;
+        padding: 3px 10px;
+    }
+
+    .image_editupload_after_action_background {
+    background: #333333 none repeat scroll 0 0;
+    height: 40px;
+    left: 19px;
+    opacity: 0.58;
+    position: absolute;
+    top: -18px;
+    width: 100%;
+    z-index: 11;
+  }
+  .image_editupload_after_action .pull-right {
+            color: #ffffff;
+            font-size: 12px;
+            position: absolute;
+            right: -7px;
+            top: -10px;
+            z-index: 27;
+        }
+  .image_editupload_after_action {
+          bottom: 50px;
+          display: none;
+          padding: 5px;
+          position: absolute;
+          right: 0;
+          width: 100%;
+          z-index: 10;
+      }
+</style>
+<script type="text/javascript">
+  function submit_edit_pic()
+    {
+      var edit = $('#if_edit').val();
+      if(edit == "yes")
+      {
+        var img = $('#edit_target img').attr('src');
+        // var replace_img = img.replace("data:image/png;base64,", ""); 
+        // var decode_img = window.atob(replace_img); 
+        // alert(decode_img);
+        // var img_src = new Buffer(img, 'base64');
+      
+        // alert(imgSrc)
+        $('#edit_url').val(img);
+      }
+
+      data = $('#edit_pic').serialize();
+      $.ajax({
+        type: 'POST',
+        url: '/loans/save_edit_pic',
+        data:data,
+        success:function(data){
+            $('#myModal4').foundation('reveal', 'close'); 
+            var datax = "&id=<%= @loan_id%>";
+            $.ajax({
+                        data: datax,
+                        type: 'POST',
+                        url: '/loans/loan_images',
+                        success:function(response){
+                            $('#pictures-container').html(response);
+                        }
+                    });
+        }
+      });
+    }
+
+    (function() {
+'use strict';
+
+Darkroom.plugins['save'] = Darkroom.Plugin.extend({
+
+  defaults: {
+    callback: function() {
+      this.darkroom.selfDestroy();
+      $('#if_edit').val('yes');
+
+       setTimeout(function() {
+       submit_edit_pic(); //your code to be executed after 1 second
+      }, 1000);
+    
+
+    }
+  },
+
+  initialize: function InitializeDarkroomSavePlugin() {
+    var buttonGroup = this.darkroom.toolbar.createButtonGroup();
+
+    this.destroyButton = buttonGroup.createButton({
+      image: 'save'
+    });
+
+    this.destroyButton.addEventListener('click', this.options.callback.bind(this));
+
+   
+  },
+});
+
+})();
+
+
+$( function () {
+      $( '.crop_gallery' ).each( function () {
+        var image     = $( this )
+          , results = image.next( '.results' )
+          , x       = $( '.cropX', results )
+          , y       = $( '.cropY', results )
+          , w       = $( '.cropW', results )
+          , h       = $( '.cropH', results )
+          , crop    = image
+            .crop( {
+              controls : 'Drag to move, scroll to zoom'
+              , width    : 575  
+              , height : 300
+            } )
+            // display crop info
+            .on( 'crop.crop_gallery', function( event ) {
+              x.text( event.cropX );
+              y.text( event.cropY );
+              w.text( event.cropW );
+              h.text( event.cropH );
+            } )
+            .data( 'crop' )
+        ;
+
+        // zoom on scroll (jquery-mousewheel dependency)
+        image
+          .on( 'mousewheel.crop_gallery', function ( event ) {
+            return event.originalEvent.wheelDelta < 0 ?
+              crop.zoomIn() :
+              crop.zoomOut();
+          } )
+        ;
+
+        // zoom on pinch touch (hammer dependency)
+        Hammer( this )
+          .on( 'pinchin', function ( event ) {
+            return crop.zoomOut();
+          } )
+          .on( 'pinchout', function ( event ) {
+            return  crop.zoomIn();
+          } )
+          .on( 'drag', function ( event ) {
+            crop.$image
+              .css( {
+                left  : '+=' + event.deltaX
+                , top : '+=' + event.deltaY
+              } )
+            ;
+            crop.update();
+          } )
+        ;
+      } );
+      
+        <% if !@image.top.blank? %>
+          setTimeout(function() {
+            left = "<%= @image.left %>"
+            top_saved = "<%= @image.top %>"
+            height = "<%= @image.height %>"
+            width = "<%= @image.width %>"
+            $('.crop_gallery').attr('style', 'left:'+left+'; width:'+width+'; top:'+top_saved+'; height:'+height+'; display:block; position:absolute; max-width:none;');
+          }, 500);
+        <% end %>
+
+        $('#image_edit_save').click(function(){
+              $('#loading_img').show();
+              var styles = dumpCSSText("img<%= @image.id %>");
+              // var styles = $('.cropImage').attr('style');
+              var sarray = styles.split(";");
+              processed_array = new Object();
+
+              for(i = 0; i < sarray.length; i++){
+                  m = sarray[i].split(":");
+                  processed_array[m[0]] = m[1];
+              }
+              // alert(array[0]);
+              // alert(processed_array['left'] + " "+ processed_array['width'] + " "+ processed_array['top'] + " "+processed_array['height']);
+              var left = processed_array['left'];
+              var width = processed_array['width'];
+              var top = processed_array['top'];
+              var height = processed_array['height'];
+              
+              var img_src = $('.crop_gallery').attr('src');
+              // var decodedUri = decodeURIComponent(img_src);
+              // var decodedUri = unescape(img_src);
+              $('#edit_url').val(img_src)
+              // alert(base64ImageContent)
+              formdata = $('#edit_pic').serialize();
+              formdata = formdata+"&left="+left+"&width="+width+"&top="+top+"&height="+height;
+              
+
+             $.ajax({
+                      type: 'POST',
+                       url: '/loans/save_edit_pic',
+                        data:formdata,
+                        success:function(data){
+                            $('#myModal4').foundation('reveal', 'close'); 
+                            var datax = "&id=<%= @loan_id%>";
+                            $.ajax({
+                                        data: datax,
+                                        type: 'POST',
+                                        url: '/loans/loan_images',
+                                        success:function(response){
+                                            $('#pictures-container').html(response);
+                                            $('#loading_img').hide();
+                                        }
+                            });
+                          }
+              
+
+                    });
+          });
+
+
+    });
+</script>
+<div class="row">
+  <div class="small-10 small-centered columns">
+    <div class="small-12 columns">
+
+    <% if @hostname=="localhost" %>
+        <% @start = "http://localhost:3000"%>
+    <% else %>
+        <% @start = "https://#{@hostname}"%>
+    <% end %>
+    <form id="edit_pic" method="post" action = "<%= @start %>/loans/save_edit_pic" >
+      <!-- <input type="button" value="SAVE" class="button" onclick="submit_edit_pic()"> -->
+      <input type="hidden" name="url" id="edit_url">
+      <input type="hidden" name="img_id" value="<%= @image.id%>">
+      <input type="hidden" name="if_edit" id="if_edit" value="yes">
+    </form>
+    </div>
+    <div class="small-12 columns">
+        <div id="content" style="margin-top:39px;">
+          <div class="container">
+              <% if @image.top.blank? %>
+                  <img  src="<%= @image.url %>" class="crop_gallery" id="img<%= @image.id %>">
+                <% else %>
+                  <img style='display:block; position:absolute; max-width:none; height:<%= @image.height %>; width:<%= @image.width %>;  top:<%= @image.top %>; left:<%= @image.left %>;' src="<%= @image.url %>" class="crop_gallery" id="img<%= @image.id %>">
+                <% end %>
+
+           </div> 
+
+             <div class="image_editupload_after_action image_editupload_after_action_up" id="edit_control" style="display: block;">
+                  <div class="image_editupload_after_action_background"></div>
+                  <div class="pull-right">
+                    <!-- <button id="image_upload_cancel" name="cancel">Cancel</button> -->
+                    <button id="image_edit_save" name="save">Save</button>
+                  </div>
+             </div>
+                
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

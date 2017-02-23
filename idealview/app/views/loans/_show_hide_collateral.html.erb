@@ -1,0 +1,26 @@
+<% unless collat.hide_fields.blank? %>
+             
+  <span id="showc_<%=field_name%>_<%= collat.id %>" <% if collat.hide_fields.include? "#{field_name}" %> style="float:right; margin-top:0px; margin-right:2px;" <% else %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% end %>>
+    <a style="" onclick="show_collateral_field('<%= collat.id %>', '<%=field_name%>');"  title = "Show" tabindex="-1">
+      <img src="/assets/eye-icon-slash.png">
+    </a>
+  </span>
+
+  <span id="hidec_<%=field_name%>_<%= collat.id %>" <% if collat.hide_fields.include? "#{field_name}" %> style="display:none; float:right; margin-top:0px; margin-right:2px;" <% else %> style="float:right; margin-top:0px; margin-right:2px;" <% end %> >
+    <a style="" onclick="hide_collateral_field('<%= collat.id %>', '<%=field_name%>');" title = "Hide" tabindex="-1">
+      <img  src="/assets/eye-icon.png">
+    </a>
+  </span>
+<% else %>
+  <span id="showc_<%=field_name%>_<%= collat.id %>" style="display:none; float:right; margin-top:0px; margin-right:2px;" >
+    <a style="" onclick="show_collateral_field('<%= collat.id %>', '<%=field_name%>');" title = "Show" tabindex="-1">
+      <img tabindex="0" src="/assets/eye-icon-slash.png">
+    </a>
+  </span>
+
+    <span id="hidec_<%=field_name%>_<%= collat.id %>"  style="float:right; margin-top:0px; margin-right:2px;">
+    <a style="" onclick="hide_collateral_field('<%= collat.id %>', '<%=field_name%>');"  title = "Hide" tabindex="-1">
+      <img tabindex="0" src="/assets/eye-icon.png">
+    </a>
+  </span>
+<% end %>

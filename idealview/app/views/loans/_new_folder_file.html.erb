@@ -1,0 +1,295 @@
+<script>
+$(function () {
+    $('#<%=form_id%>').fileupload({
+        dataType: 'json',
+        add: function (e, data) {
+            $("#loading_img").show();
+            data.context = $('<tr/>').text('Uploading...').appendTo($('#files-table-<%=form_id%>'));
+	       	$.each(data.files, function (index, file) {
+            checksize =""
+            checksize =""
+              ///////////////////////// File Storage ///////////////////////////////////////
+              <% if @adminLogin != true %>
+                size_left = "<%= @size_left_kb %>";
+                size_left = parseInt(size_left);
+                $('#fimg_size').val(file.size);
+                if(file.size > size_left)
+                {
+                    upsize = size_left/1024;
+                    upsize = upsize/1024;
+                    upsize = upsize.toFixed(2);
+                    checksize = "exceed";
+                    msg = "You have only "+upsize+"MB storage left. Please upgrade your plan or contact admin.";
+                }
+
+              <% end %>
+
+              ///////////////////////// End File Storage ///////////////////////////////////////
+              
+
+              ////////////////////////// Max Size Upload ///////////////////////////////////
+              <% if @adminLogin != true %>
+                <% if @max_upload != "No File Cap"%>
+                   max_upload = "<%= @max_upload %>";
+                   max_upload = parseInt(max_upload);
+                   $('#fimg_size').val(file.size);
+                   if(file.size > max_upload) //10MB in KB
+                   {
+                        max_up="<%= current_user.max_upload %>"
+                        if(checksize == "exceed")
+                        {
+                            checksize = "exceed";
+                            msg = "You have only "+upsize+"MB storage left. Please upgrade your plan or contact admin.";  
+                        }
+                        else
+                        {
+                            checksize = "exceed";
+                            msg = "You cannot upload file greater than "+max_up+". Please upgrade your plan or contact admin.";  
+                        }
+                        
+                   }
+                <% end %>
+              <% end %>
+              ////////////////////////// End Max Size Upload ///////////////////////////////////
+	           if(checksize != "exceed")
+               {
+                    data.context.html('<td>'+file.name + '</td><td>Uploading....</td>');
+               }
+
+	        });
+            if(checksize != "exceed")
+            {
+                $('#progress-<%=form_id%>').show();
+                data.submit();    
+            }
+            else
+            {
+                alert(msg); 
+                $("#loading_img").hide();
+                 $("#files-table-<%=form_id%>").hide();
+            }
+        },
+       dropZone: $(), 
+       progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        
+        $('#progress-<%=form_id%> .meter').css(
+            'width',
+            progress + '%'
+        );
+       },
+       done: function (e, data) {
+	       	$.each(data.files, function (index, file) {
+	            data.context.html('<td>'+file.name + '</td><td>Upload finished.</td>');
+                var datax = "&id=<%= contact_id %>";
+                 setTimeout(function() {
+                   $.ajax({
+                        data: datax,
+                        type: 'POST',
+                        url: '/loans/new_loan_documents',
+                        beforeSend: function(jqXHR, settings) {
+                            jqXHR.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+                        },
+                        success:function(response){
+                            $('#documents').html(response);
+                            $("#loading_img").hide();
+                        }
+                    });
+                }, 2000);
+	        });
+     
+       }  
+        
+    });
+
+      $('#<%=form_id%>').each(function () {
+            $(this).fileupload({
+                dropZone: $('#dropzone_<%=form_id%>')
+            });
+        });
+
+        $(document).bind('dragover', function (e) {
+            var dropZone = $('#dropzone_<%=form_id%>'),
+                timeout = window.dropZoneTimeout;
+            if (!timeout) {
+                dropZone.addClass('in');
+            } else {
+                clearTimeout(timeout);
+            }
+            var found = false,
+                node = e.target;
+            do {
+                if (node === dropZone[0]) {
+                    found = true;
+                    break;
+                }
+                node = node.parentNode;
+            } while (node != null);
+            if (found) {
+                dropZone.addClass('hover');
+            } else {
+                dropZone.removeClass('hover');
+
+            }
+            window.dropZoneTimeout = setTimeout(function () {
+                window.dropZoneTimeout = null;
+                dropZone.removeClass('in hover');
+
+            }, 100);
+        });
+});
+</script>
+<style>
+    /*.droparea {
+        background: palegreen;
+        width: 150px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-weight: bold;
+    }*/
+    .droparea.in {
+        width: 600px;
+        height: 250px;
+        line-height: 200px;
+        font-size: larger;
+    }
+    .droparea.hover {
+        background: #dcdbdb;
+        border-style: dotted;
+    }
+
+  /*  .droparea {
+        background: #ffffff;
+        border-style: none;
+    }*/
+
+    .droparea.fade {
+        -webkit-transition: all 0.3s ease-out;
+        -moz-transition: all 0.3s ease-out;
+        -ms-transition: all 0.3s ease-out;
+        -o-transition: all 0.3s ease-out;
+        transition: all 0.3s ease-out;
+        opacity: 1;
+    }
+</style>
+<% 
+if !defined? button_label 
+	button_label = 'Add files...'
+end
+%>
+
+<div id='test'></div>
+<div>
+ 	<%= form_tag({:controller=>controller, :action=>action,:id=>contact_id},  :id=>form_id, :enctype=>"multipart/form-data", :method=>"POST") do %>
+       <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="row fileupload-buttonbar">
+            <div class="small-12 columns centered">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <% if defined? folder %>
+               		<%= hidden_field_tag 'folder', folder %>
+               	<% end %>
+
+                	
+                <ul class="button-group">
+	                <li class="tiny button fileinput-button">
+	                     <span><i class="fa fa-cloud-upload"></i> <%=button_label%></span>
+	                    <input type="file" name="files[]" multiple style="float:left;" class="file_uploading">
+	                </li>
+
+                </ul>
+               
+
+                
+                <!-- The global file processing state -->
+                <span class="fileupload-process"></span>
+                <div id='progress-<%=form_id%>' class="progress progress-striped active" role="progressbar" style='width:100%'>
+                    <span class="meter" style="width: 0%"></span>
+                </div>
+                
+            </div>
+
+        </div>
+        <!-- The table listing the files available for upload/download -->
+ 		<table role="presentation" class="table table-striped" style='width:100%'><tbody id='files-table-<%=form_id%>' class="files"></tbody></table>
+    <% end %>
+</div>
+
+
+
+
+<script id="template-upload" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="alert label"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="meter" style="width:0%;"></span></div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="button tiny" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>Start</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="button tiny warning">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+        <td>
+            <span class="preview">
+                {% if (file.thumbnailUrl) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                {% } %}
+            </span>
+        </td>
+        <td>
+            <p class="name">
+                {% if (file.url) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                {% } else { %}
+                    <span>{%=file.name%}</span>
+                {% } %}
+            </p>
+            {% if (file.error) { %}
+                <div><span class="label alert">Error</span> {%=file.error%}</div>
+            {% } %}
+        </td>
+        <td>
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
+        </td>
+        <td>
+            {% if (file.deleteUrl) { %}
+                <button class="button tiny alert" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span>Delete</span>
+                </button>
+                <input type="checkbox" name="delete" value="1" class="toggle">
+            {% } else { %}
+                <button class="button tiny warning">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+

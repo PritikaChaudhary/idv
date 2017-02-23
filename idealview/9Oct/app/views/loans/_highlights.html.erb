@@ -1,0 +1,113 @@
+		<%temp_name = '_NetLoanAmountRequested0'%>
+		<div id='<%=temp_name%>' class='bottom-space' >
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_money',
+					field_type: 'text_field_tag', 
+					field_label: 'Net Loan Amount Requested', 
+					field_name:temp_name,
+					field_value:@loan.info[temp_name],
+					field_options:'',
+				} %>
+		</div>
+		
+
+		
+		<%temp_name = '_EstimatedMarketValue'%>
+		<div id='_EstimatedMarketValues' class='bottom-space' >
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_money',
+					field_type: 'text_field_tag', 
+					field_label: 'Estimated Market Value', 
+					field_name:'_EstimatedMarketValues',
+					field_value:@loan.info[temp_name],
+					field_options:'',
+				} %>
+		</div>
+		
+		<%temp_name = '_DesiredTermLength'%>
+		<div id='<%=temp_name%>' class='bottom-space' >
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_text',
+					field_type: 'select_tag', 
+					field_label: 'Desired Term Length', 
+					field_name:temp_name,
+					field_value:@loan.info[temp_name],
+					field_options:'Loan.term_lengths'
+				} %>
+		</div>
+
+		<div class='bottom-space'>
+			<b>Location</b><BR>
+			<div class="loc" ondblclick="loan_location()"><%=@loan.info['City3']%>, <%=@loan.info['State3']%></div>
+			<div id="l_location"  style="display:none;">
+			<form name="loc_form" id="loc_form" >
+				<div>
+					<b>City</b>
+					<br>
+					<div style="max-width:800px;margin-left:auto;margin-right:auto;">
+						<input id="loc_city" type="text" value="<%=@loan.info['City3']%>" rows="1" name="City3">
+					</div>
+				</div>
+				<div>
+					<b>State</b>
+					<br>
+					<div style="max-width:800px;margin-left:auto;margin-right:auto;">
+						<input id="loc_state" type="text" value="<%=@loan.info['State3']%>" rows="1" name="State3">
+						<input type="hidden" name="id" value="<%=@loan['_id']%>">
+					</div>
+				</div>
+				<button class="tiny button" type="button" onclick="location_edit()">Save</button>
+<button class="tiny button" type="button" onclick="cancel_loc()" name="button" data-disable-with="Please wait...">Cancel</button>
+
+			</form>
+							</div>
+		</div>
+		
+
+
+		<%temp_name = '_ExpectedCloseDate'%>
+		<div id='<%=temp_name%>' class='bottom-space'>
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_date',
+					field_type: 'date_field_tag', 
+					field_label: 'Expected Close Date', 
+					field_name:temp_name,
+					field_value:@loan.info[temp_name],
+					field_options:''
+				} %>
+		</div>
+		
+
+		<div id='loan-category'>
+		<%=render partial: 'loan_category', locals:{contact:@loan, edit:false}%>
+		</div>
+		
+		
+		<%temp_name = '_TransactionType0'%>
+		<div id='<%=temp_name%>' class='bottom-space'>
+			<%= render partial: 'mini_form', locals:
+				{
+					edit: false,
+					contact_id:@loan['_id'],
+					format_type:'fd_text',
+					field_type: 'select_tag', 
+					field_label: 'Transaction Type', 
+					field_name:temp_name,
+					field_value:@loan.info[temp_name],
+					field_options:'Loan.transaction_types'
+				} %>
+		</div>
+
+

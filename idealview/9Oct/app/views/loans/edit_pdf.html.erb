@@ -1,0 +1,444 @@
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+ <link  href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" media="all" rel="stylesheet" />
+ <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+<script type="text/javascript">
+    $('document').ready(function(){
+
+    
+ 
+$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+		event.stopImmediatePropagation();
+	});
+
+$('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+		event.stopImmediatePropagation();
+	});
+
+
+	$(".js-example-tokenizer").select2({
+		    tags: 'true',
+		    tokenSeparators: [',', ' '], 
+		 });
+	$('.ui-sortable').html('<li class="select2-selection__choice" title="fsfsdf"> <span class="select2-selection__choice__remove" role="presentation">×</span> fsfsdf </li>');
+	//$(".js-example-tokenizer").val("audi").trigger("change");
+	//$.fn.select2.defaults.set("theme", "classic");
+	 //$('.js-example-tokenizer').select2("val", "[abx@gmail.com, xyz@gmail.com, test@gmail.com]");
+	 //$('#send_emails').select2('data', {id: 100, a_key: 'Lorem Ipsum'});
+		
+	//$( "#sortable" ).sortable();
+	//$( "#sortable" ).disableSelection();
+
+	 $('ul').sortable({
+        axis: 'y',
+        stop: function (event, ui) {
+	        var record = $("#sortable").sortable("toArray");
+	        var data = $(this).sortable('serialize')+ "&moredata=" + record;
+	        $.ajax({
+                    data: data,
+                	type: 'POST',
+                	url: '/loans/pdforder',
+                	success:function(response){
+                		$('#sortable').html(response);
+                		$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+							event.stopImmediatePropagation();
+						});
+
+	            		$(".loan_defination").mouseover(function(){
+					        var my_id = $(this).attr('id');
+							var id = my_id.replace("loan_div", "");
+							$('#edit'+id).show();
+					     });
+
+						$(".loan_defination").mouseout(function(){
+					        $(".edit_img").hide();
+					        });
+
+              				//window.open('http://localhost:3000/loans/pdf_files/listing');
+                	 }
+
+            });
+	}
+    });
+
+	
+
+	$(".loan_defination").mouseover(function(){
+        var my_id = $(this).attr('id');
+		var id = my_id.replace("loan_div", "");
+		$('#edit'+id).show();
+     });
+
+	$(".loan_defination").mouseout(function(){
+        $(".edit_img").hide();
+        });
+
+	});
+
+	function downloadInnerHtml(filename, divId, mimeType) {
+		var a = document.body.appendChild(
+		    document.createElement("a")
+		);
+		a.download = "export.html";
+		a.href = "data:text/html," + document.getElementById(divId).innerHTML;
+		a.innerHTML = "[Export conent]";
+	}
+
+	function generate_html(id)
+	{
+		var all_emails=$('#send_emails').val();
+		var pdf_id = id;
+		 var old_cont=$('#edit_content').html();
+		 $('.edit_loan_defination').remove();
+		 var cont = $('#edit_content').html();
+		 var name = $('.text_name').val();
+		 var loans = $('#sorting').html();
+		
+		$.ajax({
+                data: {
+				    content: cont,
+				    fname: name,
+				    emails: all_emails,
+				    pdfId: pdf_id,
+				    loans: loans 
+				  },
+                type: 'POST',
+                url: '/loans/generate_html',
+                success:function(response){
+                	alert('Document has been saved successfully.');
+					$('.save_pipeline').hide();
+                	$('.save_pipeline_off').show();
+                	var gen="'http://<%= @hostname %>/loans/show_pdf/"+response+"'";
+                	$('.generate').html('<input type="button" value="Download Preview" class="tiny button" onclick="window.open('+gen+');">');
+                	$('.generate').show();
+                	$('#edit_content').html(old_cont);
+                	$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+						event.stopImmediatePropagation();
+					});
+
+            		$(".loan_defination").mouseover(function(){
+				        var my_id = $(this).attr('id');
+						var id = my_id.replace("loan_div", "");
+						$('#edit'+id).show();
+				     });
+
+					$(".loan_defination").mouseout(function(){
+				        $(".edit_img").hide();
+				        });
+               }
+               
+            });
+
+	}
+
+
+	function generate_send(id)
+	{
+		var all_emails=$('#send_emails').val();
+		if(all_emails=="")
+		{
+			alert('Please enter email.');
+			return false;
+		}
+		var pdf_id = id;
+		$('.edit_loan_defination').remove();
+		 $('.edit_img').remove();
+		  $('.not_print').remove();
+		 var cont = $('#edit_content').html();
+		 var name = $('.text_name').val();
+		 var loans = $('#sortable').html();
+
+		$.ajax({
+                data: {
+				    content: cont,
+				    fname: name,
+				    emails: all_emails,
+				    pdfId: pdf_id, 
+				  	loans: loans
+				  },
+                type: 'POST',
+                url: '/loans/generate_send',
+                success:function(response){
+              	//window.open('http://idealview.us/loans/show_pdf/'+response);
+                 window.location.href = "http://<%= @hostname %>/loans/pdf_files/listing";
+                //$("a#pdf_download").attr("href","http://idealview.us/pdfs/"+response);
+                //$("a#pdf_download").fadeIn();
+           		 }
+               
+            });
+
+	}
+
+
+	function edit_loan(id)
+	{
+		var data=$('#pdf_edit'+id).serialize();
+	$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/edit_info',
+            success:function(response){
+            	$('#sortable').html(response);
+            	$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+						event.stopImmediatePropagation();
+					});
+
+            	$(".loan_defination").mouseover(function(){
+				        var my_id = $(this).attr('id');
+						var id = my_id.replace("loan_div", "");
+						$('#edit'+id).show();
+				     });
+
+					$(".loan_defination").mouseout(function(){
+				        $(".edit_img").hide();
+				        });
+					$('.save_pipeline').show();
+                	$('.save_pipeline_off').hide();
+
+           	}
+        });
+	}
+
+	function edit_on(id)
+	{
+		$('#loan_edit'+id).show();
+		$('#loan_div'+id).hide();
+	}
+
+	function edit_off(id)
+	{
+		$('#loan_edit'+id).hide();
+		$('#loan_div'+id).show();
+	}
+
+
+
+ 	/*$(document).ready(function(e){
+		var divheight = $("#edit_content").css('height');
+		var bottom = divheight;
+		var num = bottom/400;
+		function tick() {
+	        if(--bottom < -height){
+	            left = containerwidth;
+	        }
+	        $(".ticker-text").css("margin-left", left + "px");
+	        setTimeout(tick, 16);
+	      }
+	      tick();
+	});*/
+
+ function edit_filename()
+ {
+ 	$('.edit_file_name').show();
+ }
+ function save_filename()
+ {
+	var name=$('.text_name').val();
+	$('.file_name').html(name);
+	$('.edit_file_name').hide();
+	$('.save_pipeline').show();
+    $('.save_pipeline_off').hide();
+ }
+
+ function cancel_filename()
+ {
+ 	$('.text_name').val('');
+	$('.edit_file_name').hide();
+ }
+
+
+</script>
+ 
+<style type="text/css">
+	.head_title
+	{
+		text-align: center;
+	}
+	.center_div
+	{
+		width: 70%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.emails_add
+	{
+		width: 557px; 
+		margin-left:auto; 
+		margin-right:auto;
+	}
+
+	#popup{
+	  position:absolute;
+	  width:600px;
+	  height:180px;
+	  background:#fff;
+	  left:50%;
+	  top:50%;
+	  border-radius:5px;
+	  padding:60px 0;
+	  margin-left:-320px; /* width/2 + padding-left */
+	  margin-top:-150px; /* height/2 + padding-top */
+	  text-align:center;
+	  box-shadow:0 0 10px 0 #000;
+	  
+	  #tweet{
+	    color: #4099FF;
+	  }
+	}
+
+	#close{
+	  position:absolute;
+	  background:black;
+	  color:white;
+	  right:-15px;
+	  top:-15px;
+	  border-radius:50%;
+	  width:30px;
+	  height:30px;
+	  line-height:30px;
+	  text-align:center;
+	  font-size:8px;
+	  font-weight:bold;
+	  font-family:'Arial Black', Arial, sans-serif;
+	  cursor:pointer;
+	  box-shadow:0 0 10px 0 #000;
+	}
+
+</style>
+<% if @record.file_name.blank? %>
+<style type="text/css">
+	.btn_div
+	{
+		margin-right: auto;
+		margin-left: auto;
+		width:30%;
+	}
+</style>
+<% else %>
+<style type="text/css">
+	.btn_div
+	{
+		margin-right: auto;
+		margin-left: auto;
+		width:44%;
+	}
+</style>
+<% end %>
+
+<div class="all_content">
+	<h3 class="head_title">Pipeline Summary Edit Station</h3>
+	<div class="center_div">
+		<div class="btn_div">
+		
+		<div class="generate" <% unless @record.name.blank? %> style="float: left; width: 142px;" <% else %> style="float: left; width: 142px; display:none;" <% end %>>
+			<input type="button" value="Download Preview" class="tiny button" onclick="window.open('http://<%= @hostname %>/loans/show_pdf/<%= @record.file_name %>');">
+		</div>
+		
+		
+		
+		    <% if @record.name.blank? %>
+				<div class="save_pipeline" style="float: left; width: 116px;">
+					<input type="button" value="Save Pipeline" class="tiny button" onclick="generate_html('<%= params[:id] %>')">
+				</div>
+				<div class="save_pipeline_off" style="float: left; width: 116px; display:none;">
+					<input type="button" value="Save Pipeline" class="tiny button" style="background-color:#636363; border-color:#636363; color:#ffffff">
+				</div>
+			<% else %>
+				<div class="save_pipeline" style="float: left; width: 116px;  display:none;">
+					<input type="button" value="Save Pipeline" class="tiny button" onclick="generate_html('<%= params[:id] %>')">
+				</div>
+				<div class="save_pipeline_off" style="float: left; width: 116px;">
+					<input type="button" value="Save Pipeline" class="tiny button" style="background-color:#636363; border-color:#636363; color:#ffffff">
+				</div>
+			<% end %>
+			<div class="generate_send" style="float: left; width: 135px;">
+				<input type="button" value="Generate & Send" class="tiny button success" onclick="generate_send('<%= params[:id] %>')">
+			</div>
+		</div>
+
+		<div class="emails_add">
+			<select class="js-example-tokenizer form-control" multiple="multiple" name="emails" id="send_emails">
+			<% @all_emails.each do |email| %>
+		          <option value="<%= email %>"><%= email %></option>
+	         <% end %>
+	         <% 
+	         unless @email_select.blank?
+	         	@email_select.each do |mail| %>
+	         		<option value="<%= mail %>" selected="selected"> <%= mail %> </option>>
+	         	<% end 		
+	         end	 %>
+	        </select>
+		</div>
+		File Name : <span class="file_name" ondblclick="edit_filename();"><%= @record.file_name %></span>
+		<div class="edit_file_name" style="display:none;">
+			<input type="text" name="file_name" value="<%= @record.file_name  %>" class="text_name">
+			<input type="button" value="SAVE" class="tiny button success" onclick="save_filename()"> <input type="button" value="CANCEL" class="tiny button alert" onclick="cancel_filename()">
+		</div>
+
+		<div id="edit_content" style=" border:1px solid black; height:auto;">
+			
+			<style>
+				@media print {
+					    .not_print{
+					        display: none;
+					    		}
+							}
+
+						.loan_defination {
+						    page-break-before: auto; /* 'always,' 'avoid,' 'left,' 'inherit,' or 'right' */
+						    page-break-after: auto; /* 'always,' 'avoid,' 'left,' 'inherit,' or 'right' */
+						    page-break-inside: avoid; /* or 'auto' */
+						}
+						li { cursor: pointer; cursor: all-scroll; list-style: none; }
+
+			</style>
+
+			<div style='width:100%;overflow:hidden	' >
+			<img src='http://<%= @hostname %>/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'>
+			<p style='float:right;'>Pipeline Summary <%= @str_time %></p>
+			</div>
+			  <ul id="sortable">
+			  	<% @pdfs.each do |pdf| %>
+					<li id="<%= pdf.id %>" style="list-style: none;">
+
+						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
+						<img src="http://<%= @hostname %>/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
+							<br>
+							<b><%= pdf.loan_name+" | "+pdf.location %></b>
+							<br>
+							<b>Loan Amount : </b><%= pdf.amount %>
+							<br><br>
+							<b>Summary : </b><%= pdf.summary %>
+							<br>
+						</div>
+						
+						
+
+						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px; display:none;' class="edit_loan_defination" id="loan_edit<%= pdf.id %>">
+							<form name="pdf_edit<%= pdf.id %>" id="pdf_edit<%= pdf.id %>" >
+								<br>
+								<b>Name : </b><input type="text" value="<%= pdf.loan_name%>" name="loan_name" >
+								<br>
+								<b>Location : </b><input type="text" value="<%= pdf.location%>" name="location">
+								<br>
+								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>">
+								<br>
+								<b>Summary : </b><textarea name="summary"><%= pdf.summary %></textarea>
+								<br>
+								<b>Sort Number :</b><input type="text" value="<%= pdf.sort_id %>" name="sort_id">
+								<input type="hidden" name="id" value="<%= pdf.id %>" >
+								<input type="button" value="SAVE" class="tiny button success" onclick="edit_loan('<%= pdf.id %>')">
+
+								<input type="button" value="CANCEL" class="tiny button alert" onclick="edit_off('<%= pdf.id %>')">
+							</form>
+						</div>
+						
+						
+
+					</li>
+					<% end %>
+				</ul>
+</div>
+<p class="page_brk" style="page-break-after:always;"></p>
+<div class="not_print" style="height:40px;border:1px solid red; display:none; ">
+</div>

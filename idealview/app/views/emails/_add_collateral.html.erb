@@ -1,0 +1,84 @@
+<div class="large-12 columns">
+	<form method="post" class="add_collateral">
+			<input type="hidden" name="loan_id" value="<%= @loanId %>">
+			<input type="hidden" class="collateral_id" <% unless @collateral.blank? %> value="<%= @collateral.id %>" <% end %>>
+			<div class="row">
+				<div class="small-6 columns">
+					<label for="">  Address </label>
+					<br>
+					<input class="address" type="text" name="address" style="float:left; width:141px;"  <% unless @collateral.blank? %> value="<%= @collateral.address %>" <% end %> onchange="return collateralVal('address')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" onclick="return menuCollateral('address')">
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for="">  PostalCode  </label>
+					<br>
+					<input class="postalcode" type="text" name="postalcode" style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.postalcode %>" <% end %> onchange="return collateralVal('postalcode')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" onclick="return menuCollateral('postalcode')">
+			  	</div>
+			</div>
+
+
+			<div class="row">
+				<div class="small-6 columns">
+					<label for="">   Estimated Property Value  </label>
+					<br>
+					<input class="estimated_value" type="text" name="estimated_value" style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.estimated_value %>" <% end %> onchange="return collateralVal('estimated_value')">
+					<img src="/assets/paste.png" title="Paste" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" onclick="return menuCollateral('estimated_value')">
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for="">  Amount Owed  </label>
+					<br>
+					<input type="text" class="amount_owed" name="amount_owed"  style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.amount_owed %>" <% end %> onchange="return collateralVal('amount_owed')">
+			  		<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" title="Paste" onclick="return menuCollateral('amount_owed')">
+			  	</div>
+			</div>
+
+			<div class="row">
+				<div class="small-6 columns">
+					<label for=""> Asset Type </label>
+					<br>
+					<select id="asset_type"  name="asset_type" style="width:142px;" onchange="return selectCollateral('asset_type')">
+						<option value=""> Select </option>
+						<option value="Single Family Residence" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Single Family Residence" %> selected="selected" <% end %> <% end %>>Single Family Residence</option>
+						<option value="Multifamily" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Multifamily" %> selected="selected" <% end %> <% end %>>Multifamily</option>
+						<option value="Condo" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Condo" %> selected="selected" <% end %> <% end %>>Condo</option>
+						<option value="Hospitality" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Hospitality" %> selected="selected" <% end %> <% end %>>Hospitality</option>
+						<option value="Commercial" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Commercial" %> selected="selected" <% end %> <% end %>>Commercial</option>
+						<option value="Short Term Real Estate Loan" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Short Term Real Estate Loan" %> selected="selected" <% end %> <% end %>>Short Term Real Estate Loan</option>
+						<option value="Development" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Development" %> selected="selected" <% end %> <% end %>>Development</option>
+						<option value="Mixed Use"  <% unless @collateral.blank? %> <% if @collateral.asset_type == "Development" %> selected="selected" <% end %> <% end %>>Mixed Use</option>
+						<option value="Retail"  <% unless @collateral.blank? %> <% if @collateral.asset_type == "Retail" %> selected="selected" <% end %> <% end %>>Retail</option>
+						<option value="Health Care"  <% unless @collateral.blank? %> <% if @collateral.asset_type == "Health Care" %> selected="selected" <% end %> <% end %>>Health Care</option>
+						<option value="Industrial" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Industrial" %> selected="selected" <% end %> <% end %>>Industrial</option>
+						<option value="Other" <% unless @collateral.blank? %> <% if @collateral.asset_type == "Other" %> selected="selected" <% end %> <% end %>>Other</option>
+					</select>
+			  		
+			  	</div>
+
+			  	<div class="small-6 columns">
+					<label for=""> NOI (YTD)  </label>
+					<br>
+					<input type="text" class="noi_ytd" name="noi_ytd"  style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.noi_ytd %>" <% end %> onchange="return collateralVal('noi_ytd')">
+					<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" title="Paste" onclick="return menuCollateral('noi_ytd')">
+			  	</div>
+			</div>
+
+			<div class="row">
+					<div class="small-6 columns">
+						<label for=""> NOI ( two years ago)  </label>
+						<br>
+						<input type="text" class="noi_two_years_ago" name="noi_two_years_ago"  style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.noi_two_years_ago %>" <% end %> onchange="return collateralVal('noi_two_years_ago')">
+						<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" title="Paste" onclick="return menuCollateral('noi_two_years_ago')">
+			  		</div>
+
+			  		<div class="small-6 columns">
+						<label for=""> NOI (Last Year)  </label>
+						<br>
+						<input type="text" class="noi_last_year" name="noi_last_year"  style="float:left; width:141px;" <% unless @collateral.blank? %> value="<%= @collateral.noi_last_year %>" <% end %> onchange="return collateralVal('noi_last_year')"> 
+						<img src="/assets/paste.png" style="width:21px; height:22px; float:right; margin-top:7px; cursor:pointer;" title="Paste" onclick="return menuCollateral('noi_last_year')">
+			  		</div>
+			</div>
+	</form>
+</div>

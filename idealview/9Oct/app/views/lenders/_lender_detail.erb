@@ -1,0 +1,27 @@
+<div class="lender_detail">
+	<div class="loan_info" >
+		<span class="info">Name: <%= @detail.firstName+' '+@detail.lastName%></span><br>
+		<span class="info"><b>Loan Preferences</b></span><br>
+		<span class="info">Loan Amount: <%= fd_money(@detail.loanMinDropDown) %> 
+		 <% if @detail.loanMaxDropDown!="No Max" %>
+			- <%= fd_money(@detail.loanMaxDropDown) %>
+		 <% else %>
+		 	- <%= @detail.loanMaxDropDown %>
+		 <% end %>
+		</span><br>
+		<span class="info">Loan Interest: 
+		 <% if defined? @detail.interestRateMin %>
+		 	<%= @detail.interestRateMin %>% -
+		 <% end %>
+		 <% if defined? @detail.interestRateMax.blank? %>
+		 	<%= @detail.interestRateMax %>% 
+		 <% end %>
+		 </span><br>
+		<span class="info">Points: <%= @detail.pointsMin%> - <%= @detail.pointsMax%></span><br>
+		<% if @detail.termLengthType=="year(s)" %>
+			<span class="info">Term Length: <%= @detail.termLengthMin %>Years - <%= @detail.termLengthMax %>Years</span><br>
+		<% else %>
+			<span class="info">Term Length: <%= @detail.termLengthMin %>Months - <%= @detail.termLengthMax %>Months</span><br>
+		<% end %>
+	</div>
+</div>

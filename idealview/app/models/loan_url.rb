@@ -3,6 +3,7 @@ class LoanUrl
   key :loan_id, :required=>true
   key :email, :required=>true
   key :name, :required=>true 
+  key :user_id
   key :dateCreated  #added on init
   key :url #added on init
   key :visits
@@ -15,8 +16,8 @@ class LoanUrl
 
  
  def get_url
-    host = "http://idealview.us"
-    return host+'/loans/'+self.url
+    host = "http://dash.idealview.us"
+    return host+'/loans/detail/'+self.url
  end
  
 

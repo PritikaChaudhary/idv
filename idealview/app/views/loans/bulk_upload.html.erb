@@ -1,0 +1,282 @@
+<style type="text/css">
+    .file_heading {
+    border: 1px solid;
+    min-height: 32px;
+    padding: 4px;
+    }
+    .modalhead
+{
+    background-color:  #eeeeee;
+    text-align: center;
+    font-weight: bold;
+}
+.share_drop
+  {
+    float: right;
+      font-size: 12px;
+      height: 36px;
+      margin-right: 149px;
+      margin-top: -42px;
+  }
+  .share_drop_pic
+  {
+    float: right;
+      font-size: 12px;
+      height: 36px;
+  }
+</style>
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+<script type="text/javascript">
+    $('document').ready(function(){
+        
+        $('#all_pictures').click(function(){
+            $('#pictures-container').slideToggle();
+            $('#picture_container').slideToggle();
+        });
+
+        $('#all_files').click(function(){
+            $('#documents').slideToggle();
+        });
+
+         $("#add_custom_folder").click(function(){
+            $(".add_new_folder").slideToggle();   
+          });
+
+         $("#pictures_dropbox").click(function(){
+            $('#submit_pic_path').show();
+            $('#submit_folder_path').hide();
+            $('#submit_category_path').hide();
+            $('#picturepath').foundation('reveal', 'open');
+         });
+
+         $(".folder_dropbox").click(function(){
+            id = $(this).attr('id');
+            folder_id = id.replace("_dropbox", "");
+            $('#dropbox_type').val('folder');
+            $('#dropbox_val').val(folder_id); 
+            $('#submit_folder_path').show();
+            $('#submit_pic_path').hide();
+            $('#submit_category_path').hide();
+            $('#picturepath').foundation('reveal', 'open');
+         });
+
+         $(".category_dropbox").click(function(){
+            id = $(this).attr('id');
+            folder_id = id.replace("_dropbox", "");
+            $('#dropbox_type').val('category');
+            $('#dropbox_val').val(folder_id);
+            $('#submit_category_path').show();
+            $('#submit_folder_path').hide();
+            $('#submit_pic_path').hide();
+            $('#picturepath').foundation('reveal', 'open');
+         });
+
+         $("#submit_pic_path").click(function(){
+            path = $('#dropbox_path').val();
+            data = "path="+path+"&loan_id=<%= @loan.id %>";
+            $("#loading_img").show();
+             $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/download_dropbox_picture',
+                
+                success:function(response){
+                  if(response=="done")
+                  { 
+                     var datax = "&id=<%= @loan.id %>";
+                     $.ajax({
+                          data: datax,
+                          type: 'POST',
+                          url: '/loans/bulk_loan_images',
+                          success:function(response){
+                              $('#pictures-container').html(response);
+                              $("#loading_img").hide();
+                              $('#picturepath').foundation('reveal', 'close');
+                          }
+                      });
+                  }
+                  else
+                  {
+                     alert("Please check your file path.");
+                     $("#loading_img").hide(); 
+                  }
+                }
+            });
+         });
+
+         $("#submit_folder_path").click(function(){
+
+            path = $('#dropbox_path').val();
+            folder_val = $('#dropbox_val').val();
+            data = "path="+path+"&loan_id=<%= @loan.id %>&type=folder&val="+folder_val;
+            $("#loading_img").show();
+             $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/bulkupload/download_dropbox_document',
+                success:function(response){
+                   if(response=="done")
+                   {
+                     var datax = "&id=<%= @loan.id %>&dropbox=yes";
+                     $.ajax({
+                          data: datax,
+                          type: 'POST',
+                          url: '/loans/loan_documents',
+                          success:function(response){
+                             $('#documents').html(response);
+                              $("#loading_img").hide();
+                              $('#picturepath').foundation('reveal', 'close');
+                          }
+                      });
+                    }
+                   else
+                   {
+                      alert("Please check your file path.");
+                       $("#loading_img").hide(); 
+                   } 
+                }
+            });
+         });
+
+         $("#submit_category_path").click(function(){
+
+            path = $('#dropbox_path').val();
+            folder_val = $('#dropbox_val').val();
+            // alert(folder_val);
+            data = "path="+path+"&loan_id=<%= @loan.id %>&type=folder&val="+folder_val;
+            $("#loading_img").show();
+             $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/bulkupload/download_dropbox_cdocument',
+                success:function(response){
+                   if(response == "done")
+                   {
+                     var datax = "&id=<%= @loan.id %>&dropbox=yes";
+                       $.ajax({
+                            data: datax,
+                            type: 'POST',
+                            url: '/loans/loan_documents',
+                            success:function(response){
+                              $('#documents').html(response);
+                                $("#loading_img").hide();
+                                $('#picturepath').foundation('reveal', 'close');
+                             }
+                      });
+                   }
+                   else
+                   {
+                      alert("Please check your file path.");
+                      $("#loading_img").hide(); 
+                   }
+                  
+                }
+            });
+         });
+
+    });
+
+   function del_file(id)
+    {
+      var data = "&id=" + id;
+      $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/del_file',
+                success:function(response){
+                  $('#del_'+id).hide();
+              }
+            });
+    }
+
+    function del_doc(id)
+    {
+      var data = "&id=" + id;
+      $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/del_doc',
+                success:function(response){
+                  $('#del_file'+id).hide();
+              }
+            });
+    }
+</script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<div id="picturepath" class="reveal-modal medium" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <div class="modalhead" id="note_content" style="margin-bottom:10px;">
+    Dropbox
+  </div>
+  <div class="row">
+    <div class="large-12 column">
+        <div class="small-9 column">
+            Enter dropbox path of the picture: 
+        </div>
+        <div class="small-3 column">
+            <input type="text" id="dropbox_path" placeholder="/folder/image.jpg">
+        </div>
+    </div>
+    <div class="large-12 column">
+        <div class="small-12 column">
+            <input type="button" value="Submit" class="tiny button" id="submit_pic_path" style="display:none;">
+            <input type="button" value="Submit" class="tiny button" id="submit_folder_path" style="display:none;">
+            <input type="button" value="Submit" class="tiny button" id="submit_category_path" style="display:none;">
+        </div>
+    </div>
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+<div class="row">
+    
+    <div class="large-12 colums title">
+        <h3 style="text-align:center;">Upload Files</h3>
+    </div>
+    <input type="hidden" id="dropbox_type">
+<input type="hidden" id="dropbox_val">
+
+    <div class="large-12 columns file_heading">
+        <a href="javascript:void(0);" id="all_pictures" style="float:left; width:100%">
+            <i class="fa fa-folder-open fa-2" aria-hidden="true"></i>
+            Images
+        </a>
+        <!--  <% unless @dropInfo.blank? %>
+          <div id ="picture_container" style="margin-bottom:10px; float:left; width:100%; display:none;">
+              <div class="large-12 columns" >
+                  <input type="button" value="Share from dropbox" id="pictures_dropbox" class="button share_drop_pic">
+              </div>
+          </div>
+        <% end %> -->
+        <div id="pictures-container" style="padding:8px; display:none; float:left;width:100%; ">
+            
+            <%=render partial: 'bulk_thumbnails', locals:{images: @images, loan_id:@loan._id}%>
+        </div>
+    </div>
+
+    <div class="large-12 columns file_heading">
+        <a href="javascript:void(0);" id="all_files">
+            <i class="fa fa-folder-open fa-2" aria-hidden="true"></i>
+            Documents
+        </a>
+        <div id="documents" style="padding:8px; display:none;">
+            <%=render partial: 'bulk_documents'%>
+        </div>
+    </div>
+</div>

@@ -1,10 +1,48 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
  <link  href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" media="all" rel="stylesheet" />
- <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 <script type="text/javascript">
     $('document').ready(function(){
 
-    
+    $("#include_link").click(function(){
+    	
+    	if($("#include_link").prop('checked') == true){
+		    $('.loan_detail').show();
+	    	// $('#required_login').show();
+	    	$('.detail_login').hide();
+	    	$('.detail_login').addClass('not_print');
+	    	$('.loan_detail').removeClass('not_print');
+	    	$('#required_login').attr('checked', false);
+	    }
+		else
+		{
+			$('.loan_detail').hide();
+	    	// $('#required_login').hide();
+	    	$('.detail_login').hide();
+	    		
+		}
+
+		$('.save_pipeline').show();
+        $('.save_pipeline_off').hide();
+    });
+
+    $("#required_login").click(function(){
+    	if($("#required_login").prop('checked') == true){
+    		$('.loan_detail').hide();
+    		$('.detail_login').show();
+    		$('.loan_detail').addClass('not_print');
+    		$('.detail_login').removeClass('not_print');
+    		$('#include_link').attr('checked', false);
+    	}
+    	else
+    	{
+    		$('.loan_detail').show();
+    		$('.detail_login').hide();	
+    	}
+
+    	$('.save_pipeline').show();
+        $('.save_pipeline_off').hide();
+    });
  
 $('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
 		event.stopImmediatePropagation();
@@ -92,14 +130,16 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 		 var cont = $('#edit_content').html();
 		 var name = $('.text_name').val();
 		 var loans = $('#sorting').html();
-		
+		 var radio_link = $('input[name="radio_link"]:checked').val();
+		 
 		$.ajax({
                 data: {
 				    content: cont,
 				    fname: name,
 				    emails: all_emails,
 				    pdfId: pdf_id,
-				    loans: loans 
+				    loans: loans,
+				    link_type: radio_link 
 				  },
                 type: 'POST',
                 url: '/loans/generate_html',
@@ -107,7 +147,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
                 	alert('Document has been saved successfully.');
 					$('.save_pipeline').hide();
                 	$('.save_pipeline_off').show();
-                	var gen="'http://<%= @hostname %>/loans/show_pdf/"+response+"'";
+                	var gen="'https://<%= @hostname %>/loans/show_pdf/"+response+"'";
                 	$('.generate').html('<input type="button" value="Download Preview" class="tiny button" onclick="window.open('+gen+');">');
                 	$('.generate').show();
                 	$('#edit_content').html(old_cont);
@@ -133,6 +173,21 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 
 	function generate_send(id)
 	{
+		if($("#required_login").prop('checked') == true){
+    		// alert("required");
+    		$('.loan_detail').addClass('not_print');
+    		$('.detail_login').removeClass("not_print");
+    		
+    	}
+
+    	if($("#include_link").prop('checked') == true){
+    		
+    		// alert("include");
+    		$('.detail_login').addClass('not_print');
+    		$('.loan_detail').removeClass("not_print");
+    		
+    	}
+    	// return false;
 		var all_emails=$('#send_emails').val();
 		if(all_emails=="")
 		{
@@ -146,20 +201,23 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 		 var cont = $('#edit_content').html();
 		 var name = $('.text_name').val();
 		 var loans = $('#sortable').html();
-
+		 var radio_link = $('input[name="radio_link"]:checked').val();
 		$.ajax({
                 data: {
 				    content: cont,
 				    fname: name,
 				    emails: all_emails,
 				    pdfId: pdf_id, 
-				  	loans: loans
+				  	loans: loans,
+				  	link_type: radio_link 
 				  },
                 type: 'POST',
                 url: '/loans/generate_send',
                 success:function(response){
+                	alert("Pipeline has been sent.")
+                	
               	//window.open('http://idealview.us/loans/show_pdf/'+response);
-                 window.location.href = "http://<%= @hostname %>/loans/pdf_files/listing";
+                 // window.location.href = "https://<%= @hostname %>/loans/pdf_files/listing";
                 //$("a#pdf_download").attr("href","http://idealview.us/pdfs/"+response);
                 //$("a#pdf_download").fadeIn();
            		 }
@@ -178,9 +236,17 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
             url: '/loans/edit_info',
             success:function(response){
             	$('#sortable').html(response);
-            	$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
-						event.stopImmediatePropagation();
-					});
+				if ($('input#required_login').is(':checked')) {
+					$('.loan_detail').hide();
+    				$('.detail_login').show();
+				}
+				else if ($('input#include_link').is(':checked')) {
+					$('.loan_detail').show();
+    				$('.detail_login').hide();
+				}
+				$('input[type=text]').bind('mousedown.ui-disableSelection selectstart.ui-disableSelection',function(event) {
+					event.stopImmediatePropagation();
+				});
 
             	$(".loan_defination").mouseover(function(){
 				        var my_id = $(this).attr('id');
@@ -249,6 +315,189 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 </script>
  
 <style type="text/css">
+	@media all and (max-width: 1208px) and (min-width: 1084px){
+		.btn_div 
+		{
+			width:56% !important;		
+		}
+		.check_links
+		{
+			width:56% !important;		
+		}
+
+	}
+	@media all and (max-width: 1083px) and (min-width: 1024px){
+
+		.center_div
+		{
+			width: 80% !important;
+		}
+		.btn_div 
+		{
+			width:56% !important;		
+		}
+		.check_links
+		{
+			width:56% !important;		
+		}
+	}
+
+	@media all and (max-width: 1025px) and (min-width: 951px){
+
+		.center_div
+		{
+			width: 80% !important;
+		}
+		.btn_div 
+		{
+			margin: auto auto auto 207px;
+    		width: 62% !important;
+		}
+		.check_links
+		{
+			margin: auto auto auto 207px;
+   	 		width: 62% !important;		
+		}
+	}
+
+	@media all and (max-width: 950px) and (min-width: 783px){
+
+		.center_div
+		{
+			width: 90% !important;
+		}
+		.btn_div 
+		{
+			margin: auto auto auto 170px;
+    		width: 62% !important;
+		}
+		.check_links
+		{
+			margin: auto auto auto 170px;
+   	 		width: 62% !important;		
+		}
+	}
+
+	@media all and (max-width: 782px) and (min-width: 700px){
+
+		.center_div
+		{
+			width: 90% !important;
+		}
+		.btn_div 
+		{
+			margin: auto auto auto 128px;
+    		width: 76% !important;
+		}
+		.check_links
+		{
+			margin: auto auto auto 128px;
+   	 		width: 76% !important;		
+		}
+	}
+
+	@media all and (max-width: 699px){
+
+		.center_div
+		{
+			width: 92% !important;
+		}
+
+		.edit_img {
+			margin-left:142px !important;
+		}
+		
+	}
+	@media all and (max-width: 340px){
+
+		
+
+		.edit_img {
+			margin-left:59px !important;
+		}
+		
+	}
+
+	@media all and (max-width: 477px){
+
+		.center_div
+		{
+			width: 92% !important;
+		}
+		
+	}
+
+	@media all and (max-width: 459px){
+
+		.generate
+		{
+			width:100% !important;
+		}
+
+		.generate input
+		{
+			width:100% !important;
+		}
+
+
+		.save_pipeline_off
+		{
+			width:100%  !important;
+		}
+
+		.save_pipeline_off input
+		{
+			width:100%  !important;
+		}
+
+		.save_pipeline
+		{
+			width:100%  !important;
+		}
+
+		.save_pipeline input
+		{
+			width:100%  !important;
+		}
+		.generate_send
+		{
+			width:100%  !important;
+		}
+
+		.generate_send input
+		{
+			width:100%  !important;
+		}
+			
+	}
+
+ 		<% unless @record.name.blank? %>
+ 		 	.generate
+			{
+				float: left; width: 142px;
+			}
+ 		 <% else %> 
+ 		 	.generate
+			{
+				float: left; width: 142px;
+			}
+ 		 <% end %>
+
+	
+
+	.save_pipeline_off
+	{
+		float: left; width: 116px; display:block;
+	}
+
+	.save_pipeline
+	{
+		float: left; width: 116px; display:none;
+	}
+	.generate_send
+	{
+		float: left; width: 135px;
+	}
 	.head_title
 	{
 		text-align: center;
@@ -303,61 +552,60 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 	  cursor:pointer;
 	  box-shadow:0 0 10px 0 #000;
 	}
+	.hide_link
+	{
+		display: none;
+	}
+	.edit_img
+	{
+		float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer 
+	}
 
 </style>
+
 <% if @record.file_name.blank? %>
-<style type="text/css">
-	.btn_div
-	{
-		margin-right: auto;
-		margin-left: auto;
-		width:30%;
-	}
-</style>
+
 <% else %>
-<style type="text/css">
-	.btn_div
-	{
-		margin-right: auto;
-		margin-left: auto;
-		width:44%;
-	}
-</style>
+
 <% end %>
 
 <div class="all_content">
 	<h3 class="head_title">Pipeline Summary Edit Station</h3>
 	<div class="center_div">
-		<div class="btn_div">
+		<div class="large-6 large-centered columns row btn_div">
 		
-		<div class="generate" <% unless @record.name.blank? %> style="float: left; width: 142px;" <% else %> style="float: left; width: 142px; display:none;" <% end %>>
-			<input type="button" value="Download Preview" class="tiny button" onclick="window.open('http://<%= @hostname %>/loans/show_pdf/<%= @record.file_name %>');">
+		<div class="generate">
+			<input type="button" value="Download Preview" class="tiny button" onclick="window.open('https://<%= @hostname %>/loans/show_pdf/<%= @record.file_name %>');">
 		</div>
 		
 		
 		
 		    <% if @record.name.blank? %>
-				<div class="save_pipeline" style="float: left; width: 116px;">
+				<div class="save_pipeline">
 					<input type="button" value="Save Pipeline" class="tiny button" onclick="generate_html('<%= params[:id] %>')">
 				</div>
-				<div class="save_pipeline_off" style="float: left; width: 116px; display:none;">
+				<div class="save_pipeline_off" >
 					<input type="button" value="Save Pipeline" class="tiny button" style="background-color:#636363; border-color:#636363; color:#ffffff">
 				</div>
 			<% else %>
-				<div class="save_pipeline" style="float: left; width: 116px;  display:none;">
+				<div class="save_pipeline" style="display:none;">
 					<input type="button" value="Save Pipeline" class="tiny button" onclick="generate_html('<%= params[:id] %>')">
 				</div>
-				<div class="save_pipeline_off" style="float: left; width: 116px;">
+				<div class="save_pipeline_off" >
 					<input type="button" value="Save Pipeline" class="tiny button" style="background-color:#636363; border-color:#636363; color:#ffffff">
 				</div>
 			<% end %>
-			<div class="generate_send" style="float: left; width: 135px;">
+			<div class="generate_send" >
 				<input type="button" value="Generate & Send" class="tiny button success" onclick="generate_send('<%= params[:id] %>')">
 			</div>
 		</div>
+		<div class="large-6 large-centered columns row check_links">
+			<input type="radio" name="radio_link" id="include_link" style="float: left; margin-top: 4px;" value="lender_link" <% unless @record.blank? %> <% if @record.link_type == "lender_link" %> checked="checked" <% end %><% end %>> <span style="float:left">Include share lender link</span>
+			<input type="radio" name="radio_link" id="required_login" style="float: left; margin-top: 3px; margin-left: 10px;" value="reuired_link" <% unless @record.blank? %> <% if @record.link_type == "reuired_link" %> checked="checked" <% end %><% end %>> <span style="float:left"> Required login link </span>
+		</div>
 
-		<div class="emails_add">
-			<select class="js-example-tokenizer form-control" multiple="multiple" name="emails" id="send_emails">
+		<div class="large-8 large-centered columns">
+			<select class="js-example-tokenizer form-control" multiple="multiple" name="emails" id="send_emails" style="width:100%;">
 			<% @all_emails.each do |email| %>
 		          <option value="<%= email %>"><%= email %></option>
 	         <% end %>
@@ -369,13 +617,15 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 	         end	 %>
 	        </select>
 		</div>
+		<div class="large-12 large-centered columns">
 		File Name : <span class="file_name" ondblclick="edit_filename();"><%= @record.file_name %></span>
+		</div>
 		<div class="edit_file_name" style="display:none;">
 			<input type="text" name="file_name" value="<%= @record.file_name  %>" class="text_name">
 			<input type="button" value="SAVE" class="tiny button success" onclick="save_filename()"> <input type="button" value="CANCEL" class="tiny button alert" onclick="cancel_filename()">
 		</div>
 
-		<div id="edit_content" style=" border:1px solid black; height:auto;">
+		<div id="edit_content" style=" border:1px solid black; height:auto;" class="large-12 large-centered columns">
 			
 			<style>
 				@media print {
@@ -394,15 +644,23 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 			</style>
 
 			<div style='width:100%;overflow:hidden	' >
-			<img src='http://<%= @hostname %>/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'>
+			<img src='https://<%= @hostname %>/assets/idealview-logo-2c6b9989b6877f38ebd24059a00f91e4.png' style='width:250px; float:left;'>
 			<p style='float:right;'>Pipeline Summary <%= @str_time %></p>
 			</div>
 			  <ul id="sortable">
-			  	<% @pdfs.each do |pdf| %>
-					<li id="<%= pdf.id %>" style="list-style: none;">
+			  	<% @pdfs.each do |pdf| 
+			  			if pdf.loan_name == nil
+			  				pdf.loan_name = ""
+			  			end
+
+			  			if pdf.location == nil
+			  				pdf.location = ""
+			  			end
+			  		%>
+					<li id="<%= pdf.id %>" style="list-style: none;" >
 
 						<div style='width:94%; border: 2px solid black; text-align:left;margin-left:10px; padding-left:10px; padding-right:10px; padding-bottom:25px; margin-bottom:25px;' class="loan_defination" id="loan_div<%= pdf.id %>">
-						<img src="http://<%= @hostname %>/assets/edit.png" class="edit_img" style="float: left; margin-left: 353px; margin-right: auto; margin-top: 53px; position: absolute; width: 92px; z-index: 1; display:none; cursor:pointer " id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
+						<img src="https://<%= @hostname %>/assets/edit.png" class="edit_img" id="edit<%= pdf.id %>" onclick="edit_on('<%= pdf.id %>')">
 							<br>
 							<b><%= pdf.loan_name+" | "+pdf.location %></b>
 							<br>
@@ -410,6 +668,10 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 							<br><br>
 							<b>Summary : </b><%= pdf.summary %>
 							<br>
+							<% if !pdf.loan_id.blank? %>
+								<a href="<%= request.base_url %>/loans/detail_loan/<%= pdf.loan_id %>/info" class="loan_detail hide_link"  <% unless @record.blank? %> <% if @record.link_type == "lender_link" %> style="display:block;"  <% end %><% end %>> Click here to view this loan </a>
+								<a href="<%= request.base_url %>/loans/detail_loan/<%= pdf.loan_id %>/required" class="detail_login hide_link" <% unless @record.blank? %> <% if @record.link_type == "reuired_link" %> style="display:block;"<% end %><% end %>> Click here to view this loan</a>
+							<% end %>
 						</div>
 						
 						
@@ -421,7 +683,7 @@ $('textarea').bind('mousedown.ui-disableSelection selectstart.ui-disableSelectio
 								<br>
 								<b>Location : </b><input type="text" value="<%= pdf.location%>" name="location">
 								<br>
-								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>">
+								<b>Loan Amount : </b><input type="text" value="<%= pdf.amount %>" name="amount">
 								<br>
 								<b>Summary : </b><textarea name="summary"><%= pdf.summary %></textarea>
 								<br>

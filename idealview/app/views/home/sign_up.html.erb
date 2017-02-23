@@ -1,0 +1,499 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<% #site-demo.css %>
+<% #jquery-validate.min.js %>
+<% #additional-methods.min.js  %>
+<script>
+	$('document').ready(function(){
+		$('#change').click(function(){
+			$('.plan_change').slideToggle();
+		});
+
+		$('#change_plan').change(function(){
+			val = $(this).val();
+			window.location = "http://<%= @hostname %>/home/sign_up/"+val;
+		});
+	});
+</script>
+<style type="text/css">
+	#change
+	{
+		border: 1px solid #d4d4d4;
+    	padding: 5px;
+	}
+	.to_left {
+     font-size: 17px;
+	}
+	input[type="text"], input[type="password"], textarea
+	{
+		background-color: #f1f1f1 !important;
+	}
+	.outerdiv
+	{
+		background-color: #ffffff;
+	}
+	body
+	{
+		background-color: #f1f1f1;
+	}
+	header
+	{
+		border-top:none;
+	}
+	.right {
+    	margin-right: 138px !important;
+	}
+	.recurly-hosted-field
+	{
+		 background-color: #f1f1f1;
+	    border: 1px solid #cccccc;
+	    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+	    box-sizing: border-box;
+	    color: rgba(0, 0, 0, 0.75);
+	    display: block;
+	    font-family: inherit;
+	    font-size: 0.875rem;
+	    height: 2.3125rem;
+	    margin: 0 0 1rem;
+	    padding: 0.5rem;
+	    transition: box-shadow 0.45s ease 0s, border-col
+	or 0.45s ease-in-out 0s;
+	    width: 100%;
+	}
+	
+</style>
+<% if @plan!="free" %>
+	<script>
+
+
+
+	$('document').ready(function(){
+	
+	// just for the demos, avoids form submit
+	jQuery.validator.setDefaults({
+	debug: true,
+	success: "valid"
+	});
+	$( "#signupForm" ).validate({
+		rules: {
+		firstName: {
+			required: true
+			},
+		lastName: {
+			required: true
+			},
+		company: {
+			required: true
+			},
+		jobTitle: {
+			required: true
+			},
+		email: {
+			required: true,
+			email: true,
+			 remote: {
+	                        url: "/home/checkemail",
+	                        type: "post"
+	                     }
+			},
+		username: {
+			required: true,
+			remote: {
+	                        url: "/home/checkuname",
+	                        type: "post"
+	                     }
+			},		
+		number: {
+			required: true
+			},
+		cvc: {
+		required: true
+		},
+		},
+		 messages: {
+	                email: {
+	                    remote: "Email already in use!"
+	                },
+
+	                username: {
+	                    remote: "Username already in use!"
+	                }
+	            }
+	});
+	
+	});
+	</script>
+<% else %>
+	<script>
+	$('document').ready(function(){
+	
+	$( "#signupForm" ).validate({
+		rules: {
+		firstName: {
+			required: true
+			},
+		lastName: {
+			required: true
+			},
+		company: {
+			required: true
+			},
+		jobTitle: {
+			required: true
+			},
+		email: {
+			required: true,
+			email: true,
+			 remote: {
+	                        url: "/home/checkemail",
+	                        type: "post"
+	                     }
+			},
+		username: {
+			required: true,
+			remote: {
+	                        url: "/home/checkuname",
+	                        type: "post"
+	                     }
+			},		
+	},
+		 messages: {
+	                email: {
+	                    remote: "Email already in use!"
+	                },
+	                 username: {
+	                    remote: "Username already in use!"
+	                }
+	            }
+
+	
+	});
+	});
+	</script>
+<% end %>
+
+<div class="row outerdiv" >
+	<div class="left-col medium-4 column">
+		<div >
+			<div class="medium-12 column left_img">
+				<img src="/assets/sign_up.png">
+			</div>
+			<div class="medium-12 column summary">
+				<div class="row">
+					<div class="medium-7 column to_left">Order Summary</div>
+					<% if @plan != "ENTERPRISE"%>
+						<div class="medium-5 column plan_def"><a href="javascript:void(0);" id="change">UPGRADE</a></div>
+					<% end %>
+				</div>
+				<div class="plan_change" >
+					<select name="plan" id="change_plan">
+							<option <% if @plan == "free"%> selected <% end %> value="free">FREE</option>
+							<% @plans.each do |plan| %>
+								<% if plan.name != "Lender"%>
+									<option <% if @plan == "#{plan.plan_id}"%> selected <% end %> value="<%= plan.plan_id %>"><%= plan.name %></option>
+								<% end %>
+							<% end %>
+					</select>
+
+				</div>
+			</div>
+			<% if @plan!="free" %>
+				<div class="medium-12 column summary">
+					<div class="row">
+						<div class="medium-9 column">
+							<label class="to_left"><i class="fa fa-check fa-3" aria-hidden="true" style="color:#008cba"></i><%= @pInfo.name %></label><br>
+							<% amnt = @pInfo.amount.to_i/100 %>
+							<div class="plan_def">
+								Month to month plan @ $<%= amnt %><br>
+								Auto renewing
+							</div>
+						</div>
+						<div class="medium-3 column amount_plan">
+							$<%= amnt %>
+						</div>
+					</div>
+				</div>
+				<div class="medium-12 column total summary">
+				  <div class="row">
+					<label class="medium-8 column to_left">Total</label>
+					<label class="medium-4 column amount_plan">$<%= amnt %></label>
+				  </div>
+				</div>
+			<% else %>
+				<div class="medium-12 column summary">
+					<label class="to_left"><i class="fa fa-check fa-3" aria-hidden="true" style="color:#008cba"></i> Free Plan</label><br>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	
+		
+	
+	<div class="right-col medium-8 column">
+		<div class="sign_up_form">
+		<div class="notice"><%= flash[:notice] %></div>
+			<div class="row">
+			
+			<form method="post" id="signupForm" action="https://<%= @hostname %>/home/create_broker">
+				<h3 class="heading_signup"> Personal Information </h3>
+					<input type="hidden" name="plan" value="<%= @plan %>">
+					<div class="medium-6 column">
+						<input type="text" data-recurly="first_name" name="firstName" id="firstName" placeholder="First Name" class="required">
+					</div>
+					<div class="medium-6 column">
+						<input type="text" name="lastName" placeholder="Last Name" class="form-	control" data-recurly="last_name" >
+					</div>
+					<!-- <div class="medium-12 column">
+						<input type="text" name="company" placeholder="Company" >
+					</div>
+					<div class="medium-12 column">
+						<input type="text" name="jobTitle" placeholder="Job Title" >
+					</div> -->	
+					
+					<div class="medium-12 column" style="margin-bottom:20px;">
+						<textarea name="streetAddress1" placeholder="Address"></textarea>
+					</div>
+					<div class="medium-4 column">
+						<input type="text" name="city" id="city" placeholder="City">
+					</div>
+					<div class="medium-4 column">
+						<select name="state" id="state">
+							<option value="Alabama">Alabama</option>
+							<option value="Alaska">Alaska</option>
+							<option value="Arizona">Arizona</option>
+							<option value="Arkansas">Arkansas</option>
+							<option value="California">California</option>
+							<option value="Colorado">Colorado</option>
+							<option value="Connecticut">Connecticut</option>
+							<option value="Delaware">Delaware</option>
+							<option value="District of Columbia">District of Columbia</option>
+							<option value="Florida">Florida</option>
+							<option value="Georgia">Georgia</option>
+							<option value="Hawaii">Hawaii</option>
+							<option value="Idaho">Idaho</option>
+							<option value="Illinois">Illinois</option>
+							<option value="Indiana">Indiana</option>
+							<option value="Iowa">Iowa</option>
+							<option value="Kansas">Kansas</option>
+							<option value="Kentucky">Kentucky</option>
+							<option value="Louisiana">Louisiana</option>
+							<option value="Maine">Maine</option>
+							<option value="Maryland">Maryland</option>
+							<option value="Massachusetts">Massachusetts</option>
+							<option value="Michigan">Michigan</option>
+							<option value="Minnesota">Minnesota</option>
+							<option value="Mississippi">Mississippi</option>
+							<option value="Missouri">Missouri</option>
+							<option value="Montana">Montana</option>
+							<option value="Nebraska">Nebraska</option>
+							<option value="Nevada">Nevada</option>
+							<option value="New Hampshire">New Hampshire</option>
+							<option value="New Jersey">New Jersey</option>
+							<option value="New Mexico">New Mexico</option>
+							<option value="New York">New York</option>
+							<option value="North Carolina">North Carolina</option>
+							<option value="North Dakota">North Dakota</option>
+							<option value="Ohio">Ohio</option>
+							<option value="Oklahoma">Oklahoma</option>
+							<option value="Oregon">Oregon</option>
+							<option value="Pennsylvania">Pennsylvania</option>
+							<option value="Rhode Island">Rhode Island</option>
+							<option value="South Carolina">South Carolina</option>
+							<option value="South Dakota">South Dakota</option>
+							<option value="Tennessee">Tennessee</option>
+							<option value="Texas">Texas</option>
+							<option value="Utah">Utah</option>
+							<option value="Vermont">Vermont</option>
+							<option value="Virginia">Virginia</option>
+							<option value="Washington">Washington</option>
+							<option value="West Virginia">West Virginia</option>
+							<option value="Wisconsin">Wisconsin</option>
+							<option value="Wyoming">Wyoming</option>
+						</select>
+					</div>
+					<div class="medium-4 column">
+						<input type="text" name="postalCode" id="postalCode" placeholder="Postal Code">
+					</div>
+
+				<% if @plan!="free" %>	
+					<h3 class="heading_signup">Billing Information</h3>
+					<div class="medium-12 column">
+							<div data-recurly="number" id= "recurly-number"></div>
+						</div>
+						<div class="medium-12 column">
+							<div data-recurly="cvv" id="recurly-cvv"></div>
+						</div>
+						<div class="medium-6 column">
+							<div data-recurly="month" id="recurly-month"></div> 
+						</div>
+						<div class="medium-6 column">
+							<div data-recurly="year" id="recurly-year"></div>
+						</div>
+					<%  end %>
+					<h3 class="heading_signup">Account Information</h3>
+					<div class="medium-12 column">
+						<input type="text" id="username"  name="username" placeholder="Username" >
+					</div>
+					<div class="medium-12 column">
+						<input type="text" id="email"  name="email" placeholder="Email" >
+					</div>
+					<div class="medium-12 column">
+						<input type="password" id="password" name="password" placeholder="Password [It must be atleast 8 characters long]" >
+					</div>
+					  <input type="hidden" name="recurlytoken" data-recurly="token">
+					<div class="medium-12 column">
+					<input type="submit" value="SUBMIT" class="tiny button">
+					</div>
+				</form>
+				<% if @plan!="free" %>
+					<script src="https://js.recurly.com/v4/recurly.js"></script>
+					<script type="text/javascript">
+					  
+					  $('document').ready(function(){
+					 $('#signupForm').on('submit', function (event) {
+						var form = this;
+				  		event.preventDefault();
+				  		recurly.token(form, function (err, token) {
+					    if (err) {
+					    	// alert(JSON.stringify(err.fields));
+					    	errors = err.fields;
+							$.each(errors, function( index, value ) 
+					    	{	
+					    		if(value=="number")
+					    		{
+					    			alert("Please enter valid card number.")	
+					    		}
+					    		if(value=="month")
+					    		{
+					    			alert("Please enter valid expiry month.")	
+					    		}
+					    		if(value=="year")
+					    		{
+					    			alert("Please enter valid expiry year.")	
+					    		}
+					    	});
+					    	return false;
+					      // handle error using err.code and err.fields
+					    } else {
+					    	//alert(token.id);
+					    	$('input[name="recurly-token"]').val(token.id);
+					      	email = $('#email').val();
+					    	uname = $('#username').val();
+					    	
+					    	err = 0;
+
+					    	
+					    	if(email == "")
+					    	{
+					    		err=1;
+					    		
+					    	}
+					    	else
+					    	{
+					    		data = "email="+email;
+					    		 $.ajax({
+				                    data: data,
+				                    type: 'POST',
+				                    url: '/home/checkemail',
+				                    success:function(response){
+				                     if(response=="false")
+				                     {
+				                     	err=1;
+				                     	
+				                     }
+				                     else
+				                     {
+				                     	err=0;
+				                     	
+				                     }
+
+
+				                   }
+				                });
+
+					    	}
+					    	if(uname == "")
+					    	{
+					    		err=1;
+					    		
+					    	}
+					    	else
+					    	{
+					    		data1 = "username="+uname;
+					    		 $.ajax({
+				                    data: data1,
+				                    type: 'POST',
+				                    url: '/home/checkuname',
+				                    success:function(response){
+				                     if(response=="false")
+				                     {
+				                     	err=1;
+				                     	
+				                     }
+				                     else
+				                     {
+				                     	err=0;
+				                     	
+				                     }
+
+
+				                   }
+				                });
+
+					    	}
+
+					    	setTimeout(function() {
+					    		if(err==0)
+					    		{
+					    			form.submit();	
+					    		}
+					      		
+					      	}, 4000);
+					    }
+				  });
+				});
+					 })
+					</script>
+
+					<script>
+					// recurly.readyState = 0;
+					// recurly.configure('ewr1-Si1772BTvzpk8Qer5H6Oys');
+					 recurly.configure({
+			        publicKey: 'ewr1-Si1772BTvzpk8Qer5H6Oys',
+			       	 fields: {
+					    number: '#recurly-number',
+					    month: '#recurly-month',
+					    year: '#recurly-year',
+					    cvv: '#recurly-cvv'
+					  },
+			        style: {
+			          
+			          all: {
+			           	fontFamily: 'inherit',
+			            fontSize: '1rem',
+			            fontColor: 'inherit',	
+					  	border:'1px solid'
+					  },
+			          number: {
+			            placeholder: 'Card Number'
+			          	
+			          },
+			          month: {
+			            placeholder: 'MM'
+			          },
+			          year: {
+			            placeholder: 'YY	'
+			          },
+			          cvv: {
+			            placeholder: 'CVV'
+			          }
+			        }
+			      });
+
+				</script>
+
+				<% end %>
+				
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,249 @@
+<div class="main_collateral crsr" >
+		<div class="content-white-box">
+		    <div class="cwb-header">
+		        <h3>Collateral Information</h3>
+		    </div>
+		    <div class="cwb-content">
+		        <div class="row">
+		        	<div id="collateral_loc">
+			            <div class="columns medium-6 border-right" id="collateral_address" <% if @collateral_tab.custom_fields.include? "address"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <label><strong>Address:</strong></label>
+			                    <input  type="text" placeholder="Address" name="address" >
+			                </div>
+			            </div>
+
+			            <div class="columns medium-6" id="collateral_city" <% if @collateral_tab.custom_fields.include? "city"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <label><strong>City:</strong></label>
+			                    <input class="field" type="text" placeholder="City" name="city">
+			                </div>
+			            </div>
+
+			            <div class="columns medium-6 border-right" id="collateral_state" <% if @collateral_tab.custom_fields.include? "state"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <label><strong tabindex="-1">State:</strong></label>
+			                    <input type="text" placeholder="State" name="state"  >
+			                </div>
+			            </div>
+			            <div class="columns medium-6" id="collateral_postalcode" <% if @collateral_tab.custom_fields.include? "postalcode"%> style="display:none;" <% end %>>
+			                <div class="trans-info-item">
+			                    <label><strong>Postal Code:</strong></label>
+			                    <input type="text" placeholder="Postal Code" name="postalcode" >
+			                </div>
+			            </div>
+		            </div>
+
+		            <div class="columns medium-6 border-right" id="collateral_estimated_value" <% if @collateral_tab.custom_fields.include? "estimated_value"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Estimated Property Value:</strong>
+		                    <p><input  type="text"  rows="1" name="estimated_value" class="collateral_info_fields"></p>
+		                </div>
+		            </div>
+
+		              <div class="columns medium-6" id="collateral_source_of_value" <% if @collateral_tab.custom_fields.include? "source_of_value"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Source Of Value:</strong>
+		                    
+		                    <select name="source_of_value" class="collateral_info_fields">
+								<option value="Appraisal">Appraisal</option>
+								<option value="BPO/CMA">BPO/CMA</option>
+								<option value="Market Research">Market Research</option>
+							</select>
+							
+		                </div>
+		            </div>
+		            
+		            
+		            <div class="columns medium-6 border-right" id="collateral_mortgage_status" <% if @collateral_tab.custom_fields.include? "mortgage_status"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Mortgage Status:</strong>
+		                    
+			                    <select  name="mortgage_status" class="collateral_info_fields">
+									<option value="1">Paid In Full</option>
+									<option value="0">Has Mortgage</option>
+								</select>
+						</div>
+		            </div>
+
+		           	<div class="columns medium-6"  id="collateral_amount_owed" <% if @collateral_tab.custom_fields.include? "amount_owed"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Amount Owed:</strong>
+		                    <p><input type="text" name="amount_owed" class="collateral_info_fields"></p>
+		                </div>
+		            </div>
+		            
+		            <div class="columns medium-12"  id="collateral_asset_type" <% if @collateral_tab.custom_fields.include? "asset_type"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Asset Type:</strong>
+		                   
+			                    <select name="asset_type" class="collateral_info_fields">
+									<option value="Single Family Residence">Single Family Residence</option>
+									<option value="Multifamily">Multifamily</option>
+									<option value="Condo">Condo</option>
+									<option value="Hospitality">Hospitality</option>
+									<option value="Commercial" >Commercial</option>
+									<option value="Development">Development</option>
+									<option value="Mixed Use" >Mixed Use</option>
+									<option value="Retail" >Retail</option>
+									<option value="Health Care">Health Care</option>
+									<option value="Industrial" >Industrial</option>
+									<option value="Other">Other</option>
+								</select>
+						</div>
+		            </div>
+
+		          
+					
+					<div class="columns medium-6 border-right" id="collateral_size" <% if @collateral_tab.custom_fields.include? "size"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Land Size:</strong>
+		                    
+		                    <select name="size" class="collateral_info_fields">
+		                    	<option value="Sq Footage">Sq Footage</option>
+								<option value="Acres">Acres</option>
+							</select>
+							
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6"  id="collateral_sq_footage" <% if @collateral_tab.custom_fields.include? "sq_footage"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item sq_footage">
+		                    <strong>Sq Footage:</strong>
+		                    <p>
+		                    	<input id="sq_footage" type="text" rows="1" name="sq_footage" class="collateral_info_fields">
+							</p>
+		                </div>
+
+		            </div>
+
+		             <div class="columns medium-6 border-right"  id="collateral_acres" <% if @collateral_tab.custom_fields.include? "acres"%> style="display:none;" <% end %>>
+						<div class="trans-info-item acres" >
+			                    <strong>Acres:</strong>
+			                    <p>
+			                    <input id="acres" type="text" rows="1" name="acres" class="collateral_info_fields">
+								</p>
+			                   
+			             </div>
+		            </div>
+
+		             <div class="columns medium-6"  id="collateral_structural_size" <% if @collateral_tab.custom_fields.include? "structural_size"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Structural Size:</strong>
+		                    
+		                    <select name="structural_size" class="collateral_info_fields">
+		                    	<option value=""> Select Structural Size</option>
+								<option value="Sq Footage">Sq Footage</option>
+								<option value="Units">Units</option>
+							</select>
+						</div>
+		            </div>
+
+		            <div class="columns medium-6 border-right" id="collateral_structural_sq_footage" <% if @collateral_tab.custom_fields.include? "structural_sq_footage"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>Structural Sq Footage: </strong>
+		                    <p>
+		                    <input type="text" rows="1" name="structural_sq_footage" class="collateral_info_fields">
+							</p>
+		                    
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id="collateral_units" <% if @collateral_tab.custom_fields.include? "structural_units"%> style="display:none;" <% end %>>
+		                <div class="trans-info-item">
+		                    <strong>How Many Units?:</strong>
+		                    <p>
+		                    <input type="text" rows="1" name="units" class="collateral_info_fields">
+							</p>
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6 border-right" id="collateral_sf_per_unit" <% if @collateral_tab.custom_fields.include? "structural_sf_per_unit"%> style="display:none;" <% end %> >
+		                <div class="trans-info-item">
+		                    <strong>SF per Unit:</strong>
+		                    <p>
+		                    	<input  type="text" rows="1" name="sf_per_unit" class="collateral_info_fields">
+							</p>
+		                    
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id="collateral_noi_ytd" <% if @collateral_tab.custom_fields.include? "structural_noi_ytd"%> style="display:none;" <% end %> >
+		                <div class="trans-info-item">
+		                    <strong>NOI (YTD):</strong>
+		                    <p>
+		                    	<input type="text" name="noi_ytd" placeholder="NOI"  class="collateral_info_fields">
+							</p>
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6  border-right" id="collateral_noi_two_years_ago" <% if @collateral_tab.custom_fields.include? "noi_two_years_ago"%> style="display:none;" <% end %> >
+		                <div class="trans-info-item">
+		                    <strong>NOI ( two years ago): </strong>
+		                    <p>
+		                    	<input id="noi_two_years_ago" type="text" value="" rows="1" name="noi_two_years_ago" class="collateral_info_fields">
+							</p>
+		                </div>
+		            </div>
+
+
+		            <div class="columns medium-6" id="collateral_noi_last_year" <% if @collateral_tab.custom_fields.include? "noi_last_year"%> style="display:none;" <% end %> >
+		                <div class="trans-info-last">
+		                    <strong>NOI (Last Year):</strong>
+		                    <p>
+		                    	<input id="noi_last_year" type="text" name="noi_last_year" class="collateral_info_fields">
+							</p>
+		                </div>
+		            </div>
+
+		            <div class="columns medium-6" id="collateral_collateral_value" <% if @collateral_tab.custom_fields.include? "collateral_value"%> style="display:none;" <% end %> >
+		                <div class="trans-info-last">
+		                    <strong>Collateral Value:</strong>
+		                    <p>
+		                    	<input type="text" name="collateral_value" class="collateral_info_fields">
+							</p>
+		                </div>
+		            </div>
+
+
+		        </div>
+		    </div>
+		</div><!-- content-white-box -->
+
+		
+		
+
+		<div class="content-white-box" id="collateral_related_to" <% if @collateral_tab.custom_fields.include? "collateral_related_to"%> style="display:none;" <% end %> >
+		  	<div class="cwb-header">
+		      	<label><h3>This Collateral is related to: </h3></label>
+		      
+		  	</div>
+			
+
+			<div class="cwb-content loan_all_funds" style="display:none;">
+				<!------ Render from select_related_funds ---->	
+			</div>
+
+			<div class="cwb-content related_collats">
+				
+
+				<table border="0" cellpadding="0" cellspacing="0" class="table-related-fund">
+
+					  <tr>
+					      <td></td>
+					      <td style="width:35%"><strong>Use</strong></td>
+					      <td style="width:33%"><strong>Beneficiary</strong></td>
+					      <td style="width:30%"><strong>Amount</strong></td>
+					  </tr>
+					  	
+				</table>
+				
+			  
+			</div>
+
+	  
+		</div><!-- content-white-box -->
+</div>
+
+
+

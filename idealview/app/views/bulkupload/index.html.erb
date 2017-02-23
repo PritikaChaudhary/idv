@@ -1,0 +1,745 @@
+<style>
+    @media all and (min-width: 780px){
+        form#search_form {
+            float: left;
+            margin-left: 11px;
+            top: 0;
+            width: 42%;
+            }
+         .form_wrap {
+             position: relative;
+             width: 100%;
+        }
+         .form_wrap > input#search_btn {
+            height: 34px;
+            position: absolute;
+            right:1px;
+            border: none;
+            background-image:url("/assets/search.png"); 
+            background-repeat: no-repeat;
+            top: 1px;
+            width: 36px;
+            background-position: center;
+            cursor: pointer;
+        }
+        .number_records
+        {
+            width:44%;
+            margin-left: 10px;
+        }
+        .bulk_high_res
+        {
+            display:block;
+        }
+        .bulk_low_res
+        {
+            display: none;
+        }
+    }
+
+    @media all and (max-width: 779px){
+        form#search_forms {
+            float: left;
+            margin-left: 11px;
+            top: 0;
+            width: 45%;
+            }
+         .form_wrap {
+             position: relative;
+             width: 100%;
+            }
+         .form_wrap > input#search_btns {
+            height: 34px;
+            position: absolute;
+            right:1px;
+            border: none;
+            background-image:url("/assets/search.png"); 
+            background-repeat: no-repeat;
+            top: 1px;
+            width: 36px;
+            background-position: center;
+            cursor: pointer;
+        }
+        .number_records
+        {
+            width:45%;
+            margin-left: 10px;
+        }
+        .bulk_high_res
+        {
+            display:none;
+        }
+        .bulk_low_res
+        {
+            display: block;
+        }
+        .bulk_high_low
+        {
+            width:100%;
+        }
+    }
+
+
+.bulk_upload_btns
+{
+    float: right;
+    margin-right: 18px;
+}
+.fileinput-button input {
+    font-size: 14px;
+    }
+
+/*button.tiny, .button.tiny {
+    float: left;
+    font-size: 14px;
+    margin-right: 10px;
+    padding: 0.625rem 1.25rem 0.6875rem;
+}*/
+</style>
+<style type="text/css">
+  #loading_img{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:100%;
+  background-color:#666;
+  background-image:url('/assets/ajaxloader.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:10000000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+</style>
+<div id="loading_img" style="display:none"></div>
+<% if @checkAdmin == true %>
+<style type="text/css">
+    .large-3 {
+            width: 31%;
+        }
+</style>
+<% end %>
+<script type="text/javascript">
+
+
+    
+
+        function search_fun()
+        {
+            var fdata=$('#search_form').serialize();
+            var page = 1;
+            var records = $('.number_records').val();
+            var sorting_type = $('#sorting').val();
+            var data = fdata+'&page='+page+'&records='+records+'&sorting_type='+sorting_type;
+            $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/bulkupload/search',
+                    success:function(response){
+                        $('#loan_records').html(response);
+                        $(document).foundation('tooltip');
+                    }
+                });
+         }
+
+
+    function search_functn()
+    {
+        var fdata=$('#search_forms').serialize();
+        var page = 1;
+        var records = $('.number_records').val();
+        var sorting_type = $('#sorting').val();
+        var data = fdata+'&page='+page+'&records='+records+'&sorting_type='+sorting_type;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/bulkupload/search',
+                success:function(response){
+                    $('#loan_records').html(response);
+                    $(document).foundation('tooltip');
+                }
+            });
+     }
+
+    
+
+    function callAjax(customUrl, divId, formId){
+    if(typeof(formId)==='undefined')
+    {
+        data = '';
+    } 
+    else     
+    {
+        data = $('#'+formId).serialize();
+
+    }
+    if(typeof(divId)===undefined) divId ='';
+     $('#loan_lenders').html('loading...');
+    $.ajax({
+        type: 'POST',
+        url: customUrl,
+        data:data,
+        success:function(data){
+                $('#'+divId).html(data);    
+            
+            
+            if(formId=="lender_loans")
+            {
+                var a_id=divId.replace('loan_lenders','');
+                $('#click_'+a_id).hide();
+                $('#click_hide_'+a_id).show();
+                $("#loan_lenders"+a_id).show();
+            }
+
+                },
+        error:function(data){
+            alert('Something went wrong.');
+            
+            },
+        dataType: 'html',
+
+
+    });
+        
+    }
+
+
+    
+
+    $('document').ready(function(){
+        // $(".pagination a").on("click", function() {
+        //     $(".pagination").html("Page is loading...");
+        //     $.getScript('/loans/recent/desc');
+        //     return false;
+        //   });
+
+        $('#sync_loan').click(function(){
+            data = "current_user=admin";
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/bulkupload/upload_loan_data',
+                success:function(response){
+                   $('#sync_info').show();
+                   $('#sync_loan').hide();
+                   $('.flash_notice').hide();
+                }
+            });
+
+        });
+
+        $('#will_paginate_id').bind('click', function(event){
+
+          window.scrollTo(0,0);
+
+          // Some code to show loader on screen
+
+          $('#loan_records').html('Loading');
+          // $(document).foundation('tooltip');
+        });
+
+
+        
+    
+
+/**************** For New Changes ********************************/
+
+   
+    /////////////// Pagination Code //////////////////////
+
+        $('.number_records').change(function(){
+             sorting_type = $('#sorting').val();
+             page = 1;
+             records = $(this).val();
+             var form_val = $('#used').val();
+             var sinput =  $('.search_input').val();
+            
+             customUrl='/bulkupload/recent/desc'
+            if(sinput!="")
+            {
+                var fdata=$('#search_form').serialize();
+                var page = 1;
+                var records = $('.number_records').val();
+                var sorting_type = $('#sorting').val();
+                var data = fdata+'&page='+page+'&records='+records+'&sorting_type='+sorting_type;
+                $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/bulkupload/search',
+                    success:function(response){
+                        $('#loan_records').html(response);
+                        $(document).foundation('tooltip');
+                    }
+                });
+            }
+            else
+            {
+                data = "sorting_type="+sorting_type+"&page="+page+"&records="+records;
+                $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: customUrl,
+                    success:function(response){
+                       $('#loan_records').html(response);
+                       $(document).foundation('tooltip');
+                    }
+                });
+            }
+
+        });
+
+        
+
+
+
+
+    ///////////////// Pagination End Code ////////////////
+
+    $('#add_new_loan').click(function(){
+        $('#myModalLoan').foundation('reveal', 'open');
+    });
+
+    $('#save_loan').click(function(){
+        var button = $('#save_loan');
+
+        // Disable the submit button while evaluating if the form should be submitted
+        button.prop('disabled', true);
+        var data=$('.newLoanForm').serialize();
+        $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/new_loan',
+                    success:function(response){
+                       window.location.href = "http://<%= @hostname %>/loans/"+response;
+                       // window.location.href = "localhost:3000/loans/"+response;
+                    }
+                });
+    });
+
+    $('.newLoanForm').on('keyup keypress', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) { 
+        e.preventDefault();
+        return false;
+        }
+    });
+
+    $('#upload_zipfolder').click(function(){
+        $('#uploadZip').foundation('reveal', 'open');
+    });
+
+    $('#import_from_dropbox').click(function(){
+        $('#loading_img').show();
+         var data="folder=IDV";
+        $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/bulkupload/check_folder',
+            success:function(response){
+                 $('#loading_img').hide();
+                    if(response!="error")
+                    {
+                        if(confirm('It looks like you already have a dropbox folder called IDV, would you like idealVIEW to use this folder as its root directory?'))
+                        {
+                            $('#loading_img').show();
+                             var data="button=click";
+                             $.ajax({
+                                    data: data,
+                                    type: 'POST',
+                                    url: '/bulkupload/list_folders',
+                                    success:function(response){
+                                        if(response=="error")
+                                        {
+                                            alert("No loan folder found.");
+                                            $('#loading_img').hide();
+                                        }
+                                        else
+                                        {
+                                            $('#folder_list').html(response);
+                                            $('#foldersList').foundation('reveal', 'open');
+                                        }
+                                        $('#loading_img').hide();
+                                    }
+                                });
+                        }
+                        else
+                        {
+                            $('#loading_img').hide();   
+                        }
+                    }
+                    else
+                    {
+                        $('#loading_img').hide();
+                        if(confirm('idealVIEW would like to create a folder in dropbox called IDV'))
+                        {
+                             $('#loading_img').show();
+                             $.ajax({
+                                data: data,
+                                type: 'POST',
+                                url: '/bulkupload/create_folder',
+                                success:function(response){
+                                  alert("Please create loan folders containing documents and images folder in IDV folder. [/IDV/loan_name/images or /IDV/loan_name/documents] ")
+                                  $('#loading_img').hide();
+                                    
+                                }
+                            });
+                        }
+                        else
+                        {
+                             $('#loading_img').hide();
+                        }
+                    }
+                }
+            });
+        });
+
+});
+
+function paging(pgnum){
+            page = pgnum;
+            $('.page_number').val(page);
+            sorting_type = $('#sorting').val();
+            records = $('.number_records').val();
+            var form_val = $('#used').val();
+            var sinput =  $('.search_input').val();
+          
+            customUrl='/bulkupload/recent/desc'
+            if(sinput!="")
+            {
+                var fdata=$('#search_form').serialize();
+                var records = $('.number_records').val();
+                var sorting_type = $('#sorting').val();
+                var data = fdata+'&page='+page+'&records='+records+'&sorting_type='+sorting_type;
+                $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: '/loans/search',
+                    success:function(response){
+                        $('#loan_records').html(response);
+                        $(document).foundation('tooltip');
+                    }
+                });
+            }
+            else
+            {
+                data = "sorting_type="+sorting_type+"&page="+page+"&records="+records;
+                 $.ajax({
+                    data: data,
+                    type: 'POST',
+                    url: customUrl,
+                    
+                    success:function(response){
+                       $('#loan_records').html(response);
+                       $(document).foundation('tooltip');
+                    }
+
+                });   
+            }            
+        }
+
+
+
+function send_to_ids()
+{
+    var allVals = [];
+    $('input[name="select_loan"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        alert("Please select atleast one loan.");
+        return false;
+    }
+    var data = "&moredata=" + allVals;
+    $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/send_to_ids',
+            success:function(response){
+                alert("Loans are sent to IDS");
+            }
+        });
+    //$.form('http://<%= @hostname %>/loans/send_to_cpc', { q: allVals }, 'POST').submit();
+        
+}
+
+
+
+
+function submit_folder()
+{
+    $('#loading_img').show();
+    var allVals = [];
+    $('input[name="select_folder"]:checked').each(function(){
+        allVals.push($(this).val());
+    });
+    if (allVals.length === 0) {
+        $('#loading_img').hide();
+        alert("Please select atleast one folder.");
+        return false;
+    }
+    else
+    {
+        var data = "&folders="+allVals
+        <% if @adminLogin == true %>
+             $.ajax({
+                            data: data,
+                            type: 'POST',
+                            url: '/bulkupload/sync_folders',
+                            success:function(response){
+                                $('#loan_records').html(response);
+                                $('#foldersList').foundation('reveal', 'close');
+                                $('#loading_img').hide();
+                                alert("Your folders are synced.") 
+                            }
+                        });
+        <% else %>
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/bulkupload/check_dropbox_size',
+                success:function(response){
+                    if(response=="true")
+                    {
+                        $.ajax({
+                            data: data,
+                            type: 'POST',
+                            url: '/bulkupload/sync_folders',
+                            success:function(response){
+                                $('#loan_records').html(response);
+                                $('#foldersList').foundation('reveal', 'close');
+                                $('#loading_img').hide();
+                                alert("Your folders are synced.") 
+                            }
+                        });
+                    }
+                    else
+                    {
+                        alert("You don't have enough memory. Please update your plan or contact admin.");
+                        $('#foldersList').foundation('reveal', 'close');
+                        $('#loading_img').hide();
+                    }
+                }
+            });
+        <% end %>
+    }
+}
+
+function old_import_loans()
+{
+    $('#loading_img').show();
+     var data="button=click";
+     $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/bulkupload/import_from_dropbox',
+            success:function(response){
+              if(response=="error")
+              {
+                $('#loading_img').show();
+                if(confirm('idealVIEW would like to create a folder in dropbox called IDV'))
+                {
+
+                     $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/bulkupload/create_folder',
+                        success:function(response){
+                          alert("Please create loan folders containing documents and images folder in IDV folder. [/IDV/loan_name/images or /IDV/loan_name/documents] ")
+                          $('#loading_img').hide();
+                            
+                        }
+                    });
+                }
+                else
+                {
+                   $('#loading_img').hide(); 
+                }
+              }
+              else
+              {
+                $('#loan_records').html(response);
+                $('#loading_img').hide();  
+              }
+              
+            }
+        });
+}
+
+function upload_zip()
+{
+    // val = $(this).val();
+    // alert(val);
+    // data = $('#upload_zip').serialize()
+    //  $.ajax({
+    //         data: data,
+    //         type: 'POST',
+    //         url: '/bulkupload/upload_zip',
+    //         success:function(response){
+    //           alert("Please create loan folders containing documents and images folder in IDV folder. [/IDV/loan_name/images or /IDV/loan_name/documents] ")
+    //           $('#loading_img').hide();
+                
+    //         }
+    //     });
+    
+    formdata = $('#upload_zip').serialize();
+    form = $('#upload_zip')
+
+    var formAction = form.attr('action');
+     $.ajax({
+        url         : '/bulkupload/check_zipfolder_size',
+        data        : formdata ? formdata : form.serialize(),
+        cache       : false,
+        contentType : false,
+        processData : false,
+        type        : 'POST',
+        success     : function(data, textStatus, jqXHR){
+            // Callback code
+        }
+    });
+    // $.ajax({
+    //     url         : '/bulkupload/upload_zip',
+    //     data        : formdata ? formdata : form.serialize(),
+    //     cache       : false,
+    //     contentType : false,
+    //     processData : false,
+    //     type        : 'POST',
+    //     success     : function(data, textStatus, jqXHR){
+    //         // Callback code
+    //     }
+    // });
+}
+
+
+</script>
+<script src="https://rawgit.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<!-------------------- List Folders Popup -------------------------->
+
+    <div id="foldersList" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead" id="note_content">
+        Select Folder
+      </div>
+       <div class="row">
+            <input onclick="submit_folder()" class="button" type="button" value="Submit">
+            <div class="large-12 column" id="folder_list">
+                
+            </div>
+        </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
+<!-------------------- List Folders Popup -------------------------->
+
+<!-------------------- Upload zip Popup -------------------------->
+
+    <div id="uploadZip" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div class="modalhead" id="note_content">
+        Select File
+      </div>
+       <div class="row">
+            <div class="large-12 column">
+               <%= render partial: 'file_upload', locals:{contact_id:"21321", form_id:'zip_upload', controller:'bulkupload', action:'upload_zip', category:'zip', multiple:'true', type:'full', button_label:'Upload new files'}
+                        %>
+            </div>
+        </div>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
+<!-------------------- End Upload zip Popup -------------------------->
+
+
+<div class="container heading">
+    <div class="medium-12 column" style="background:#F1F1F1; margin-bottom: 25px;">
+        <h3 style="text-align:center;">Loans</h3>
+    </div>
+</div>
+<!-- <div class="container"  style="padding-left:48px; padding-right:60px;"> -->
+<div class="container">
+
+<!------------------------- Header Buttons ------------------------------>
+     <div class="small-12 columns" id="new_buttons">
+        <div class="small-4 columns bulk_high_res">
+            
+           <form id="search_form"  name="search_form">
+                <div class="form_wrap">
+                    <input type="text" placeholder="Search" name="search_txt" onkeyup="search_fun();" class="search_input">
+                    <input id="search_btn" type="button" >
+                </div>
+            </form>
+
+
+            <select  class="number_records">
+                <option value="10">10 Records</option>
+                <option value="25">25 Records</option>
+                <option value="50">50 Records</option>
+                <option value="100">100 Records</option>
+            </select>
+            
+            <input type="hidden" class="page_number" <% if defined? @page %> value = "<%= @page %>" <% else %> value="1" <% end %>  >
+
+        </div>
+        
+            <div class="small-8 columns  bulk_high_low">
+                
+                    <% #unless @dropInfo.blank? %>
+                        
+                        <!-- <input type="button" <% if @syncing == 1 %> style="display:none;"<% else %> <% end %> class="button" id="sync_loan" value="Sync Loan"> -->
+                        
+                    <% #end %>
+                    <a href="https://storage.googleapis.com/idealview/outsider/bulk_format/IDV.zip" class="button bulk_page_btn"> Download Template </a>
+                    <a href="javascript:void(0);" class="button bulk_uploadpage_btn" id="upload_zipfolder" class="button"> Upload Zip </a>
+                    <% unless @dropInfo.blank? %>
+                        <a href="javascript:void(0);" class="button bulk_page_btn"  id="import_from_dropbox">Import from dropbox </a>
+                    <% end %>
+                
+            </div>
+
+            <div class="small-12 columns bulk_low_res">
+                
+               <form id="search_forms"  name="search_form">
+                    <div class="form_wrap">
+                        <input type="text" placeholder="Search" name="search_txt" onkeyup="search_functn();" class="search_input">
+                        <input type="button" id="search_btns" >
+                    </div>
+                </form>
+
+
+                <select  class="number_records">
+                    <option value="10">10 Records</option>
+                    <option value="25">25 Records</option>
+                    <option value="50">50 Records</option>
+                    <option value="100">100 Records</option>
+                </select>
+                
+                <input type="hidden" class="page_number" <% if defined? @page %> value = "<%= @page %>" <% else %> value="1" <% end %>  >
+
+            </div>
+        
+
+
+        
+        
+
+    
+    <div id="loan_records" class="small-12 column">
+    
+        <div><img src="/assets/sync.gif" id="sync_info"  <% if @syncing == 1 %>style="float: left; margin-left: 435px;" <% else %> style="float: left; margin-left: 435px; display:none;" <% end %>></div>
+       <% if @syncing != 1 %>
+           <% unless @check_syncloan.blank?%>
+                <% if @check_syncloan.process == "completed"%>
+                    <div class="flash_notice">Your loans are synced.</div>
+                <% end %>
+            <% end %>
+        <% end %>
+        <% if defined? params[:id]%>
+        <% else %>
+            <%= render partial: 'layouts/messages' %>
+        <% end %>
+        <%= render partial: 'all_loans'%>
+    </div>
+    
+</div>
+
+ 

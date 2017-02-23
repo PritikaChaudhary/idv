@@ -1,0 +1,221 @@
+<script>
+function handleMainImage(files) {
+	for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var imageType = /image.*/;
+    
+      checksize =""
+      <% if !@infoBroker.blank? && @infoBroker.plan == "free"%>
+	   if(file.size > 10485760) //10MB in KB
+	   {
+	        checksize = "exceed";
+	        msg = "You cannot upload file greater than 10 MB. Please upgrade your plan to business.";
+	   }
+	  <% end %>
+
+	  <% if !@infoBroker.blank? && @infoBroker.plan == "BUSINESS"%>
+	   if(file.size > 26214400) //25MB in KB
+	   {
+	        checksize = "exceed";
+	        msg = "You cannot upload file greater than 25 MB. Please upgrade your plan to enterprise.";
+	   }
+	  <% end %>
+
+	  <% if @fileUpload == "false" %>
+	        checksize = "exceed";
+	        <% if !@infoBroker.blank? && @infoBroker.plan == "SOLO"%>
+	            msg = "Sorry, you have used your free 1gb storage."
+	        <% end %>
+	        <% if !@infoBroker.blank? && @infoBroker.plan == "BUSINESS"%>
+	            msg = "Sorry, you have used your free 5gb storage."
+	        <% end %>
+	  <% end %>
+	
+	if(checksize=="exceed")
+	{
+		alert(msg);
+		return false;
+	}
+
+    if (!file.type.match(imageType)) {
+      continue;
+    }
+    $("#main_image_preview").css({"float":"right",  "margin-right":"77px", "margin-top":"20px"}); 
+    var img = document.createElement("img");
+    img.classList.add("obj");
+    img.file = file;
+    mainDiv = document.getElementById("for_target");
+    mainDiv.innerHTML = '';
+    
+    mainDiv.appendChild(img); // Assuming that "preview" is a the div output where the content will be displayed.
+    
+    var reader = new FileReader();
+    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; aImg.id = "target";
+
+    	var dkrm = new Darkroom('#target', {
+      // Size options
+      minWidth: 100,
+      minHeight: 100,
+      maxWidth: 600,
+      maxHeight: 500,
+      ratio: 4/3,
+      backgroundColor: '#000',
+
+      // Plugins options
+      plugins: {
+        //save: false,
+        crop: {
+          quickCropKey: 67, //key "c"
+          //minHeight: 50,
+          //minWidth: 50,
+          //ratio: 4/3
+        }
+      },
+
+      // Post initialize script
+      initialize: function() {
+        var cropPlugin = this.plugins['crop'];
+        // cropPlugin.selectZone(170, 25, 300, 300);
+        // cropPlugin.requireFocus();
+      }
+    });
+
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-23657373-2', 'mattketmo.github.io');
+    ga('send', 'pageview');
+
+	}; })(img);
+
+
+
+    reader.readAsDataURL(file);
+  }
+}
+
+	function for_check()
+	{
+
+		var img = $('#for_target img').attr('src');
+		// response.data = new Buffer(matches[2], 'base64');
+		// Set your data that will be sent to reflect this change
+        $('#img_fullpath').val(img);
+		data = $('#featured_image').serialize();
+	      $.ajax({
+	        type: 'POST',
+	        url: '/loans/upload_main_imagex/<%= @loan.id %>',
+	        data:data,
+	        success:function(data){
+	        	if(data!="true")
+	        	{
+	        		$('#file').hide();
+	        		$('#main_image').hide();
+	        		$('#nt_allowed').show();
+	        	}
+	        	$("#main_image_preview").css({ "margin-top":"20px", "margin-right": "0px"});
+	            // $('#myModal4').foundation('reveal', 'close'); 
+	            // var datax = "&id=<%= @loan_id%>";
+	            // $.ajax({
+	            //             data: datax,
+	            //             type: 'POST',
+	            //             url: '/loans/loan_images',
+	            //             success:function(response){
+	            //                 $('#pictures-container').html(response);
+	            //             }
+	            //         });
+	        }
+	      });
+	}
+
+	  (function() {
+'use strict';
+
+Darkroom.plugins['save'] = Darkroom.Plugin.extend({
+
+  defaults: {
+    callback: function() {
+      this.darkroom.selfDestroy();
+        
+      $('#if_edit').val('yes');
+		  setTimeout(function() {
+		   for_check(); //your code to be executed after 1 second
+		  }, 1000);
+    
+
+    }
+  },
+
+  initialize: function InitializeDarkroomSavePlugin() {
+    var buttonGroup = this.darkroom.toolbar.createButtonGroup();
+
+    this.destroyButton = buttonGroup.createButton({
+      image: 'save'
+    });
+
+    this.destroyButton.addEventListener('click', this.options.callback.bind(this));
+
+   
+  },
+});
+
+})();
+
+</script>
+					<div class='image-upload-section'>
+						<%=form_tag({:controller=>'loans', :action=>'upload_main_imagex',:id=>@loan._id},  :id=>'featured_image', multipart: true,  :method=>"POST") do %>
+								<div class='small-12 medium-loan-detil columns inline' style="position:relative;">
+									<% if @fileUpload == "true" %>
+										<div id="file" style="position:absolute;"class='btn-choose-img'>
+										Choose Image</div>
+										<%=file_field_tag 'upload', :onchange=>"handleMainImage(this.files)", :style=>"opacity:0; z-index:1;width:242px;height:41px;cursor:pointer", :id=>'main_image'%>
+									<% else %>
+										<div class="btn-choose-img"  id="file" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+									<% end %>
+
+									<div class="btn-choose-img"  id="nt_allowed" tabindex="0"  style="cursor:pointer; float:left; margin-left:150px; display:none;" onclick="alert('Please update your plan.')" >
+										Choose Image</div>
+
+								</div>
+								<input type="hidden" id="img_fullpath" name="feature_fullpath">
+								<!-- <div class='small-5 columns inline'>
+									<a href="javascript:void(0);" id="checkcheck" onclick="for_check();"  class="btn-save-img">Save Image</a>
+								</div> -->
+						<%end%>
+
+						<div id='main_image_preview' class='centered large-12 columns' style='float:right;  margin-top:20px;'>
+					
+							<div id="content">
+									<div class="container">
+										<div class="figure-wrapper">
+								           <figure class="image-container target" id="for_target">
+										   		<%
+							                     if @loan.featured_image %>
+							                     	<img style='max-height:400px;width:auto;' src="<%= @loan.featured_image['url']%>">
+												<% else  %>
+													<% address = "" %>
+													<% unless @loan.info['Address3'].blank?%>
+														<% address = @loan.info['Address3'] %>
+													<% else %>
+														<% if @loan.info['City3'] && @loan.info['State3']%>
+															<% address = "#{@loan.info['City3']}, #{@loan.info['State3']}"%>
+														<% end %>
+													<% end %>
+								                    <% if address!="" %>
+							                          <img src="https://maps.googleapis.com/maps/api/streetview?size=748x348&location=<%= address %>&heading=151.78&pitch=-0.76&key=AIzaSyD8qHHvmUY3R0E5OrLOGUj3aFRnPqAVJ60" style="margin-left:45px;">
+							                        <% end %>
+							                    <% end %>
+										   </figure>
+								    	</div>
+							    	</div>
+							</div>
+						</div>
+
+					</div>
+				
+				<% # abort("#{@loan.featured_image['url']}")%>
+				
+				
+					  	

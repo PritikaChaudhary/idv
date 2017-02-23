@@ -1,0 +1,74 @@
+<div class='row'>
+	
+  <div class="row">
+    <div class="small-4 small-centered columns">
+      <h2>Manage Admins</h2>
+    </div>
+    </div>
+    <div class="row">
+      <div class="small-3 columns">
+            <img src="http://<%= @hostname %>/assets/bin2.png" style="float: left; width: 39px; height: 38px; border: 1px solid; cursor:pointer;" class="bin2" onclick="if(confirm('Are you sure you want to delete these items?')){delete_admins()}">
+      </div>
+      <div class="small-3 columns">
+      </div>
+      <div class="small-3 columns">
+      </div>
+      <div class="small-3 columns">
+          <%= link_to((button_tag 'Add Admin', class: 'tiny button'), admins_new_user_path()) %>
+      </div>
+    </div>
+      <div class="row">
+          <div class="small-12 small-centered columns all_admins">
+            <table style="width:100%">
+            	<tr><th><input type="checkbox" name="select_all_admin"  class="select_all_admins" style="float:left; margin-bottom:0px;"></th><th>Name</th><th>Email</th><th>&nbsp;</th></tr>
+              <% @users.each do |user| %>
+                <tr>
+                  <td><input type="checkbox" nid="check_<%= user.id %>" name="select_admin" value="<%= user.id %>" class="single_admin" style="float:left; margin-bottom:0px;"></td>
+                  <td><%= user.name %></td>
+                  <td><%= link_to(user.email,  admins_edit_user_path(user)) %></td>
+                  <td><%= link_to((button_tag 'Edit', class: 'tiny button'), admins_edit_user_path(user)) %></td>
+                   <!-- <td><%= user.roles_text %></td>
+                   <td><%= user.is_admin %></td> -->
+            	  <!-- <td>
+            	  	<%= link_to 'Delete', admins_destroy_user_path(user),
+                          method: :delete,
+                          data: { confirm: 'Are you sure?' } %>
+            	  </td> -->
+                </tr>
+              <% end %>
+            </table>
+          </div>
+      </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $('document').ready(function(){
+      $(".select_all_admins").change(function () {
+        $(".single_admin").prop('checked', $(this).prop("checked"));
+      });
+
+  });
+
+  function delete_admins()
+  {
+      var allVals=[];
+      $('input[name="select_admin"]:checked').each(function(){
+          allVals.push($(this).val());
+      });
+      if (allVals.length === 0) {
+          alert("Please select atleast one broker.");
+          return false;
+      }
+      var data = "&moredata=" + allVals;
+      $.ajax({
+              data: data,
+              type: 'POST',
+              url: '/admin/delete_admins',
+               success:function(data){
+                  $('.all_admins').html(data);
+              }
+              
+          });
+
+  }
+</script>

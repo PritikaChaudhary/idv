@@ -1,0 +1,97 @@
+ <%= render partial: 'layouts/messages' %>
+                <% color_class = ''%>
+                <div class="small-12 columns">
+                    <table width="100%" class="list_loans">
+                        <thead>
+                            <tr>
+                                <th>Loan Name</th>
+                                <th>Net Amount</th>
+                                <th>Location</th>
+                                <th>Time Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                <%
+                i = 1;
+                unless @loans.blank?
+                 @loans.each do |loan_rec|
+                    loan=loan_rec.copy_loan
+                    #abort("#{loan.inspect}")
+                    
+                 %>
+
+                <!-- <div class='row <%=color_class%> bottom-space text-left'> -->
+                    <% if loan.name.blank?
+                        #abort("#{loan|Loan_id|}")
+                        loan_name = 'No Loan Title'
+                       else
+                        loan_name = loan.name
+                       end
+
+                    %>
+                    
+                    <tr>
+                        
+                        <td><a href="http://<%= @hostname %>/lenders/loan_detail/<%= loan_rec.id %>"><%= loan_name%> </td>
+                        <td>
+                                <!-- <span>Net Amount:</span><BR> -->
+                                <% if loan.info['_NetLoanAmountRequested0'].blank? %>
+                                    N/A
+                                <% else %>
+                                    <%=fd_money(loan.info['_NetLoanAmountRequested0'])%>
+                                <% end %>
+                        </td>
+                        <td>
+                            <!-- <span>Location :</span> -->
+                            <% if loan.info['City3'].blank? && loan.info['State3'].blank? %>
+                               N/A
+                            <% else %>
+                              <%= loan.info['City3']+', '%> <%= loan.info['State3']%>
+                            <% end %>
+                        </td>
+                        
+
+
+                <td>
+                <% 
+                    etime = Time.parse(loan_rec.end_time)
+                    @endt = etime.strftime("%a %b %d %Y %H:%M:%S")
+                    now_time = Time.now %>
+
+                  <%  if etime < now_time %>
+                            Expired
+                  <%  else %>
+                        <script type="text/javascript">
+                            $('document').ready(function(){
+                                $('#countdown<%=i %>').timeTo(new Date('<%= @endt %>'));
+                            });
+                        </script>
+                        <div id="countdown<%=i %>" class = "countdown"></div>
+                  <% end  %>
+                </td>
+         
+                 
+                    
+
+                    
+                    </tr>
+              <% i = i+1 %>
+              <% end %>
+                        
+                <%
+                else %>
+                <tr>
+                    <td colspan="4">
+                        <% if @empty.blank? %>
+                                No Potential deals found.
+                        <% else %> 
+                                <%= @empty %>
+                        <%  end %>
+                    </td>
+                </tr>
+              <% end %>
+                </tbody>
+              </table>
+            </div>
+       
+    </div>

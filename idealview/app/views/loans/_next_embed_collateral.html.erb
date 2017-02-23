@@ -1,0 +1,979 @@
+<!-------------------------- Location Google API ------------------------------>
+  
+  <script type="text/javascript">
+  var autocomplete = {};
+    var autocompletesWraps = <%= raw @brwrId.to_json %>;
+
+   autocompletesWraps.forEach(function(this_form) {
+       // alert(this_form)
+       window[this_form+'_form']  = { street_number: 'short_name', route: 'long_name', locality: 'long_name', administrative_area_level_1: 'long_name', country: 'long_name', postal_code: 'short_name' };
+        ++this.count;
+      }, this);
+
+     function initialize() {
+      $.each(autocompletesWraps, function(index, name) {
+      
+        if($('#'+name).length == 0) {
+          return;
+        }
+
+       
+        autocomplete[name] = new google.maps.places.Autocomplete($('#'+name+' .autocomplete')[0], { types: ['geocode'] });
+          
+        google.maps.event.addListener(autocomplete[name], 'place_changed', function() {
+          
+          var place = autocomplete[name].getPlace();
+          var form = eval(name+'_form');
+          // var form = eval(name);
+
+          for (var component in form) {
+            $('#'+name+' .'+component).val('');
+            $('#'+name+' .'+component).attr('disabled', false);
+          }
+          
+          highlight_address = "";
+          col_address = "";
+          prsnl_address = "";
+          grntr_address = "";
+          for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (typeof form[addressType] !== 'undefined') {
+              var val = place.address_components[i][form[addressType]];
+              $('#'+name+' .'+addressType).val(val);
+              // alert(name+" "+addressType+" - "+val);
+              if(name.indexOf("loan_highlight") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  highlight_address = highlight_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  highlight_address = highlight_address.concat(val);            
+                }
+                $('#loc_address').val(highlight_address);
+              
+              }
+
+              if(name.indexOf("collateral_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  col_address = col_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  col_address = col_address.concat(val);            
+                }
+                id_col = name.replace("collateral_loc_","")
+                $('#'+name+' #address_'+id_col).val(col_address);
+              
+              }
+
+              if(name.indexOf("personal_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  prsnl_address = prsnl_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  prsnl_address = prsnl_address.concat(val);            
+                }
+                id_bor = name.replace("personal_loc_","")
+                $('#'+name+' #personal_address_'+id_bor).val(prsnl_address);
+              
+              }
+
+              if(name.indexOf("guarantor_loc") >= 0)
+              {
+                
+
+                if(addressType=="street_number")
+                {
+                  grntr_address = grntr_address.concat(val+", "); 
+                }
+                
+                if(addressType=="route")
+                {
+                  grntr_address = grntr_address.concat(val);            
+                }
+                id_bor = name.replace("guarantor_loc_","")
+                $('#'+name+' #guarantor_address_'+id_bor).val(grntr_address);
+              
+              }
+              
+            }
+
+
+          }
+
+          if (name.indexOf("collateral_loc") >= 0)
+          {
+            setTimeout(function(){
+                  
+              id_col = name.replace("collateral_loc_","")
+              address = $('#'+name+' #address_'+id_col).val();
+              city = $('#'+name+' #city_'+id_col).val();
+              state = $('#'+name+' #state_'+id_col).val();
+              postalcode = $('#'+name+' #postalcode_'+id_col).val();
+
+              data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id_col;
+
+              $.ajax({
+                  data: data,
+                  type: 'POST',
+                        url: '/loans/save_collateral_address',
+                         success:function(response){
+                         
+
+                          new_data = "&collateral_id="+id_col;
+                          $.ajax({
+                            data: new_data,
+                            type: 'POST',
+                                  url: '/loans/fetch_location_map',
+                                   success:function(response){
+                                    $("#collateral_"+id_col+" .map_container").html(response);
+                                }
+                              }) ;
+
+                          address_val = $('#loc_address').val();
+                          
+                          if(address_val=="")
+                          {
+                            $('#loc_address').val(address);
+                            $('#loc_state').val(state);
+                            $('#loc_city').val(city);
+                            
+                            datas = "id=<%= @loan.id %>";
+                            $.ajax({
+                              data: datas,
+                              type: 'POST',
+                              url: '/loans/view_loc_map',
+                              success:function(response){
+                                $('#place_featured_image').html(response);
+                              }
+                            });
+
+                          }
+                      }
+              });
+            }, 3000);
+          }
+
+
+          if (name.indexOf("loan_highlight") >= 0)
+          {
+            
+            setTimeout(function(){
+            
+              city_val = $('#loc_city').val();
+              state_val = $('#loc_state').val();
+              address_val = $('#loc_address').val();
+              data = "id=<%= @loan.id %>"+"&City3="+city_val+"&State3="+state_val+"&Address3="+address_val;
+              $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_loc',
+                  success:function(response){
+                    $('.loctn_loc').html(city_val+', '+state_val);
+                    $('#place_featured_image').html(response);
+                  }
+               });
+           
+              }, 3000);
+            }
+
+            if (name.indexOf("personal_loc") >= 0)
+            {
+              
+              setTimeout(function(){
+              
+              id_prsnl = name.replace("personal_loc_","")
+              address = $('#'+name+' #personal_address_'+id_prsnl).val();
+              city = $('#'+name+' #personal_city_'+id_prsnl).val();
+              state = $('#'+name+' #personal_state_'+id_prsnl).val();
+              postalcode = $('#'+name+' #personal_postalcode_'+id_prsnl).val();
+
+             data = "&personal_address="+address+"&personal_city="+city+"&personal_state="+state+"&personal_postalcode="+postalcode+"&borrower_id="+id_prsnl;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_personal_address',
+                             success:function(response){
+                              
+                          }
+                        }) ;
+
+                }, 3000);
+              }
+
+              if (name.indexOf("guarantor_loc") >= 0)
+              {
+                
+                setTimeout(function(){
+                
+                id_grntr = name.replace("guarantor_loc_","")
+                address = $('#'+name+' #guarantor_address_'+id_prsnl).val();
+                city = $('#'+name+' #guarantor_city_'+id_prsnl).val();
+                state = $('#'+name+' #guarantor_state_'+id_prsnl).val();
+                postalcode = $('#'+name+' #guarantor_postalcode_'+id_prsnl).val();
+
+                data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id_grntr;
+
+                  $.ajax({
+                      data: data,
+                      type: 'POST',
+                            url: '/loans/save_guarantor_address',
+                             success:function(response){}
+                        }) ;
+
+                }, 3000);
+              }
+
+
+          
+                        
+                  // data = "&guarantor_address="+address+"&guarantor_city="+city+"&guarantor_state="+state+"&guarantor_postalcode="+postalcode+"&borrower_id="+id;
+
+                  // $.ajax({
+                  //     data: data,
+                  //     type: 'POST',
+                  //           url: '/loans/save_guarantor_address',
+                  //            success:function(response){}
+                  //       }) ;
+
+                
+          
+        });
+
+
+      });
+    }
+</script>
+  
+
+<!-------------------------- End Location Google API ------------------------------>
+<% if !@collaterals.empty? %>
+	<% serial = 1 %>
+	<% @collaterals.each do |collateral|%>
+		<div class="main_collateral crsr" id="collateral_<%= collateral.id %>">
+				<div class="content-white-box">
+				    <div class="cwb-header">
+				        <h3><%= serial %>. Collateral Information</h3>
+               
+				    </div>
+				    <div class="cwb-content">
+				        <div class="row">
+				        	<div id="collateral_loc_<%= collateral['_id']  %>">
+					            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "address"%> style="display:none;" <% end %> >
+					                <div class="trans-info-item">
+					                    <strong>Address:</strong>
+					                    <input class="address autocomplete collateral_info_fields" type="text" placeholder="Address" name="address" id="address_<%= collateral.id %>" autocomplete="off" tabindex="0" value="<%= collateral.address%>">
+					                    <label class="error collateral_address_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+					                </div>
+					            </div>
+					            <div class="columns medium-6" <% if @collateral_tab.custom_fields.include? "city"%> style="display:none;" <% end %> >
+					                <div class="trans-info-item">
+					                    <strong>City:</strong>
+					                    <input class="field locality collateral_info_fields" type="text" placeholder="City" name="city" id="city_<%= collateral.id %>" tabindex="0" value="<%= collateral.city%>">
+					                     <label class="error collateral_city_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+					                </div>
+					            </div>
+					            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "state"%> style="display:none;" <% end %> >
+					                <div class="trans-info-item">
+					                    <strong>State:</strong>
+					                    <input class="field administrative_area_level_1 collateral_info_fields" type="text" value="<%= collateral.state%>" placeholder="State" name="state" id="state_<%= collateral.id %>" tabindex="0">
+					                    <label class="error collateral_state_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+					                </div>
+					            </div>
+					            <div class="columns medium-6" <% if @collateral_tab.custom_fields.include? "postalcode"%> style="display:none;" <% end %> >
+					                <div class="trans-info-item">
+					                    <strong>Postal Code:</strong>
+					                    <input class="field postal_code collateral_info_fields" type="text" placeholder="Postal Code" name="postalcode" id="postalcode_<%= collateral.id %>" tabindex="0" value="<%= collateral.postalcode%>">
+                              <label class="error collateral_postalcode_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+					                   
+					                </div>
+					            </div>
+				            </div>
+
+				            <div class="columns medium-6 border-right"  <% if @collateral_tab.custom_fields.include? "estimated_value"%> style="display:none;" <% end %> >
+				                <div class="trans-info-item">
+				                    <strong>Estimated Property Value:</strong>
+				                    <% 
+								      	estimated_value = ""
+								      	unless collateral.estimated_value.blank?
+								      		estimated_value = fd_money(collateral.estimated_value.to_i)
+								      	end
+								      %>
+				                    <input id="estimated_value_<%= collateral.id %>" type="text" rows="1" name="estimated_value" value="<%= estimated_value%>" class="collateral_info_fields">
+                            <label class="error collateral_estimated_value_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                   
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6"   <% if @collateral_tab.custom_fields.include? "source_of_value"%> style="display:none;" <% end %> >
+				                <div class="trans-info-item">
+				                    <strong>Source Of Value:</strong>
+				                    
+				                    <select id="source_of_value_<%= collateral.id %>" rows="1" name="source_of_value" class="collateral_info_fields">
+        										<option value="Appraisal" <% if collateral.source_of_value=="Appraisal" %> selected="selected" <% end %>>Appraisal</option>
+        										<option value="BPO/CMA" <% if collateral.source_of_value=="BPO/CMA" %> selected="selected" <% end %>>BPO/CMA</option>
+        										<option value="Market Research" <% if collateral.source_of_value=="Market Research" %> selected="selected" <% end %>>Market Research</option>
+        									</select>
+									         <label class="error collateral_source_of_value_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                   
+				                </div>
+				            </div>
+				            
+				            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "mortgage_status"%> style="display:none;" <% end %> >
+				                <div class="trans-info-item">
+				                    <strong>Mortgage Status:</strong>
+				                    
+					                    <select id="mortgage_status_<%= collateral.id %>"  name="mortgage_status" class="collateral_info_fields">
+        											<option value="1" <% if collateral.mortgage_status=="1" %> selected="selected" <% end %>>Paid In Full</option>
+        											<option value="0" <% if collateral.mortgage_status=="0" %> selected="selected" <% end %>>Has Mortgage</option>
+        										</select>
+                             <label class="error collateral_mortgage_status_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+									
+				                    
+				                </div>
+				            </div>
+
+
+				            <div class="columns medium-6" <% if @collateral_tab.custom_fields.include? "amount_owed"%> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>Amount Owed:</strong>
+				                    <% 
+								      	amount_owed = ""
+								      	unless collateral.amount_owed.blank?
+								      		amount_owed = fd_money(collateral.amount_owed.to_i)
+								      	end
+								      %>
+				                    <input id="amount_owed_<%= collateral.id %>" type="text" value="<%= amount_owed %>" rows="1" name="amount_owed" class="collateral_info_fields">
+                             <label class="error collateral_amount_owed_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+				            </div>
+				            
+
+				         
+
+				            <div class="columns medium-12" <% if @collateral_tab.custom_fields.include? "asset_type"%> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>Asset Type:</strong>
+				                   
+					                    <select id="asset_type_<%= collateral.id %>"  name="asset_type" class="collateral_info_fields">
+        											<option value="Single Family Residence" <% if collateral.asset_type=="Single Family Residence" %> selected="selected" <% end %>>Single Family Residence</option>
+        											<option value="Multifamily"  <% if collateral.asset_type=="Multifamily" %> selected="selected" <% end %>>Multifamily</option>
+        											<option value="Condo" <% if collateral.asset_type=="Condo" %> selected="selected" <% end %>>Condo</option>
+        											<option value="Hospitality"  <% if collateral.asset_type=="Hospitality" %> selected="selected" <% end %>>Hospitality</option>
+        											<option value="Commercial" <% if collateral.asset_type=="Commercial" %> selected="selected" <% end %>>Commercial</option>
+        											<option value="Development" <% if collateral.asset_type=="Development" %> selected="selected" <% end %>>Development</option>
+        											<option value="Mixed Use" <% if collateral.asset_type=="Mixed Use" %> selected="selected" <% end %>>Mixed Use</option>
+        											<option value="Retail" <% if collateral.asset_type=="Retail" %> selected="selected" <% end %>>Retail</option>
+        											<option value="Health Care" <% if collateral.asset_type=="Health Care" %> selected="selected" <% end %>>Health Care</option>
+        											<option value="Industrial" <% if collateral.asset_type=="Industrial" %> selected="selected" <% end %>>Industrial</option>
+        											<option value="Other" <% if collateral.asset_type=="Other" %> selected="selected" <% end %>>Other</option>
+        										</select>
+                            <label class="error collateral_asset_type_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+									
+				                   
+				                </div>
+				            </div>
+
+				            
+
+				            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "size"%> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>Land Size:</strong>
+				                    
+				                    <select id="size_<%= collateral.id %>" name="size" class="collateral_info_fields">
+				                    	<option value="Sq Footage" <% if collateral.size=="Sq Footage" %> selected="selected" <% end %>>Sq Footage</option>
+          										<option value="Acres" <% if collateral.size=="Acres" %> selected="selected" <% end %>>Acres</option>
+          									</select>
+									            <label class="error collateral_size_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6" >
+				                <div class="trans-info-item sq_footage"  <% if @collateral_tab.custom_fields.include? "sq_footage"%> style="display:none;" <% end %>>
+				                    <strong>Sq Footage:</strong>
+				                    
+				                    <input id="sq_footage_<%= collateral.id %>" type="text" rows="1" name="sq_footage" value="<%= collateral.sq_footage %>" class="collateral_info_fields">
+									            <label class="error collateral_sq_footage_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+
+                        <% if !@collateral_tab.custom_fields.include? "acres"%> 
+				                 <div class="trans-info-item acres" <% if collateral.size!="Acres" %> style="display:none;" <% end %>>
+				                    <strong>Acres:</strong>
+				                    
+				                     <input id="acres_<%= collateral.id %>" type="text" rows="1" name="acres" value="<%= collateral.acres %>" class="collateral_info_fields">
+									            <label class="error collateral_acres_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                  
+				                  </div>
+                        <% end %>
+
+				            </div>
+
+                    <% if !@collateral_tab.custom_fields.include? "structural_size"%> 
+  				             <div class="columns  <% if collateral.structural_size=='Sq Footage' %> medium-6 <% else %> medium-12 <% end %> ask_structural_size">
+  				                <div class="trans-info-item">
+  				                    <strong>Structural Size:</strong>
+  				                    
+  				                    <select id="structural_size_<%= collateral.id %>" name="structural_size" class="collateral_info_fields">
+  				                    	<option value=""> Select Structural Size</option>
+            										<option value="Sq Footage" <% if collateral.structural_size=="Sq Footage" %> selected="selected" <% end %>>Sq Footage</option>
+            										<option value="Units" <% if collateral.structural_size=="Units" %> selected="selected" <% end %>>Units</option>
+            									</select>
+  									           <label class="error collateral_structural_size_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+  				                    
+  				                </div>
+  				             </div>
+                    <% end %>
+
+                   <% if !@collateral_tab.custom_fields.include? "structural_sq_footage"%>  
+				            <div class="columns medium-6 structure_sq_footage" <% if collateral.structural_size!='Sq Footage' %> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>Sq Footage: </strong>
+				                    
+				                    <input id="structural_sq_footage_<%= collateral.id %>" type="text" rows="1" name="structural_sq_footage" value="<%= collateral.structural_sq_footage %>" class="collateral_info_fields">
+									           <label class="error collateral_structural_sq_footage_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                   
+				                </div>
+				            </div>
+                   <% end %>
+
+				           <% if !@collateral_tab.custom_fields.include? "units"%> 
+                     <div class="columns medium-6  border-right structure_units" <% if collateral.structural_size!='Units' %> style="display:none;" <% end %>>
+  				                <div class="trans-info-item">
+  				                    <strong>How Many Units?:</strong>
+  				                    <input id="units_<%= collateral.id %>" type="text" rows="1" name="units" value="<%= collateral.units %>" class="collateral_info_fields">
+  									           <label class="error collateral_units_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+  				                </div>
+  				            </div>
+                    <% end %>
+
+				            <% if !@collateral_tab.custom_fields.include? "units"%> 
+                    <div class="columns medium-6 structure_units" <% if collateral.structural_size!='Units' %> style="display:none;" <% end %> >
+				                <div class="trans-info-item">
+				                    <strong>SF per Unit:</strong>
+				                    
+				                    	<input id="sf_per_unit_<%= collateral.id %>" type="text" rows="1" name="sf_per_unit" value="<%= collateral.sf_per_unit %>" class="collateral_info_fields">
+									             <label class="error collateral_sf_per_unit_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                   
+				                </div>
+				            </div>
+                    <% end %>
+
+
+				            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "noi_ytd"%> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>NOI (YTD):</strong>
+				                     <% 
+        								      	noi_ytd = ""
+        								      	unless  collateral.noi_ytd.blank?
+        								      		noi_ytd = fd_money(collateral.noi_ytd.to_i)
+        								      	end
+        								      %>
+				                   
+				                    <input id="noi_ytd_<%= collateral.id %>" type="text" value="" rows="1" name="noi_ytd" value="<%= noi_ytd %>" class="collateral_info_fields">
+									          <label class="error collateral_noi_ytd_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6" <% if @collateral_tab.custom_fields.include? "noi_two_years_ago"%> style="display:none;" <% end %>>
+				                <div class="trans-info-item">
+				                    <strong>NOI ( two years ago): </strong>
+				                    <% 
+								      	noi_two_years_ago = ""
+								      	unless  collateral.noi_two_years_ago.blank?
+								      		noi_two_years_ago = fd_money(collateral.noi_two_years_ago.to_i)
+								      	end
+								      %>
+				                    
+				                    <input id="noi_two_years_ago_<%= collateral.id %>" type="text" value="" rows="1" name="noi_two_years_ago" value="<%= noi_two_years_ago %>" class="collateral_info_fields">
+									           <label class="error collateral_noi_two_years_ago_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+				            </div>
+
+
+				            <div class="columns medium-6 border-right" <% if @collateral_tab.custom_fields.include? "noi_last_year"%> style="display:none;" <% end %>>
+				                <div class="trans-info-last">
+				                    <strong>NOI (Last Year):</strong>
+				                    <% 
+								      	noi_last_year = ""
+								      	unless  collateral.noi_last_year.blank?
+								      		noi_last_year = fd_money(collateral.noi_last_year.to_i)
+								      	end
+								    %>
+				                    <input id="noi_last_year_<%= collateral.id %>" type="text"  rows="1" name="noi_last_year" value="<%= noi_last_year %>" class="collateral_info_fields">
+									           <label class="error collateral_noi_last_year_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                    
+				                </div>
+				            </div>
+
+				            <div class="columns medium-6" <% if @collateral_tab.custom_fields.include? "collateral_value"%> style="display:none;" <% end %>>
+				                <div class="trans-info-last">
+				                    <strong>Collateral Value:</strong>
+				                    
+				                    <input id="collateral_value_<%= collateral.id %>" type="text"  rows="1" name="collateral_value" value="<%= collateral.collateral_value %>" class="collateral_info_fields">
+									
+				                   <label class="error collateral_collateral_value_<%= collateral.id %>" style="float:left;"> This field is required. </label>
+				                </div>
+				            </div>
+
+
+				        </div>
+				    </div>
+				</div><!-- content-white-box -->
+
+				
+				<div class="content-white-box map_container" >
+					
+						<% unless collateral.address.blank? %>
+					       <input type="button" class="success button"  value="Property Information" onclick="fetch_property_info('<%= collateral.id %>')">
+							<% @loc = "#{collateral.postalcode}, #{collateral.address}, #{collateral.city}, #{collateral.state}" %>
+							<% #abort("#{@loc}") %>
+							<script type="text/javascript">
+							$('document').ready(function(){
+								
+								if($('#property<%= collateral.id %>').html().length==0){
+
+							   		// $('#property<%= collateral.id %>').html('<h1>zxczxczxczxc</h1>');
+							   		   var embed = '<iframe'+
+											' width="600"'+
+											' height="450"'+
+											' frameborder="0" style="border:0"'+
+											'class="map_canvas"'+
+											' src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDWe2ZhHLQauBtuujbDpPKtZAG0QP5XeyA&q=<%=@loc%>&zoom=15">'+
+									'</iframe>';
+							
+							
+									$('#property<%= collateral.id %>').html(embed);
+								}
+
+								$('.map_canvas').addClass('scrolloff'); // set the pointer events to none on doc ready
+						        $('.canvass').on('click', function () {
+						        	// alert("fgdfgdfg");
+						            $('.map_canvas').removeClass('scrolloff'); // set the pointer events true on click
+						        });
+
+						        // you want to disable pointer events when the mouse leave the canvas area;
+
+						        $(".map_canvas").mouseleave(function () {
+						            $('.map_canvas').addClass('scrolloff'); // set the pointer events to none when mouse leaves the map area
+						        });
+							});
+							</script>
+							
+							<div id='property<%= collateral.id %>' class="flex-video canvass"></div>
+
+							
+						
+						<% end %>	
+					
+				</div>
+
+				<div class="content-white-box" <% if @collateral_tab.custom_fields.include? "collateral_related_to"%> style="display:none;" <% end %> >
+				  	<div class="cwb-header">
+				      	<label><h3>This Collateral is related to: </h3></label>
+				      	<div class="cwb-controls">
+				           <%= render partial: 'show_hide_collateral', locals:{collat: collateral, field_name:"related_funds"} %>
+				      	</div>
+				  	</div>
+					
+
+					<img class="edit-icon fund_edit_pen" style="float:left; margin-left:10px; margin-top: 10px;" onclick="fund_edit_pen('<%= collateral.id%>')" src="/assets/edit-icon.png" id="relate_fund_edit_<%= collateral.id %>" >
+
+					<div class="cwb-content loan_all_funds" style="display:none;">
+						<!------ Render from select_related_funds ---->	
+					</div>
+
+					<div class="cwb-content related_collats">
+						<% unless collateral.related_funds.blank? %>
+							<% @relates = collateral.related_funds.split(",")
+								# abort("#{relates.inspect}")
+								i=1
+							%>
+
+							<table border="0" cellpadding="0" cellspacing="0" class="table-related-fund">
+
+						  <tr>
+						      <td></td>
+						      <td style="width:35%"><strong>Use</strong></td>
+						      <td style="width:33%"><strong>Beneficiary</strong></td>
+						      <td style="width:30%"><strong>Amount</strong></td>
+						  <!--<td><strong>Maturity / Contract Date</strong></td>
+						      <td><strong>Earned Deposit/Stats</strong></td> !-->
+						  </tr>
+						  	
+						  	
+						  
+						    <% @relates.each do |relate| %>
+						    <% unless relate.blank? %>
+						    	
+						    <% end %>
+						    <% fnd = UseOfFund.find_by_id("#{relate}") %> 
+							<% unless fnd.blank? %>
+							    	<tr id="<%= i %>_fund" class="fund_row">
+						                <td><a href="javascript:void(0);" style="color:black;" onclick="return remove_related_fund('<%= collateral.id %>', '<%= relate %>')"><b>x</b></a></td>
+						                <td><%= fnd.use %></td> 
+						                <td><%= fnd.beneficiary %></td> 
+						                <td><%= fnd.amount %></td>
+						              
+						            </tr>
+						        <% i += 1 %>
+						        <% end %>
+						    	 
+						    <% end %>
+						  
+							</table>
+						<% end %>
+					  
+					</div>
+
+			<input type="button" value="Add New Fund" class="button tiny add_collateral_fund" onclick="return add_related_funds('<%= collateral.id %>')">   
+			</div><!-- content-white-box -->
+		</div>
+
+		
+		<% serial += 1 %>
+	<% end %>
+<% end %>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.relation_edit').click(function(){
+			mainId = $(this).parents('.main_collateral').attr('id');
+			var atId = $(this).attr('id');
+			var id = atId.replace("rel_", ""); 
+			var data = "loan_id=<%= @loan.id %>&collateral_id="+id;
+			$.ajax({
+		            data: data,
+		            type: 'POST',
+		            url: '/loans/loan_funds',
+		            success:function(response){
+		            	$('#'+mainId+' .edit_relation').html(response);
+		            	$('#'+mainId+' .edit_relation').show();
+		            	$('#'+mainId+' .related_collats').hide();
+		           }
+		        });
+		});
+
+		 
+
+	    $('.change_col_funds').click(function(){
+	              id = $(this).attr('id');
+	              col_id = id.replace("relate_fund_btn_", ""); 
+	              select_id = "collateral_funds_"+col_id
+	              val = $('#'+select_id).val();
+	              data = "related_funds="+val+"&collateral_id="+col_id;
+	               $.ajax({
+	                      data: data,
+	                      type: 'POST',
+	                      url: '/loans/add_collateral_funds',
+	                      success:function(response){
+	                        $('#collateral_'+col_id+' .loan_all_funds').hide();
+	                        $('#collateral_'+col_id+' .related_collats').html(response);
+	                        $('#collateral_'+col_id+' .related_collats').show();
+	                        $('#collateral_'+col_id+' .add_collateral_fund').show();
+	                      }
+	                  });
+	    });
+
+ /************************** Save Collateral Data ********************************/
+        
+        $('.collateral_info_fields').change(function(){
+
+            this_val = $(this).val();
+            field_name = $(this).attr('name');
+            this_id = $(this).attr('id');
+            id = this_id.replace(field_name+"_", "");
+        /**************** Location Function ******************/
+          if(field_name=="address")
+          {
+            // alert("hey...")
+
+            setTimeout(function(){
+            address = this_val;
+            city = $('#city_'+id).val();
+            state = $('#state_'+id).val();
+            postalcode = $('#postalcode_'+id).val();
+            
+            data = "&address="+address+"&city="+city+"&state="+state+"&postalcode="+postalcode+"&collateral_id="+id;
+
+            $.ajax({
+                data: data,
+                type: 'POST',
+                      url: '/loans/save_collateral_address',
+                       success:function(response){
+                       
+
+                        new_data = "&collateral_id="+id;
+                        $.ajax({
+                          data: new_data,
+                          type: 'POST',
+                                url: '/loans/fetch_location_map',
+                                 success:function(response){
+                                  $("#collateral_"+id+" .map_container").html(response);
+                              }
+                            }) ;
+                    }
+                  }) ;
+            }, 3000);
+
+          }
+          
+        /**************** Location Function ******************/
+        /******************** Land Size **********************/
+          if(field_name=="size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.sq_footage').show();
+              $('.acres').hide();
+            }
+            else if(this_val=="Acres")
+            {
+              $('.acres').show();
+              $('.sq_footage').hide();
+            }
+          }
+
+        /******************** End Land Size **********************/
+
+        /******************** Structural Size ********************/
+          if(field_name=="structural_size")
+          {
+            if(this_val=="Sq Footage")
+            {
+              $('.ask_structural_size').removeClass('medium-12 ');
+              $('.ask_structural_size').addClass('medium-6  border-right');
+              $('.structure_sq_footage').show();
+              $('.structure_units').hide();
+            }
+            else if(this_val=="Units")
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').show();
+            }
+            else
+            {
+              $('.ask_structural_size').addClass('medium-12');
+              $('.ask_structural_size').removeClass('medium-6  border-right');
+              $('.structure_sq_footage').hide();
+              $('.structure_units').hide(); 
+            }
+          }
+
+
+
+        /******************** End Structural Size ********************/
+        
+          if(field_name=="estimated_value" || field_name=="amount_owed" || field_name=="gross_monthly_income" || field_name == "noi_ytd" || field_name == "noi_two_years_ago")
+          {
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_money',
+                  success:function(response){
+                    $("#"+field_name+"_"+id).val(response);
+                    if(field_name=="estimated_value")
+                    {
+                      ldata = "&loan_id=<%= @loan.id %>"
+                       $.ajax({
+                            data: ldata,
+                            type: 'POST',
+                            url: '/loans/estimated_market_value',
+                            success:function(response){
+                             $('#_EstimatedMarketValue').val(response);
+                            }
+                        });
+                    }
+                  }
+              });
+          } 
+          else
+          {
+            data = "&field="+field_name+"&value="+this_val+"&collateral_id="+id;
+            // alert(data);
+            $.ajax({
+                  data: data,
+                  type: 'POST',
+                  url: '/loans/save_collateral_field',
+                  success:function(response){
+                  }
+              });
+          } 
+
+          
+
+          
+
+          /********************** Collateral Analysis ********************************/
+            setTimeout(function(){
+            if(field_name=="acres")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+
+
+            if(field_name=="sq_footage")
+            {
+              
+              
+                var data = "&loan_id=<%= @loan.id %>&field=land_square_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="gross_monthly_income")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=gross_monthly_income";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                        url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="noi_ytd")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+             
+
+            }
+
+            if(field_name=="structural_size")
+            {
+              
+               
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="units")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="structural_sq_footage")
+            {
+              
+                
+                var data = "&loan_id=<%= @loan.id %>&field=structural_sq_footage";
+                 $.ajax({
+                        data: data,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+
+            if(field_name=="sf_per_unit")
+            {
+              
+                
+                var datas = "&loan_id=<%= @loan.id %>&field=noi_ytd";
+                 $.ajax({
+                        data: datas,
+                        type: 'POST',
+                       url: '/loans/edit_analysis_data',
+                        success:function(response){
+                          $('#analysis_information').html(response);
+                        }
+                 });
+              
+
+            }
+          },3000);
+            // alert("df");
+        /********************** End Collateral Analysis ***************************/
+
+        });
+
+      /************************** End Save Collateral Data ********************************/
+		
+	});
+</script>

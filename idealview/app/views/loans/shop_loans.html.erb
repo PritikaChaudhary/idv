@@ -1,0 +1,289 @@
+<style>
+.br-header{position: relative; float: left; width: 100%; margin-top:10px;}
+ form#search_form {position: absolute;right: 0;top: 0;}
+ .form_wrap{float: left; width: 100%; position: relative;}
+ .form_wrap > input#search_btn {
+    height: 34px;
+    position: absolute;
+    right:1px;
+    border: none;
+    background-image:url("assets/search.png"); 
+    background-repeat: no-repeat;
+    top: 1px;
+    width: 36px;
+    background-position: center;
+    cursor: pointer;
+}
+.read_status
+{
+    width: 25px;
+    margin-left: 10px;
+}
+
+.unread_status
+{
+    width: 31px;
+    margin-left: 6px;
+}
+.bin
+{
+    width: 28px;
+    float: right;
+    margin-right: 45px;
+}
+.header_bold:hover
+{
+    cursor: pointer;
+    color: blue;
+}
+</style>
+<script type="text/javascript">
+    function delete_loans()
+    {
+        var allVals=[];
+
+        $('input[name="checkLoan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one email.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/delete_copy_loans',
+                 success:function(data){
+                    $('#email_records').html(data);
+                    $('.flash_notice').show();
+                }
+                
+            });
+
+    }
+
+    function reject_loans()
+    {
+         var allVals=[];
+
+        $('input[name="checkLoan"]:checked').each(function(){
+            allVals.push($(this).val());
+        });
+        if (allVals.length === 0) {
+            alert("Please select atleast one email.");
+            return false;
+        }
+        var data = "&moredata=" + allVals;
+        $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/loans/reject',
+                 success:function(data){
+                    $('#email_records').html(data);
+                    $('.flash_notice').show();
+                }
+                
+            });
+    }
+
+    function cancel_shop(loan_id)
+    {
+        data = "&loanId="+loan_id
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: '/lenders/cancel_shop_loan',
+                 success:function(response){
+                    $('.active_users'+loan_id).html('');
+                    alert("Shop loan cancelled successfuly.");
+                }
+            });
+    }
+
+    function sort_by(field)
+    {
+        type=$("#"+field+"_sort").val();
+
+
+        data="&field="+field+"&type="+type;
+        $.ajax({
+            data: data,
+            type: 'POST',
+            url: '/loans/sort_shop_loan',
+                success: function(response)
+                {
+                    $('#email_records').html(response);
+                    if(type=="desc")
+                    {
+                        $("#"+field+"_sort").val("asc");
+                    }
+                    else
+                    {
+                        $("#"+field+"_sort").val("desc");   
+                    }
+                }
+        });
+    }
+
+</script>
+<style type="text/css">
+ .countdown ul
+  {
+    line-height:1 !important;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+.countdown
+{
+    margin-bottom: 10px;
+}
+.timeTo ul li
+{
+    font-size: 30px !important;
+}
+</style>
+
+<div class="row" style="margin-top:25px">
+    <div class="br-header">
+        
+        <h3 class='text-center'>Shop Loans</h3>
+        <div class="broker_search">
+            
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <a class="button secondary tiny" onclick="reject_loans()" href="javascript:void(0);">Reject Loans</a>
+</div>
+<div class="row shop_header">
+<div class="large-1 columns"><img class="bin" src="/assets/bin2.png" style="cursor:pointer;" onclick="delete_loans()"></div>
+    <div class="large-2 columns"><b class="header_bold" onclick="return sort_by('name')">Loan Name <input type="hidden" id="name_sort" value="desc"></b></div>
+    <div class="large-1 columns"><b class="header_bold" onclick="return sort_by('amount')">Net Amount <input type="hidden" id="amount_sort" value="asc"></b></div>
+    <div class="large-1 columns"><b class="header_bold" onclick="return sort_by('location')">Location <input type="hidden" id="location_sort" value="asc"></b></div>
+    <!-- <div class="large-1 columns"><b class="header_bold" onclick="return sort_by('created_name')">Name <input type="hidden" id="created_name_sort" value="asc"></b></div> -->
+    <div class="large-2 columns"><b class="header_bold" onclick="return sort_by('created_date')">Created Date <input type="hidden" id="created_date_sort" value="asc"></b></div>
+    <div class="large-2 columns"><b>Status</b></div>
+    <div class="large-1 columns"><b>&nbsp; </b></div>
+</div>
+
+<div class='row' id="email_records" style="border-top: 7px solid rgb(242, 242, 242);">
+    <% color_class = ''%>
+    <% i=0
+    if !@loans.blank?
+        @loans.each do |loan|
+            i = i+1 %>
+            <% active = loan.active_user %>
+            <% bInfo = loan.broker %>
+            <% uInfo = loan.user %> 
+            <div class='row <%=color_class%> bottom-space text-left'>
+                <div class="large-1 columns">
+                    <input type="checkbox" value="<%= loan.id %>" name="checkLoan"> 
+                </div>
+                <div class="large-2 columns">
+                 <a href="http://<%= @hostname %>/loans/shop_loan/<%= loan.id %>">
+                    <% unless loan.name.blank? %>
+                        <%= loan.name %>
+                    <% else %>
+                        &nbsp;
+                    <% end %>
+                 </a>
+                </div>
+                <div class="large-1 columns">
+                     <% unless loan.amount.blank? %>
+                        <%=fd_money(loan.amount)%> 
+                    <% else %>
+                        &nbsp;
+                    <% end %>          
+                </div>
+                <div class="large-1 columns">
+                   &nbsp; <% if !loan.info['City3'].blank? && !loan.info['State3'].blank?%>
+                        <%= "#{loan.info['City3']}, #{loan.info['State3']}"%>
+                     <% elsif !loan.info['City3'].blank? %>
+                        <%= "#{loan.info['City3']}"%>
+                     <% elsif !loan.info['State3'].blank? %>
+                        <%= "#{loan.info['State3']}"%>
+                     <% else %>
+                        &nbsp;
+                     <% end %>
+                </div>
+                <!-- <div class="large-1 columns">
+                  <% unless loan.created_by_name.blank? %>  
+                    <%= loan.created_by_name %>
+                  <% else %>
+                    &nbsp;
+                  <% end %>         
+                </div> -->
+                <div class="large-2 columns">
+                <% unless loan.created_date.blank? %>  
+                    <%= loan.created_date %>
+                  <% else %>
+                    &nbsp;
+                  <% end %>
+                
+                </div>
+                <div class="large-4 columns">
+                    <% if loan.reject == 1 %>
+                        Rejected        
+                    <% else %>
+                       <% if !active.blank? %>
+                            <%  etime = Time.parse(active.end_time)
+                                @endt = etime.strftime("%a %b %d %Y %H:%M:%S")
+                                now_time = Time.now %>  
+
+                              <%  if etime < now_time %>
+                                        Expired
+                              <%  else %>
+                                  <div class="active_users<%= loan.id %>">
+                                        <%= active.lender.email %> : <br>
+                                        <script type="text/javascript">
+                                            $('document').ready(function(){
+                                                $('#countdown<%=i %>').timeTo({
+                                                timeTo: new Date(new Date('<%= @endt %>')),
+                                                displayDays: 2,
+                                                theme: "black",
+                                                displayCaptions: true
+                                                });
+                                            });
+                                        </script>
+                                        <div id="countdown<%=i %>" class = "countdown" ></div>
+                                   </div>
+                               <% end  %>
+                       <% else %>
+
+                       <% end %>
+                    <% end %>
+
+                 </div>
+                 <div class="large-1 columns">
+                  <% if !active.blank? %>
+                 <% if loan.reject != 1 %>
+                        <a id="cancel" class="alert tiny button" href="#" onclick="cancel_shop('<%= loan.id %>')">Cancel</a>
+                 <%  end %>
+                 <% end %>    
+                 </div>
+                              
+            </div>
+
+
+            <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+
+        <% 
+    end
+     else %>
+              <div class='row <%=color_class%> bottom-space text-left'>
+
+                    <div class="large-12 columns">
+                        No shop loans request yet.           
+                    </div>
+            
+            
+                 </div>   
+    <%
+    end 
+    %>
+
+</div>
+
+ 

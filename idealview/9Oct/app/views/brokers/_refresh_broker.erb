@@ -1,0 +1,30 @@
+<%= render partial: 'layouts/messages' %>
+    <% color_class = ''%>
+    <% @brokers.each do |broker| 
+        unless broker['delete']==1 %>
+        <div class='row <%=color_class%> bottom-space text-left'>
+            
+            <div class='large-2 columns'>
+            <input type="checkbox" id="check_<%= broker.id %>" name="select_broker" value="<%= broker.id %>" style="float:left;margin-top:7px;">
+            </div>
+            
+            <div class='large-3 columns'>
+                <% unless broker.firstName.blank? %>
+                    <%= broker.firstName+' '+broker.lastName %>
+                <% else %>
+                     "N/A"
+                <% end %>
+            </div>
+
+            <div class='large-2 columns'>
+                <%= broker.email %>
+            </div>
+            
+            <div class='large-2 columns'>
+                <a href="tel:<%= broker.phone1 %>"><%= broker.phone1 %></a>
+            </div>
+        </div>
+
+        <% color_class.blank? ? (color_class='even-row'):(color_class='') %>
+        <% end %>
+    <% end %>

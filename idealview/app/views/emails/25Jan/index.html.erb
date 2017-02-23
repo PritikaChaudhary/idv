@@ -1,0 +1,238 @@
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script>
+$(function() {
+	$( "#accordion, #accordion2, #accordion3, #accordion4" ).accordion({
+		collapsible: true,
+		active: false,
+		heightStyle: "content"
+	});
+
+	$(".edit").click(function(){
+		var btnId = $(this).attr('id');
+		var id = btnId.replace("edit_", "");
+		var cont = "content_"+id;
+		var edit_cont = "edit_content_"+id
+		$("#"+cont).hide();
+		$("#"+edit_cont).show();
+		
+	});
+
+	$(".save").click(function(){
+		var id = $(this).attr('id');
+		var data=$('.form_'+id).serialize();
+		$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/emails/update_email',
+            success:function(response){
+            	$("#email_listing").html(response);
+        	   	$( "#accordion, #accordion2, #accordion3, #accordion4" ).accordion({
+					collapsible: true,
+					active: false,
+					heightStyle: "content"
+				});
+        	   	$(document).foundation('tab', 'reflow');
+				
+				$(".edit").click(function(){
+					var btnId = $(this).attr('id');
+					var id = btnId.replace("edit_", "");
+					var cont = "content_"+id;
+					var edit_cont = "edit_content_"+id
+					$("#"+cont).hide();
+					$("#"+edit_cont).show();
+					
+				});
+        	}
+        });
+	});
+});
+
+function save_email(id)
+{
+		var id = id;
+		var data=$('.form_'+id).serialize();
+		$.ajax({
+            data: data,
+            type: 'POST',
+            url: '/emails/update_email',
+            success:function(response){
+            	$("#email_listing").html(response);
+            	$( "#accordion, #accordion2, #accordion3 , #accordion4" ).accordion({
+					collapsible: true,
+					active: false,
+					heightStyle: "content"
+				});
+				$(document).foundation('tab', 'reflow');
+				$(".edit").click(function(){
+					var btnId = $(this).attr('id');
+					var id = btnId.replace("edit_", "");
+					var cont = "content_"+id;
+					var edit_cont = "edit_content_"+id
+					$("#"+cont).hide();
+					$("#"+edit_cont).show();
+					
+				});
+        	}
+        });
+}
+
+function cancel_save(id)
+{
+	var id = id;
+	$("#content_"+id).show();
+	$("#edit_content_"+id).hide();
+}
+</script>
+<div class="br-header" style="margin-top: 58px; text-align: center;">
+	<h3> Email Notifications </h3>
+</div>
+<div class="row" id="email_listing">
+
+	<ul class="tabs" data-tab>
+	  <li class="tab-title active"><a href="#fd_forms">FD FORMS</a></li>
+	  <li class="tab-title"><a href="#shopping">SHOPPING</a></li>
+	  <li class="tab-title"><a href="#misc">MISC</a></li>
+	  <li class="tab-title"><a href="#enterprise">ENTERPRISE</a></li>
+	</ul>
+	<div class="tabs-content">
+		<div class="content active" id="fd_forms">
+			<div id="accordion">
+				<% @fd_emails.each do |fdemail|%>
+					<h3><%= fdemail.name %></h3>
+					<div class="all_content" >
+						<div class="show_data" id="content_<%= fdemail.id %>">
+							<p style="float:left; width:92%"><b>Subject: </b> <%= fdemail.subject %> </p>
+							<input type="button" value="EDIT" class="tiny button edit" id="edit_<%= fdemail.id %>">
+							<div style="border:1px solid; padding:5px;">
+								<%= raw fdemail.content %>
+							</div>
+
+						</div>
+
+						<div id="edit_content_<%= fdemail.id %>" style="display:none;">
+						 <form class="form_<%= fdemail.id %>">
+							<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > Subject : </label><input type = "text" name="subject" value="<%= fdemail.subject %>" style="width:90%;  float:left;"> <br>
+							<% if fdemail.name == "Shop Loan" || fdemail.name == "New FD Loan Submission" %>
+								<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > To : </label><input type = "text" name="to" value="<%= fdemail.to %>" style="width:90%;  float:left;"> <br>
+							<% end %>
+							<textarea name="content" style = "width: 921px; height: 297px;" ><%= fdemail.content %></textarea>
+							<input type="hidden" value="<%= fdemail.id %>" name="id">
+							<b>Note:</b> Please don't change these words <b>"<%= fdemail.fixed_variable %>"</b>.
+							<br>
+							<div style="margin-top:15px;">
+								<input type="button" class="tiny button success save" value="SAVE" id="<%= fdemail.id %>" ><input type="button" class="tiny button alert" value="CANCEL" onclick="cancel_save('<%= fdemail.id %>')"  style="margin-left:10px;">
+							</div>
+						</form>
+
+						</div>
+					</div>
+				<% end %>
+			</div>
+		</div>
+		<div class="content" id="shopping">
+			<div id="accordion2">
+				<% @shopping_emails.each do |semail|%>
+					<h3><%= semail.name %></h3>
+					<div class="all_content" >
+						<div class="show_data" id="content_<%= semail.id %>">
+							<p style="float:left; width:92%"><b>Subject: </b> <%= semail.subject %> </p>
+							<input type="button" value="EDIT" class="tiny button edit" id="edit_<%= semail.id %>">
+							<div style="border:1px solid; padding:5px;">
+								<%= raw semail.content %>
+							</div>
+
+						</div>
+
+						<div id="edit_content_<%= semail.id %>" style="display:none;">
+						 <form class="form_<%= semail.id %>">
+							<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > Subject : </label><input type = "text" name="subject" value="<%= semail.subject %>" style="width:90%;  float:left;"> <br>
+							<% if semail.name == "Round Robin" || semail.name == "New FD Loan Submission" %>
+								<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > To : </label><input type = "text" name="to" value="<%= semail.to %>" style="width:90%;  float:left;"> <br>
+							<% end %>
+							<textarea name="content" style = "width: 921px; height: 297px;" ><%= semail.content %></textarea>
+							<input type="hidden" value="<%= semail.id %>" name="id">
+							<b>Note:</b> Please don't change these words <b>"<%= semail.fixed_variable %>"</b>.
+							<br>
+							<div style="margin-top:15px;">
+								<input type="button" class="tiny button success save" value="SAVE" id="<%= semail.id %>" ><input type="button" class="tiny button alert" value="CANCEL" onclick="cancel_save('<%= semail.id %>')"  style="margin-left:10px;">
+							</div>
+						</form>
+
+						</div>
+					</div>
+				<% end %>
+			</div>
+		</div>
+		<div class="content" id="misc">
+			<div id="accordion3">
+				<% @misc_emails.each do |email|%>
+					<h3><%= email.name %></h3>
+					<div class="all_content" >
+						<div class="show_data" id="content_<%= email.id %>">
+							<p style="float:left; width:92%"><b>Subject: </b> <%= email.subject %> </p>
+							<input type="button" value="EDIT" class="tiny button edit" id="edit_<%= email.id %>">
+							<div style="border:1px solid; padding:5px;">
+								<%= raw email.content %>
+							</div>
+
+						</div>
+
+						<div id="edit_content_<%= email.id %>" style="display:none;">
+						 <form class="form_<%= email.id %>">
+							<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > Subject : </label><input type = "text" name="subject" value="<%= email.subject %>" style="width:90%;  float:left;"> <br>
+							<% if email.name == "Shop Loan" || email.name == "New FD Loan Submission" %>
+								<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > To : </label><input type = "text" name="to" value="<%= email.to %>" style="width:90%;  float:left;"> <br>
+							<% end %>
+							<textarea name="content" style = "width: 921px; height: 297px;" ><%= email.content %></textarea>
+							<input type="hidden" value="<%= email.id %>" name="id">
+							<b>Note:</b> Please don't change these words <b>"<%= email.fixed_variable %>"</b>.
+							<br>
+							<div style="margin-top:15px;">
+								<input type="button" class="tiny button success save" value="SAVE" id="<%= email.id %>" ><input type="button" class="tiny button alert" value="CANCEL" onclick="cancel_save('<%= email.id %>')"  style="margin-left:10px;">
+							</div>
+						</form>
+
+						</div>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+		<div class="content" id="enterprise">
+			<div id="accordion4">
+				<% @enterprise_emails.each do |eemail|%>
+					<h3><%= eemail.name %></h3>
+					<div class="all_content" >
+						<div class="show_data" id="content_<%= eemail.id %>">
+							<p style="float:left; width:92%"><b>Subject: </b> <%= eemail.subject %> </p>
+							<input type="button" value="EDIT" class="tiny button edit" id="edit_<%= eemail.id %>">
+							<div style="border:1px solid; padding:5px;">
+								<%= raw eemail.content %>
+							</div>
+
+						</div>
+
+						<div id="edit_content_<%= eemail.id %>" style="display:none;">
+						 <form class="form_<%= eemail.id %>">
+							<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > Subject : </label><input type = "text" name="subject" value="<%= eemail.subject %>" style="width:90%;  float:left;"> <br>
+							<% if eemail.name == "Round Robin" || eemail.name == "New FD Loan Submission" %>
+								<label style="float: left; font-weight: bold; padding: 6px; width: 10%; font-size:17px;" > To : </label><input type = "text" name="to" value="<%= semail.to %>" style="width:90%;  float:left;"> <br>
+							<% end %>
+							<textarea name="content" style = "width: 921px; height: 297px;" ><%= eemail.content %></textarea>
+							<input type="hidden" value="<%= eemail.id %>" name="id">
+							<b>Note:</b> Please don't change these words <b>"<%= eemail.fixed_variable %>"</b>.
+							<br>
+							<div style="margin-top:15px;">
+								<input type="button" class="tiny button success save" value="SAVE" id="<%= eemail.id %>" ><input type="button" class="tiny button alert" value="CANCEL" onclick="cancel_save('<%= eemail.id %>')"  style="margin-left:10px;">
+							</div>
+						</form>
+
+						</div>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+	</div>
+	
+</div>

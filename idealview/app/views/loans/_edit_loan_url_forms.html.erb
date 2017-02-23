@@ -1,0 +1,53 @@
+			  <div class='row' style="margin-top:10px;">
+				<%= render partial: 'layouts/messages' %>
+				
+					<%= form_tag({:controller=>'loan_urls', :action=>'create'}, :onSubmit => 'return false', :id=>'loan-url-form21') do %>
+					
+						<%= hidden_field_tag 'loan_id', @loan.id %>
+						<div class="medium-5 medium-offset-1 columns">
+							<input id="email" type="text"  name="email" placeholder="example@example.com"></input>
+						</div>
+						<div class='medium-4 columns'><%=text_field_tag 'name', '', placeholder:'Full Name' %></div>
+
+						<% if @share_lender=="no" &&  @numoflenders>=5 %>
+							<div class='medium-1 columns'> <button class="tiny button" type="submit" onclick="alert('To add more lenders. Please update your plan.');" name="button">Add</button> </div>
+						<% else %>
+							<% @url=url_for :controller=>'loan_urls', :action=>'create' %>
+							<div class='medium-1 columns'><%= button_tag "Add",  onclick:"callFun('#{@url}','show-urlxs', 'loan-url-form21', '#{@user_plan}' )", class: 'tiny button'%></div>
+						<% end %>
+						
+						
+
+						<div class='medium-3 columns'></div>
+					<% end %>
+				
+
+				<table class='small-12 access_email_list'>
+				<thead>
+					<tr class="panel_head"><th>Email</th><th>Name</th><th>Link</th><th>Notes</th><th>Status</th><th>#Visits</th><th>Email Link</th>
+					<% if @brokerLogin == true %>
+						<% if @infoBroker.plan != "free"%>
+							<th>&nbsp;</th>	
+						<% end %>
+					<% else %>
+						<th>&nbsp;</th>
+					<% end %>
+					</tr>
+				</thead>
+				<tbody>
+				<% if @infoBroker.plan != "free" %>
+					<% @loan.loan_urls.each do |loan_url|%>
+						<%= render partial: 'loan_urls/show', locals:{url:loan_url}%>
+					<% end %>
+				<% else %>
+					<% unless @share_lenders.blank? %>
+						<% @share_lenders.each do |loan_url| %>
+							<%= render partial: 'loan_urls/show', locals:{url:loan_url}%>
+						<% end %>
+					<% end %>
+				<% end %>
+				</tbody>
+				</table>
+			</div>
+
+ 

@@ -3,21 +3,62 @@
 		<span class="info">Name: <%= @detail.firstName+' '+@detail.lastName%></span><br>
 		<span class="info"><b>Loan Preferences</b></span><br>
 		<span class="info">Loan Amount: <%= fd_money(@detail.loanMinDropDown) %> 
-		 <% if @detail.loanMaxDropDown!="No Max" %>
-			- <%= fd_money(@detail.loanMaxDropDown) %>
+		 <% if @detail.loanMaxDropDown!=0 %>
+		 		<% if !@detail.loanMinDropDown.blank? %>
+		 			-
+		 		<% end %>
+				<%= fd_money(@detail.loanMaxDropDown) %>
 		 <% else %>
-		 	- <%= @detail.loanMaxDropDown %>
+		 		<% if !@detail.loanMinDropDown.blank? %>
+		 			-
+		 		<% end %>
+		 	  No Max
 		 <% end %>
 		</span><br>
 		<span class="info">Loan Interest: 
 		 <% if defined? @detail.interestRateMin %>
-		 	<%= @detail.interestRateMin %>% -
+		 	<% if !@detail.interestRateMin.blank? %>
+		 		<% if @detail.interestRateMin!=""%>
+		 			<%= @detail.interestRateMin %>% 
+		 		<% end %>
+			<% else %>
+
+			<% end %>	 
 		 <% end %>
 		 <% if defined? @detail.interestRateMax.blank? %>
-		 	<%= @detail.interestRateMax %>% 
+		 	<% if !@detail.interestRateMax.blank? %>
+		 		<% if !@detail.interestRateMin.blank? %>
+		 			-
+		 		<% end %> 
+
+		 		<%= @detail.interestRateMax %>% 
+			<% else %>
+
+			<% end %>	 
 		 <% end %>
 		 </span><br>
-		<span class="info">Points: <%= @detail.pointsMin%> - <%= @detail.pointsMax%></span><br>
+		<span class="info">Loan Value: 
+		<% if @detail.loanToValueMin == 0%>
+			None
+		<% else %>
+			<%= @detail.loanToValueMin%> 
+		<% end %>
+		
+		<% if !@detail.loanToValueMax.blank? %>
+				<% if !@detail.loanToValueMin.blank? %>
+		 			-
+		 		<% end %> 
+			<% if @detail.loanToValueMax == 0 %>
+				None
+			<% else %>
+				<%= @detail.loanToValueMax%>
+			<% end %>
+			
+		<% else %>
+
+		<% end %>
+
+		</span><br>
 		<% if @detail.termLengthType=="year(s)" %>
 			<span class="info">Term Length: <%= @detail.termLengthMin %>Years - <%= @detail.termLengthMax %>Years</span><br>
 		<% else %>
